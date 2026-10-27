@@ -1,0 +1,16 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace CaseOnlyRenameRepro
+{
+public class Foooo
+{
+public void ExecuteLogic() //{Change Method: target method for Windows case‑only file‑rename solution‑explorer‑disappear bug reproduction}
+{
+Console.WriteLine("demo");
+}
+}
+}

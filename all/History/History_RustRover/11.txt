@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: The two selected consecutive let statements: `let s: &String = &args[1];` and `let file: &String = &args[2];`
+Refactoring Scope: Rust function body inside fn main()
+Plugin Environment: IntelliJ Rust plugin, Macro expansion engine: new, Name resolution engine: old
+Trigger Operation: Select the two let bindings, invoke the Extract Method refactor
+*/
+/* Error Root Cause:
+Observed failure: When multiple sequential let statements are selected for extraction, the generated extracted method only returns the last defined variable. Intermediate local variables defined within the selected range are incorrectly treated as input parameters for the new method.
+Expected behavior: The refactor should detect all variables defined inside the extracted block that are used after the block exits. If multiple such variables escape the scope, the extracted function should return a tuple containing all escaping values. Only variables defined outside the selected region and read inside it should become parameters.
+Underlying cause: The old name resolution engine's dataflow analysis for Extract Method fails to differentiate three categories of variables:
+1. Input variables: declared outside the selected range and read inside the range
+2. Internal temporary variables: declared by let inside the selected range and only used within the extracted block
+3. Output variables: declared by let inside the selected range and read after the selected block ends
+It misclassifies internally-defined let bindings as required input dependencies, instead of collecting them as return values.
+*/
+use std::fs::read_to_string;
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    // The two lines below are the selection target for Extract Method
+    let s: &String = &args[1];
+    let file: &String = &args[2];
+
+    let content: String = read_to_string(file).expect("Some error");
+    println!("{:#?}", content);
+}

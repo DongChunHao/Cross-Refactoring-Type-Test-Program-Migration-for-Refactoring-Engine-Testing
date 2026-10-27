@@ -1,0 +1,29 @@
+// $GOPATH/src/baz/foo.go
+package foo
+
+func example() {
+}
+
+// $GOPATH/src/bar/bar.go
+package main
+
+/* Refactoring Settings:
+Refactoring type: Code Reformat / Import Organizer
+Refactoring target: Go import block with aliased import `baz "baz"`
+Refactoring scope: Entire source file bar.go
+Refactoring rule: Preserve explicit import aliases even when alias text matches the import path segment.
+*/
+
+/* Error Root Cause:
+Observed failure: The Go code formatter / import organizer automatically deletes the explicit alias `baz` from `baz "baz"`, changing it to bare `import "baz"`. This causes compile error `baz.example() undefined (type string has no field or method example)`, because the package name is actually `foo`, not `baz`.
+Expected behavior: The formatter must retain the user-written alias `baz "baz"`. The alias is intentional: import path "baz" points to a package whose declared package name is `foo`.
+Underlying cause: The import cleanup logic naively assumes that an alias equal to the last path component is redundant and safe to drop, without checking the actual package name declared inside that imported package.
+*/
+
+import (
+	baz "baz"
+)
+
+func main() {
+	baz.example()
+}

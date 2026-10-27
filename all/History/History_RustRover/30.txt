@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Variable
+Refactoring Target: Expression `false` inside a shorthand closure `|| false`
+Refactoring Scope: Multiple-occurrence replacement across closure and outer function scope
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4282-213-nightly, CLion 2021.3, Rust 1.56.1, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Variable on `false` inside the non-block closure body, select "Replace all 2 occurrences"
+*/
+/* Error Root Cause:
+Observed failure: The refactor creates the new variable `x` inside the closure’s newly introduced block, then tries to replace all usages (including the two `false` outside the closure) with `x`. Those outer sites cannot access the closure-local `x`, producing undefined name errors.
+Expected behavior: When choosing "Replace all occurrences", the refactor must pick a binding scope that encloses every selected occurrence. Since the usages are in the outer `foo` function and inside the closure, the variable should be declared in `foo`, not inside the closure. If the occurrences span disjoint scopes, the refactor should warn or disallow bulk replacement instead of producing invalid code.
+Underlying cause: The extract variable logic defaults to the closest enclosing scope of the cursor (the closure body) when creating the binding, without checking whether all replaced expression sites are inside that scope.
+*/
+// Before
+fn foo() {
+    let _ = false;
+    || false;
+    let _ = false;
+}
+
+// Actual broken output
+fn foo() {
+    let _ = x;
+    || {
+        let x = false;
+        x
+    };
+    let _ = x;
+}

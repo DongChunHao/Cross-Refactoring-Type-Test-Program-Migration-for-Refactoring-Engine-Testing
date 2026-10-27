@@ -1,0 +1,38 @@
+#include <exception>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract block `if(y == 5) { throw std::exception(); } else { }`
+Refactoring rule expectation: Treat `throw` as a valid exit path of the extracted function. Do not report false "multiple exit points" error.
+*/
+
+/* Error Root Cause:
+Observed failure: CLion reports "Cannot extract a function. There are multiple exit points ...".
+The code has one exit path when `y==5` (throw exception), and the other branch does nothing (falls through). The refactoring engine incorrectly treats throw + normal fallthrough as multiple return/exit points and blocks extraction.
+
+Expected behavior: Allow extraction. Two valid options:
+Option 1 (void method):
+void checkY(int y) {
+    if(y == 5) {
+        throw std::exception();
+    }
+}
+
+Option 2 (bool return):
+bool checkY(int y) {
+    if(y ==5) {
+        throw std::exception();
+    }
+    return false;
+}
+
+Underlying cause: Extract Method control-flow analysis treats `throw` as an exit path and counts it together with the implicit fallthrough as multiple exits. It does not understand that `throw` is an exceptional exit and supports void functions that throw.
+*/
+
+void test(int y)
+{
+    if(y == 5) {
+        throw std::exception();
+    } else {
+    }
+}

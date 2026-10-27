@@ -1,0 +1,16 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: runMapIteration
+'''
+#include <iostream>
+#include <map>
+void runMapIteration() { //{Rename function testMethod to runMapIteration}
+std::mapstd::string,int testmap = {{"a", 1}, {"b", 2}};
+for (std::mapstd::string,int::iterator it = testmap.begin(); it != testmap.end(); ++it) {
+std::cout << it->first << " -> " << it->second << "\n";
+}
+}
+int main() {
+runMapIteration();
+return 0;
+}

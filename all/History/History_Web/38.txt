@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Type Alias
+Refactoring Target: `[this, this]` inside interface I3
+Refactoring Scope: TypeScript file
+Trigger Operation: Run Extract Type Alias on `[this, this]` within the interface member type
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Type Alias extracts `[this, this]` as a plain non-generic type alias, e.g. `type Created = [this, this];`. This is invalid because `this` in an interface refers to the polymorphic `this` type of the containing interface, and cannot be captured in a standalone top-level alias without a type parameter.
+Expected behavior: The refactoring should generate a generic type parameter to represent the polymorphic `this`, producing something like `type Created<T> = [T, T];`, and substitute `Created<this>` at the original location.
+Underlying cause: The Extract Type Alias logic does not detect polymorphic `this` as an implicit type parameter that needs to be lifted into the new type alias. It treats `this` like an ordinary type reference instead of a bounded generic parameter.
+*/
+
+// Complete compilable test code
+interface I3 {
+    a: this[];
+    b: [this, this];  // <-- from here
+}

@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Class (Rider C# sync rename: class name + filename)
+Refactoring Target: C# class inside a .cs file, with the option "Rename file to match type name" enabled
+Refactoring Scope: Type symbol rename and automatic associated file rename in MSBuild project
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure: Intermittent bug. When renaming a class with the sync-rename option on, Rider occasionally creates a brand-new extra .cs file in the project instead of renaming the existing file in-place. The original file remains, and the new file with the new class name is added as a separate project item. This bug is non-deterministic and cannot be reliably reproduced.
+
+Expected behavior: When renaming a class and "Rename file to match type name" is checked, Rider should modify the existing file’s name and update its MSBuild Include path. No extra file should be created.
+
+Underlying cause: The race condition in the project model/PSI transaction. During rename, two operations run concurrently: updating the type PSI node and renaming the disk/project file. In rare timing windows, the file rename operation fails to replace the original project item cleanly. Rider’s project model falls back to adding a new Compile item for the new filename while keeping the old file item, resulting in duplicate files in the solution.
+*/
+
+// Initial state
+// MyClass.cs
+public class MyClass {}
+
+// Trigger rename MyClass → MyClassV2, "Rename file" enabled
+// Expected: Rename MyClass.cs → MyClassV2.cs, update project item in-place
+// Intermittent bug: Rider adds new MyClassV2.cs to project, original MyClass.cs remains

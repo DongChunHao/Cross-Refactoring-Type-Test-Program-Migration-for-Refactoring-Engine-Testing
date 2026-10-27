@@ -1,0 +1,27 @@
+<?php
+class A { }
+class B extends A{
+    static private function fs(){}
+    function fa2()
+    {
+        self::fs();
+    }
+}
+class C extends B{}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method fa2() in class B, pull up to parent class A
+Refactoring rule: When analyzing `self::` static calls inside a method to be pulled up, correctly resolve that `self` is bound to the original declaring class at parse time. After moving the method to a different class, `self` will refer to the new containing class, not the original child class, which breaks access to private static members of the original child. The refactoring must detect this semantic shift and emit a warning.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling fa2() up into A produces no warning. After refactoring, fa2() lives in A and still has `self::fs()`. Now `self` means A, not B; fs() is private to B and cannot be reached, resulting in fatal PHP error.
+Expected behavior:
+Refactoring detects `self::fs()` inside fa2(), identifies that `self` will bind to the new host class after moving, warns the user about the broken private-static dependency, and requires confirmation or blocks the operation.
+Underlying cause:
+The dependency scanner does not differentiate `self::` / `static::` / explicit-class-name static invocations. It treats `self::fs()` as if it were an explicit `B::fs()` call and does not account for the compile-time binding of `self` changing when the method’s lexical host class changes.
+*/
+?>

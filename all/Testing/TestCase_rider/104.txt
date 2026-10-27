@@ -1,0 +1,26 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace StaleIndexNavigationRepro
+{
+public class OldName
+{
+public void Run() //{Change Method: target method for rename‑stale‑PSI‑index‑Go‑to‑Declaration‑broken bug reproduction}
+{
+Console.WriteLine("demo");
+}
+}
+
+public class Consumer
+{
+public void Demo()
+{
+var x = new OldName();
+x.Run();
+}
+}
+
+}

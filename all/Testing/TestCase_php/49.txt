@@ -1,0 +1,14 @@
+```
+<?php
+class GameUnit { }
+class Warrior extends GameUnit {
+    static function getBaseDamage(): int { return 45; }
+    function getAttackInfo()
+    {
+        $dmg = Warrior::getBaseDamage();
+        return ['damage' => $dmg, 'type' => 'melee'];
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `getAttackInfo()` from class `Warrior` to parent class `GameUnit`

@@ -1,0 +1,7 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing ASI‑sensitive string‑literal‑plus‑IIFE statement}
+'variable'  ;(() => {})()
+}

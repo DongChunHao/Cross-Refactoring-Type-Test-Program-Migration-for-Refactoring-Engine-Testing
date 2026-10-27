@@ -1,0 +1,19 @@
+/* Refactoring Settings:
+Refactoring type: Rename (Shift+F6) C++ refactoring
+Refactoring target: local struct X declared inside main()
+Operation: Place caret on `X` inside destructor `~X() = default;`, invoke Rename refactoring
+Scope: Handling of local function-scoped struct; destructor tilde `~` token preservation during rename of class name; avoid duplication of ~ character
+*/
+
+/* Error Root Cause:
+Observed failure: When renaming a function-scoped struct X by triggering rename on the destructor `~X() = default;`, the refactoring incorrectly duplicates the tilde `~` character, producing `~~NewName()` instead of `~NewName()`.
+Expected behavior: Rename only the identifier `X`, keep exactly one `~` for destructor, resulting in `~NewName() = default;`.
+Underlying cause: The PSI range visitor for destructor nodes mishandles the `~` token. When renaming the class name inside destructor declaration, the refactoring treats the tilde as part of the identifier range or copies the tilde token twice during text replacement, especially for structs defined inside function scope with `= default` destructor.
+*/
+
+int main() {
+    struct X {
+        ~X() = default; // rename X here
+    };
+    return 0;
+}

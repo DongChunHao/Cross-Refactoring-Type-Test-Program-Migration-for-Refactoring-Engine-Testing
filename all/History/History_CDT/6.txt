@@ -1,0 +1,21 @@
+void foo() { }
+int main() {
+     foo(); /* << Select "foo" without the parens */
+     return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: identifier `foo` (function name only, exclude parentheses) inside main() call site
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select bare identifier `foo` (omit `()`), trigger Extract‑Function refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT generates invalid code: `void extracted_function(){ return foo; }` and call site `extracted_function()();`. Return type is incorrectly set to void instead of function‑pointer type, and call‑site produces erroneous double parentheses syntax.
+Expected behavior: Two valid options: (1) disallow Extract Function for bare function‑identifier selection and reject the operation with user warning; OR (2) correctly generate function‑pointer returning function `void (*extracted_function())() { return foo; }` and proper call `extracted_function();`.
+Underlying cause: The refactoring AST selection parser treats the bare function identifier `foo` as a standalone expression but fails to resolve its type as function pointer. It uses naive void return‑type for extracted function and does not handle function‑pointer call semantics, leading to malformed generated syntax.
+*/

@@ -1,0 +1,44 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Enum Variant
+Refactoring Target: Enum variant `Bar(i32)` inside `foo::Foo`
+Refactoring Scope: Replace indirect constructor usages (stored in a variable then called)
+Plugin Environment: IntelliJ Rust plugin 0.2.121.3051-201-nightly, CLion 2020.1, Rust 1.42.0, macOS 10.15.4
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Enum Variant on `Bar` variant
+*/
+/* Error Root Cause:
+Observed failure: The refactor only modifies the enum definition and creates the new `Bar` struct. It fails to rewrite indirect usages where the variant constructor is stored into a variable (`let ctr = foo::Foo::Bar;`) and later invoked as a call expression `ctr(123)`. After extraction, `foo::Foo::Bar` is no longer a function-like constructor, so `ctr(123)` becomes invalid.
+Expected behavior: Detect indirect constructor usages like this and rewrite them appropriately. In this case, `let ctr = foo::Foo::Bar; let f = ctr(123);` should become `let f = foo::Foo::Bar(foo::Bar(123));`.
+Underlying cause: The refactoring’s usage finder only looks for direct variant constructor calls of the form `Foo::Bar(...)`, and does not track when the variant constructor is assigned to a variable and invoked later.
+*/
+// Before
+mod foo {
+    pub enum Foo { Bar(i32) }
+}
+
+fn main() {
+    let ctr = foo::Foo::Bar;
+    let f = ctr(123);
+}
+
+// Actual broken output
+mod foo {
+    pub struct Bar(pub i32);
+    pub enum Foo { Bar(Bar) }
+}
+
+fn main() {
+    let ctr = foo::Foo::Bar;
+    let f = ctr(123); // Compile error: Foo::Bar is not a function
+}
+
+// Expected output
+mod foo {
+    pub struct Bar(pub i32);
+    pub enum Foo { Bar(Bar) }
+}
+
+fn main() {
+    let f = foo::Foo::Bar(foo::Bar(123));
+}

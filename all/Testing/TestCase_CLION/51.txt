@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: obj
+'''
+struct MyClass {
+MyClass(int);
+int field;
+};
+void qqq() {
+MyClass x = 239; //{Rename variable x to obj}
+x.field;
+}
+

@@ -1,0 +1,16 @@
+```
+<?php
+class CacheBase { }
+class FileCache extends CacheBase {
+    private function flush()
+    {
+    }
+}
+class LocalFileCache extends FileCache {
+    public function run() {
+        static::flush();
+    }
+}
+```
+
+【Refactoring Action】: Push Down method `flush()` from class `FileCache` to subclass `LocalFileCache`.

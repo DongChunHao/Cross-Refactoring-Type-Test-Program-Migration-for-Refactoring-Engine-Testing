@@ -1,0 +1,14 @@
+```
+<?php
+class Base { }
+class ParentLevel extends Base {
+    function calculate()
+    {
+    }
+}
+class ChildLevel extends ParentLevel {
+}
+(new ChildLevel)->calculate();
+```
+
+【Refactoring Action】: Push Down method `calculate()` from class `ParentLevel` to subclass `ChildLevel`.

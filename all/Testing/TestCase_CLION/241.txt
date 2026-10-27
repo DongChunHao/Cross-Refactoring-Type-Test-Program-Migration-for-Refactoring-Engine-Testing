@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: computeGlobalX
+'''
+int x;
+class enclose {
+int x;
+void f(int i) {
+i = x;
+int j = computeGlobalX(i); //{Extract method computeGlobalX}
+::x = i;
+};
+int computeGlobalX(int i) {
+return ::x;
+}
+};

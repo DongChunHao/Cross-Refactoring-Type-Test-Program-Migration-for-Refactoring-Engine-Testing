@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Custom composite refactoring — Convert multiple related public properties into one associative array property
+Refactoring target: three public properties $meta_description, $meta_keywords, $meta_charset inside class Template
+Scope: class Template, all read/write usages of these three properties in the project
+Refactoring operation:
+1. Remove $meta_description, $meta_keywords, $meta_charset
+2. Create new public array property $meta
+3. Map: "description" => $meta_description initial value, "keywords" => $meta_keywords initial value, "charset" => $meta_charset initial value
+4. Rewrite all external usages: $obj->meta_description → $obj->meta['description'], $obj->meta_keywords → $obj->meta['keywords'], $obj->meta_charset → $obj->meta['charset']
+*/
+
+/* Error Root Cause:
+Observed failure: The IDE does not provide a built-in refactoring action for grouping multiple similarly-named properties into a single associative array property. No menu entry appears when selecting these fields.
+Expected behavior: When selecting multiple related properties with a common prefix (meta_), offer a dedicated refactoring "Group into associative array". It should generate the combined array property and update all access sites automatically.
+Underlying cause: Standard PhpStorm/Rider refactoring set lacks this composite transformation. The existing extract-variable/extract-field operations only work for one symbol at a time and cannot automatically rename accesses and restructure property declarations into array key-value pairs.
+*/
+class Template {
+    public $meta_description = "";
+    public $meta_keywords = [];
+    public $meta_charset = "utf-8";
+}
+?>

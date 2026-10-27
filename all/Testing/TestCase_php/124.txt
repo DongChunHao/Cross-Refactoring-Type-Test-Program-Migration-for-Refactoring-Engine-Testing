@@ -1,0 +1,18 @@
+```
+<?php
+/**
+ * @method getInfo(int $id)
+ */
+class BaseRepository{
+    public function __get(string $prop){}
+    public function __set(string $prop, $value){}
+}
+class UserRepo extends BaseRepository {}
+$repo = new BaseRepository;
+echo $repo->name;
+$repo->name = "alice";
+$repo->getInfo(101);
+?>
+```
+
+【Refactoring Action】: Push Down refactoring, push `__get` and `__set` from `BaseRepository` down to subclass `UserRepo`

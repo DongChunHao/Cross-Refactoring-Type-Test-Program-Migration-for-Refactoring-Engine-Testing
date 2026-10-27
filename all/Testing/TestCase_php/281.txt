@@ -1,0 +1,13 @@
+```
+<?php
+/**
+ * @return User the matched user entity
+ */
+public function findUser(): User
+{
+    return null;
+}
+?>
+```
+
+【Refactoring Action】: Quick-fix Change return type, change return type from `User` to `?User`.

@@ -1,0 +1,30 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <unordered_map>
+#include <memory>
+#include <string>
+#include <iostream>
+// Forward declarations
+class BaseGenerator
+{
+public:
+void writeCodeModel(std::ostream& hppout, std::ostream& cppout) {}
+void writeCodeBody(std::ostream& hppout, std::ostream& cppout) {}
+};
+class AbstractGenerator : public BaseGenerator //{Push down writeCodeModel and writeCodeBody from BaseGenerator to AbstractGenerator}
+{
+public:
+void writeCodeModel(std::ostream& hppout, std::ostream& cppout);
+void writeCodeBody(std::ostream& hppout, std::ostream& cppout);
+};
+void AbstractGenerator::someFunc(std::ostream& hppout, std::ostream& cppout)
+{
+std::unordered_map<std::string, std::shared_ptr<AbstractGenerator>> m_siblingClasses;
+for(auto sibling : m_siblingClasses) {
+sibling.second->writeCodeModel(hppout, cppout);
+hppout << std::endl;
+}
+writeCodeBody(hppout, cppout);
+}

@@ -1,0 +1,28 @@
+```
+<?php
+namespace Storage {
+    class FileMeta
+    {
+    }
+}
+namespace Storage\Disk {
+    class DiskDriver
+    {
+        public function write(FileMeta $meta)
+        {
+        }
+    }
+}
+namespace Storage\S3 {
+    use Storage\FileMeta;
+    class S3Driver extends \Storage\Disk\DiskDriver
+    {
+        public function put(FileMeta $meta)
+        {
+        }
+    }
+}
+?>
+```
+
+【Refactoring Action】: Push Down refactoring, target method `write()` in `\Storage\Disk\DiskDriver`, push down to child class `\Storage\S3\S3Driver`.

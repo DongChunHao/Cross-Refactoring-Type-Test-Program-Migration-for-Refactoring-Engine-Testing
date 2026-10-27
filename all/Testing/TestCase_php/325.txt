@@ -1,0 +1,13 @@
+```
+<?php
+class UserRepo
+{
+    public function find()
+    {
+        return $this;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Project language level PHP 7.4; Change Signature on `UserRepo::find()`, add return type `static`.

@@ -1,0 +1,17 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: renamed_foo
+'''
+typedef struct s {
+char *n;
+};
+void foo(struct s* j) {//rename method for function containing pointer‑type assignment statement
+struct s* i;
+j = i;
+j->n = "Jack";
+}
+int main() {
+struct s* j;
+foo(j);
+return 0;
+}

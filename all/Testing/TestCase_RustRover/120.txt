@@ -1,0 +1,20 @@
+mod mod1 {
+    pub fn foo/*caret*/() {}//inline ref
+}
+mod mod2/*target*/ {
+    mod inner1 {
+        fn test() { crate::mod1::foo(); }
+    }
+    mod inner2 {
+        fn test() {
+            use crate::mod1;
+            mod1::foo();
+        }
+    }
+    mod inner3 {
+        fn test() {
+            use crate::mod1::*;
+            foo();
+        }
+    }
+}

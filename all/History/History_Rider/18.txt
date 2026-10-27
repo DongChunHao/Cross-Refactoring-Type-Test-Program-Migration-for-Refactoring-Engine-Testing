@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring Type: File Rename + Undo
+Refactoring Target: Open C# source file in editor; rename operation where user deletes `.cs` extension, then triggers Undo
+Refactoring Scope: Editor tab PSI context, context actions / Alt+Enter, Find Usages and refactoring availability
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure: After starting a file rename, removing the `.cs` extension and undoing the rename, the editor tab enters a broken state. The context action menu (Alt+Enter) hangs showing "Waiting for context actions"; Find Usages and most refactoring commands are unavailable. Closing and reopening the editor tab restores functionality.
+Expected behavior: Undo should fully roll back the file rename operation, restore the file’s original name and PSI state, and keep all editor features and context actions working without needing to reopen the tab.
+Underlying cause: The file rename transaction and its undo path do not properly reset the in-editor PSI document state and file type association. Even after undo, the editor retains stale transient state from the invalid rename attempt (file without `.cs` extension), so Rider’s context action engine, refactoring and usage lookup logic treat the document as invalid/unresolved until the tab is reloaded.
+*/
+
+// Initial .csproj item
+<Compile Include="Class1.cs" />
+
+// User action: start rename, erase ".cs" → temporary invalid state "Class1"
+// Press Undo: project item reverts back to Class1.cs on disk and in project,
+// but the open editor tab’s PSI context remains stuck in the intermediate invalid state.
+
+// Editor symptoms:
+// - Alt+Enter: "Waiting for context actions" indefinitely
+// - Find Usages, Refactor menu items disabled
+// Fix: Close tab, reopen file

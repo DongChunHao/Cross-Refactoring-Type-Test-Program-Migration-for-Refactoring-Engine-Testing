@@ -1,0 +1,6 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+var foo = {x: undefined, y: "a", z: true}, {x = 5, y, z} = foo;
+var g = x; //{Move Method target usage site for variable with destructuring fallback default}

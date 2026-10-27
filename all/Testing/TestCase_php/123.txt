@@ -1,0 +1,17 @@
+```
+<?php
+/**
+ * @method runJob(string $input)
+ */
+class BaseWorker{
+    public function __invoke(string $task){}
+    public function __call(string $name, array $args){}
+}
+class Worker extends BaseWorker {}
+$w = new BaseWorker;
+$w("clean");
+$w->runJob("data");
+?>
+```
+
+【Refactoring Action】: Push Down refactoring, push magic methods `__invoke` and `__call` from `BaseWorker` down to subclass `Worker`.

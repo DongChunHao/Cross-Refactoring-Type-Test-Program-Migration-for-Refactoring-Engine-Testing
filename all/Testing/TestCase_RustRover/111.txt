@@ -1,0 +1,19 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+trait MyTrait2 {
+fn fn_bar() {}
+}
+trait Trait {
+fn fn_bar() {}
+}
+enum Result<T, E> {
+Ok(T),
+Err(E),
+}
+impl<T, E> Trait for Result<T, E> where (T,E): MyTrait2 {
+fn fn_bar() { //{rename method fn_bar to trait_impl_bar}
+println!("hello");
+}
+}

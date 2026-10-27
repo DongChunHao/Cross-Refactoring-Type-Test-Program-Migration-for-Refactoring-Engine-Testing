@@ -1,0 +1,14 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Inheritance‑resolution logic disregards Python MRO for multiple‑inheritance; naively traverses base‑class list and picks wrong ancestor method instead of actual runtime super() target
+class A(object):
+def m(self):
+print(1)
+class B():
+def m(self):
+print(2) // REFACTOR_TARGET
+class C(B, A):
+def m(self):
+super().m()
+print(3)
+def stub_helper():
+pass

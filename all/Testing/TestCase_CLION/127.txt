@@ -1,0 +1,31 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <unordered_map>
+#include <memory>
+#include <string>
+#include <iostream>
+// Forward declarations
+class AbstractGenerator {
+public:
+void writeCodeModel(std::ostream& hppout, std::ostream& cppout);
+void writeCodeBody(std::ostream& hppout, std::ostream& cppout);
+void someFunc(std::ostream& hppout, std::ostream& cppout);
+};
+struct Wrapper
+{
+void wrapperSomeFunc(AbstractGenerator* obj, std::ostream& hppout, std::ostream& cppout) { //{Move someFunc logic into struct Wrapper member function}
+std::unordered_map<std::string, std::shared_ptr<AbstractGenerator>> m_siblingClasses;
+for(auto sibling : m_siblingClasses) {
+sibling.second->writeCodeModel(hppout, cppout);
+hppout << std::endl;
+}
+obj->writeCodeBody(hppout, cppout);
+}
+};
+void AbstractGenerator::someFunc(std::ostream& hppout, std::ostream& cppout)
+{
+Wrapper w;
+w.wrapperSomeFunc(this, hppout, cppout);
+}

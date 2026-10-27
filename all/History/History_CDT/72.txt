@@ -1,0 +1,38 @@
+float GlobalVar_0 = 0;
+float func_0 ( ){
+    int LocalVar_0 = 0;
+    return GlobalVar_0;
+}
+float Function_0 ( ){
+    int LocalVar_0 = 100;
+    return GlobalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring(local variable rename inside func_0)
+Refactoring Target: local variable `LocalVar_0` inside func_0
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select local variable LocalVar_0 inside func_0, invoke Rename refactoring, input string `a v` with embedded whitespace as new variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts rename input `a v` containing whitespace.
+The local‑variable declaration inside func_0 becomes `int a v = 0;`.
+Whitespace acts as token separator in C; compiler parses `a` and `v` as two separate identifiers, which leads to syntax compilation error.
+Lexical scope analysis behaves correctly: the homonymous local variable `LocalVar_0` in Function_0 is not modified. Global variable `GlobalVar_0` keeps unchanged.
+Refactoring completes silently without any warning, and invalid source code is persisted.
+
+Expected behavior:
+Local‑variable rename must perform strict lexical validation for candidate name before source modification:
+1. Valid C identifier starts with letter or underscore.
+2. Only letters, underscores, decimal digits are allowed.
+3. Reject inputs containing whitespace, special symbols, reserved keywords, literals starting with digit.
+4. Abort refactoring and report error message once validation fails.
+
+Underlying cause:
+CDT rename component does not verify user input complies with C identifier lexical rules. Raw input string with whitespace is directly substituted into declaration site. Syntax checking is fully delegated to compiler.
+*/

@@ -1,0 +1,22 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method C::f()
+Scope: method return type and corresponding PHPDoc @return tag
+Refactoring operation: change return type from int to string
+*/
+
+/* Error Root Cause:
+Observed failure: After modifying the method return type via Change Signature, the @return tag loses its type information and becomes `@return` with no type.
+Expected behavior: Update the PHPDoc to `@return string` to match the new signature return type.
+Underlying cause: The PHPDoc regenerator for Change Signature clears the existing @return type annotation but does not populate it with the updated return type from the method signature.
+*/
+class C{
+    /**
+     * @return int
+     */
+    public function f() : int
+    {
+    }
+}
+?>

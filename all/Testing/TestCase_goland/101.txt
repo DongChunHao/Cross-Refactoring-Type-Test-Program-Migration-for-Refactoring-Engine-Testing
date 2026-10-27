@@ -1,0 +1,16 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+package main
+func example() {
+runPrint() // extract print statements into runPrint
+}
+func runPrint() {
+print("1")
+
+print("2")
+
+print("3")
+
+}

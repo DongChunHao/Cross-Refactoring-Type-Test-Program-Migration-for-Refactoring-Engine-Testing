@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: expression `serial_port::character_size res = serial_port::character_size(serial_port::character_size(8)); return res;` inside function fn()
+Operation: Select the code segment inside fn(), invoke Extract Method and name new method getSize
+Scope: Respect order of `using namespace boost::asio;` when inserting forward declaration of extracted method; avoid invalid `this->` qualifier for non-member free function; preserve qualified type names correctly
+*/
+
+/* Error Root Cause:
+Observed failure: 1. The forward declaration `serial_port_base::character_size getSize();` is inserted BEFORE `using namespace boost::asio;`, causing name lookup failure because `serial_port_base` is not visible yet at that point. 2. The refactoring incorrectly adds invalid `this->` qualifier to `character_size()` inside extracted method getSize(), since getSize is a free function with no `this` pointer.
+Expected behavior: Insert the forward declaration after `using namespace boost::asio;`, do not add `this->` qualifiers for free function code, keep original type references valid.
+Underlying cause: The refactoring’s new-declaration placement logic does not respect existing `using namespace` statement ordering. Additionally, the PSI reference visitor mistakenly treats the `serial_port::character_size` constructor call as a class member access and injects `this->`, even though this is a free function extraction context without an object instance.
+*/
+
+#include <boost/asio/serial_port.hpp>
+using namespace boost::asio;
+
+serial_port::character_size fn(){
+    serial_port::character_size res = serial_port::character_size(serial_port::character_size(8));
+    return res;
+}
+
+int main() {
+    return 0;
+}

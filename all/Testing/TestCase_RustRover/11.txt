@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+macro_rules! console {
+($level:expr, $msg:expr) => { println!($msg) };
+}
+fn foo(bar: u32) { //{move function body containing macro invocation into nested inner function}
+console!(log, format!("something {}", bar));
+}

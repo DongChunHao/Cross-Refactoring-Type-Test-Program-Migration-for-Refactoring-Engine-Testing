@@ -1,0 +1,15 @@
+```
+<?php
+abstract class BaseStore {
+    private static $cacheKey = '';
+    private static function flushCache(){}
+}
+class RedisStore extends BaseStore { }
+class TempStore {
+    public static $cacheKey = '';
+    public static function flushCache(){}
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target static property `$cacheKey` and static function `flushCache()` from class `TempStore` to class `RedisStore`

@@ -1,0 +1,9 @@
+```
+<?php
+class User{}
+const USER_INST = new User();
+class UserHolder{}
+?>
+```
+
+【Refactoring Action】: Move global constant `USER_INST` into `UserHolder` as class constant.

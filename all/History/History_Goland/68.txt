@@ -1,0 +1,27 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Rename
+Refactoring target: variable `v` inside short declaration in if init statement
+Refactoring rule: When generating rename candidate suggestions, correctly resolve the full lexical scope of the target variable and exclude names of other variables declared in the same short declaration group to avoid duplicate identifiers.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Case 1: `if s, v := 0, ""; false {}`
+Rename on `v` produces suggestions `v, s`. `s` is already declared in the same `:=` group, so it should be filtered out.
+Case 2: `if s, v := 0, ""; false {}` (different caret/analysis path) correctly suggests `v2` and skips `s`.
+
+Expected behavior:
+For both cases, the suggestion list must omit `s`, since `s` exists in the same short variable declaration statement and would cause a redeclaration error.
+
+Underlying cause:
+The scope analysis used for rename suggestions treats the variables in the `:=` tuple as available only after the full statement, and does not treat sibling variables in the same short declaration as conflicting names during candidate filtering. There is an inconsistent code path for scope lookup between the two scenarios.
+*/
+
+func main() {
+	if s, v := 0, ""; false {} // <caret> on v, bad suggestions: [v, s]
+}
+
+// Bad suggestion list: [v, s]
+// Expected suggestion list: [v2, ...] without s

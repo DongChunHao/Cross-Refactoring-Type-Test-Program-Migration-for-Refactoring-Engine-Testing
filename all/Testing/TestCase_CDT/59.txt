@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: &global_0
+'''
+#define Id_1
+int global_0 = 1;
+int f_0() {
+int LocalVar_0 = 10;
+return global_0;
+}
+int f_1(int LocalVar_0) {
+return global_0;
+} //rename field for rename‑refactoring‑ampersand‑global‑variable‑rename‑address‑operator‑injection‑type‑mismatch‑syntax‑error defect scenario

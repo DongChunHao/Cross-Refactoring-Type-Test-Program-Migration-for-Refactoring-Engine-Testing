@@ -1,0 +1,17 @@
+```
+<?php
+class HelperBin { }
+class BaseValidator{
+    static function normalize(){
+    }
+}
+class EmailValidator extends BaseValidator {
+    static function prepare()
+    {
+        self::normalize();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `normalize()` from class `BaseValidator` to class `HelperBin`

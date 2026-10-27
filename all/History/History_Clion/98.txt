@@ -1,0 +1,19 @@
+#include <cstddef>
+
+/* Refactoring Settings:
+Refactoring type: Inline variable
+Refactoring target: Inline local array variable sizes, merging declaration and usage in range-based for loop
+Refactoring scope: Variable declaration size_t sizes[] = {1,2,3}; and range-based for loop for (auto x : sizes)
+Refactoring rule expectation: When inlining an initialized array used in range-for, produce initializer list syntax {1,2,3}, not cast-style compound literal (size_t){1,2,3}
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining array variable sizes, refactoring engine generates for (auto x : (size_t){1, 2, 3}) {}. This is invalid C++ for range-based for, compound literal cannot be used this way.
+Expected behavior: The inlined code should be for (auto x : {1, 2, 3}) {}, using std::initializer_list.
+Underlying cause: The refactoring engine treats the initialized array as a compound literal instead of converting it to an initializer list when substituting into range-based for loop, generating invalid compound literal syntax.
+*/
+
+void dummy() {
+    size_t sizes[] = {1, 2, 3};
+    for (auto x : sizes) {}
+}

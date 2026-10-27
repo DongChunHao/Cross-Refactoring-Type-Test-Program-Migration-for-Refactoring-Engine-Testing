@@ -1,0 +1,15 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+void foo(int(*)());
+struct Wrapper
+{
+static void wrapper_bar() { //{Move bar logic into static wrapper member}
+int(*fp1)();
+foo(fp1);
+}
+};
+void bar() {
+Wrapper::wrapper_bar();
+}

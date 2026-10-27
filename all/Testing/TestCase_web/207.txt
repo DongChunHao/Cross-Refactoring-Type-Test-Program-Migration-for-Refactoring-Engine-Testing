@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+var a = this.a,
+c = a.foo.bar ? a.foo.bar(a) : ''; //{Extract Method target multi‑declarator var statement, processor misrecognizes comma‑chain as independent statements, breaks initialization‑order}

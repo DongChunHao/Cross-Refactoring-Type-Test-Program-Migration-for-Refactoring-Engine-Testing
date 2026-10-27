@@ -1,0 +1,30 @@
+<?php
+class A {
+    static function my_callback_function()
+    {
+        echo 'hello world!';
+    }
+}
+class B extends A{
+}
+$obj=new A();
+call_user_func(array($obj,'my_callback_function'));
+?>
+/* Refactoring Settings:
+Refactoring type: Push Members Down refactoring
+Refactoring target: static method my_callback_function in class A, push down to subclass B
+Refactoring rule: Before pushing down a static method, the refactoring must scan for callable-style usages such as `array($obj, 'my_callback_function')`. When the variable’s static type is the base class A, moving the method to B will break this callback. The refactoring must detect such usages, emit a warning, and avoid throwing an unhandled ClassCastException.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Attempting to push `my_callback_function` from A to B triggers a ClassCastException in the refactoring backend.
+The usage `call_user_func(array($obj,'my_callback_function'))` references the method by string name on an instance of A. After push down, A no longer contains `my_callback_function`, and the callback will fail at runtime.
+The refactoring’s usage resolver encounters an unexpected PSI/type node when analyzing the array-style callable syntax, leading to an uncaught cast exception instead of a validation warning.
+
+Expected behavior:
+Detect `array($obj, 'methodName')` callable usages typed to the source base class A, show a warning that pushing the method down will break these callbacks, and gracefully abort or confirm the operation without an internal exception.
+
+Underlying cause:
+The refactoring’s usage visitor only handles direct method call expressions, and does not properly resolve string-name callable patterns like `array($instance, 'method')`. When traversing this PSI node, the code assumes a direct method reference node and performs an unchecked type cast, resulting in ClassCastException.
+*/

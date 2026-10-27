@@ -1,0 +1,7 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+unsafe fn this_is_unsafe(ptr: *const u32) -> u32 { //{rename unsafe function, retain raw pointer dereference inside unsafe fn context}
+*ptr
+}

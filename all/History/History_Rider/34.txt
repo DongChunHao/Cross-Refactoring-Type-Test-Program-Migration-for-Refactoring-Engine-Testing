@@ -1,0 +1,36 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Class (from static method)
+Refactoring Target: Static method, trigger Extract Class refactoring
+IDE: Rider 2024.1.3 RD-241.17011.166
+*/
+
+/* Error Root Cause:
+Observed failure: When running Extract Class on a static method, the refactoring UI incorrectly asks for an object reference/instance parameter for the new extracted class.
+Since the source method is static, it does not depend on an instance of the original type, and the extracted class should not require an instance reference to be passed in.
+
+Expected behavior:
+If the source member is static and does not capture instance state from the containing class:
+1. The Extract Class dialog should not prompt for an instance reference parameter.
+2. The new extracted class should get a static method, or the extracted method should be self-contained without injecting a reference to the old parent class.
+
+Underlying cause:
+The Extract Class refactoring’s dependency analysis treats all members uniformly, using the instance-member workflow even for static methods. The logic does not check whether the source method is static and whether it accesses instance fields; it unconditionally adds a requirement for a parent-type reference parameter.
+*/
+
+// Original code example
+public static class Extensions
+{
+    private static readonly List<string> _extensions = new();
+    public static Extensions Extensions
+    {
+        get { return _extensions; }
+    }
+
+    public static void DoStaticWork()
+    {
+        // static logic, no `this` used
+    }
+}
+
+// Buggy refactoring prompt: asks to pass an Extensions instance reference into new class
+// Expected: New class + static method, no instance parameter required

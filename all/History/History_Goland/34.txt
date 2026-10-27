@@ -1,0 +1,32 @@
+package bad_refactor_sample
+
+/* Refactoring Settings:
+Refactoring type: Move Package (directory-based package move)
+Refactoring target: Move directory `bad_refactor_sample/parsers/grok` to `bad_refactor_sample/grok`
+Refactoring scope: Package test file `bad_refactor_sample/grok/parser_test.go` which uses local type `Parser` in the same package
+Refactoring rule: Only rewrite import paths and qualified identifiers that refer to the moved package from external packages; do not alter unqualified in-package usages of types and methods.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving the grok package directory, the test file `parser_test.go` is incorrectly mutated. Method call `p.Compile()` becomes bare `Compile()`, the receiver `p` is dropped, leaving invalid code. This test file belongs to the moved package and uses unqualified local identifiers, and should not have its method calls rewritten.
+Expected behavior: Files inside the moved package that reference types/methods in the same package retain their original receiver expressions (`p.Compile()` stays unchanged). Only external files importing this package get their import paths and qualified names updated.
+Underlying cause: The move package refactoring’s reference visitor does not distinguish between cross-package qualified references and same-package unqualified references. It mistakenly treats in-package method calls as references that need rewriting and strips the receiver expression.
+*/
+
+// Original relevant snippet from parser_test.go
+/*
+p := &Parser{Patterns: ...}
+assert.NoError(t, p.Compile())
+*/
+
+// Bad actual result after package move
+/*
+p := &Parser{Patterns: ...}
+assert.NoError(t, Compile())
+*/
+
+// Expected unchanged result
+/*
+p := &Parser{Patterns: ...}
+assert.NoError(t, p.Compile())
+*/

@@ -1,0 +1,19 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+type Original struct{}
+type Copy struct {
+a int
+}
+func buildCopy(o Original) Copy { // extract composite literal creation into buildCopy
+return Copy{
+a: o.a,
+}
+}
+func main() {
+var o Original
+c := buildCopy(o)
+println(o, c)
+}

@@ -1,0 +1,37 @@
+```
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: C::__construct(public int $a, private float $b)
+Scope: constructor promoted property modifier preservation
+Refactoring operation: reorder parameters, move $b before $a
+*/
+
+/* Error Root Cause:
+Observed failure:
+After reordering constructor promoted property parameters via Change Signature, the visibility modifiers `public` / `private` are stripped.
+Promoted properties `public int $a` and `private float $b` become ordinary parameters `float $b, int $a`, losing the property promotion semantics.
+PHP constructor property promotion relies on the visibility modifier directly on the parameter; removing it turns them into regular parameters and no longer generates the backing properties automatically.
+
+Expected behavior:
+1. When reordering constructor parameters in Change Signature, retain all property promotion modifiers (public/protected/private) for each parameter.
+2. The refactoring result should be:
+```
+
+public function __construct(private float $b, public int $a)
+{
+}
+
+```
+3. Keep track of which parameters are promoted properties independently of their position in the list.
+
+Underlying cause:
+The parameter model inside Change Signature does not persist the promotion visibility flag when reordering. It treats promoted parameters as ordinary typed parameters and discards the modifier when regenerating the constructor signature.
+*/
+class C{
+    public function __construct(public int $a, private float $b)
+    {
+    }
+}
+?>
+```

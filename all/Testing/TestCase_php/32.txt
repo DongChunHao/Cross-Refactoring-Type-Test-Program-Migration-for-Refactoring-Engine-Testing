@@ -1,0 +1,10 @@
+<?php
+class Config {
+    const API_HOST = "https://example.com";
+}
+class ApiClient extends Config {
+    public function getHost() {
+        return self::API_HOST;
+    }
+}
+【Refactoring Action】: Push Down class constant `API_HOST` from parent class `Config` to child class `ApiClient`.

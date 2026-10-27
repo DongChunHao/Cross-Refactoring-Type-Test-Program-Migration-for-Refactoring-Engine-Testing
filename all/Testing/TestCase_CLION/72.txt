@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: run_a_logic
+'''
+#include <stdlib.h>
+#include <stdbool.h>
+bool _try() {
+return (bool) (rand() % 2);
+}
+int a(int y) { //{Rename method a to run_a_logic}
+bool got_data = false;
+if(_try()) {
+got_data = true;
+}
+if (!got_data) {
+}
+return 0;
+}

@@ -1,0 +1,35 @@
+typedef struct {
+    int x;
+    int y;
+} point;
+
+typedef struct {
+    double x;
+    double y;
+} fpoint;
+
+void reset_point(point *p) {
+    p->x = 0;
+    p->y = 0;
+}
+
+void reset_fpoint(fpoint *p) {
+    p->x = 0.0;
+    p->y = 0.0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename field refactoring
+Refactoring Target: member `x` inside struct `point`
+Refactoring Scope: current file
+Operation steps: Create new C project with this source code, invoke Refactor -> Rename on point.x, observe live preview and final result after pressing Enter.
+IDE: Eclipse CDT
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: Live preview correctly only modifies `reset_point` (the usages of point.x). After confirming rename by pressing Enter, CDT incorrectly renames the `x` member inside struct fpoint and its usages in reset_fpoint().
+Expected behavior: Only rename the `x` field belonging to struct point; the identically‑named `x` member of fpoint should remain untouched.
+Underlying cause: The refactoring engine’s symbol binding resolution fails to distinguish homonymous struct members from different struct types. The preview calculation uses correct type binding, but the final rewrite logic only matches the raw identifier name "x" instead of checking the associated declaring struct type, causing accidental cross‑struct rename of unrelated homonym field.
+*/

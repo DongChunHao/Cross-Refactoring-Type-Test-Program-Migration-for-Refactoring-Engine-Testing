@@ -1,0 +1,33 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+struct color_space {
+enum color {
+red
+} color;
+};
+void demo(enum color c) {
+if (c == red) //{Rename variable c to currentColor}
+return;
+}
+struct paren_stack_item {
+int cast;
+};
+struct paren_stack {
+struct paren_stack_item* item;
+int len;
+};
+struct parser_state {
+struct paren_stack paren;
+};
+enum cast_kind {
+cast_unknown,
+cast_maybe
+};
+void demo2(struct parser_state* ps)
+{
+struct paren_stack *paren = &ps->paren;
+if (paren->item[paren->len - 1].cast == cast_unknown)
+paren->item[paren->len - 1].cast = cast_maybe;
+}

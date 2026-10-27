@@ -1,0 +1,37 @@
+#define A
+int main(int argc, char** argv) {
+    int a; // Variable to be renamed
+#ifdef A
+    a = 1;
+#else
+    a = 2
+#endif
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: local variable `a` inside main()
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select variable `a`, invoke Rename refactoring, input new valid identifier `b`.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: The target variable `a` appears inside preprocessor conditional blocks `#ifdef A … #else … #endif`. Although renaming `a` → `b` is semantically safe and all occurrences should be rewritten, CDT refuses to perform rename transformation. No actual name collision or lexical error exists; constraints are overly conservative.
+
+Expected behavior:
+1. Analyze all variable references: both branches of `#ifdef / #else` reference the same variable `a`.
+2. Recognize this is a safe transformation: every occurrence of variable `a` inside both preprocessor branches shall be replaced with `b`.
+3. Apply rename normally and produce the suggested correct output code.
+Only block rename when references appear inside complex macro expansions with undecidable semantics; pure conditional‑compilation branches referencing ordinary AST variable nodes should be permitted.
+
+Underlying cause:
+CDT rename implementation uses a conservative heuristic: whenever variable usages cross preprocessor conditional boundaries (`#ifdef`/`#else`/`#elif`), the refactoring tool treats the code as “unsafe to modify” and aborts transformation.
+The heuristic over‑approximates risk: it cannot distinguish two cases:
+‑ Dangerous case: variable references only exist in one conditional branch;
+‑ Safe case: variable is referenced on both branches (as in this bug example).
+The tool treats all preprocessor‑conditional‑enclosed references uniformly as high‑risk, leading to false positive rejection of valid, safe refactoring operations.
+*/

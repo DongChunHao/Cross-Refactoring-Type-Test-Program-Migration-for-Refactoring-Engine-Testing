@@ -1,0 +1,33 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion), ticket EM13
+Refactoring target: statement `i = 3;` inside union Frob::Method1()
+Operation: Select `i = 3;`, invoke Extract Method, name new method `goinky`
+Scope: C++ union member function support; inserting method declaration inside union definition; valid syntax generation for union-scoped member functions
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method inserts the new `goinky()` definition directly inside the union `Frob { }` body. In C++ unions cannot contain non-static member function definitions inside the union declaration; only declarations are allowed. This produces invalid C++ syntax.
+Expected behavior: Only put the function declaration `void goinky();` inside the union, and place the full definition of `goinky` outside the union body, like:
+union Frob {
+    int i;
+    float f;
+    double d;
+    void Method1();
+    void goinky();
+};
+void Frob::goinky() { i = 3; }
+Underlying cause: The extract method logic treats union identically to class/struct, and inserts the complete method definition inside the union block. It does not enforce C++ grammar rule that union bodies may only hold member declarations, not function definitions.
+*/
+
+union Frob
+{
+    int i;
+    float f;
+    double d;
+
+    void Method1()
+    {
+        // #TEST#: EM13 Extract Method on next line
+        i = 3;
+    }
+};

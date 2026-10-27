@@ -1,0 +1,28 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion refactoring)
+Refactoring target: statement `throw std::exception();` inside function a()
+Operation: Select only the line `throw std::exception();`, invoke Extract Method refactoring
+Scope: Preserve type name `std::exception`; must not inject `this->` before class type name. `this->` is only valid for accessing class members, not for naming types.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, refactoring produces invalid code: `throw this->exception();`.
+`std::exception` is a standard library class type, not a member of `this`. The inserted `this->` is bogus and breaks compilation.
+
+Expected behavior:
+Extracted helper function:
+void helper()
+{
+    throw std::exception();
+}
+
+Underlying cause:
+The refactoring engine’s AST symbol resolution incorrectly treats the identifier `exception` as an instance member instead of a type name. When generating the extracted method, it incorrectly injects `this->` qualifier before the type name `std::exception`.
+*/
+
+#include <exception>
+int a() {
+    throw std::exception(); // extract this only line
+    return 42;
+}

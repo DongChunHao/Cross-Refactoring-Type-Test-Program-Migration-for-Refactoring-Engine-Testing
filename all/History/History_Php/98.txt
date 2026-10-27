@@ -1,0 +1,17 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method C::g()
+Scope: method return type declaration and PHPDoc
+Refactoring operation: set return type to int[]
+*/
+
+/* Error Root Cause:
+Observed failure: When entering `int[]` as the return type in the Change Signature dialog, the refactoring strips the `[]` plural array notation and generates invalid or simplified type instead of `int[]`.
+Expected behavior: Preserve `int[]` array syntax, apply `: int[]` as the method return type, and sync PHPDoc correctly.
+Underlying cause: The type parser/serializer inside Change Signature dialog does not recognize the shorthand `Type[]` array syntax; it treats `[]` as extraneous formatting and discards it, instead of converting it to PHP array type representation.
+*/
+class C{
+    function g(){}
+}
+?>

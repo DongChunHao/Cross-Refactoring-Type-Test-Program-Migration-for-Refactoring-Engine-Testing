@@ -1,0 +1,54 @@
+/* Refactoring Settings:
+Refactoring type: Extract Superclass
+Refactoring target: Extract superclass B from templated class A<T1,T2>, moving constructor, f1() and member1 into B
+Refactoring scope: Template class A, its out-of-line method definitions, selected members and functions
+Refactoring rule expectation: Automatically detect template parameters T1/T2 used by extracted members/methods, generate templated base class `template<typename T1, typename T2> class B`; make A inherit `public B<T1,T2>` and propagate template parameters consistently to base class declaration and definitions.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Superclass creates non-templated base class B, but the members and methods inside B use T1/T2 template parameters. The cpp definitions incorrectly write `B<T1,T2>::` while the header class B has no template parameters, creating inconsistent, uncompilable code.
+Expected behavior:
+B.h:
+template <typename T1, typename T2>
+class B {
+public:
+    B(some parameters);
+    void f1(const T1 & param1, const T2 & param2);
+private:
+    T1 member1;
+};
+
+A.h:
+template <typename T1, typename T2>
+class A : public B<T1,T2> {
+public:
+    A(some parameters);
+    void f2(const T1 & param1, const T2 & param2);
+private:
+    T2 member2;
+    type member3;
+};
+
+Underlying cause: Extract Superclass refactoring does not collect and carry over required template parameters from the original templated class to the newly created superclass. It copies the method signatures and member types that reference T1/T2 but forgets to add template<> to the new base class declaration, creating a mismatch between templated cpp definitions and non-template header class. The UI also lacks an option to manually select which template parameters to propagate into superclass.
+*/
+
+template <typename T1, typename T2>
+class A {
+public:
+    A(some parameters);
+    void f1(const T1 & param1, const T2 & param2);
+    void f2(const T1 & param1, const T2 & param2);
+private:
+    T1 member1;
+    T2 member2;
+    type member3;
+};
+
+template <typename T1, typename T2>
+A<T1,T2>::A(some parameters) { }
+
+template <typename T1, typename T2>
+void A<T1,T2>::f1(const T1 & param1, const T2 & param2) { }
+
+template <typename T1, typename T2>
+void A<T1,T2>::f2(const T1 & param1, const T2 & param2) { }

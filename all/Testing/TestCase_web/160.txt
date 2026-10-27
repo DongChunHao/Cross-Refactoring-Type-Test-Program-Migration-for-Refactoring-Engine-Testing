@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+class Test {
+method(): TestChild {
+return new TestChild(this); //{Extract Method target constructor‑call carrying this argument for Change‑Signature this‑rewrite defect}
+}
+}
+class TestChild {
+constructor() {}
+}

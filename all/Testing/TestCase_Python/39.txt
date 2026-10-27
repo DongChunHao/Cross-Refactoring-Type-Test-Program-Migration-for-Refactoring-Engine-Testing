@@ -1,0 +1,11 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Dependency analysis collects inner‑function references but misclassifies cross‑module referenced symbols; resolver treats external symbol as local to original module and skips generating required import statements in destination unit
+
+# a.py
+
+def f1():
+pass
+def wrapper():
+def f2(): // REFACTOR_TARGET
+f1()
+f2()

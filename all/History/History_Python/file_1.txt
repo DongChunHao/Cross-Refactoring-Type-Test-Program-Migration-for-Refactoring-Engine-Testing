@@ -1,0 +1,21 @@
+''' Refactoring Settings:
+Refactoring type: Inline function refactoring
+Refactoring target: function practice()
+Refactoring scope: call‑site under `if __name__ == '__main__'`, entire body of practice function, referenced helper function n()
+Refactoring rule expectation: When inlining practice() at its call‑site, expand all statements of practice into main block; preserve reference to existing helper function n(), must not generate invalid/non‑existent identifier names.
+'''
+''' Error Root Cause:
+Observed failure: After performing inline refactoring on practice(), the inlined code incorrectly renames or mangles function reference n() into a non‑existent name, resulting in undefined‑name / unresolved‑reference runtime error.
+Expected behavior: Inline expands practice() body into the __main__ block, keep original call `if n():` unchanged, retain definition of function n() intact.
+Underlying cause: Inline‑function refactoring’s name‑resolution / variable‑rewrite logic has a bug; when lifting statements from inside practice() to top‑level main scope, it incorrectly modifies the name of external referenced helper function n(), producing an identifier that does not exist in the target scope.
+'''
+def n():
+    return False
+
+def practice():
+    m = 10
+    if n():
+        m += 56
+
+if __name__ == '__main__':
+    practice()

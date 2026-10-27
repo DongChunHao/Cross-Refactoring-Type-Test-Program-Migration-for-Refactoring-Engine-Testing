@@ -1,0 +1,20 @@
+```
+<?php
+namespace Lib{
+    const STATUS_ACTIVE = 1;
+    class User{}
+    echo STATUS_ACTIVE;
+}
+namespace App\Domain {
+    class User{
+    }
+}
+namespace App{
+    use const Lib\STATUS_ACTIVE;
+    class User{}
+    echo STATUS_ACTIVE;
+}
+?>
+```
+
+【Refactoring Action】: Move constant `Lib\STATUS_ACTIVE` into `App\Domain\User` as `App\Domain\User::STATUS_ACTIVE`.

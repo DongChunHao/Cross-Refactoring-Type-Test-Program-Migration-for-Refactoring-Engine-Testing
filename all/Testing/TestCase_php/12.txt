@@ -1,0 +1,16 @@
+<?php
+class A {
+}
+class B extends A{
+    private function fa()
+    {
+        return 1;
+    }
+    function fa2() // <-- Pull Up refactoring target
+    {
+        $a = function () {
+            return $this->fa();
+        };
+        $this->fa();
+    }
+}

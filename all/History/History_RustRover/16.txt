@@ -1,0 +1,23 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function (Ctrl + Alt + M)
+Refactoring Target: Selected statements `let a = 1; let b = 2;` inside an inner block
+Refactoring Scope: Partial statement selection inside nested block expression
+Plugin Environment: IntelliJ Rust plugin 0.3.140.3609-203-nightly, IDEA 2020.3.1, Rust 1.48.0, Linux 5.8.0-36-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select `let a = 1; let b = 2;` inside the inner block and run Extract function
+*/
+/* Error Root Cause:
+Observed failure: Even after fixing #6677, selecting a subset of statements within a nested block expression and running Extract Function still expands scope to the entire block. It extracts `let c = a + b;` as well and replaces the whole inner block, instead of only the selected two statements.
+Expected behavior: Extract only the user-selected `let a = 1; let b = 2;` into a new function, keep `let c = a + b;` and `()` in the original inner block.
+Underlying cause: The range validator for Extract Function does not correctly handle block expressions whose final element is an expression (not a semicolon-terminated statement). It treats the partial selection as invalid and falls back to extracting the whole containing block.
+*/
+fn foo() {
+    {
+        let a = 1;
+        let b = 2;
+        let c = a + b;
+        ()
+    }
+    ()
+}

@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: innerLogic
+'''
+// foo.cpp
+#include "f.hpp"
+void innerLogic() { //{Extract method innerLogic from f}
+}
+void f() {
+innerLogic();
+}
+void g() {
+f();
+}

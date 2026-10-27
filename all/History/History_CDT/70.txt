@@ -1,0 +1,40 @@
+void func_0 (  int LocalVar_1){
+	int LocalVar_0 = 1;
+	LocalVar_0 = 0;
+}
+void Function_0 ( ){
+	int LocalVar_0 = 4;
+	LocalVar_0 = 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (local variable rename inside func_0)
+Refactoring Target: local variable `LocalVar_0` inside func_0
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select local variable LocalVar_0 inside func_0, invoke Rename refactoring, input C reserved keyword `int` as new name.
+Reported Eclipse CDT bug: #435129
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts reserved keyword `int` as rename candidate for local variable.
+It incorrectly lifts the local variable out of function scope and inserts a global static constant declaration `static const int int = 1;`.
+Inside func_0, the original local variable definition is removed, and the reference becomes `int LocalVar_0 = int;`.
+Two severe problems:
+1. `int` is a C reserved keyword and cannot be used as an identifier. Declaration `static const int int = 1;` is syntactically invalid.
+2. Unexpected scope transformation: renaming a local variable should keep it local inside func_0, but CDT erroneously promotes it to a file‑level static constant.
+The homonymous local variable `LocalVar_0` inside Function_0 remains untouched (scope resolution is partially correct).
+Refactoring finishes silently without warning and saves broken source code.
+
+Expected behavior:
+1. Validate candidate name before applying any transformation: reject reserved C keywords immediately, abort rename and show error message.
+2. Local variable rename must preserve the original storage scope. It must not extract the local variable into a global static constant declaration.
+Rename refactoring should only replace identifier tokens, not change variable scope, storage class or declaration location.
+
+Underlying cause:
+1. Missing semantic validation: no check whether candidate name belongs to C reserved keyword list.
+2. Defect in CDT refactoring transformation logic: when given certain invalid identifier inputs, the rename path accidentally triggers a variable extraction/promotion codepath, lifting local variable to global static const, instead of simply substituting identifier text.
+*/

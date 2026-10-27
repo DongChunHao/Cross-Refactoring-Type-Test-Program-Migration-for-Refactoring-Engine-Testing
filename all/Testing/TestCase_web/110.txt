@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+import * as React from 'react';
+function render2() {
+interface P1 {
+p?: boolean;
+c?: string;
+}
+interface P2 {
+p?: boolean;
+c?: any;
+d?: any;
+}
+var C: React.ComponentType<P1> | React.ComponentType<P2> = null as any; //{Rename Method target union‑typed React component variable used as JSX tag}
+const a = ;
+}

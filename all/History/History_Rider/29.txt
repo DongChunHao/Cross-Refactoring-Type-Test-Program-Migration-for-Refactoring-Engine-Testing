@@ -1,0 +1,68 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: Code block with `await using` and async/await
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure:
+When extracting a block that contains `await using` (async disposable) inside an async method:
+1. Rider fails to detect that the extracted block contains `await` operations, so it generates a **synchronous signature returning `Guid[]`** instead of `async ValueTask<Guid[]>`;
+2. It does **not** add `await` and `.ConfigureAwait(false)` at the call site.
+The resulting code is invalid: you cannot use `await using` inside a non-async method.
+
+Expected behavior:
+The refactoring engine must scan the selected code for:
+- `await` expressions
+- `await using` / `await foreach`
+If any are present, automatically mark the new method as `async`, wrap the return value in the appropriate awaitable type, and emit `await` at the call site.
+
+Underlying cause:
+The PSI analysis for Extract Method missed `await using` as an async indicator. It only looked for plain `await` expressions and ignored async-disposal syntax, so it treats the block as synchronous.
+*/
+
+// Original code
+private async ValueTask<Guid[]> getHistoryAsync(DataSourceInfo source)
+{
+    await using (var factory = await this.DbContextFactoryCreator.CreateFactoryAsync(source).ConfigureAwait(false))
+    {
+        await using (var ctx = factory.CreateViewContext())
+        {
+            return ctx.Exports.OrderBy(it => it.Id).Select(it => it.Signature).ToArray();
+        }
+    }
+}
+
+// Actual (buggy) output
+private async ValueTask<Guid[]> getHistoryAsync(DataSourceInfo source)
+{
+    await using (var factory = await this.DbContextFactoryCreator.CreateFactoryAsync(source).ConfigureAwait(false))
+    {
+        return HistoryAsync(factory); // Missing await
+    }
+}
+
+private static Guid[] HistoryAsync(LalaDbContextFactory factory)
+{
+    await using (var ctx = factory.CreateViewContext()) // Compile error: await in non-async method
+    {
+        return ctx.Exports.OrderBy(it => it.Id).Select(it => it.Signature).ToArray();
+    }
+}
+
+// Expected correct output
+private async ValueTask<Guid[]> getHistoryAsync(DataSourceInfo source)
+{
+    await using (var factory = await this.DbContextFactoryCreator.CreateFactoryAsync(source).ConfigureAwait(false))
+    {
+        return await HistoryAsync(factory).ConfigureAwait(false);
+    }
+}
+
+private static async ValueTask<Guid[]> HistoryAsync(LalaDbContextFactory factory)
+{
+    await using (var ctx = factory.CreateViewContext())
+    {
+        return ctx.Exports.OrderBy(it => it.Id).Select(it => it.Signature).ToArray();
+    }
+}

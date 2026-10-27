@@ -1,0 +1,9 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Default superclass‑target selection lacks deterministic rule; does not prioritize immediate parent, dialog pre‑selection randomly alternates between direct‑ancestor Base and object
+class Base: // REFACTOR_TARGET
+pass
+class Child(Base):
+def my_method(self):
+return 42
+def stub_helper():
+pass

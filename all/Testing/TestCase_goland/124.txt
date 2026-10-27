@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+// main.go
+package main
+type MyFirstType struct {
+field *MySecondType
+}
+func (m *MyFirstType) Name() {
+m.field.Update() // rename Set to Update
+}
+func main() {}
+
+// another.go
+package main
+type MySecondType struct{}
+func (s *MySecondType) Update() {}

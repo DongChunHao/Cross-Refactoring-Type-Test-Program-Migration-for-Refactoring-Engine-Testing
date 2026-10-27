@@ -1,0 +1,17 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+namespace RiderNugetBugDemo
+{
+public interface IClass2
+{
+void DoWork(); //{Pull Up Method: target method for move‑single‑top‑level‑type‑moves‑all‑file‑types‑bug reproduction}
+}
+
+public class Class2 : IClass2
+{
+public void DoWork() { }
+}
+
+}

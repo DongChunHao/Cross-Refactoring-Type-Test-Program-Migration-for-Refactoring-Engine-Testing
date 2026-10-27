@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+const myFunction = (props: {
+prop1: string;
+prop2: string;
+prop3: string //{Extract Method target inline‑object‑type, last‑property omits trailing‑semicolon triggers token‑position‑drift and character‑mangling}
+}) => {
+console.log(props);
+};

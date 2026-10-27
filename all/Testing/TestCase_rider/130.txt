@@ -1,0 +1,18 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace QuickfixMoveTypeLossRepro
+{
+public abstract class BaseCustomException : Exception { }
+
+public class ThisExceptionIsGoingToShowABugInRiderWatchMe : BaseCustomException
+{
+public void Validate() //{Pull Up Method: target method for quick‑fix‑move‑type‑silent‑source‑loss‑bug reproduction}
+{
+}
+}
+
+}

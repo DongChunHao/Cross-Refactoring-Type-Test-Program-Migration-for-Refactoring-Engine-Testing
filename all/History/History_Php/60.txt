@@ -1,0 +1,26 @@
+<?php
+class C { }
+class A extends A0 {
+    static function f()
+    {
+        A::$a = 2;
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static function f() from class A to class C
+Refactoring rule: When analyzing internal references inside the method body, the conflict checker must gracefully handle unresolved/invalid PSI references (undefined fields, unresolved classes). It must not pass a null PSI element into PhpPsiUtil.getParentByCondition, and should emit a regular conflict warning instead of throwing an uncaught IllegalArgumentException.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The code references `A::$a`, where static field `$a` does not exist on A, and class A0 is not defined. Running Move Static Method triggers an unhandled `IllegalArgumentException: Argument 0 for @NotNull parameter of com/jetbrains/php/lang/psi/PhpPsiUtil.getParentByCondition must not be null`.
+Stack trace shows the crash happens inside `PhpMoveMemberConflicts.checkInternalReferences` -> `PhpMoveMemberProcessor.getClass`. The resolver produces a null PSI element for the unresolved static field reference, and this null is directly passed to `getParentByCondition`, which expects a non-null argument annotated @NotNull.
+
+Expected behavior:
+When visiting a reference that cannot be resolved (undefined field, missing class), treat it as an unresolved symbol conflict. Show a user-facing warning that the method body contains unresolved references, abort the refactoring validation cleanly, and avoid passing null into PSI utility functions.
+
+Underlying cause:
+The internal reference visitor does not null-check the resolved PSI element before calling `PhpPsiUtil.getParentByCondition`. It assumes every reference successfully resolves to a valid PSI node, which is not true for incomplete or invalid code with undefined members.
+*/

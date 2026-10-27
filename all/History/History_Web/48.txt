@@ -1,0 +1,23 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention Action - Create field
+Refactoring Target: `this.bar` inside Foo.init()
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Invoke the "Create field" quick-fix on unresolved `this.bar`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When creating a new class field after the last existing field which carries an inline trailing comment, the comment gets moved below the newly inserted field instead of staying attached to the original field.
+Expected behavior: The inline comment `// example comment` should remain on the line with `foo: any;`, and the new `private bar: number;` is inserted after it.
+Underlying cause: The intention logic treats the trailing comment as belonging to the next line/node rather than associating it with the preceding field declaration. When inserting the new field, it inserts before the comment range, shifting the comment downward.
+*/
+
+// Complete compilable test code
+class Foo {
+    foo: any;  // example comment
+
+    init() {
+        this.bar = 1;
+    }
+}

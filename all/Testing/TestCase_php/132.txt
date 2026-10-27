@@ -1,0 +1,14 @@
+```
+<?php
+namespace {
+    class ProductEntity
+    {
+    }
+}
+namespace Shop\Repository {
+    use ProductEntity;
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `ProductEntity`, move to namespace `Shop\Model`

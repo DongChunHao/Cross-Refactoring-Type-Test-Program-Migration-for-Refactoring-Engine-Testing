@@ -1,0 +1,48 @@
+```
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: all code inside function baz()
+Operation: Select all code inside baz(), invoke Extract Method refactoring, name new helper function make_string
+Scope: Preserve template arguments and namespace qualifiers; never inject `this->` before type/function names; retain template specialization `<std::string>` for template types like ostream_iterator.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, refactoring produces invalid code:
+`copy(test_set.begin(), test_set.end(), this->ostream_iterator(test_stream, " "));`
+Two defects:
+1. Incorrectly injects `this->` before `ostream_iterator`. `ostream_iterator` is a template type, not a class member, `this->` is illegal here.
+2. Drops template specialization `<std::string>`, so `ostream_iterator` has no template argument.
+Additionally, refactoring strips `std::` namespace qualifiers from multiple identifiers (related to Youtrack CPP-3085).
+
+Expected behavior:
+```cpp
+const std::string make_string() {
+    std::unordered_set<std::string> test_set;
+    std::stringstream test_stream;
+    std::copy(test_set.begin(), test_set.end(), std::ostream_iterator<std::string>(test_stream, " "));
+    const std::string test_str{test_stream.str()};
+    return test_str;
+}
+```
+
+Underlying cause:
+The refactoring engine’s AST symbol resolver misidentifies template type identifiers as member references and incorrectly inserts `this->`. It also discards template argument specialization `<std::string>` and strips `std::` namespace qualifiers from std library types, causing invalid syntax.
+*/
+
+#include <unordered_set>
+#include <sstream>
+#include <iterator>
+#include <string>
+
+using namespace std;
+
+void baz() { // perform "Extract method" here
+std::unordered_setstd::string test_set;
+std::stringstream test_stream;
+
+std::copy(test_set.begin(), test_set.end(), std::ostream_iteratorstd::string(test_stream, " "));
+
+const std::string test_str{test_stream.str()};
+
+}

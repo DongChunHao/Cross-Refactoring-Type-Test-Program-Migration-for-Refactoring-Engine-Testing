@@ -1,0 +1,12 @@
+```
+<?php
+class Some {
+    public function foo()
+    {
+    }
+}
+(new Some())->foo();
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `Some::foo()`, add new parameter `string $param = null`.

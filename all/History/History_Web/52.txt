@@ -1,0 +1,27 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Propagate to destructuring declaration
+Refactoring Target: `store.dispatch` inside nested arrow function chain `store => next => action => {}`
+Refactoring Scope: JavaScript file
+Trigger Operation: Invoke "Propagate to destructuring declaration" on `store.dispatch`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The refactoring corrupts the nested concise arrow function chain (no parentheses single-parameter arrows) when introducing destructuring. It incorrectly rewrites the top-level arrow parameter syntax and breaks the curried middleware signature.
+Expected behavior: Preserve the curried arrow function structure and apply destructuring only to the relevant parameter, without mangling the arrow syntax for unparenthesized single-argument arrows.
+Underlying cause: The intention’s parser logic does not properly handle nested curried arrow functions with single parameters and omitted parentheses. It mishandles the parameter list rewrite and produces invalid JS syntax.
+*/
+
+// Complete compilable test code
+declare function isPromise(v: any): boolean;
+declare const ASYNC_START: string;
+
+const promiseMiddleware = store => next => action => {
+  if (isPromise(action.payload)) {
+    store.dispatch({
+      type: ASYNC_START,
+      subtype: action.type,
+    });
+  }
+};

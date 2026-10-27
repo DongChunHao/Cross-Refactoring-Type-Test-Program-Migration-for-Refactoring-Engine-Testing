@@ -1,0 +1,26 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Replace destructuring with property and index access
+Refactoring Target: `{ name, message } = error`
+Refactoring Scope: TypeScript file
+Trigger Operation: Run intention on the destructuring pattern
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After expanding destructuring into separate variable assignments (`const name = error.name; const message = error.message;`), the refactoring incorrectly rewrites the object literal shorthand `{ $isError: true, name, message }` into explicit key-value pairs or corrupts the shorthand syntax, instead of preserving valid shorthand property syntax.
+Expected behavior: Expand the destructuring declaration to individual variable assignments while leaving downstream shorthand properties `name, message` untouched.
+Underlying cause: The intention’s scope rewrite logic only considers the destructuring statement itself and does not track that later usages are shorthand object properties. It treats all `name`/`message` identifiers in the function as needing expansion, modifying code that should remain as shorthand.
+*/
+
+// Complete compilable test code
+function transformErrorForSerialization(error: any): any {
+    if (error instanceof Error) {
+        var { name, message } = error; // Replace destructuring with property and index access
+        return {
+            $isError: true,
+            name,
+            message
+        };
+    }
+}

@@ -1,0 +1,17 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Foo struct{}
+type Wrapper struct{}
+func (w Wrapper) check() {
+s := Foo{}
+if x == s {
+// do something
+}
+}
+func main() {
+w := Wrapper{}
+w.check() // move check method from Wrapper to standalone function
+}

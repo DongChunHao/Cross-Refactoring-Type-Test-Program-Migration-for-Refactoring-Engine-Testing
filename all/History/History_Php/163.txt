@@ -1,0 +1,40 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature with parameter propagation
+Refactoring target: MyClass::g()
+Operation: Add new parameter array $a to g(), propagate this new parameter to the caller f()
+Scope: Parameter insertion position rules for PHP signatures containing optional default parameters and variadic parameters
+*/
+
+/* Error Root Cause:
+Observed failure: When propagating a new parameter to f(), the refactoring always inserts it at the end of the parameter list.
+1. For the first case: f originally has optional $foo = 1. Adding $a after it produces $foo = 1, array $a — invalid PHP syntax because required parameters cannot follow optional parameters.
+2. For the variadic case: f originally has ...$foo. Adding $a after it produces ...$foo, array $a — invalid PHP syntax because variadic parameters must be the last parameter in a signature.
+Expected behavior: When propagating parameters, respect PHP parameter ordering rules: required parameters before optional parameters, variadic must be final. Insert the propagated parameter in the correct legal position instead of blindly appending to the end.
+Underlying cause: The propagation logic uses a simple "append to end" strategy without checking existing parameters for optional defaults or variadic parameters and computing a syntactically valid insertion index.
+*/
+class MyClass {
+    public function f($foo = 1)
+    {
+        echo $foo;
+        $this->g();
+    }
+    public function g()
+    {
+    }
+}
+
+// Variadic reproduction variant
+/*
+class MyClass {
+    public function f(...$foo)
+    {
+        echo $foo;
+        $this->g();
+    }
+    public function g()
+    {
+    }
+}
+*/
+?>

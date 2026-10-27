@@ -1,0 +1,9 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Import collector only scans runtime AST nodes and ignores legacy # type: comment‑based type annotations; symbols inside comment type hints are not collected, required imports are missing in destination unit
+from collections import OrderedDict
+from typing import Optional, Text
+def test(foo, bar, baz=None): // REFACTOR_TARGET
+
+# type: (Text, Text, Optional[Text]) -> dict
+
+return OrderedDict()

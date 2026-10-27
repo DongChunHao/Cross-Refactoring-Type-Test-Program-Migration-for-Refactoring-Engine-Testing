@@ -1,0 +1,28 @@
+''' Refactoring Settings:
+Refactoring type: Rename property refactoring
+Refactoring target: property "x" (the @property decorated method x inside class C)
+Refactoring new name: "y"
+Refactoring scope: entire class C, all associated property decorators (@property, @x.setter, @x.deleter)
+Refactoring rule expectation: When renaming property x to y, all related decorator references (@x.setter, @x.deleter) shall also be updated to @y.setter, @y.deleter synchronously.
+'''
+''' Error Root Cause:
+Observed failure: After renaming property x to y, only the @property‑decorated method name is changed to y. The setter decorator remains @x.setter but the decorated method is incorrectly named x, and deleter still keeps @x.deleter with method name x, decorator references are not updated consistently.
+Expected behavior: Rename should update property getter method, setter method, deleter method, together with their corresponding decorator identifiers (@x.setter → @y.setter, @x.deleter → @y.deleter).
+Underlying cause: The refactoring engine does not track the binding relationship between property getter object and its associated setter/deleter decorators; it only renames the getter function definition and ignores updating the decorator’s reference symbol.
+'''
+class C(object):
+    def __init__(self):
+        self._x = None
+
+    @property
+    def x(self):
+        """I'm the 'x' property."""
+        return self._x
+
+    @x.setter
+    def x(self, value):
+        self._x = value
+
+    @x.deleter
+    def x(self):
+        del self._x

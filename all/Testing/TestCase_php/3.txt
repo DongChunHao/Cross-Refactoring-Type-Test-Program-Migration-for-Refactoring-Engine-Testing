@@ -1,0 +1,17 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+<?php
+class A {
+    public static $a;
+
+    public static function b() { // Move static method b from A to B
+    }
+}
+
+class B extends A {
+    public function c() {
+        A::b();
+    }
+}

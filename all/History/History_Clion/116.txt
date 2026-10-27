@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring type: Move refactoring, move function `A::foo` into namespace B
+Refactoring target: Move declaration `int A::foo();` from namespace A into namespace B
+Refactoring scope: function declaration `int foo();` and call site `A::foo();` inside B::fun1()
+Refactoring rule expectation: 1. Place moved function declaration before fun1() inside namespace B. 2. Update call site from A::foo() to B::foo() / foo().
+*/
+
+/* Error Root Cause:
+Observed failure: After moving foo into namespace B, refactoring inserts `int foo();` **after** fun1() inside namespace B. The call site still uses old qualified name `A::foo();`, which now refers to non-existent symbol.
+Expected behavior:
+namespace A {
+}
+namespace B {
+    int foo();
+    int fun1() {
+        foo();
+    }
+}
+Underlying cause: The move refactoring engine fails to respect declaration-before-use ordering inside target namespace. It appends the moved symbol at the end of target namespace, and does not update the old qualified call site reference to match new namespace home of foo.
+*/
+
+namespace A {
+    int foo();//move foo from `A` to `B`
+}
+namespace B {
+    int fun1() { A::foo(); }
+}

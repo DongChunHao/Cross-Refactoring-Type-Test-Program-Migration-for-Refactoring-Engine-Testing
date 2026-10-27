@@ -1,0 +1,37 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Rename Package
+Refactoring target: package name `my_pack`
+Refactoring rule: When the option "Search in comments and strings" is checked, the rename engine must locate and replace all matching occurrences of the old package name in: single-line comments, multi-line comments, and string literals.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After renaming `my_pack` → `my_pack2` with "Search in comments and strings" enabled:
+1. Single-line comment occurrences (`//global one line comment package my_pack`, `//local one line comment my_pack`) are **not found** by the search.
+2. Matches inside multi-line comments and string literals are found, but **not actually rewritten** during refactoring.
+
+Expected behavior:
+All 4 locations (single-line comment, multi-line comment, string literal, inline local comment) should be matched and replaced with `my_pack2` when the checkbox is active.
+
+Underlying cause:
+Two separate bugs:
+1. The search visitor does not traverse/collect tokens inside single-line comment nodes for package rename, only multi-line comments are scanned.
+2. Even when matches in strings/multiline comments are collected in the preview, the rename application logic skips applying text replacement to non-PSI-identifier matches (treats them as read-only hits, no edit action).
+The option is only partially implemented for package rename, unlike symbol rename which handles comment/string replacements correctly.
+*/
+
+//global one line comment package my_pack
+package my_pack
+
+import "fmt"
+func main() {
+	fmt.Println("my_pack") // usage in string
+	//local one line comment my_pack
+}
+/* global multiline comment package my_pack */
+
+// Bad actual outcome after rename:
+// single-line comments unchanged; multi-line comment and string literal remain "my_pack"
+// Expected outcome: all instances become "my_pack2"

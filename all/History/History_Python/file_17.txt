@@ -1,0 +1,14 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function)
+Refactoring target: conditionally‑defined function func inside `if condition:` block to another module
+Refactoring scope: source file AST after extraction, remaining conditional block syntax validity
+Refactoring rule expectation: When moving func out from inside an if‑block, if the if block becomes empty after removing `def func(): pass`, automatically insert `pass` to preserve valid Python syntax.
+'''
+''' Error Root Cause:
+Observed failure: After moving func out of `if condition:`, the source file leaves behind an empty `if condition:` with no body statements. Empty block produces Python syntax error.
+Expected behavior: Retain `if condition:` and fill empty body with `pass`, ensuring source file remains syntactically correct.
+Underlying cause: Move refactor only deletes the target symbol definition node from parent block; it does not check whether the parent compound statement becomes empty after deletion, and does not inject `pass` placeholder for empty blocks.
+'''
+if condition:
+    def func():
+        pass

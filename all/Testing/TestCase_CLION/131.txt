@@ -1,0 +1,23 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: siblingEntry
+'''
+#include <unordered_map>
+#include <memory>
+#include <string>
+#include <iostream>
+// Forward declarations
+class AbstractGenerator {
+public:
+void writeCodeModel(std::ostream& hppout, std::ostream& cppout);
+void writeCodeBody(std::ostream& hppout, std::ostream& cppout);
+};
+void AbstractGenerator::someFunc(std::ostream& hppout, std::ostream& cppout)
+{
+std::unordered_map<std::string, std::shared_ptr<AbstractGenerator>> m_siblingClasses;
+for(auto sibling : m_siblingClasses) { //{Rename variable sibling to siblingEntry}
+sibling.second->writeCodeModel(hppout, cppout);
+hppout << std::endl;
+}
+writeCodeBody(hppout, cppout);
+}

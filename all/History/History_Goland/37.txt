@@ -1,0 +1,34 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Change Signature quick-fix
+Refactoring target: Function `sum(a, b, c int) int`
+Refactoring scope: Quick-fix for arity mismatch at call site `sum(1,2)`; remove the third parameter `c`
+Refactoring rule: Preserve Go parameter group type syntax. When deleting a trailing parameter from a shared-type group `a, b, c int`, keep the type attached to the remaining parameters.
+*/
+
+/* Error Root Cause:
+Observed failure: The quick fix deletes parameter `c int` and produces `sum(a, b) int`; the type `int` is lost, which is invalid Go syntax.
+Expected behavior: Result should be `sum(a, b int) int`, retaining the shared type specifier for the remaining grouped parameters.
+Underlying cause: The parameter list rewrite logic treats the type token as belonging only to the last parameter in the group, rather than recognizing that `a,b,c int` is a parameter list sharing a single type. When removing the last parameter, it deletes the trailing type token along with it.
+*/
+
+func sum(a, b, c int) int {
+	return a + b + c
+}
+
+var _ = sum(1, 2)
+
+// Bad actual output after quick-fix
+/*
+func sum(a, b) int {
+	return a + b
+}
+*/
+
+// Expected correct output after quick-fix
+/*
+func sum(a, b int) int {
+	return a + b
+}
+*/

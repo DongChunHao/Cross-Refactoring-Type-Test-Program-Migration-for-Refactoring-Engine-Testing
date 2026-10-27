@@ -1,0 +1,40 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"fmt"
+)
+type Foo interface {
+Frob(int) string
+}
+type fooImpl struct {
+frob func(int) string
+}
+func (f *fooImpl) Frob(i int) string {
+return f.frob(i)
+}
+func NewFoo(frob func(int) string) Foo {
+return &fooImpl{frob: frob}
+}
+type Builder struct{}
+func (b Builder) buildFooHex() Foo { // move buildFooHex method from Builder to standalone function
+return NewFoo(func(i int) string {
+return fmt.Sprintf("%x", i)
+})
+}
+func main() {
+b := Builder{}
+foos := []Foo{
+b.buildFooHex(),
+NewFoo(func(i int) string {
+return fmt.Sprintf("%d", i)
+}),
+}
+for i := 0; i < 3; i++ {
+for _, f := range foos {
+println(f.Frob(i))
+}
+}
+}

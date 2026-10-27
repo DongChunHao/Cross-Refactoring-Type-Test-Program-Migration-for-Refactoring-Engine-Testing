@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: renamed_main
+'''
+int main(int a){//rename method for function containing assignment lvalue selection scenario
+int b;
+a = b;
+return 0;
+}

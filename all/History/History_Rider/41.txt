@@ -1,0 +1,60 @@
+/* Refactoring Settings:
+Refactoring Type: Move To Another File
+Refactoring Target: C# class that uses a `using` type alias
+IDE: Rider
+Comparative note: ReSharper does NOT exhibit this bug.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving a class to another file via Move To Another File:
+The refactoring substitutes all alias usages with the underlying target type, and does **not** carry the type alias `using GridCoord = UnityEngine.Vector3Int;` into the new file.
+Result: the moved class loses the alias and uses the expanded type name directly.
+
+Expected behavior:
+1. Detect type alias dependencies used by the moved class.
+2. Copy the required `using` type alias declaration to the target file.
+3. Keep the original alias identifier (`GridCoord`) in the class members instead of expanding to `Vector3Int`.
+
+Underlying cause:
+Rider’s Move To Another File dependency collector distinguishes ordinary namespace `using`s from **type alias using directives** incorrectly.
+- Normal namespace usings are preserved/copied.
+- Type aliases are treated only as a local syntax substitution, not as a required import dependency for the type symbol.
+During PSI rewrite, the semantic resolver expands the alias to the underlying type, and the refactoring does not emit the alias into the destination file.
+ReSharper’s implementation tracks type aliases as proper dependencies and transfers them, which explains why the same scenario works there.
+*/
+
+// Original source file
+using UnityEngine;
+using GridCoord = UnityEngine.Vector3Int;
+
+namespace DefaultNamespace
+{
+    public class AliasExample : MonoBehaviour
+    {
+        private GridCoord x;
+    }
+}
+
+// Actual (buggy) after move
+using UnityEngine;
+
+namespace DefaultNamespace
+{
+    public class AliasExample : MonoBehaviour
+    {
+        private Vector3Int x;
+    }
+}
+
+// Expected after move
+using UnityEngine;
+using GridCoord = UnityEngine.Vector3Int;
+
+namespace DefaultNamespace
+{
+    public class AliasExample : MonoBehaviour
+    {
+        private GridCoord x;
+    }
+}

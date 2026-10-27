@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Interface
+Refactoring Target: Class `LessCrazy<T, U, V>` with generic method `m`
+Refactoring Scope: TypeScript file
+Trigger Operation: Execute Extract Interface on class LessCrazy
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The generated interface only gets the generic parameter `<T>`, dropping `U` and `V`. The method signature still references `U, V`, which become unresolved type names and cause compile errors.
+Expected behavior: The extracted interface should carry all three generic parameters: `interface LessCrazyInterface<T, U, V> { m(x: (q: T) => [U, V]): void; }`
+Underlying cause: The generic parameter collector only scans parameters directly used in the class’s own field/method signatures at the top level, and fails to traverse nested type expressions (here the return tuple `[U, V]` inside the function type `(q: T) => [U, V]`) to collect all referenced type variables.
+*/
+
+// Complete compilable test code
+class LessCrazy<T, U, V> {
+    m(x: (q: T) => [U, V]) {}
+}

@@ -1,0 +1,15 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move whole module mod from pack to another target package)
+Refactoring target: module pack.mod
+Refactoring scope: source file containing function f(), import statements and all call‑site references towards pack.mod
+Refactoring rule expectation: After moving module mod to new package, update import statement to reflect new module location, and rewrite all qualified references accordingly to preserve name resolution.
+'''
+''' Error Root Cause:
+Observed failure: After moving module mod, original import `import pack.mod` gets deleted. Qualified call `pack.mod.f()` is incorrectly simplified to `mod.f()`. Since no corresponding `import mod` exists in scope, this triggers unresolved‑reference error.
+Expected behavior: Update import to match mod’s new package location, adjust `pack.mod.f()` to use new qualified module path, maintain valid name binding.
+Underlying cause: Module‑move refactoring incorrectly strips package prefix from qualified references, fails to generate correct new import statement for moved module; it only keeps bare module name without adding proper import, breaking symbol resolution.
+'''
+import pack.mod
+
+def f():
+    pack.mod.f()

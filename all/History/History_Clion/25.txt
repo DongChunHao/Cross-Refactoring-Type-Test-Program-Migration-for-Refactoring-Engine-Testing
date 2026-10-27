@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C language)
+Refactoring target: first four lines inside function a(int y): `bool got_data = false; if(_try()) { got_data = true; }`
+Operation: Select the code segment and invoke Extract Method refactoring
+Scope: Handling of C `bool` macro from <stdbool.h>; preserve the bool type when extracting method; avoid type signature corruption for macro-defined bool
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method refactoring corrupts code when <stdbool.h> is included and bool is a macro. The refactoring incorrectly removes or mangles the `bool` type in the generated method signature.
+Expected behavior: Respect the macro alias `bool` from stdbool.h, retain valid C type syntax in extracted method signature, keep original code semantics.
+Underlying cause: The refactoring engine’s C type renderer mishandles `bool` when it is defined as a preprocessor macro from stdbool.h. The PSI/AST layer confuses the macro-expanded underlying type with the source-level `bool` identifier, leading to invalid type signatures during extraction.
+*/
+
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool _try() {
+    return (bool) (rand() % 2);
+}
+
+int a(int y) {
+    bool got_data = false;
+
+    if(_try()) {
+        got_data = true;
+    }
+    if (!got_data) {
+    }
+    return 0;
+}

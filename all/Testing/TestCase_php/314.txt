@@ -1,0 +1,18 @@
+```
+<?php
+class TestClazz {
+    private $b;
+    public function testMe()
+    {
+        new class($this->b) extends AbstractClassWithConstructor {};
+    }
+}
+class AbstractClassWithConstructor{
+    public function __construct($b)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `AbstractClassWithConstructor::__construct($b)`; add new parameter `string $extra` to the constructor signature.

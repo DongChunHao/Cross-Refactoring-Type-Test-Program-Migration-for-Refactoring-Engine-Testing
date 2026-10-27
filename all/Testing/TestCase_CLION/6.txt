@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+template  void require_equal(T expected, T actual) {}
+class Foo {
+public:
+explicit Foo(int i) : f(i) {}
+int f; //{Rename field f to fieldVal}
+};
+template  int test(T t) { return t.f; }
+int main() {
+require_equal(3, test<Foo>(Foo{2}));
+return 0;
+}

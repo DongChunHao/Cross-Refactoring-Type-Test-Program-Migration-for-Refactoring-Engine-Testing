@@ -1,0 +1,14 @@
+```
+<?php
+namespace File\Issues {
+    use UnexpectedValueException;
+    class FileExceptionRoot
+    {
+    }
+    class FileParseFailure extends UnexpectedValueException {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `FileParseFailure`, destination global namespace.

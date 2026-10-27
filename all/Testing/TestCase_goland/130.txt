@@ -1,0 +1,7 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+var s = 3
+var bVal = "" // rename b to bVal, avoid conflict with s

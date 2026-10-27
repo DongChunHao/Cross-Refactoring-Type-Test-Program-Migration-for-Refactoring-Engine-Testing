@@ -1,0 +1,16 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+
+<?php
+class A {
+private function a(){}
+}
+class B extends A {
+private function aRenamed(){} // rename method a to aRenamed
+private function b(){
+$this->aRenamed(); // <caret> invoke Rename Method refactoring here
+}
+}
+?>

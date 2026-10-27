@@ -1,0 +1,20 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// contains‑function‑to‑inline.ts
+export const tmp = () => {
+return 'stand‑in'
+}
+export const promote = (value: string)=> {
+return `promote(${value})`;
+}
+export const toInline = () => {
+return promote(tmp()) //{Extract Method target imported‑function body referencing module‑scope tmp vulnerable to destination‑scope name‑shadowing}
+}
+// function‑usage.ts
+import { toInline } from './contains‑function‑to‑inline';
+export const someFunction = () => {
+const tmp = ()=> 'bogus'
+const result = toInline();
+}

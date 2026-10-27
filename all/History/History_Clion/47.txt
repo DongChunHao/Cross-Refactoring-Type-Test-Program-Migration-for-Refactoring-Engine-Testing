@@ -1,0 +1,32 @@
+```
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: statement `std::map<int,int>::const_iterator it = m.find(7);` inside main()
+Operation: Select the statement and invoke Extract Method, name new function `foo`
+Scope: When extracting code containing template type names, preserve template arguments; retain `std::map<int,int>` instead of stripping template parameters to `std::map`
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, generated helper function uses `std::map::const_iterator it = m.find(7);`.
+This is invalid C++ syntax. `std::map` is a template and requires template arguments `<int,int>`.
+
+Expected behavior:
+```cpp
+void foo() {
+    std::map<int,int>::const_iterator it = m.find(7);
+}
+```
+
+Underlying cause:
+Extract Method refactoring loses template argument information for template type names. The symbol resolver drops `<int,int>` template parameters and emits the bare template name `std::map`, producing ill-formed code.
+*/
+
+#include <map>
+
+std::map<int,int> m;
+
+int main() {
+std::map<int,int>::const_iterator it = m.find(7);
+return 0;
+}

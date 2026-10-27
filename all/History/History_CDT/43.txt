@@ -1,0 +1,24 @@
+int main(int a, char** argv) { // Function "main" to be renamed to "int"
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: function `main`
+Refactoring Scope: entire translation unit
+IDE: Eclipse CDT
+Operation steps: Select function name `main`, invoke Rename refactoring, input C reserved keyword `int` as new function‑name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts reserved keyword `int` as function identifier, producing function declaration `int int(int a, char** argv)`. `int` is C reserved keyword and cannot serve as function name, resulting in compile‑time syntax error. No warning or blocking dialog appears during refactoring operation.
+
+Expected behavior: Before applying rename transformation:
+1. Validate candidate new name against C reserved keyword list; if matches any keyword, reject refactoring and show error message.
+2. Validate candidate follows C identifier grammar: starts with underscore / alphabet, subsequent characters can be underscore, alphabet, digit.
+3. Additionally, for special functions such as `main`, may add optional warning about changing program entry‑point.
+
+Underlying cause: Rename refactoring for function symbols lacks keyword‑check and identifier‑syntax validation. It only checks for existing symbol name collisions, but does not verify whether the candidate name itself is a legal C identifier, allowing reserved keywords to become function names and generating uncompilable source code.
+*/

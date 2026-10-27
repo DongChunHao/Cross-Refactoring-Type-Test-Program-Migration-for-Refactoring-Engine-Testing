@@ -1,0 +1,25 @@
+#include <iostream>
+
+/* Refactoring Settings:
+Refactoring type: Move refactoring, move function foo into new namespace N
+Refactoring target: Move function foo() into namespace N
+Refactoring scope: forward declaration `void foo();`, function definition `void foo(){ std::cout<<"ANNA"; }` and call site in main()
+Refactoring rule expectation: Move both declaration AND definition into namespace N, update call site in main() to N::foo();, maintain symbol consistency
+*/
+
+/* Error Root Cause:
+Observed failure: Refactoring only moves the function definition inside namespace N, leaving the forward declaration `void foo();` outside namespace N. The original call site `foo()` in main() still refers to the global `foo()` (unimplemented), while N::foo() is a separate unrelated function. This creates symbol mismatch and linker error.
+Expected behavior:
+1. Move forward declaration into namespace N: `namespace N { void foo(); }`
+2. Move definition into namespace N
+3. Update call site in main() to `N::foo();`
+Underlying cause: When moving a function into a new namespace, the refactoring engine only moves the implementation definition and ignores the existing forward declaration. It does not update the call site to qualify with N::, breaking symbol linkage.
+*/
+
+void foo(); //move foo to new namespace N
+int main(){
+    foo();
+}
+void foo() {
+    std::cout<<"ANNA";
+}

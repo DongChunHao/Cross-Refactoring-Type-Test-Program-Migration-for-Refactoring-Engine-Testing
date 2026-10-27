@@ -1,0 +1,23 @@
+#define A 0
+int main(int a, char** argv) {
+    int x = a; // Line to be extracted
+    return x;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: statement `int x = a;` inside main()
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select `int x = a;`, invoke Extract‑Function refactoring, assign new function name `A` which is already defined as preprocessor macro.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT permits creating new function `int A(int a)` when identifier `A` is already a preprocessor macro `#define A 0`. At compile time, every occurrence of `A` gets macro‑expanded: call `A(a)` expands to `0(a)`, yielding syntax error “unexpected ‘(’ after constant”. Refactoring completes without warning, generated code cannot compile.
+
+Expected behavior: During Extract‑Function name validation phase, lookup the proposed name across **preprocessor namespace together with C symbol namespace**. Detect that `A` is already defined as macro. Block refactoring and warn user: identifier is occupied by a preprocessor macro, cannot be used for new function name.
+
+Underlying cause: Refactoring’s symbol collision check only queries C/C++ AST symbol table (variables, functions, typedefs). It does **not consult preprocessor macro symbol table**. Macros live in separate namespace, so name collision with macro is completely undetected, resulting in macro expansion breaking generated source code.
+*/

@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Move Statement Up
+Refactoring Target: Last array item `2 // move statement` inside array literal
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Execute Move Statement Up on the last element of an array (or object literal) that has a trailing line comment on the same line.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When moving the last array element upward, the trailing comma is inserted after the inline comment, producing `2 // move statement,`. This is invalid JS syntax, since comments terminate the line and the comma cannot be placed after them.
+Expected behavior: The comma should be placed before the comment: `2, // move statement`, and the element order swapped correctly.
+Underlying cause: The Move Statement Up logic treats the entire line including comment as a single token range and appends the comma at the physical end of the line, not before the comment node. It does not distinguish between the expression node and the trailing comment node when rewriting punctuation.
+*/
+
+// Complete compilable test code
+let arr = [
+    1,
+    2 // move statement
+]

@@ -1,0 +1,42 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Introduce Method
+Refactoring target: Introduce missing GetAnother() method for receiver type MyAnotherType
+Refactoring rule: Place the newly introduced method after the latest defined method of the target type
+Scope: The Go source file containing MyAnotherType and MyType
+*/
+
+/* Error Root Cause:
+Observed failure: The introduced GetAnother() method uses a value receiver "anotherType MyAnotherType", but the original calling site uses pointer receiver instance m.field (*MyAnotherType). No compilation error is triggered by the refactoring engine during preview/generation.
+Expected behavior: The introduced GetAnother() method should use pointer receiver consistent with existing GetSome() method of MyAnotherType: func (m *MyAnotherType) GetAnother() int {}.
+Underlying cause: The refactoring engine's receiver inference logic for "Introduce Method" does not match the receiver style of existing methods on the target struct; it defaults to value receiver instead of reusing the pointer receiver convention already present on MyAnotherType.
+*/
+
+import "fmt"
+
+type MyAnotherType struct{}
+
+func (m *MyAnotherType) GetSome() int {
+	return 42
+}
+
+type MyType struct {
+	field MyAnotherType
+}
+
+func (m *MyType) Method1() {
+	var result int
+	result = m.field.GetSome()
+	result += m.field.GetAnother()
+	fmt.Println(result)
+}
+
+func (anotherType MyAnotherType) GetAnother() int {
+	return 0
+}
+
+func main() {
+	t := MyType{field: MyAnotherType{}}
+	t.Method1()
+}

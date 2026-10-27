@@ -1,0 +1,27 @@
+interface Foo {
+    public function Method1();
+}
+/* Refactoring Settings:
+Refactoring type: Push Members Down refactoring, PHP
+Refactoring target: interface Foo, newly added Method2()
+Refactoring rule: Push Members Down for PHP is designed for **class → subclass**, not for interface’s method declarations. An interface’s method signature is a contract for all implementors; removing a method from an interface and pushing it down means moving that declaration into *sub-interfaces*, not auto-generating implementation stubs in implementing classes.
+*/
+
+/* Error / Limitation Analysis:
+Observed behavior:
+After adding `public function Method2();` to `interface Foo`, opening Push Members Down dialog on Foo and checking Method2 does **not** do what you expect.
+Push Members Down in PHP (PhpStorm / Rider PHP plugin) treats interfaces as a type hierarchy (interface → sub-interface), not as a contract for implementing classes.
+It will try to move `Method2()` from Foo into its **sub-interfaces**, not into the concrete classes that `implements Foo`.
+
+Expected by user:
+When you uncheck “Create methods stubs in classes that implement interface”, the refactoring should remove Method2 from `Foo` and automatically add `Method2()` stubs into every concrete class that implements Foo.
+
+Root limitation:
+The PHP Push Members Down implementation does **not** support this workflow for interface contract members.
+The refactoring’s target list only loads subtypes in the *interface inheritance hierarchy* (other interfaces that extend Foo), not the concrete implementing classes.
+Concrete implementors are not treated as push-down destinations for interface methods.
+Therefore this scenario is not implemented; the checkbox “Create methods stubs…” you expect for this case does not exist in the PHP version of this refactoring.
+
+Workaround:
+Use “Change Signature” / manual inspection or a separate “Implement missing members” quick-fix, not Push Members Down, when you want to remove a method from an interface and push the implementation stubs down into all implementing classes.
+*/

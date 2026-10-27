@@ -1,0 +1,18 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Replace destructuring with property and index access
+Refactoring Target: Destructuring `{x = 5, y, z} = foo` with default initializer `x = 5`
+Refactoring Scope: JavaScript file
+Trigger Operation: Run "Replace destructuring with property and index access" on the destructuring pattern
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The intention ignores the destructuring default value `= 5` for `x`. It generates simple assignment `var x = foo.x;` and discards the fallback initializer, changing runtime behavior.
+Expected behavior: Preserve the default value, expand to `var x = foo.x ?? 5;` or equivalent fallback logic.
+Underlying cause: The expansion logic only reads the property name from the destructuring pattern and does not capture/emit the default initializer clause.
+*/
+
+// Complete compilable test code
+var foo = {x: undefined, y: "a", z: true}, {x = 5, y, z} = foo; // here
+var g = x;

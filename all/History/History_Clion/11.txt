@@ -1,0 +1,20 @@
+/* Refactoring Settings:
+Refactoring type: Move Declarations / Move (F6) C++ refactoring
+Refactoring target: function print(const char *string)
+Operation: Move function print to new file utils.h, specify target namespace io in refactoring dialog
+Scope: Respect user-specified target namespace when moving function to newly created header file
+*/
+
+/* Error Root Cause:
+Observed failure: User enters target namespace `io` in Move refactoring dialog, but the generated utils.h file does NOT wrap the moved function inside `namespace io { }`. The namespace option is silently ignored.
+Expected behavior: Generate the new header file and wrap the moved function inside the specified namespace `io`.
+Underlying cause: The refactoring’s new-file namespace handling logic does not apply the user-provided namespace to the generated code when creating a brand new header file; the namespace parameter is accepted in the UI but not emitted during code generation.
+*/
+
+#include <iostream>
+void print(const char *string) { std::cout << string; }
+
+int main() {
+  print("Hello world!\n");
+  return 0;
+}

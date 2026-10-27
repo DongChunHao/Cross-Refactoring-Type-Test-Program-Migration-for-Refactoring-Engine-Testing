@@ -1,0 +1,13 @@
+```
+<?php
+function calculate_total($price) {
+    $tax_rate = 0.08;
+    if ($tax_rate > 0) {
+        $price = 0;
+    }
+    return $tax_rate * $price;
+}
+?>
+```
+
+【Refactoring Action】: Rename parameter refactoring, target rename parameter `$price` to `$tax_rate`.

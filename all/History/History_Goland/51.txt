@@ -1,0 +1,19 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Change Signature intention (EAP build)
+Refactoring target: variadic parameter `b ...string` in `func foo(a string, b ...string)`
+Refactoring rule: The Change Signature dialog must correctly render and parse the full variadic type `...string` for variadic parameters; the `...` is part of the parameter declaration syntax and must not be stripped or displayed as a standalone token.
+*/
+
+/* Error Root Cause:
+Observed failure: When opening the Change Signature dialog and inspecting the second parameter, the UI only shows `...` instead of `...string`. The parser/renderer inside the refactoring dialog splits the variadic marker `...` from the underlying element type `string`, losing the type information.
+Expected behavior: Display and edit the parameter type as `...string`.
+Underlying cause: The UI model for parameter types in the Change Signature panel treats `...` as a separate flag/toggle instead of integrating it with the type AST node. It extracts the variadic flag but discards the associated element type when populating the input field.
+*/
+
+func foo(a string, b ...string) {
+}
+
+// Expected dialog display for param b: type = ...string
+// Actual dialog display for param b: type = ...

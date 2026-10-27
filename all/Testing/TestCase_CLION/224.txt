@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+namespace foo {
+}
+using Alias_t = bool;
+bool testFunc() { //{Rename method testFunc to renamedTestFunc}
+Alias_t x = true;
+return x;
+}

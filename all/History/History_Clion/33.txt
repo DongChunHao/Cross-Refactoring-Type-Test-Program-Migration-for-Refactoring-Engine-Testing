@@ -1,0 +1,53 @@
+/* Refactoring Settings:
+Refactoring type: Move definition to source (CLion C++), static class member function inside namespace PV3D
+Refactoring target: static function `Vector3::Multiply` declaration inside namespace PV3D
+Operation: Invoke "Move definition to source" from header file Vector3.h
+Scope: C++ static member function rules; preserve comments; correctly qualify return type and function name; do not emit static keyword in .cpp definition
+*/
+
+/* Error Root Cause:
+Observed failures:
+1. Comment loss: The comment line above function declaration is removed/lost during refactoring.
+2. Invalid `static` keyword in cpp: In C++, `static` for member functions only belongs in the class declaration (header). The definition in source file cannot use `static` modifier; refactoring incorrectly adds it.
+3. Incorrectly qualified return type: The generated definition uses `Vector3` instead of fully qualified `PV3D::Vector3` as return type.
+
+Original header (Vector3.h):
+namespace PV3D {
+    class Vector3 {
+    public:
+        //| Comment line here
+        static Vector3 Multiply(Vector3 src, PV3DNumberType scale);
+    };
+}
+
+Broken generated cpp:
+Vector3 static PV3D::Vector3::Multiply(Vector3 src, PV3DNumberType scale) {}
+
+Expected cpp:
+PV3D::Vector3 PV3D::Vector3::Multiply(Vector3 src, PV3DNumberType scale)
+{
+}
+
+Expected header remains unchanged:
+namespace PV3D {
+    class Vector3 {
+    public:
+        //| Comment line here
+        static Vector3 Multiply(Vector3 src, PV3DNumberType scale);
+    };
+}
+
+Underlying cause:
+The "Move definition to source" logic mishandles static member functions inside namespaces:
+1. It does not preserve leading comments attached to the function declaration.
+2. It does not know C++ grammar rule: static is only for declaration inside class, must be omitted in out-of-line definition.
+3. Return type qualification logic is broken: it does not fully qualify the return type with enclosing namespace PV3D.
+*/
+
+namespace PV3D {
+    class Vector3 {
+    public:
+        //| Comment line here
+        static Vector3 Multiply(Vector3 src, PV3DNumberType scale);
+    };
+}

@@ -1,0 +1,22 @@
+<?php
+function a($a,            $b)
+{
+
+}
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function a
+Action: add new parameter $c
+Refactoring rule: When modifying a function parameter list, preserve the existing whitespace alignment/formatting of existing parameters instead of normalizing and collapsing spacing. Insert the new parameter while respecting the user’s existing formatting style for the parameter list.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Original parameter list has custom aligned whitespace: `$a,            $b`. After adding $c, the refactoring collapses spacing and outputs `$a, $b, $c`, discarding the manual alignment.
+Expected behavior:
+Keep the original spacing for existing parameters, inserting $c in a way that maintains the user’s alignment style, e.g. `$a,            $b, $c` or `$a,            $b,            $c`.
+
+Underlying cause:
+The parameter list rewrite logic does not retain original token whitespace. It regenerates the parameter list from scratch with standard minimal spacing, overwriting hand-aligned formatting.
+*/

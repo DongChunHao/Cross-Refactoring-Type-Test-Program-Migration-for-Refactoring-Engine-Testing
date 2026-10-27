@@ -1,0 +1,45 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Statement `returnInt++` inside function with named return parameter `returnInt int`
+Refactoring rule: When extracting code that reads/writes a named return variable, correctly pass it as an argument to the new helper function and capture the updated value, instead of treating the named return as accessible inside the extracted method.
+*/
+
+/* Error Root Cause:
+Observed failure: The extracted helper `funcName()` directly references `returnInt++` without parameters, assuming it can access the outer function’s named return variable. The outer function is incorrectly rewritten to `returnInt := funcName()`, which declares a new local variable shadowing the named return, producing undefined reference and shadowing compile errors.
+Expected behavior: Pass the named return variable into the extracted method as an input parameter and assign the result back: `returnInt = funcName(returnInt)`.
+Underlying cause: The extract-method PSI analysis misclassifies named return variables as free variables that are in scope for the new function, rather than recognizing they belong exclusively to the original outer function’s activation frame. It does not generate the required parameter/return plumbing.
+*/
+
+func _() (returnInt int) {
+	returnInt++ // <cursor>
+	returnInt--
+	return
+}
+
+// Bad actual refactored result
+/*
+func _() (returnInt int) {
+	returnInt := funcName()
+	returnInt--
+	return
+}
+func funcName() int {
+	returnInt++
+	return returnInt
+}
+*/
+
+// Expected correct refactored result
+/*
+func _() (returnInt int) {
+	returnInt = funcName(returnInt)
+	returnInt--
+	return
+}
+func funcName(returnInt int) int {
+	returnInt++
+	return returnInt
+}
+*/

@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+class Foo {
+int f{0};
+public:
+void test(int dummyParam); //{Change method signature add int dummyParam parameter}
+};
+void Foo::test(int dummyParam) {
+int Foo::*pF = &Foo::f;
+this->*pF = 1;
+}
+int main() {
+Foo x;
+x.test(0);
+return 0;
+}

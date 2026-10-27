@@ -1,0 +1,13 @@
+```
+<?php
+class BaseModel {}
+class User extends BaseModel {
+    public function clone(): self
+    {
+        return new static();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Up Members refactoring, pull `clone()` from `User` up to `BaseModel`.

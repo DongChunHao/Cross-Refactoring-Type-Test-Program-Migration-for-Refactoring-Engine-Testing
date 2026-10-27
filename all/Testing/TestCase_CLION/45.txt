@@ -1,0 +1,156 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+#include <cmath>
+#define DBL_DIG 15
+#define MAXPARAMS 10
+enum class fractal_type {
+CELLULAR
+};
+enum class debug_flags {
+force_arbitrary_precision_math,
+prevent_arbitrary_precision_math
+};
+enum class bf_math_type {
+NONE
+};
+enum CMD_RESULT {
+CMDARG_FRACTAL_PARAM,
+CMDARG_ERROR,
+CMDARG_NONE
+};
+struct SomeClass {
+int floatparms;
+int totparms;
+const char* curarg;
+bool usemag;
+bool initcorners;
+int decimals;
+double floatval[6];
+const char* floatvalstr[6];
+debug_flags debugflag;
+bf_math_type bf_math;
+// bf buffer placeholders
+void* bfxmin;
+void* bfxmax;
+void* bfx3rd;
+void* bfymin;
+void* bfymax;
+void* bfy3rd;
+void* bfparms[MAXPARAMS];
+double param[MAXPARAMS];
+double xxmin, xxmax, xx3rd;
+double yymin, yymax, yy3rd;
+void argerror(const char* arg) {}
+int get_max_curarg_len(const char** strs, int count) { return 10; }
+void init_bf_dec(int dec) {}
+void floattobf(void* bf, double val) {}
+void get_bf(void* bf, const char* str) {}
+int getprecbf_mag() { return 12; }
+CMD_RESULT parse_command(const char* variable, fractal_type fractype) //{Change method signature add bool dryRun param}
+{
+if (variable == "corners")       // corners=?,?,?,?
+{
+if (fractype == fractal_type::CELLULAR)
+{
+return CMDARG_FRACTAL_PARAM; // skip setting the corners
+}
+if (floatparms != totparms
+|| (totparms != 0 && totparms != 4 && totparms != 6))
+{
+argerror(curarg);
+return CMDARG_ERROR;
+}
+usemag = false;
+if (totparms == 0)
+{
+return CMDARG_NONE; // turns corners mode on
+}
+initcorners = true;
+// good first approx, but dec could be too big
+int dec = get_max_curarg_len(floatvalstr, totparms) + 1;
+if ((dec > DBL_DIG+1 || debugflag == debug_flags::force_arbitrary_precision_math)
+&& debugflag != debug_flags::prevent_arbitrary_precision_math)
+{
+bf_math_type old_bf_math = bf_math;
+if (bf_math == bf_math_type::NONE || dec > decimals)
+{
+init_bf_dec(dec);
+}
+if (old_bf_math == bf_math_type::NONE)
+{
+for (int k = 0; k < MAXPARAMS; k++)
+{
+floattobf(bfparms[k], param[k]);
+}
+}
+// xx3rd = xxmin = floatval[0];
+get_bf(bfxmin, floatvalstr[0]);
+get_bf(bfx3rd, floatvalstr[0]);
+// xxmax = floatval[1];
+get_bf(bfxmax, floatvalstr[1]);
+// yy3rd = yymin = floatval[2];
+get_bf(bfymin, floatvalstr[2]);
+get_bf(bfy3rd, floatvalstr[2]);
+// yymax = floatval[3];
+get_bf(bfymax, floatvalstr[3]);
+if (totparms == 6)
+{
+// xx3rd = floatval[4];
+get_bf(bfx3rd, floatvalstr[4]);
+// yy3rd = floatval[5];
+get_bf(bfy3rd, floatvalstr[5]);
+}
+// now that all the corners have been read in, get a more
+// accurate value for dec and do it all again
+dec = getprecbf_mag();
+if (dec < 0)
+{
+argerror(curarg);
+return CMDARG_ERROR;
+}
+if (dec > decimals)  // get corners again if need more precision
+{
+init_bf_dec(dec);
+/* now get parameters and corners all over again at new
+decimal setting */
+for (int k = 0; k < MAXPARAMS; k++)
+{
+floattobf(bfparms[k], param[k]);
+}
+// xx3rd = xxmin = floatval[0];
+get_bf(bfxmin, floatvalstr[0]);
+get_bf(bfx3rd, floatvalstr[0]);
+// xxmax = floatval[1];
+get_bf(bfxmax, floatvalstr[1]);
+// yy3rd = yymin = floatval[2];
+get_bf(bfymin, floatvalstr[2]);
+get_bf(bfy3rd, floatvalstr[2]);
+// yymax = floatval[3];
+get_bf(bfymax, floatvalstr[3]);
+if (totparms == 6)
+{
+// xx3rd = floatval[4];
+get_bf(bfx3rd, floatvalstr[4]);
+// yy3rd = floatval[5];
+get_bf(bfy3rd, floatvalstr[5]);
+}
+}
+}
+xxmin = floatval[0];
+xx3rd = xxmin;
+xxmax = floatval[1];
+yymin = floatval[2];
+yy3rd = yymin;
+yymax = floatval[3];
+if (totparms == 6)
+{
+xx3rd =      floatval[4];
+yy3rd =      floatval[5];
+}
+return CMDARG_FRACTAL_PARAM;
+}
+return CMDARG_NONE;
+}
+};

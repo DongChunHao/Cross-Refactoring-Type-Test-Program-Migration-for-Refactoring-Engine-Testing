@@ -1,0 +1,15 @@
+```
+<?php
+class BaseTransport { }
+abstract class AbstractCar extends BaseTransport {
+    abstract public function startEngine();
+}
+class Sedan extends AbstractCar {
+    public function startEngine()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target method `startEngine()` from class `Sedan`, pull up to parent class `BaseTransport`

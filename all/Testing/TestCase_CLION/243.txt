@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+int x;
+class enclose {
+int x;
+};
+struct Wrapper
+{
+static void f(enclose* obj, int i) { //{Move f logic into static wrapper member}
+i = obj->x;
+int j = ::x;
+::x = i;
+}
+};

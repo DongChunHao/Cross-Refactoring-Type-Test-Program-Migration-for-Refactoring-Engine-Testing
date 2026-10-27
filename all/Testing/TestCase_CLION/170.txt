@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: runFunc1Logic
+'''
+#pragma once
+#include <iostream>
+class TestClass {
+public:
+virtual void runFunc1Logic() {} //{Rename method Func1 to runFunc1Logic}
+};

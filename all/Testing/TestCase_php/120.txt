@@ -1,0 +1,12 @@
+```
+<?php
+$calc = function () {
+    return 100;
+};
+$runner = function () use ($calc) {
+    $calc();
+};
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target closure `$calc`, add new parameter `$rate`, enable propagate signature changes to call sites in closure `$runner`.

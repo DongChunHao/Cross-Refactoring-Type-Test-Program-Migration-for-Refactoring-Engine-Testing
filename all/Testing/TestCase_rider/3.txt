@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: newLocalVal
+'''
+using System;
+
+public class Demo
+{
+public void ExampleMethod()
+{
+var localValue = 42; //{Rename Variable: trigger refactoring on double‑click selected localValue identifier}
+Console.WriteLine(localValue);
+}
+}

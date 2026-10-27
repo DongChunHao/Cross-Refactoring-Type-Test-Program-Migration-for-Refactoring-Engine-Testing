@@ -1,0 +1,77 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+/* Refactoring Settings:
+Refactoring Type: General-purpose C# syntax refactoring (Extract Variable / Extract Method / Introduce Local, triggered inside constructor argument list)
+Refactoring Target: LINQ chained expressions (Select + ToArray) inside the argument list of the CaseNode constructor invocation
+Refactoring Scope: The expression tree inside new CaseNode(...) arguments
+Refactoring Rule Expectation: Preserve extension-method syntax (source.Select(...)) instead of rewriting to static Enumerable.Select(source, ...) static invocation syntax
+Editorconfig style rule expected: csharp_prefer_extension_method = true:suggestion
+*/
+
+/* Error Root Cause:
+Observed failure: After applying the refactoring operation, LINQ extension method syntax like numericTableColumns.Select(c => c.Column).ToArray() is rewritten into static Enumerable.Select(numericTableColumns, c => c.Column).ToArray() static method call syntax.
+Expected behavior: Refactoring engine should retain the original extension-method invocation syntax (dot syntax) for LINQ operators after rewrite.
+Underlying cause: The Roslyn-based refactoring rewriter only considers semantic equivalence and does not preserve the original syntax form of extension methods. Extension methods are syntactic sugar; the semantic model represents them as static Enumerable method invocations. When the refactoring syntax rewriter regenerates the syntax tree, it emits the underlying static method form instead of reconstructing the member-access extension method call syntax. This issue frequently occurs when refactoring complex multi-argument constructor initializer expressions containing chained LINQ calls.
+*/
+
+// Dependent type definitions added for compilation, original business logic unchanged
+public record NumericColumnAndValues(TableReferenceColumnNumeric Column);
+public record SumColumnAndValues(TableReferenceColumnNumeric Column);
+public record NonNumericColumnAndValues(TableReferenceColumn Column);
+public record ColorColumnAndValues(ColorSelectorReferenceColumn Column);
+public record TableReferenceColumnNumeric;
+public record TableReferenceColumn;
+public record ColorSelectorReferenceColumn;
+
+public class CaseNode
+{
+    public CaseNode(
+        string tableName,
+        TableReferenceColumnNumeric[] numericColumns,
+        TableReferenceColumnNumeric[] sumColumns,
+        TableReferenceColumn[] refColumns,
+        ColorSelectorReferenceColumn[] referencedColorSelectorsCols,
+        object[] rsColumns,
+        object[] outputColumns,
+        object[] resultColumns)
+    {
+    }
+}
+
+public class Table
+{
+    public string Name { get; set; }
+}
+
+public static class RefactoringTestProgram
+{
+    public static void Main()
+    {
+        // Test variables
+        var table = new Table { Name = "TestTable" };
+        var numericTableColumns = new List<NumericColumnAndValues>();
+        var referencedSumsCols = new List<SumColumnAndValues>();
+        var nonNumericTableColumns = new List<NonNumericColumnAndValues>();
+        var referencedColorSelectorsCols = new List<ColorColumnAndValues>();
+        object[] rsColumns = Array.Empty<object>();
+        object[] outputColumns = Array.Empty<object>();
+        object[] resultColumns = Array.Empty<object>();
+
+        // Source code before refactoring (original snippet from issue screenshot)
+        var node = new CaseNode(
+            table.Name,
+            numericTableColumns.Select(c: NumericColumnAndValues => c.Column) // IEnumerable<TableReferenceColumnNumeric>
+                .ToArray(),
+            sumColumns: referencedSumsCols.Select(c: SumColumnAndValues => c.Column).ToArray(),
+            refColumns: nonNumericTableColumns.Select(c: NonNumericColumnAndValues => c.Column) // IEnumerable<TableReferenceColumn>
+                .ToArray(),
+            referencedColorSelectorsCols.Select(c: ColorColumnAndValues => c.Column) // IEnumerable<ColorSelectorReferenceColumn>
+                .ToArray(),
+            rsColumns,
+            outputColumns,
+            resultColumns
+        );
+    }
+}

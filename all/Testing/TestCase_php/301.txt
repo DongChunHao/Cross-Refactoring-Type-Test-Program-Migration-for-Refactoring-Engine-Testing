@@ -1,0 +1,13 @@
+```
+<?php
+class A {
+}
+class B {
+    function getB(): B {
+        return $this;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Place caret on method identifier `getB` in method declaration; invoke F6 Move Instance Method to move method from class B to class A.

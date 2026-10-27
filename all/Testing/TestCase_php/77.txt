@@ -1,0 +1,17 @@
+```
+<?php
+namespace App\Utils {
+    use App\Utils as UTIL_ALIAS;
+    class BaseHelper
+    {
+    }
+    class JsonSerializer implements UTIL_ALIAS\Schema\ISchema{
+    }
+}
+namespace App\Utils\Schema {
+    interface ISchema{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `JsonSerializer`, target namespace `App\NewNS`.

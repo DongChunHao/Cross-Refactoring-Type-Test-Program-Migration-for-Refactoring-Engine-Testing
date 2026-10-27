@@ -1,0 +1,8 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: The symbol resolver mishandles pytest fixture injection semantics. It recognizes the link between test‑function parameter and fixture‑definition, but fails to collect and rewrite variable read‑usages inside the test‑function body that refer to this fixture‑provided argument
+import pytest
+@pytest.fixture
+def herro_thar_im_a_fixture():  // REFACTOR_TARGET
+return 123
+def test_foo(herro_thar_im_a_fixture):
+assert herro_thar_im_a_fixture == 123

@@ -1,0 +1,45 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract block inside `WindowManager::handle()` into `focus_next_session()`
+Refactoring rule expectation: When extracting code inside a non-static member function, if the extracted method does **not** access any instance (`this`) members, offer to make it `static`; or at minimum generate a normal non-static member function with correct signature. Prevent producing incoherent return type `bool void`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+1. The generated signature becomes `bool void WindowManager::focus_next_session()` — invalid C++: multiple return types in one function header.
+2. No check for whether the extracted method needs to be static. The code `focus_controller->focus_next_session();` accesses `this->focus_controller`, so it cannot be static; but in a different scenario where no instance members are accessed, the refactoring should suggest static.
+In this diff, the parser incorrectly merged return type of original `handle()` (bool) with new extracted function, creating `bool void`.
+Expected result:
+bool WindowManager::focus_next_session() {
+    focus_controller->focus_next_session();
+    if (auto const surface = focus_controller->focused_surface())
+        focus_controller->raise({surface});
+}
+And inside handle():
+focus_next_session();
+
+Underlying cause:
+1. The refactoring parser corrupts function signature: it copies outer method return type `bool` and incorrectly retains the default void candidate, producing `bool void`.
+2. Static context analysis logic is broken: it does not evaluate whether `this` is used in extracted body to decide static/non-static.
+*/
+
+namespace me {
+class WindowManager {
+public:
+    bool handle(MirEvent const& event);
+private:
+    FocusController* focus_controller;
+};
+}
+
+bool me::WindowManager::handle(MirEvent const& event)
+{
+    static bool display_off = false;
+    if (event.key.modifiers & mir_key_modifier_alt && event.key.scan_code == KEY_TAB)
+    {
+        focus_controller->focus_next_session();
+        if (auto const surface = focus_controller->focused_surface())
+            focus_controller->raise({surface});
+        return true;
+    }
+}

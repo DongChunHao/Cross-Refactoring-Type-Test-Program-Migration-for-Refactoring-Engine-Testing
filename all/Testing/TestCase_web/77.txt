@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+import Vue from 'vue';
+import { Component, Prop } from 'vue-property-decorator';
+@Component
+export default class HelloWorld extends Vue { //{Move Method target decorated exported class HelloWorld}
+@Prop() private msg!: string;
+}

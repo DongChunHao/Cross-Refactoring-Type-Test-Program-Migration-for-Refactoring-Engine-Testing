@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+class Third {
+m() {
+return Third.n();
+}
+private static n() { //{Rename Method target private static method n with access modifier}
+return 2;
+}
+}

@@ -1,0 +1,18 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+// test.h
+#ifndef GGG
+#define GGG
+struct XYZ {
+int a;
+};
+#endif
+// main.c
+#include "test.h"
+static struct XYZ uuu = {0};
+int main() {
+auto &refUuu = uuu; //{Extract variable refUuu}
+return 0;
+}

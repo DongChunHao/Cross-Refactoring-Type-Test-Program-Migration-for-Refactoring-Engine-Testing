@@ -1,0 +1,31 @@
+<?php declare(strict_types = 1);
+/* Refactoring Settings:
+Refactoring type: Move Member To Class refactoring
+Refactoring target: constant ClassOne::FOO, move it to ClassThree
+Scope: ClassOne.php, ClassTwo.php, ClassThree.php; ClassTwo contains `use \RuntimeException as R;`
+Refactoring operation: relocate constant FOO from ClassOne to ClassThree, update usages of ClassOne::FOO in the codebase
+*/
+
+/* Error Root Cause:
+Observed failure: After moving ClassOne::FOO to ClassThree, the usage in ClassTwo is incorrectly rewritten to R::FOO instead of ClassThree::FOO. The refactoring mistakenly binds the constant reference to the aliased RuntimeException import `R`.
+Expected behavior: Replace `ClassOne::FOO` with `ClassThree::FOO` in ClassTwo, ignoring the unrelated `use RuntimeException as R;` alias.
+Underlying cause: The reference rewriting logic confuses the namespace alias symbol table. When searching for a short name to emit for the new target class ClassThree, it erroneously picks up the existing alias `R` (which points to RuntimeException) and substitutes it, incorrectly combining the alias with the constant name.
+*/
+// ClassOne.php
+class ClassOne {
+    const FOO = 'bar';
+}
+
+// ClassTwo.php
+use \RuntimeException as R;
+class ClassTwo {
+    public function fun()
+    {
+        echo ClassOne::FOO;
+    }
+}
+
+// ClassThree.php
+class ClassThree {
+}
+?>

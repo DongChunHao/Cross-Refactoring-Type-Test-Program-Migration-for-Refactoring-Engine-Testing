@@ -1,0 +1,5 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+'variable'  ;(() => {})() //{Extract Method target string‑literal adjacent to IIFE triggering ASI semicolon‑loss defect}

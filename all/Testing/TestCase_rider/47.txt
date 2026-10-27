@@ -1,0 +1,13 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System;
+
+public class MyClass
+{
+public void DemoWork() //{Change Method: target class member for cross‑refactor migration of class‑file‑rename race‑condition scenario}
+{
+Console.WriteLine("sample logic");
+}
+}

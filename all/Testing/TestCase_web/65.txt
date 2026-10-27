@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// Case 1
+var anArrow = (name: string, lastName: string) => 1; //{Move Method target variable‑assigned arrow function anArrow}
+anArrow("John", "Smith");
+anArrow("Bill", "Jones");
+// Case 2
+var anArrow2 = () => 1; //{Move Method target variable‑assigned arrow function anArrow2}
+anArrow2();
+anArrow2();

@@ -1,0 +1,17 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Member refactoring (move class constant)
+Refactoring target: constant A::B
+Scope: constant visibility modifier
+Refactoring operation: move public const B from class A to another target class
+*/
+
+/* Error Root Cause:
+Observed failure: After moving `public const B = 'C';` to a different class, the visibility modifier `public` is dropped; the resulting constant becomes `const B = 'C'` (implicit public in PHP, but explicit modifier is lost).
+Expected behavior: Retain the original explicit visibility modifier, output `public const B = 'C';` in the destination class.
+Underlying cause: The constant PSI element serializer for the move-member refactoring does not persist the explicit access modifier. It only serializes the constant name and value, omitting the visibility keyword even when present in the source.
+*/
+class A {
+    public const B = 'C';
+}
+?>

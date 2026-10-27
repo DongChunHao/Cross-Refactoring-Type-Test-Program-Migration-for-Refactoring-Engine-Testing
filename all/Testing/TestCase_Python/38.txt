@@ -1,0 +1,11 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Dependency analysis collects inner‑function references but misclassifies cross‑module referenced symbols; resolver treats external symbol as local to original module and skips generating required import statements in destination unit
+
+# a.py
+
+def f1():
+pass
+def f2(): // REFACTOR_TARGET
+f1()
+local_data = 99
+return local_data

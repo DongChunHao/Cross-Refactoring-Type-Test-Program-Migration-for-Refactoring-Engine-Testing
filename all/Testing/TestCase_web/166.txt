@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+var spreadElements = { //{Extract Method target ES5 object‑literal triggering unconditional‑object‑spread syntax‑version‑mismatch defect}
+'name': 'Kate',
+'tea': 'green'
+};

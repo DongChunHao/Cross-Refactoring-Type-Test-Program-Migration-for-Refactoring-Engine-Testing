@@ -1,0 +1,21 @@
+<?php
+namespace N;
+class A { }
+?>
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class A in namespace N; user opens dialog and clicks Refactor without modifying any settings (no-op move)
+Refactoring rule: Before running file creation / file move logic, the processor must detect that the target location and class name are identical to the original. In this no-op case, skip all filesystem checks and do not emit "File with name A.php already exists" error.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When opening Move Class dialog for N\A and pressing Refactor without changing destination folder, namespace, or class name, the refactoring still executes the file target validation path. It checks if the destination file A.php exists and raises the error "File with name 'A.php' already exists".
+No actual move is intended; the operation should be a no-op. Move Namespace handles this scenario correctly and does not produce an error.
+
+Expected behavior:
+Add an early equality check: if the source class’s file path, namespace, and class name are exactly equal to the selected target values, immediately exit the refactoring with no validation errors and no changes to the project. Skip file existence checks entirely for this trivial no-op case.
+
+Underlying cause:
+The Move Class processor does not have an early no-op guard clause. It proceeds to the file target resolution and collision validation even when nothing would change, unlike the Move Namespace implementation.
+*/

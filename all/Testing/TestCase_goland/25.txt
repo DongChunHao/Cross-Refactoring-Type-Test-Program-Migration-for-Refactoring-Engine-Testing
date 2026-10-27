@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+package main
+func killTheIDE() {
+xs<zzz> := []int{1, 2, 3} // rename variable xs<zzz> to newVar
+}
+func main() {}

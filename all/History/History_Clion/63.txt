@@ -1,0 +1,39 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (CLion C++ refactoring)
+Refactoring target: function `calc_sum_of_arr`
+Operation: Invoke Refactor -> Rename, rename `calc_sum_of_arr` to `calc_sum_of_arr2`
+Scope: Rename only the function identifier. Preserve the original array parameter type syntax, macro size specifier, static and const qualifiers inside array declarator. Must not convert `int arr[MY_ARRAY_SIZE]` to `int* arr`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming the function, refactoring rewrites the function parameter type:
+Original `int arr[MY_ARRAY_SIZE]` becomes `int* arr`.
+For the alternate form `int arr[static const MY_ARRAY_SIZE]`, refactoring also deletes `static` and `const` qualifiers inside the array declarator.
+
+Expected behavior:
+Only function name changes, parameter type untouched:
+int calc_sum_of_arr2(int arr[MY_ARRAY_SIZE]) { ... }
+For static const version:
+int calc_sum_of_arr2(int arr[static const MY_ARRAY_SIZE]) { ... }
+
+Underlying cause:
+Rename refactoring’s type normalization logic resolves array function parameters to pointer type, discarding the original user-written array declarator syntax, macro, static and const qualifiers written inside the array brackets. It replaces the source text with the normalized underlying type instead of preserving original source tokens.
+*/
+
+#define MY_ARRAY_SIZE 4
+
+int g_my_arr[MY_ARRAY_SIZE] = {1, 2, 3, 4};
+
+int calc_sum_of_arr(int arr[MY_ARRAY_SIZE]) {
+    int sum = 0;
+    for ( int i = 0; i < MY_ARRAY_SIZE; ++i ) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+int main(void) {
+    int sum = calc_sum_of_arr(g_my_arr);
+    return sum;
+}

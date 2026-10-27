@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class TestClass {
+public:
+virtual int test(int testval) {
+return 0;
+}
+};
+struct Wrapper
+{
+int wrapperTest(TestClass& obj, int v) { //{Move call logic into struct Wrapper member function}
+return obj.test(v);
+}
+};

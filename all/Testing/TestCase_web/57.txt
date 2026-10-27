@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+function foo() {
+function nested() { //{Rename Method target local nested function nested}
+return 1;
+}
+const two = nested() * 2;
+}

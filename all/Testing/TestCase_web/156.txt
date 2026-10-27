@@ -1,0 +1,7 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+let student;
+let {name = 'Jane', age} = student; //{Extract Method target destructuring pattern with default‑value for inline‑variable unsafe‑substitution bug}
+console.log(name);

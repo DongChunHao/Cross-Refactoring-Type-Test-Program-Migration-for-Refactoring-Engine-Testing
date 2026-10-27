@@ -1,0 +1,14 @@
+```
+<?php
+/**
+ * Class Logger
+ */
+/**
+ * Class \Logger
+ */
+class Logger{
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target global `Logger`, move into namespace `Log`.

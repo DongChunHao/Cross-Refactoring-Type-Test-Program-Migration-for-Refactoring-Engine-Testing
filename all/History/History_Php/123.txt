@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Quick-fix Change return type (Alt+Enter)
+Refactoring target: function foo()
+Scope: method return type and @return PHPDoc tag
+Refactoring operation: apply quick fix to update return type from Response to bool
+*/
+
+/* Error Root Cause:
+Observed failure: Applying the "Change return type" quick fix updates the type part of the @return tag but discards the textual description after it. Original `@return Response bar` becomes `@return bool`, losing "bar".
+Expected behavior: Replace only the type identifier in the @return tag while preserving the trailing human-readable description, producing `@return bool bar`.
+Underlying cause: The PHPDoc rewriter for this quick fix parses the tag as two separate tokens (type + description), but when regenerating it, it only writes out the new type and drops the description segment.
+*/
+/**
+ * @return Response bar
+ */
+function foo() {
+    return true;
+}
+?>

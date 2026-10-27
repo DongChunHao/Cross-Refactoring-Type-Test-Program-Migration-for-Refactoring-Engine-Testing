@@ -1,0 +1,28 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"fmt"
+)
+func Print(i interface{}) {
+printBody(i) // extract switch body
+}
+func printBody(i interface{}) {
+switch o := i.(type) {
+case int64:
+fmt.Printf("%5d\n", o)
+case float64:
+fmt.Printf("%7.3f\n", o)
+case string:
+fmt.Printf("%s\n", o)
+default:
+fmt.Printf("%+v\n", o)
+}
+}
+func main() {
+var a float64
+a = 1.33343
+Print(a)
+}

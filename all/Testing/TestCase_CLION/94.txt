@@ -1,0 +1,43 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: runHttpRequestParseTest
+'''
+#include <cstdint>
+enum class HttpParserState { kParsed };
+enum class HttpStatusCode { kOk };
+enum class HttpVersion { kHttp11 };
+enum class HttpMethod { kGet };
+struct HttpHeaders { static constexpr int kHost = 0; };
+struct HttpParser {
+HttpParser(bool);
+int ParseFragmentedMessage(const uint8_t*, size_t);
+HttpParserState GetParserState();
+HttpStatusCode GetStatusCode();
+HttpVersion GetVersion();
+HttpMethod GetMethod();
+int GetHeadersCount(int);
+size_t GetParsedBytesCount();
+struct Uri { size_t start; size_t end; };
+Uri GetUri();
+};
+#define ASSERT_GT(a,b)
+#define ASSERT_EQ(a,b)
+#include <vector>
+#include <string>
+std::vectorstd::string kRequests;
+void runHttpRequestParseTest() { //{Rename method runTest to runHttpRequestParseTest}
+for (const auto& httpRequest : kRequests) {
+HttpParser parser(true);
+ASSERT_GT(
+parser.ParseFragmentedMessage(reinterpret_cast<const uint8_t*>(httpRequest.data()), httpRequest.size()), 0);
+ASSERT_EQ(HttpParserState::kParsed, parser.GetParserState());
+ASSERT_EQ(HttpStatusCode::kOk, parser.GetStatusCode());
+ASSERT_EQ(HttpVersion::kHttp11, parser.GetVersion());
+ASSERT_EQ(HttpMethod::kGet, parser.GetMethod());
+ASSERT_EQ(1, parser.GetHeadersCount(HttpHeaders::kHost));
+ASSERT_EQ(httpRequest.size(), parser.GetParsedBytesCount());
+const auto path = parser.GetUri();
+ASSERT_EQ(httpRequest.find('/'), path.start);
+ASSERT_EQ(httpRequest.find(' ', path.start), path.end);
+}
+}

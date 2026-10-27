@@ -1,0 +1,21 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+#include <string>
+template  class X {
+T t; //{Rename field t to memberT}
+public:
+X(T t) {}
+};
+void test() {
+struct X {
+int x;
+std::string s;
+public:
+X() : X(10) {}
+X(int x) : X(x, "hello world!") {}
+X(int num, const char *text) : x(num), s(text) {}
+};
+}
+int main() { return 0; }

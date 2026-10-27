@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring Type: Intention Action - Add derive clause
+Refactoring Target: Struct `JsonError` which already carries an existing #[derive(...)] attribute
+Refactoring Scope: Rust struct item
+Plugin Environment: Intellij-Rust plugin v0.2.96.2122-191, IntelliJ IDEA 2019.1 Ultimate, Linux 5.0.7 Arch
+Trigger Operation: Place cursor after the struct, invoke Alt+Enter and select the "Add derive clause" intention
+*/
+/* Error Root Cause:
+Observed failure: The "Add derive clause" intention is still offered for a struct that already has a #[derive] attribute. Applying the intention does not add a new derive entry; instead it incorrectly reformats the code, shifts the struct declaration to the left margin, and places the cursor inside the existing derive list.
+Expected behavior: The intention should be hidden and unavailable when the struct already has a #[derive] attribute. The action should only appear for structs without any derive attribute.
+Underlying cause: The intention's availability predicate fails to check whether the target struct already contains a #[derive] attribute. The execution logic assumes no existing derive attribute exists and performs incorrect text repositioning and cursor placement when one is already present.
+*/
+    #[derive(Debug, Clone)]
+    struct JsonError {
+        pub message: String,
+        pub line: usize,
+        pub column: usize,
+    }

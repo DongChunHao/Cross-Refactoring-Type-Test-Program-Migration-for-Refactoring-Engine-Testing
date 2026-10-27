@@ -1,0 +1,42 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Variable
+Refactoring Target: String literal inside Console.WriteLine argument
+IDE: Rider RD-172.4144.486
+*/
+
+/* Error Root Cause:
+Observed failure:
+Intermittent defect. Extract Variable on `"foo"` inside `Console.WriteLine("foo")` produces `Console.WriteLine(foofoo)` instead of `Console.WriteLine(foo)`.
+Undo (Ctrl+Z) and re-applying the same refactoring yields correct code.
+
+Original code:
+Console.WriteLine("foo");
+
+Buggy output:
+var foo = "foo";
+Console.WriteLine(foofoo);
+
+After Ctrl+Z + redo:
+var foo = "foo";
+Console.WriteLine(foo);
+
+Underlying cause:
+PSI/selection range update race condition.
+During the refactoring workflow:
+1. Rider creates the new variable declaration `var foo = "foo";`
+2. It replaces the selected literal node with the variable reference `foo`
+In rare timing windows, the editor/PSI model has stale caret/selection ranges; the replacement operation runs twice on the same location, concatenating the identifier, producing `foofoo`.
+The undo path resets the PSI state cleanly, so a retry succeeds.
+This is a transient state corruption in the refactoring replacement pass, not consistent.
+*/
+
+// Original
+Console.WriteLine("foo");
+
+// Expected
+var foo = "foo";
+Console.WriteLine(foo);
+
+// Intermittent bad result
+var foo = "foo";
+Console.WriteLine(foofoo);

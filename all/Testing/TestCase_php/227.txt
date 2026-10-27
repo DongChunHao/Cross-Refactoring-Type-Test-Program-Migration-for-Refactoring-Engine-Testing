@@ -1,0 +1,14 @@
+```
+<?php
+interface I {
+    public function f(): int;
+}
+class C implements I {
+    function f(): int
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target method `C::f()`, modify return type from `int` to `float`, do NOT propagate changes to base interface method.

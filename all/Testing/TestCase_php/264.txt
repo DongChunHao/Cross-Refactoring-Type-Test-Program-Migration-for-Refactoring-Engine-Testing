@@ -1,0 +1,24 @@
+```
+<?php
+class D{}
+class C0{}
+class C extends C0{
+    /**
+     * @param D $d
+     * @return self
+     */
+    public function f(D $d): self
+    {
+        $b = new parent();
+        return new self;
+    }
+    public function g()
+    {
+    }
+}
+$a = new D;
+(new C)->f($a)->g();
+?>
+```
+
+【Refactoring Action】: Move Instance Method refactoring, move instance method `f()` from class `C` to target class `D`.

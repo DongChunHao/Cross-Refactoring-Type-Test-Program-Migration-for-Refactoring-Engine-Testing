@@ -1,0 +1,31 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: iterator declaration and for loop using std::vector<std::string>::iterator
+Operation: Select the iterator and for-loop lines, invoke Extract Method and name new helper `newMethod`
+Scope: Preserve template arguments for template types; retain `<std::string>` template parameter for `std::vector<std::string>::iterator`, do not strip template arguments.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, refactoring generates `std::vector::iterator iter = vec.begin();`.
+`std::vector` is a template and requires template arguments, bare `std::vector::iterator` is invalid C++ syntax and fails compilation.
+
+Expected behavior:
+`std::vector<std::string>::iterator iter = vec.begin();`
+
+Underlying cause:
+Extract Method refactoring loses template argument information for template type names during AST rewriting. The symbol resolver drops `<std::string>`, leaving the uninstantiated template name `std::vector` instead of the fully instantiated type `std::vector<std::string>`.
+*/
+
+#include <vector>
+#include <string>
+#include <iostream>
+
+void demo()
+{
+    std::vector<std::string> vec;
+    std::vector<std::string>::iterator iter = vec.begin();
+    for( ; iter != vec.end(); ++iter ){
+        std::cout << "Hello";
+    }
+}

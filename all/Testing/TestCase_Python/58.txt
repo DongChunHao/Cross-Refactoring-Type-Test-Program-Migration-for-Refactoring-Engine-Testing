@@ -1,0 +1,6 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Import rewriting logic alters import statement form but does not synchronously adjust corresponding in‑code symbol references; import style and identifier usage become mismatched and break name binding
+from pack import mod
+def func(): // REFACTOR_TARGET
+use(mod)
+return mod

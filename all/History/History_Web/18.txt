@@ -1,0 +1,21 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Superclass, Pull Members Up
+Refactoring Target: Class member `field` with preceding `// noInspection unused` comment and trailing inline comment
+Refactoring Scope: Current TypeScript/JavaScript file
+Trigger Operation: Execute Extract Superclass or Pull Members Up refactoring to move the `field` member from derived class LittleDog to base class Dog.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When using Extract Superclass or Pull Members Up to move class members, associated comments are left behind and not moved together with the member, including special //noInspection comments and inline trailing field comments.
+Expected behavior: Comments that belong to the target member (leading line comments and inline trailing comments) should be transferred along with the member to the new superclass or pulled-up parent class.
+Underlying cause: The refactoring logic for moving class members does not correctly attach and preserve comment AST ranges associated with the member node; it only transfers the member itself and discards adjacent related comments.
+*/
+
+// Complete compilable test code
+class Dog {}
+class LittleDog extends Dog {
+    // noInspection unused
+    field; // inline
+}

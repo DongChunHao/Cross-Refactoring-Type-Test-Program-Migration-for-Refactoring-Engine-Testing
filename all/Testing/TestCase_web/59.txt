@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+const doStuff = (firstName: string) => { //{Move Method target variable‑assigned arrow function doStuff}
+console.log(firstName, 'last name');
+};
+doStuff('first name');

@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack1
+var variable = ""
+func readVar() string {
+return getVariable() // extract variable access into getVariable method
+}
+func getVariable() string {
+return variable
+}

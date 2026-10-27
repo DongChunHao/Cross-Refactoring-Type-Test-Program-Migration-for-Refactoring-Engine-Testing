@@ -1,0 +1,55 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Pull Members Up
+Refactoring Target: Members from derived classes to base class
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Execute Pull Members Up refactoring on selected members in derived classes, covering four scenarios:
+1. Pull up a private method and mark it as abstract
+2. Pull up a field with preceding block comment and inline trailing comment
+3. Pull up members which would force a non-abstract base class to become abstract, or change member modifiers silently
+4. Pull up `drink()` from CoffeeCup, where the method is already inherited through Bowl → Cup and declared in interface ITeaThings
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Four separate issues in Pull Members Up:
+1. The refactoring allows marking a private method as abstract, which produces invalid TypeScript code, since abstract methods cannot be private.
+2. Leading block comments and inline trailing comments attached to members are discarded when the member is moved to the parent class.
+3. No warning is emitted when pulling up abstract members forces a formerly concrete base class to become abstract; modifier changes (private → public) happen silently without notification.
+4. The same inherited/interface-implemented member is suggested multiple times in the refactoring UI for descendant classes.
+Expected behavior:
+1. Disable the "make abstract" option for private methods, prevent generating invalid abstract private signatures.
+2. Preserve both leading and inline comments associated with the member when moving upward to the base class.
+3. Show an explicit warning if the refactoring will turn a non-abstract class into an abstract class; notify users about accessibility modifier changes.
+4. Deduplicate candidate members and avoid presenting the same inherited/interface member repeatedly in the refactoring selection list.
+Underlying cause:
+The Pull Members Up precondition and candidate collection logic lacks TypeScript modifier/abstract rule validation, comment range preservation, class-modification impact analysis, and duplicate inherited-member filtering.
+*/
+
+// Complete compilable test code
+class Dog {}
+class LittleDog extends Dog {
+    private method(): string;
+    /* before */
+    field; // inline
+}
+
+interface ITeaThings {
+    drink(): void;
+}
+
+class Bowl implements ITeaThings {
+    public drink() {};
+}
+
+class Cup extends Bowl implements ITeaThings {
+    constructor(name: string) {
+        super();
+    }
+    public drink() {
+        console.log("glang-glang");
+    }
+}
+
+class CoffeeCup extends Cup {
+}

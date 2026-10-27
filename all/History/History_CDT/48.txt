@@ -1,0 +1,41 @@
+int GlobalVar_0 = 0;
+int GlobalVar_1 = 100;
+
+int func_0() {
+   return GlobalVar_1;
+}
+
+int Function_0() {
+    return GlobalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (function rename)
+Refactoring Target: function `func_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select function `func_0`, invoke Rename refactoring, input string `&func_0` as new function name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts input containing ampersand `&`. The function signature becomes `int &func_0()`.
+In C language, `&` cannot be used as function‑return reference declarator (reference is C++ feature).
+The `&` is not parsed as part of function identifier; instead it is interpreted as part of function return‑type declarator.
+Original function returns an integer value. After refactoring, the syntax is invalid for standard C, triggering compilation error.
+No warning or blocking is performed during refactoring; broken source code is written persistently.
+
+Expected behavior:
+Function rename shall strictly validate candidate name follows C identifier lexical grammar before any source modification:
+1. Valid identifier must start with letter or underscore.
+2. Only letters, underscores, decimal digits are allowed.
+3. Reject inputs containing special symbols: `&`, `*`, `#`, `+`, `-`, whitespace.
+4. Reject reserved keywords and digit‑leading literals.
+Abort refactoring and report error message upon validation failure.
+Rename operation should only replace the identifier token. Changing return‑type declarators belongs to Change‑Signature refactoring and must not be permitted inside rename workflow.
+
+Underlying cause:
+CDT function rename does not isolate pure identifier token from user input. Raw input string is directly substituted in function declarator. The ampersand `&` leaks into return‑type position and is parsed as type modifier, corrupting function signature. All syntax checking is delegated to compiler.
+*/

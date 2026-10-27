@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class AccountingDepartment { //{Move Method target class for second‑run extract‑superclass triggering duplicate‑class / multi‑inheritance bug}
+name;
+printName() {
+console.log("Department name: " + this.name);
+}
+printMeeting() {
+console.log("The Accounting Department meets each Monday at 10am.");
+}
+generateReports() {
+console.log("Generating accounting reports...");
+}
+}

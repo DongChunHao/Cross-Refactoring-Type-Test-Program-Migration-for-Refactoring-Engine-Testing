@@ -1,0 +1,17 @@
+```
+<?php
+interface ProductContract {
+    public function getPrice();
+}
+interface DigitalProductContract extends ProductContract {
+}
+class PhysicalProduct implements ProductContract {
+    public function getPrice(){}
+}
+class DigitalProduct implements ProductContract {
+    public function getPrice(){}
+}
+?>
+```
+
+【Refactoring Action】: Push Members Down refactoring, target `interface ProductContract`, select newly added method `public function setSku()`

@@ -1,0 +1,59 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: Selected `println!("hello");` inside `impl<T, E> Trait for Result<T, E> where (T,E): MyTrait2`
+Refactoring Scope: Propagate all generic parameters and where bounds when creating inherent impl
+Plugin Environment: IntelliJ Rust plugin 0.4.156.4102-212-nightly, CLion 2021.2.1, Rust 1.54.0, Windows 10
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Function on the selected statement inside the bounded generic trait impl
+*/
+/* Error Root Cause:
+Observed failure: Extract Method generates the new inherent impl for `Result<T, E>` but omits some generic parameters or the `where` clause bound `where (T,E): MyTrait2`. The generated method signature/impl header is missing required generics/bounds, causing compilation errors.
+Expected behavior: Copy the full generic parameter list `<T, E>` and all associated where predicates from the source trait impl into the new inherent impl of `Result<T, E>`. Call site uses `Self::bar()` or `Result<T, E>::bar()`.
+Underlying cause: The refactor only naively takes the type name `Result<T,E>` and does not fully clone the source impl’s generic parameters and where clause constraints.
+*/
+// Before
+trait MyTrait2 {
+    fn fn_bar() {}
+}
+
+trait Trait {
+    fn fn_bar() {}
+}
+
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+
+impl<T, E> Trait for Result<T, E> where (T,E): MyTrait2 {
+    fn fn_bar() {
+        println!("hello");
+    }
+}
+
+// Expected after refactor
+trait MyTrait2 {
+    fn fn_bar() {}
+}
+
+trait Trait {
+    fn fn_bar() {}
+}
+
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+
+impl<T, E> Trait for Result<T, E> where (T,E): MyTrait2 {
+    fn fn_bar() {
+        Self::bar();
+    }
+}
+
+impl<T, E> Result<T, E> where (T, E): MyTrait2 {
+    fn bar() {
+        println!("hello");
+    }
+}

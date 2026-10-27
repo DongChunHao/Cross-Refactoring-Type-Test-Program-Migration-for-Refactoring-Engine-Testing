@@ -1,0 +1,55 @@
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <cstdio>
+
+// Forward declarations
+struct Point { int x, y; };
+struct Segment { Point l, r; Segment(Point a, Point b) : l(a), r(b) {} };
+struct Event {
+    enum Type { SEGMENT_OPEN, SEGMENT_CLOSE };
+    Event(Type t, int x, int id) {}
+};
+void scanfPoint(Point& p);
+
+/* Refactoring Settings:
+Refactoring type: Extract Function
+Refactoring target: Extract the if-else block operating on segs, events and vertical
+Refactoring scope: The selected if/else block inside the for loop
+Refactoring rule expectation: Preserve full nested template type `std::map<int, std::map<int, bool>> &vertical` in generated function signature, do not truncate template arguments
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Function incorrectly truncates the nested map type, generating `std::map<int> &vertical` instead of `std::map<int, std::map<int, bool>> &vertical`.
+Expected behavior: The extracted function parameter should retain complete template arguments: `std::map<int, std::map<int, bool>> &vertical`.
+Underlying cause: The refactoring engine's template type parser fails to correctly parse multi-level nested template arguments when generating function parameters. It incorrectly stops parsing after the first template argument, producing an incomplete template type name `std::map<int>` which is invalid C++.
+*/
+
+void example()
+{
+    int n;
+    scanf("%d", &n);
+    std::vector<Event> events;
+    std::vector<Segment> segs;
+    Point first;
+    scanfPoint(first);
+    Point last = first;
+    std::map<int, std::map<int, bool>> vertical;
+    for (size_t i = 1; i < n; ++i){
+        Point now;
+        scanfPoint(now);
+        segs.emplace_back(last, now);
+        if (segs.back().l.x != segs.back().r.x) {
+            events.push_back(Event(Event::SEGMENT_OPEN, segs.back().l.x, i - 1));
+            events.push_back(Event(Event::SEGMENT_CLOSE, segs.back().r.x, i - 1));
+        } else {
+            int x = segs.back().l.x;
+            int boty = segs.back().l.y;
+            int topy = segs.back().r.y;
+            if (boty > topy) std::swap(boty, topy);
+            vertical[x][boty] = true;
+            vertical[x][topy] = false;
+        }
+        last = now;
+    }
+}

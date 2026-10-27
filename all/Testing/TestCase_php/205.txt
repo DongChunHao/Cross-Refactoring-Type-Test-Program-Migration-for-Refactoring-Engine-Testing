@@ -1,0 +1,22 @@
+```
+<?php
+// MyClass.php
+namespace N;
+use Foo\Bar\{
+    Baz
+};
+class MyClass {
+}
+
+// AnotherClass.php
+namespace N;
+use Foo\Bar\Baz;
+class AnotherClass {
+    public static function f() {
+        var_dump(new Baz());
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Method refactoring, target static method `AnotherClass::f()` from `N\AnotherClass` to `N\MyClass`; preserve existing grouped use statement in MyClass.php.

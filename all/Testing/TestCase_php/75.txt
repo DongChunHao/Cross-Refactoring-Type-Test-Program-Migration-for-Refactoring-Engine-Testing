@@ -1,0 +1,17 @@
+```
+<?php
+namespace Shop\Cart {
+    use Shop\Cart as CART_ALIAS;
+    class CartRoot
+    {
+    }
+    class OrderProcessor implements CART_ALIAS\Events\IEventEmitter{
+    }
+}
+namespace Shop\Cart\Events {
+    interface IEventEmitter{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `OrderProcessor`, target namespace `Shop\Checkout`.

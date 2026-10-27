@@ -1,0 +1,54 @@
+// file h1.h
+#define MACRO1
+#ifdef MACRO1
+        int c = 20;
+#endif
+
+// .c file
+#include <stdio.h>
+#include "h1.h"
+
+extern int c;
+int main(){
+    #ifdef MACRO2
+        printf("%d", c);
+    #endif
+    printf("%d", 13); // output: 13
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename across files)
+Refactoring Target: macro `MACRO1` located in header file h1.h
+Refactoring Scope: whole project / multiple translation units
+IDE: Eclipse CDT
+Operation steps: Open header h1.h, select macro `MACRO1`, invoke Rename refactoring, new name `MACRO2`.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+1. Inside h1.h: the macro definition `#define MACRO1` is changed to `#define MACRO2`. But the reference `#ifdef MACRO1` within the **same header file h1.h** remains unchanged (stale old macro name).
+2. Inside the `.c` source file which includes h1.h: the reference `#ifdef MACRO2` gets updated incorrectly (or partial‑update behaviour).
+Resulting semantics:
+- `#define MACRO2` exists, but conditional `#ifdef MACRO1` in header tests for undefined macro MACRO1; variable `int c = 20` is no longer compiled in header.
+- `extern int c` in .c file refers to an undefined external symbol, triggering link‑time compilation error.
+Refactoring produces broken multi‑file project without warning.
+
+Two separate root‑cause issues appear here:
+A) Intra‑file header bug: Even within the same header file h1.h, rename does **not visit tokens inside #ifdef preprocessor directives**. The usage `#ifdef MACRO1` inside h1.h is missed, left as stale reference. This is the same defect seen in previous single‑file macro‑rename test‑cases.
+B) Cross‑file scope limitation: When renaming a macro defined in a header, CDT’s refactoring may fail to correctly collect references across `#include` boundaries. Depending on indexer state, some usages in consumer `.c` files may or may not be processed. The CDT indexer sometimes treats included header content as expanded source rather than original source tokens; refactoring operates on original physical source files, not pre‑expanded AST.
+
+Expected behavior:
+1. Within the same physical file (h1.h): collect **all macro identifier occurrences**, including inside `#ifdef`, `#ifndef`, `#if defined()`, `#elif defined()` preprocessor directives; update every reference synchronously in original source text.
+2. For cross‑file rename (macro defined in header):
+   - Traverse the project index to find all physical source/header files which reference this macro, respecting `#include` dependency graph.
+   - Modify the original physical source files (both headers and .c files), not only working on pre‑expanded in‑memory AST.
+3. If indexer cannot resolve some usages (e.g. files excluded from build, conditional includes), warn user explicitly listing files that could not be modified.
+4. Before applying rename, check preprocessor namespace for name collisions with existing macros.
+
+Underlying cause:
+1. Preprocessor conditional tokens are excluded from rename’s AST‑based usage collection pass; only ordinary C‑code AST nodes are scanned, tokens inside preprocessing directives are ignored even in same‑file.
+2. CDT refactoring relies on the project index for cross‑file symbol resolution. When renaming preprocessor macros, the index does not reliably track macro usages across #include boundaries. The indexer often works on pre‑expanded parse trees instead of original source tokens, so physical source‑file edits for macro references are missed.
+*/

@@ -1,0 +1,6 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+var a = this.a,
+c = a.foo.bar ? a.foo.bar(a) : ''; //{Move Method target inside comma‑separated declarator‑list, exposes declaration‑group‑node identification defect}

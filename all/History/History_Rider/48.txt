@@ -1,0 +1,56 @@
+/* Refactoring Settings:
+Refactoring Type: Move to another type (move member into a different existing type)
+IDE: Rider 2023.2 EAP7 RD-232.8453.124, Windows 11
+Symptom:
+User launches "Move to another type", fills out/confirms the refactoring dialog, closes the dialog.
+No source changes are applied, no error message, no conflict popup, no notification. Refactoring aborts silently.
+*/
+
+/* Error Root Cause
+This is a silent transaction rollback in the refactoring workflow. Common root causes for this EAP version:
+1. **PSI conflict detection pass finds unhandled conflict, lacks UI reporting**:
+   The conflict search phase detects a problem (name collision, accessibility change, unresolved reference, captured `this`, generic constraint mismatch, unsafe transfer of private state) but fails to surface the conflict in the UI. The refactoring transaction is rolled back without feedback.
+2. **Reference rewriting failure with unhandled PSI exception**:
+   While updating call sites/references to the moved member, the C# PSI ElementFactory fails to generate valid syntax (similar to the earlier `.Responses()` fragment crash). The exception is caught internally by the refactoring pipeline, and the entire PSI transaction is rolled back, hiding the error from the user.
+3. **EAP-specific workflow/state bug**:
+   Early 2023.2 EAP builds had a known issue where certain refactoring finalization steps would bail out when the target type was in a different namespace / different file / had differing type parameters. The dialog model succeeds, but the apply step does not commit the PSI changes.
+
+Distinction:
+This differs from “Move to another file”. This refactoring moves a **member (method/property/field) into an existing class/struct**, not moving a top-level type to another file.
+*/
+
+/* Reproduction Steps
+1. Select a class member (method, property, field).
+2. Invoke Refactor → Move to another type.
+3. Select a target existing type, configure options, confirm dialog.
+4. Dialog closes. No code is changed, no message appears.
+
+Expected Behavior
+Either:
+1. Member is moved to the target type, all references updated; OR
+2. If conflicts exist, Rider shows a conflict preview window listing the problems, allowing user to proceed or cancel.
+Must not silently discard the refactoring operation.
+
+Workarounds
+1. Check Rider backend logs (`Help | Show Log in Explorer`) for ElementFactoryException or refactoring conflict exceptions after reproducing.
+2. Simplify the member temporarily: remove captures of `this`, remove complex generic constraints, break long chained call sites, check for name collisions with existing members in the target type.
+3. Try the stable release of Rider instead of this 2023.2 EAP build; many silent-refactoring-rollback issues were fixed before stable.
+4. Manual copy-paste + find/replace references as fallback.
+5. Try running with a clean Rider cache: `File | Invalidate Caches…` and restart IDE.
+*/
+
+// Example scenario that often triggers this in 232.8453.124
+public class Source
+{
+    // Trying to move this method into Target
+    public void DoWork()
+    {
+        // References `this` from Source, which becomes invalid after moving to Target
+        Console.WriteLine(this.Id);
+    }
+    public int Id { get; set; }
+}
+
+public class Target
+{
+}

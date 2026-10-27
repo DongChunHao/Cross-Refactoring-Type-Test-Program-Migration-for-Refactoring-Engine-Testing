@@ -1,0 +1,22 @@
+```
+<?php
+// a.php
+namespace NS1 {
+    class AC1{}
+}
+namespace NS2 {
+    use const MYCONST;
+    class AC2
+    {
+        public function foo()
+        {
+            echo MYCONST;
+        }
+    }
+}
+// b.php
+define('MYCONST', 1);
+?>
+```
+
+【Refactoring Action】: Invoke Move Constant refactoring on global constant `MYCONST` defined in b.php, move it into `NS1\AC1` as class constant `NS1\AC1::MYCONST`.

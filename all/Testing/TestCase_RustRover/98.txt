@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+struct Foo(usize);
+fn consume<T>(_: T) {}
+fn main() {
+consume({ //{extract block‑expression argument logic into new method new}
+let x = 3;
+x
+})
+}

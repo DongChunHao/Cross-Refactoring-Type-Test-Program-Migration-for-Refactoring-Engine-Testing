@@ -1,0 +1,27 @@
+/* Refactoring Settings: */
+/* Refactoring Type: Extract Variable */
+/* Refactoring Target: Subexpression `a.foo.bar` inside the ternary of a chained `var` declaration */
+/* Refactoring Scope: JavaScript, chained comma-separated var declarations */
+/* Trigger Operation: Run Extract Variable on `a.foo.bar` within `var a = this.a, c = a.foo.bar ? a.foo.bar(a) : '';` */
+
+/* Error Root Cause: */
+/*
+Observed failure:
+The original code uses a single `var` statement with multiple comma-separated variable declarators: `var a = this.a, c = ...;`.
+The expected result inserts the new variable `b` into the same comma chain:
+`var a = this.a, b = a.foo.bar, c = b ? b(a) : '';`
+Instead, the refactoring creates a separate preceding `var b = a.foo.bar;` statement.
+This produces broken semantics: `b` is assigned before `a` is initialized, so `a` is undefined when `a.foo.bar` runs.
+
+The extract variable logic treats the chained declarators as independent statements rather than a single declaration group. It emits a new standalone variable statement before the original `var`, ignoring the order and grouping of the comma-separated declarator list.
+
+Expected behavior:
+When extracting an expression from within a multi-declarator `var`/`let`/`const` statement, insert the new variable declarator into the existing comma chain at the correct position, preserving initialization order.
+
+Underlying cause:
+The extract variable processor does not recognise the entire comma-separated list as one declaration node. It defaults to generating a new separate variable statement outside the original declaration, which changes execution order and causes an undefined reference.
+*/
+
+// Complete source
+var a = this.a,
+    c = a.foo.bar ? a.foo.bar(a) : '';

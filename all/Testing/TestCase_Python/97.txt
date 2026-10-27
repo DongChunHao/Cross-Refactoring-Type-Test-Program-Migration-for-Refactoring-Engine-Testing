@@ -1,0 +1,10 @@
+// Target Refactoring Type: Extract Superclass
+// Expected Defect Performance: Copies selected members to new superclass but fails to update original‑class base‑list for inheritance; UI dialog remains open without completion notification, producing runtime AttributeError for remaining self‑method calls
+class Basic(object): // REFACTOR_TARGET
+def **init**(self, a, b):
+self.a = a
+self.b = b
+def func1(self):
+return ""
+def func2(self):
+return self.func1()

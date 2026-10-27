@@ -1,0 +1,28 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Introduce Local Variable
+Refactoring Target: Class declaration inside `@Component export default class HelloWorld extends Vue`
+Refactoring Scope: Vue TypeScript SFC script block
+Trigger Operation: Invoke Introduce Local Variable on the exported decorated class
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The refactoring splits the class into a local variable and moves the `@Component` decorator to the `export default` line. Decorators applied to `export default` are invalid in this context; the decorator must be attached directly to the class declaration, which causes type/linter errors.
+Expected behavior: The refactoring should preserve the decorator on the class:
+@Component
+let helloWorld = class HelloWorld extends Vue {
+  @Prop() private msg!: string;
+};
+export default helloWorld;
+Underlying cause: Introduce Local Variable does not track that the preceding `@Component` belongs to the class node. It treats the decorator as a sibling of the export statement and leaves it attached to `export default`, violating TypeScript decorator grammar rules.
+*/
+
+// Complete compilable test code
+import Vue from 'vue';
+import { Component, Prop } from 'vue-property-decorator';
+
+@Component
+export default class HelloWorld extends Vue {
+  @Prop() private msg!: string;
+}

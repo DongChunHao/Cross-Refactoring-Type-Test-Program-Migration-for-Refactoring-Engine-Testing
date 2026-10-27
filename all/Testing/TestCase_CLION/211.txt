@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: printAndClearVec
+'''
+#include <vector>
+#include <iostream>
+class C {
+public:
+void printAndClearVec(); //{Rename method f to printAndClearVec}
+protected:
+std::vector<int> v = {1, 2};
+};
+void C::printAndClearVec() {
+for (auto i : v) {
+std::cout << i << "\n";
+}
+v.clear();
+}

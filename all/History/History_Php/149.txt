@@ -1,0 +1,26 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: C::f()
+Scope: `static` return type support in signature editor
+Refactoring operation: set return type to `static`
+*/
+
+/* Error Root Cause:
+Observed failure:
+The Change Signature dialog rejects `static` as a return type, or fails to generate valid PHP `static` return type syntax.
+`static` is a legal PHP return type (late static binding, means the class of the called instance).
+
+Expected behavior:
+1. Allow entering `static` in the return type field of Change Signature.
+2. Generate `public function f(): static {}`.
+3. Properly validate that `static` is only used on instance methods (disallow on static functions).
+
+Underlying cause:
+The signature parser/validator for the refactoring dialog has a allowlist of return type keywords and does not include `static`. It treats `static` as invalid input, even though it is a valid reserved type for return declarations in PHP.
+*/
+class C{
+    public function f()
+    {}
+}
+?>

@@ -1,0 +1,27 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Expression `Third.n()` inside method `m()` of class Third
+Refactoring Scope: TypeScript file
+Trigger Operation: Select `Third.n()` and run Extract Method, choosing global scope for the new function
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The extracted global function still calls `Third.n()`, but `n` is declared `private static`. From global scope it is inaccessible, producing a compile error.
+Expected behavior: The refactoring should detect that `Third.n()` is a private static member and either:
+1. Prevent extraction to a scope outside `Third`;
+2. Warn about accessibility violation before generating the code.
+Underlying cause: Extract Method’s dependency analysis only tracks variable/function names, but does not check TypeScript access modifiers (private/protected) when calculating whether a symbol will be visible in the target extraction scope.
+*/
+
+// Complete compilable test code
+class Third {
+    m() {
+        return Third.n(); // <-- extract to global scope => red code
+    }
+
+    private static n() {
+        return 2;
+    }
+}

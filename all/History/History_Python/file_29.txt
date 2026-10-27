@@ -1,0 +1,14 @@
+''' Refactoring Settings:
+Refactoring type: Inline variable refactoring
+Refactoring target: local variable foo, assigned expression 1 + 1
+Refactoring scope: all usages of variable foo in the current file
+Refactoring rule expectation: When inlining variable foo, substitute foo with its right-hand-side expression `1 + 1`. Only add parentheses when required by operator precedence rules; avoid redundant parentheses if they are not needed for preserving evaluation semantics.
+'''
+''' Error Root Cause:
+Observed failure: When inlining variable foo inside `print(foo)`, the refactoring engine wraps the substituted expression with extra parentheses, producing `print((1 + 1))`. For standalone usage `foo`, inlining correctly yields `1 + 1` without extra parentheses.
+Expected behavior: Inline into print call to produce `print(1 + 1)` with no redundant parentheses.
+Underlying cause: The inline variable logic unconditionally wraps the substituted expression in parentheses when the variable appears as a function argument, regardless of whether the original expression already has sufficient precedence, leading to unnecessary parenthesis injection.
+'''
+foo = 1 + 1
+print(foo)
+foo

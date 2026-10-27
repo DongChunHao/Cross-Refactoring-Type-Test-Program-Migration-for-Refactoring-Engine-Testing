@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+void f1(int x){
+    printf("%d", x+1);
+}
+
+void f2(void){
+    printf("%d", 2); //extracted line
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: statement `printf("%d", 2);` inside f2()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select printf line in f2(), invoke Extract‑Function, manually input existing function name `f1` as new‑function name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: User specifies already‑existing function name `f1` for extracted function. CDT silently generates overloaded function `void f1()` alongside original `void f1(int x)`. In C language function overloading is not supported, creating duplicate‑name symbol compilation errors. No warning or error is shown during refactoring.
+Expected behavior: Before generating code, perform name collision check. Detect that target name `f1` is already defined in current translation unit. Prompt user with conflict warning and disallow using that name, or require renaming.
+Underlying cause: Extract‑Function refactoring does not check for existing symbol names in C mode. It permits creating another function with identical identifier, ignoring that C lacks function overloading. The conflict is only exposed at compile‑time, not caught during refactoring UI phase.
+*/

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import "net/http"
+func main() {
+c := &http.Client{}
+invokeDemo(c) // extract demo call into invokeDemo
+}
+func invokeDemo(c *http.Client) {
+demo(c)
+}

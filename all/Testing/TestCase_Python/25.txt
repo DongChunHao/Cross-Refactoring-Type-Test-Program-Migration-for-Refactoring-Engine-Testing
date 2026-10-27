@@ -1,0 +1,19 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: The refactoring engine’s name‑replacement logic mishandles capitalized class identifiers during symbol substitution; it incorrectly applies lower‑casing transformation to class constructor call expressions
+class File:
+def **init**(self, filename, mode):
+self.filename = filename
+self.mode = mode
+def **enter**(self):
+self.open_file = open(self.filename, self.mode)
+return self.open_file
+def **exit**(self, *args):
+self.open_file.close()
+def foo(): // REFACTOR_TARGET
+file_path = '/tmp/nice_file'
+return File(file_path, 'w')
+files = []
+for _ in range(10000):
+with foo() as infile:
+infile.write('foo')
+files.append(infile)

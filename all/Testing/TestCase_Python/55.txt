@@ -1,0 +1,6 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Change‑Signature refactoring only modifies function signature definition; it does not convert existing positional call‑site arguments to keyword form after parameter reordering, leading to wrong argument binding and altered runtime semantics
+def foo(a="a", b="b"):
+return a, b
+def caller(): // REFACTOR_TARGET
+foo("a")

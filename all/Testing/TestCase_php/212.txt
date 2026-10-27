@@ -1,0 +1,15 @@
+```
+<?php
+class Base {
+    const STATUS_ACTIVE = 'active';
+}
+class User extends Base {
+    public function getActiveStatus()
+    {
+        return self::STATUS_ACTIVE;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Members Up refactoring, target `getActiveStatus()` from `User` up to `Base`.

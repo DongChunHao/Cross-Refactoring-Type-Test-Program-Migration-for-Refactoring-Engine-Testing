@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Constant
+Refactoring target: Q\Consts::A
+Operation: Move constant A to a new class, input reserved keyword "New" as the new class name
+Scope: Reserved keyword validation timing for newly created target class name
+*/
+
+/* Error Root Cause:
+Observed failure: The validation error for reserved class name appears prematurely, before the user finishes entering the class name. The dialog triggers reserved-word checking on partial/in-progress input, rather than validating only after the user confirms the name.
+Expected behavior: Validate the class name only after the user finishes typing or submits the dialog; do not show the reserved-keyword error while the user is still editing the name field.
+Underlying cause: The input field’s change listener runs reserved-keyword validation on every keystroke, instead of deferring validation to form submission.
+*/
+namespace Q;
+final class Consts {
+    const A= "1"; //invoke Move constant
+}
+
+echo Consts::A;
+?>

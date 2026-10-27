@@ -1,0 +1,26 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <map>
+class BaseRunner
+{
+public:
+void iterateMap(){}
+};
+class Runner : public BaseRunner //{Push down iterateMap implementation from BaseRunner to Runner}
+{
+public:
+void iterateMap() {
+std::mapstd::string,int testmap = {{"a", 1}, {"b", 2}};
+for (std::mapstd::string,int::iterator it = testmap.begin(); it != testmap.end(); ++it) {
+std::cout << it->first << " -> " << it->second << "\n";
+}
+}
+};
+int main() {
+Runner r;
+r.iterateMap();
+return 0;
+}

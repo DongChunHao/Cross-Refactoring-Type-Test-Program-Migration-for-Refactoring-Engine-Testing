@@ -1,0 +1,17 @@
+''' Refactoring Settings:
+Refactoring type: Rename refactoring (rename source file)
+Refactoring target: file test_sample.py → test_sample2.py
+Refactoring scope: source file name, IDE test run configuration file path references
+Refactoring rule expectation: When renaming a test file, IDE shall automatically update the file path stored inside the unittest test run configuration to point to the new filename test_sample2.py.
+'''
+''' Error Root Cause:
+Observed failure: After renaming test_sample.py to test_sample2.py, the unittest run configuration still references old file path <project_path>/test_sample.py. The configuration becomes invalid and cannot find test file, while older test runners support automatic update of run config paths.
+Expected behavior: IDE should update the file path field within the associated Test Run Configuration synchronously during file rename refactor.
+Underlying cause: The rename refactor file change listener does not track and update external IDE artifacts like test run configuration entries; it only handles source code symbol/file references in code files, ignoring the metadata stored in IDE run configuration settings.
+'''
+# test_sample.py (original test file)
+import unittest
+
+class DemoTest(unittest.TestCase):
+    def test_case(self):
+        self.assertTrue(True)

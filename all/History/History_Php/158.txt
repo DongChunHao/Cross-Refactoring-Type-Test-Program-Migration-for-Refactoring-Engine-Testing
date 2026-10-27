@@ -1,0 +1,45 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Static Method
+Refactoring target: StubsTest::getParameterRepresentation(PHPFunction $function): string
+Operation: Move static method from StubsTest to BaseStubsTest
+Scope: PSI processing and property access resolution for dynamically declared / PHPDoc-described fields during static method movement
+*/
+
+/* Error Root Cause:
+Observed failure: Triggering Move Static Method throws an internal exception. The method accesses `$parameter->is_passed_by_ref`, which is a property declared in PHPParameter as `is_passed_by_reference` (name mismatch) or handled via dynamic/PHPDoc metadata. The refactoring backend’s reference resolver crashes while resolving the property access when rewriting the static method’s qualified names during the move.
+Expected behavior: Resolve property references safely, perform the move, or show a clean user-facing error instead of throwing an unhandled exception.
+Underlying cause: The Move Static Method PSI visitor does not have defensive handling for dynamic/non-literal property lookups or mismatched property name metadata; resolving `is_passed_by_ref` on PHPParameter triggers an uncaught exception in the reference resolution pipeline.
+*/
+class PHPParameter {
+    public bool $is_passed_by_reference;
+    public string $name;
+}
+
+class StubsTest {
+    #[Pure]
+    public static function getParameterRepresentation(PHPFunction $function): string {
+        $result = '';
+        foreach ($function->parameters as $parameter) {
+            if (!empty($parameter->types)) {
+                $result .= implode('|', $parameter->types);
+            }
+            if ($parameter->is_passed_by_ref) {
+                $result .= '&';
+            }
+            $result .= '$' . $parameter->name . ', ';
+        }
+        return rtrim($result, ', ');
+    }
+}
+
+class PHPFunction {
+    /**
+     * @var PHPParameter[]
+     */
+    public array $parameters = [];
+}
+
+class BaseStubsTest {
+}
+?>

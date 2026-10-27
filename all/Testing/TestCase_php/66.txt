@@ -1,0 +1,14 @@
+```
+<?php
+namespace Auth\Failures {
+    use LengthException;
+    class AuthBaseException
+    {
+    }
+    class PasswordLengthError extends LengthException {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `PasswordLengthError`, destination global namespace.

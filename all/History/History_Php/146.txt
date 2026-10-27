@@ -1,0 +1,42 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: My\Attributes\SingleArgument::__construct
+Scope: PHP attribute usage call-site rewriting
+Refactoring operation: add new constructor parameter with default value
+*/
+
+/* Error Root Cause:
+Observed failure:
+When modifying the constructor signature of an attribute class via Change Signature, existing attribute usages like `#[SingleArgument("Hello World")]` are not updated.
+PHP attributes are syntactic sugar for constructor invocations of the attribute class; their argument list should be treated as call sites of the constructor.
+When adding a parameter that has a default value, existing attribute usages remain valid (they can omit the new optional argument), but the refactoring framework should at least recognize these as constructor call sites.
+If adding a required parameter, the attribute usage must be updated to supply the new argument.
+
+Expected behavior:
+1. Treat `#[Attr(...)]` attribute syntax nodes as call sites to the attribute’s constructor.
+2. Include attribute usages in the set of call sites processed by Change Signature.
+3. For new optional parameters: leave existing attribute arguments unchanged (valid).
+4. For new required parameters: update attribute usages to inject the new argument or prompt the user.
+
+Underlying cause:
+The Change Signature call-site collector does not traverse PHP attribute declaration nodes (`#[...]`) and does not treat attribute arguments as constructor calls. Attribute PSI elements are separate from ordinary function/method call expressions and are excluded from reference resolution for constructor refactoring.
+*/
+namespace My\Attributes {
+    use Attribute;
+    #[Attribute]
+    class SingleArgument
+    {
+        public $argumentValue;
+        public function __construct($argumentValue)
+        {
+            $this->argumentValue = $argumentValue;
+        }
+    }
+
+    #[SingleArgument("Hello World")]
+    class Foo
+    {
+    }
+}
+?>

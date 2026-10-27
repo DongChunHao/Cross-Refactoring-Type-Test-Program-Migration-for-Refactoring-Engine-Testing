@@ -1,0 +1,71 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (C++ CLion), test case R17
+Refactoring target: outer scope local variable `int y`
+Operation: Invoke Rename refactoring on outer `y`
+Scope: Respect C++ lexical scoping and variable shadowing; only rename usages of the target outer `y`. Do NOT touch usages of the inner shadowing `int y` declared inside the nested block.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming the outer `y`, the refactoring incorrectly touches references to the inner shadowing local variable `y` inside the nested block `{ int y = 3; y =4; ... }`. That inner `y` is a separate variable that shadows the outer one.
+
+Expected behavior:
+Only rename all usages of the outer `y`. The inner block's `int y` and its usages should remain untouched.
+
+Underlying cause:
+Rename refactoring’s symbol resolution fails to distinguish lexically shadowed variables. It only matches the identifier token `y` instead of resolving the fully qualified symbol in each scope, conflating the outer variable and the inner shadowing variable with identical simple name.
+*/
+
+#include <stdexcept>
+#define MACRO_NO_ARGS 1.0f
+#define MACRO_ONE_ARG(v) (v)
+
+namespace X {
+    int x;
+    int y;
+}
+namespace Y {
+    int x;
+}
+struct Test2 {
+    int Operation() { return 0; }
+};
+
+void demo()
+{
+    Test2 test2;
+    // #TEST#: R17 rename the variable y
+    // #TEST#: R18 rename the variable test2
+    // #TEST#: R19 rename the method Operation
+    // #TEST#: R20 rename the namespace X
+    // #TEST#: R21 rename the variable X::x
+    // #TEST#: R22 rename the variable X::y
+    // #TEST#: R23 rename the variable Y::x
+    int y = test2.Operation() + X::x + X::y + Y::x;
+
+    float x = MACRO_NO_ARGS;
+    x = MACRO_ONE_ARG(2.0f);
+
+    {
+        // #TEST#: R27 Rename the namespace X
+        // #TEST#: R28 Rename the variable X::y
+        using X::y;
+        // #TEST#: R29 Rename y, which is really X::y
+        y = -1;
+    }
+
+    y = 3;
+    {
+        int y = 3;
+        // #TEST#: R30 Rename y, which shadows outer scope y
+        y = 4;
+        if (y != 4)
+        {
+            throw std::runtime_error("R38 may have failed");
+        }
+    }
+    if (y != 3)
+    {
+        throw std::runtime_error("R38 may have failed");
+    }
+}

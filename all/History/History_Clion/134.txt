@@ -1,0 +1,22 @@
+#include <type_traits>
+#include <iostream>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract statement `std::is_same<T, int>::value << '\n';`
+Refactoring scope: Code using local `using T = int;` type alias inside main()
+Refactoring rule expectation: Detect `T` is a local type alias inside main() only, which will not exist in extracted function scope. Prevent extraction or warn user that `T` will be undefined in new function.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method completes extraction without warning, creating code where `T` is undefined inside new function. The local `using T = int;` is scoped only to main() and is not visible inside extracted helper function.
+Expected behavior:
+1. Show warning: local type alias `T` will not be accessible in extracted function.
+2. Either block extraction or automatically substitute `T` with `int` inside extracted function.
+Underlying cause: Extract Method scope analysis does not account for block-scoped `using` type aliases. It treats local `using` alias as available in outer function scope, while C++ scoping rules limit it only inside main().
+*/
+
+int main() {
+    using T = int;
+    std::cout << std::is_same<T, int>::value << '\n'; // extract this line
+}

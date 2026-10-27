@@ -1,0 +1,23 @@
+/* Refactoring Settings:
+Refactoring type: Inline Variable (C++ CLion)
+Refactoring target: variable `x` inside function qqq()
+Operation: Trigger Inline Variable refactoring on `MyClass y = x;` where x is `MyClass x = 2;`
+Scope: Preserve object initialization semantics for classes without default constructors; avoid generating uninitialized object declaration `MyClass x;` which requires default constructor
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining variable x, the refactoring produces `MyClass x;`. This is invalid because MyClass does not have a default constructor.
+Expected behavior: Keep original initialization `MyClass x = 2;` or fully inline all references and remove x entirely, never create an uninitialized declaration for a class lacking default constructor.
+Underlying cause: The refactoring engine’s variable inlining logic does not check whether the type has a default constructor. It attempts to separate declaration and initialization, creating a bare declaration without initializer, which is illegal C++ for types without default constructor.
+*/
+
+class MyClass {
+public:
+    MyClass(int);
+};
+
+void qqq() {
+    MyClass x = 2;
+    MyClass y = x; // caret here
+    x = MyClass(28);
+}

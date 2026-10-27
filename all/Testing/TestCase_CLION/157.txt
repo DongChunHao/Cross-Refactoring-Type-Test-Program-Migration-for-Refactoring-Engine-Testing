@@ -1,0 +1,24 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: createXFromVecItem
+'''
+#include <vector>
+#include <string>
+class X{};
+void createXFromVecItem() { //{Extract method createXFromVecItem from f}
+std::vectorstd::string strings{"foo"};
+X x(strings[0]);
+}
+void f() {
+createXFromVecItem();
+std::string str = "bar";
+X x2(str);
+}
+template  struct vec {
+typedef T value_type;
+value_type& bar();
+};
+void test_vec() {
+vecstd::string v;
+X x(v.bar());
+}

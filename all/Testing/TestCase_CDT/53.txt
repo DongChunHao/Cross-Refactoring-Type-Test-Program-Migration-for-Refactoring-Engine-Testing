@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: *func_0
+'''
+int GlobalVar_0 = 0;
+int func_0() {
+return GlobalVar_0;
+}
+int Function_0() {
+return GlobalVar_0;
+} //rename method for rename‑refactoring‑asterisk‑in‑function‑rename‑return‑type‑mutation‑type‑mismatch defect scenario

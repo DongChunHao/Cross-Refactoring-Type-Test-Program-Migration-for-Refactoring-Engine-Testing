@@ -1,0 +1,6 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+let {x} = {x: {y: 1}};
+let {x: x} = {x: {y: 1}}; //{Move Method target identity‑binding destructuring triggering nested‑destructuring generation failure}

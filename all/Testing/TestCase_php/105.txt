@@ -1,0 +1,13 @@
+```
+<?php
+class Animal{}
+class Cat extends Animal{
+    static function speak(){}
+}
+abstract class AbstractCreature{
+    static final function speak(){}
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static final method `speak()` from class `AbstractCreature` to class `Animal`

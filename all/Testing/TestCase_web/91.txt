@@ -1,0 +1,7 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+class LessCrazy<T, U, V> {
+m(x: (q: T) => [U, V]) {} //{Rename Method target generic method m with nested type referencing U,V}
+}

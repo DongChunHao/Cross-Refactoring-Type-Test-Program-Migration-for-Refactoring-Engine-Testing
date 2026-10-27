@@ -1,0 +1,24 @@
+def calculate_tax(income):
+    tax_rate = income * 0.21
+    return tax_rate
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Introduce Constant refactoring
+Refactoring Target: numeric literal `0.21` inside calculate_tax() function
+Refactoring Scope: current module
+Documentation context: topicId783, conditional=8
+Operation steps: Select literal value 0.21, invoke Refactor → Introduce Constant. Assign constant name TAX_RATE, constant scope set to module‑level.
+Expected refactored output:
+TAX_RATE = 0.21
+def calculate_tax(income):
+    tax_rate = income * TAX_RATE
+    return tax_rate
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: No functional defect; this is a product documentation enhancement request. Official documentation section topicId783 under conditional=8 lacks a concrete runnable code example for Introduce Constant refactoring.
+Expected behavior: Add this complete code example into documentation topicId783 conditional=8 section to illustrate Introduce Constant workflow for numeric literals.
+Underlying cause: Documentation content gap; existing topic describes Introduce Constant concept but does not supply concrete before‑and‑after Python code sample for end‑user reference.
+"""

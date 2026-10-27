@@ -1,0 +1,14 @@
+```
+<?php
+namespace Queue\Errors {
+    use OutOfBoundsException;
+    class QueueBaseException
+    {
+    }
+    class QueueIndexException extends OutOfBoundsException {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `QueueIndexException`, destination global namespace.

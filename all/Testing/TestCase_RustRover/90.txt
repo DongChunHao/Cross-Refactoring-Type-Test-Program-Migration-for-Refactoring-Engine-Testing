@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+fn main() {
+let y = {
+let x = 0;
+x
+};
+fn foo() -> u64 { //{extract existing block logic into new nested foo method}
+let x = 0;
+x
+}
+}

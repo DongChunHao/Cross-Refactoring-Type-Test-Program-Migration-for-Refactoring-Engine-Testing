@@ -1,0 +1,20 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+type Util struct{}
+func (u Util) myFunc(a, b int) (value string, err error) {
+if a < b {
+return
+}
+if b > a {
+return
+}
+return fmt.Sprintf("<caret>")
+}
+func main() {
+u := Util{}
+println(u.myFunc(1,2)) // move myFunc method from Util to standalone function
+}

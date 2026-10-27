@@ -1,0 +1,13 @@
+```
+<?php
+class Base { }
+class Derived extends Base {
+    static function calculateTotal(){}
+    function runCalc()
+    {
+        Derived::calculateTotal();
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `runCalc()` from class `Derived` to parent class `Base`.

@@ -1,0 +1,18 @@
+''' Refactoring Settings:
+Refactoring type: Rename attribute refactoring
+Refactoring target: attribute "id"
+Refactoring caret position: after "f.id", caret marker <CARET> at f.id
+Refactoring scope: local class Foo context, usage site f.id at top‑level script scope
+Refactoring rule expectation: rename all occurrences of attribute "id" belonging to Foo instance, exclude renaming of "self" keyword/reference
+'''
+''' Error Root Cause:
+Observed failure: When performing rename‑attribute refactoring on attribute "id" with caret placed at `f.id`, the refactoring engine incorrectly renames the `self` reference inside `Foo.__init__` instead of renaming the `id` attribute.
+Expected behavior: Only rename the "id" attribute (self.id inside constructor and f.id usage site), keep the `self` keyword untouched.
+Underlying cause: The refactoring engine’s symbol‑resolution logic mis‑identifies the target symbol at the caret location; it confuses the instance reference `self` with the instance attribute `id`, leading to wrong symbol selection for rename operation.
+'''
+class Foo:
+    def __init__(self, id_value):
+        self.id = id_value
+
+f = Foo(3)
+f.id

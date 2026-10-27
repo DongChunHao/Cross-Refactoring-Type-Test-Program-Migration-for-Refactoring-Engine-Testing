@@ -1,0 +1,26 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring (F6)
+Refactoring target: class Foo\Bar\Bar, move to namespace Foo\Bar2
+Scope: the file containing grouped use statement `use Foo\Bar\{Bar};`
+Refactoring operation: relocate Bar from Foo\Bar to Foo\Bar2, update related use imports
+*/
+
+/* Error Root Cause:
+Observed failure: After moving Bar to Foo\Bar2, the grouped use clause becomes `use Foo\Bar\{ Foo\Bar2\Bar };`. This is invalid PHP syntax: grouped use entries inside curly braces cannot contain fully qualified names with separate namespace prefixes.
+Expected behavior: Rewrite the grouped use import to `use Foo\Bar2\{ Bar };`, updating the namespace prefix of the group while keeping the grouped syntax valid.
+Underlying cause: The refactoring’s grouped-use rewriter only modifies the inner item name instead of replacing the entire namespace prefix of the use group. It inserts the full FQN inside the existing group’s brace list, producing malformed grouped-use syntax.
+*/
+namespace Foo\Bar {
+    class Bar
+    {
+    }
+}
+
+namespace {
+    use Foo\Bar\{
+        Bar
+    };
+    $a = new Bar();
+}
+?>

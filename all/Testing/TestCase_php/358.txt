@@ -1,0 +1,15 @@
+```
+<?php
+class C{
+    /**
+     * @param array<int, Exception> $a
+     */
+    public function f(array $a): int
+    {
+        return 0;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `C::f()`, change parameter `$a` type from `array` to `array|int`.

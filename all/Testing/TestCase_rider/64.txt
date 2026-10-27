@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+namespace ConsoleApp1;
+
+public class MyClass
+{
+public void Execute() //{Move Method: target member for project‑rename stale‑PSI‑context highlighting‑loss reproduction}
+{
+}
+}

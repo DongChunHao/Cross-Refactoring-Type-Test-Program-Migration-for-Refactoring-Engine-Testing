@@ -1,0 +1,9 @@
+// Target Refactoring Type: Extract Parameter
+// Expected Defect Performance: Refactoring backend lacks support for Introduce‑Parameter over undefined identifiers within method body; shortcut cannot trigger transformation to add formal parameters and leave assignment statements intact
+class Point:
+def reset(self):
+self.x = 0
+self.y = 0
+def set(self): // REFACTOR_TARGET
+self.x = new_x
+self.y = new_y

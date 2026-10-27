@@ -1,0 +1,12 @@
+```
+<?php
+$logWriter = function () {
+    echo "message";
+};
+$logWrapper = function () use ($logWriter) {
+    $logWriter();
+};
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target closure `$logWriter`, add new parameter `$message`, enable propagation to `$logWrapper`.

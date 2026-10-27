@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Third {
+m() {
+return Third.n(); //{Move Method target method m referencing private static member n}
+}
+private static n() {
+return 2;
+}
+}

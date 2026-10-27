@@ -1,0 +1,34 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Introduce Variable
+Refactoring target: composite slice literal `[]string{"112", "333"}`
+Refactoring rule: When extracting a slice composite literal into a new variable, preserve the full type `[]string` on the right-hand side and emit a valid left-hand variable identifier.
+*/
+
+/* Error Root Cause:
+Observed failure: Invoking Introduce Variable on `[]string{"112", "333"}` produces invalid syntax `[]s := string{"112", "333"}`. The refactoring incorrectly splits the slice type syntax `[]string`, misplacing the brackets and truncating the type name.
+Expected behavior: Generate `strings := []string{"112", "333"}`.
+Underlying cause: The PSI parser/substitution logic mishandles array/slice type nodes during variable introduction. It treats `[]string` as two separate tokens `[]` + `string` and corrupts the AST when building the assignment statement.
+*/
+
+func main() {
+	exp := 1
+	[]string{"112", "333"}
+}
+
+// Bad actual refactored result
+/*
+func main() {
+	exp := 1
+	[]s := string{"112", "333"}
+}
+*/
+
+// Expected correct refactored result
+/*
+func main() {
+	exp := 1
+	strings := []string{"112", "333"}
+}
+*/

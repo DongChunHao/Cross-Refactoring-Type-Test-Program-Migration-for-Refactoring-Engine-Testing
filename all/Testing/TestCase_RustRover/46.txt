@@ -1,0 +1,11 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn main() {
+{
+let a = 1;
+let b = 2; //{move selected let statements into separate outer function}
+let c = a + b;
+};
+}

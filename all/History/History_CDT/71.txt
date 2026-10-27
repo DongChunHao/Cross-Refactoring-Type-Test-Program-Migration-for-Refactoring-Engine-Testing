@@ -1,0 +1,40 @@
+#define Id_0
+int func_0() {
+	int LocalVar_0 = 0;
+    return LocalVar_0;
+}
+int Function_0 ( ){
+    int LocalVar_0 = 4;
+    return LocalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (local variable promote‑to‑global rename side‑effect, rename LocalVar_0 inside func_0, input name `a v` with whitespace)
+Refactoring Target: local variable `LocalVar_0` inside func_0
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select local variable LocalVar_0 inside func_0, invoke Rename refactoring, input string `a v` containing whitespace. In this case the refactoring tool incorrectly promotes local variable to a global static‑const declaration at top of translation unit.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts candidate name `a v` containing whitespace.
+Unexpected side‑effect: the local variable is lifted to global scope, generating `static const int a v = 0;` at file top.
+Inside func_0, original local declaration is removed, reference substituted to `LocalVar_0 = a 	v;`.
+Whitespace acts as C token separator: `a` and `v` are parsed as two separate identifiers. Both global declaration and assignment expression produce syntax error.
+Lexical scope partial behaviour: Function_0’s local LocalVar_0 remains untouched.
+Refactoring completes without warning; malformed source code is persisted.
+This case combines two flaws:
+1. Missing lexical validation: accept whitespace‑containing candidate name.
+2. Unexpected transformation bug: rename of local variable incorrectly promotes variable to global static‑const.
+
+Expected behavior:
+1. Before any modification, validate candidate name strictly against C identifier lexical rules. Reject input `a v` with whitespace, abort refactoring and show error message.
+2. Rename for local variable must keep variable inside original function scope, must not lift it to global static‑const.
+
+Underlying cause:
+1. No lexical‑grammar check for rename candidate; arbitrary raw text is accepted.
+2. CDT rename logic contains an unexpected path: under certain inputs it mis‑triggers variable promotion transformation while performing rename, changing variable storage scope and declaration location.
+*/

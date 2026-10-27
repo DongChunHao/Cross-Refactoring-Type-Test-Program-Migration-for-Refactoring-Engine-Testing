@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+// pack1/main.go
+package pack1
+type Type struct{}
+func (t Type) Foo() { // rename receiver from pack1 to t to avoid name collision
+t.Foo()
+Bar()
+}
+func Bar() {}

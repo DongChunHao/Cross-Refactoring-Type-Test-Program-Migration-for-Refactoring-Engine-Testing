@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Constant refactoring
+Refactoring target: global constant `C`
+Scope: stub classes, writeable PSI validation
+Refactoring operation: attempt to move global constant into a class that comes from IDE stubs (PHP built-in/stub source, read-only)
+*/
+
+/* Error Root Cause:
+Observed failure:
+When selecting a stub-provided class as the target for Move Constant, an internal exception is thrown. Stub classes are read-only synthetic PSI elements; they do not correspond to editable user source files and cannot be modified to add the new constant member. The refactoring lacks a pre-check to reject read-only stub targets before attempting to modify the class PSI.
+
+Expected behavior:
+Before executing the refactoring, check whether the selected target class is from stubs / read-only library source. Show a friendly validation dialog stating that stub classes cannot be modified, instead of letting the code proceed and crash with an exception.
+
+Underlying cause:
+The target resolution logic does not distinguish between user-editable source classes and read-only stub classes. It tries to insert the constant as a member into the stub class’s PSI tree, which fails because stub elements are not mutable.
+*/
+const C = 1;
+?>

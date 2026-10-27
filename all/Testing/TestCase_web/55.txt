@@ -1,0 +1,10 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function foo() {
+function nested() {
+return 1;
+}
+const two = nested() * 2; //{Change Method target enclosing function foo, modify signature}
+}

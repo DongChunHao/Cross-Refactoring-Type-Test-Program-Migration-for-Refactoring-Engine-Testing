@@ -1,0 +1,26 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Push Down / Pull Up Members refactoring
+Refactoring target: typed property `A::$i`
+Scope: native typed property syntax preservation
+Refactoring operation: push down `public int $i` from parent class A to subclass B
+*/
+
+/* Error Root Cause:
+Observed failure:
+When pushing down (or pulling up) a PHP native typed property like `public int $i;`, the refactoring drops the native type modifier in the generated property declaration, only keeping the visibility and property name.
+For example, after push down it becomes `public $i;`, losing the `int` native type.
+
+Expected behavior:
+Preserve the full property signature during move: visibility modifier, native type, property name, default value, and any relevant docblock.
+The moved property in the target class should be `public int $i;`.
+
+Underlying cause:
+The PSI serialization logic for member push/pull up was originally built for untyped properties and docblock-based `@var` types. It does not copy the native property type element when cloning the property to the target class; it only serializes the visibility and variable name.
+*/
+class A {
+  public int $i;
+}
+class B extends A {
+}
+?>

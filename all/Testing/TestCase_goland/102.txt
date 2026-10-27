@@ -1,0 +1,26 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"fmt"
+"time"
+)
+type Author struct {
+Namee   string
+Surname time.Time
+}
+func buildUser() *User { // extract composite literal creation into buildUser
+return &User{
+Author:        Author{},
+Name:          "Sammy the Shark",
+Password:      "fisharegreat",
+PreferredFish: nil,
+CreatedAt:     time.Now(),
+}
+}
+func main() {
+u := buildUser()
+fmt.Println(u.Name)
+}

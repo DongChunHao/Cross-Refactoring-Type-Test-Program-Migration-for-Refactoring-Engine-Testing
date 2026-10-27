@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+
+func demoM(m map[string]float64) { // Rename method demoM to demoMap
+m["pi"] = 3.14
+print(m["pi"])
+}
+func demoS(s []int) {
+s = append(s, 0)
+}
+func main() {}

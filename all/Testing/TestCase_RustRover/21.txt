@@ -1,0 +1,12 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn main() { //{change main method, keep named format placeholder inside macro string literal}
+for i in ["One", "Two", "", "Last"] {
+if !i.is_empty() {
+println!("Hello, world! {i}");
+println!("This was {}", i)
+}
+}
+}

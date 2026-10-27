@@ -1,0 +1,17 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: fetchStudentTuple
+'''
+#include <tuple>
+#include <iostream>
+#include <string>
+std::tuple<double, char, std::string> get_student(int id) { //{Rename method get_student to fetchStudentTuple}
+return std::make_tuple(3.8, 'A', "Lisa Simpson");
+}
+int main() {
+auto student0 = get_student(0);
+std::cout << std::get<0>(student0);
+return 0;
+}
+
+'''

@@ -1,0 +1,7 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: int
+'''
+int main(int a, char** argv) { // Function "main" to be renamed to "int" //rename method for rename‑refactoring‑reserved‑keyword‑as‑function‑name defect scenario
+return a;
+}

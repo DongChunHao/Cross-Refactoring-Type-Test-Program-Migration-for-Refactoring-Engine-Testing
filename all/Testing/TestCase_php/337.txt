@@ -1,0 +1,12 @@
+```
+<?php
+class ConfigLoader
+{
+    public function load()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature on `ConfigLoader::load()`, add parameter `string|null $mode = null`.

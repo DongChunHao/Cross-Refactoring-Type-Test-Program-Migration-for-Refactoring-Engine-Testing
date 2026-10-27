@@ -1,0 +1,16 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+declare function mapConnection(results: any, opts: { nodeToCursor: (node: any) => string }): any;
+declare const context: { getFromApi: (args: any) => Promise<{ results: any[] }> };
+const rootResolvers = {
+Query: {
+fromApi: (root, args, context, info) => { //{Change Method target resolver function enclosing shorthand‑property usage site}
+return context.getFromApi(args).then((json) => {
+const nodeToCursor = (node) => node.databaseId.toString();
+return mapConnection(json.results, {nodeToCursor});
+});
+},
+},
+};

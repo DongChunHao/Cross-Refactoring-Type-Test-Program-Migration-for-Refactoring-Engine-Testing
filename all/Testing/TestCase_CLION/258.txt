@@ -1,0 +1,16 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+// MoveMethod.h
+class BaseAbstract
+{
+public:
+virtual ~BaseAbstract() = 0; //{Pull up destructor declaration into BaseAbstract}
+};
+class MoveMethodAbstractInline : public BaseAbstract {
+public:
+virtual ~MoveMethodAbstractInline() override
+{
+}
+};

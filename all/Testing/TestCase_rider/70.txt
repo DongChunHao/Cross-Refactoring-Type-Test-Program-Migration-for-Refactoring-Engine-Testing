@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+using System;
+
+public class Class1
+{
+public void ProcessData() //{Move Method: target member for invalid‑file‑rename‑undo stale‑PSI‑document‑state bug reproduction}
+{
+Console.WriteLine("sample logic");
+}
+}

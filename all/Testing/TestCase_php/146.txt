@@ -1,0 +1,13 @@
+```
+<?php
+class Container{}
+class BaseModel{}
+class User extends BaseModel{
+    public static function whoAmI() {
+        echo self::class;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `whoAmI()` from class `User` to class `Container`.

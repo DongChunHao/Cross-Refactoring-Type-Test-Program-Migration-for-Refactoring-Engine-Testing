@@ -1,0 +1,24 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace ExtractMethodMissingReplaceAllRepro
+{
+public class Foo
+{
+public void DoSomething()
+{
+var res = String.ToString("bla"); //{Rename Method: target duplicate expression for Extract‑Method missing replace‑all‑occurrences feature gap reproduction}
+Console.WriteLine(res);
+}
+
+public void DoSomethingElse()
+{
+var res = String.ToString("bla");
+Console.WriteLine(res);
+}
+}
+
+}

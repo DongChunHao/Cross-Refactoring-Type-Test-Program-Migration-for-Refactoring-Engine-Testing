@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "net/http"
+type DemoRunner struct{}
+func (r DemoRunner) demo(c *http.Client) { // move demo method from DemoRunner to standalone function
+}
+func main() {
+c := &http.Client{}
+runner := DemoRunner{}
+runner.demo(c)
+}

@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+interface Foo {
+bar: number;
+}
+function createFoo<T>(x: T) {
+return (y: T) => null;
+}
+const foo = createFoo<Foo>({ bar: 1 });
+const extracted = foo({ bar: 2 }); //{Extract Variable target call‑site expression referencing Foo.bar}

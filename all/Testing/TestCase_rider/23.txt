@@ -1,0 +1,37 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+using System.IO;
+
+public class ReceiptRenderer
+{
+public bool RenderReceipt { get; set; }
+public void Method1()
+{
+if (RenderReceipt)
+{
+var fileInfo = new FileInfo("filename");
+Transform(fileInfo); //{Move Method: target call inside structurally duplicate conditional block}
+}
+}
+public void Method2()
+{
+if (RenderReceipt)
+{
+var fileInfo = new FileInfo("filename2");
+Transform(fileInfo);
+}
+}
+public void Method3()
+{
+if (RenderReceipt)
+{
+var fileInfo = new FileInfo("filename3");
+Transform(fileInfo);
+}
+}
+private void Transform(FileInfo fileInfo)
+{
+}
+}

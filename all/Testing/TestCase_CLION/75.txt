@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+unsigned operator""_len(char const* , unsigned long l) {
+return l;
+}
+struct Wrapper {
+int foo() { //{Move function foo into struct Wrapper member function}
+auto s = "bar"_len;
+return s;
+}
+};

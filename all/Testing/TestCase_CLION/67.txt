@@ -1,0 +1,20 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+union Frob
+{
+int i;
+float f;
+double d;
+void Method1()
+{
+i = 3;
+}
+};
+struct Wrapper
+{
+void wrappedMethod(Frob* obj) { //{Move union operation logic into struct Wrapper member function}
+obj->Method1();
+}
+};

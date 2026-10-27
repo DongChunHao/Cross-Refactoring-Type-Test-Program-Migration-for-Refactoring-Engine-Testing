@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+//Hello world
+type Greeting interface { // rename Hello to Greeting
+World()
+}

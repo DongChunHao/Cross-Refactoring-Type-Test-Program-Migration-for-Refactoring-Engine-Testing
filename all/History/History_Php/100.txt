@@ -1,0 +1,19 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Rename refactoring
+Refactoring target: method parameter $e inside foo::bar()
+Scope: parameter declaration and all usages inside the method
+Refactoring operation: rename $e using the suggested name $exception from the completion list
+*/
+
+/* Error Root Cause:
+Observed failure: When selecting the suggested name $exception in the rename popup for the class method parameter $e, the IDE appends the suggestion text to the existing identifier instead of replacing it, producing $eexception. This does not occur in top-level functions, only inside class methods.
+Expected behavior: Selecting the suggested name $exception should fully replace the old name $e, resulting in $exception.
+Underlying cause: The rename input handler for method parameters incorrectly preserves the original identifier text when accepting a completion suggestion. The completion logic for method-scope variables uses append mode instead of overwrite mode, while the handler for global/function-scope variables works correctly.
+*/
+class foo {
+    public function bar (\Exception $e) {
+        echo $e->getMessage();
+    }
+}
+?>

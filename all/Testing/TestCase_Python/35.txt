@@ -1,0 +1,14 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Two issues occur together: redundant old import is not cleaned‑up; code placer puts new function definition at file end ignoring call‑site location, causing call to execute ahead of definition and triggering NameError
+
+# ---- a.py ----
+
+def f():
+pass
+
+# ---- b.py ----
+
+from a import f
+def wrapper(): // REFACTOR_TARGET
+f()
+wrapper()

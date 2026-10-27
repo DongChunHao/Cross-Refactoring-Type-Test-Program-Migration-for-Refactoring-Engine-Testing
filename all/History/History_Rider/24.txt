@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Symbol (Rider C# rename refactoring)
+Refactoring Target: Type / method / property / local variable
+Refactoring Scope: Solution-wide rename, followed by "Go to Declaration" navigation
+Refactoring Rule Expectation: After rename completes successfully, "Go to Declaration" (Ctrl+B / Cmd+B) on any updated reference should jump correctly to the renamed symbol's definition.
+*/
+
+/* Error Root Cause:
+Observed failure: After applying rename refactoring, source references are updated visually, but "Go to Declaration" fails: either nothing happens, jumps to stale old definition location, or reports "Cannot find declaration". Rebuilding or invalidating caches may sometimes fix it.
+Expected behavior: All renamed references should resolve to the new PSI element immediately after refactoring finishes.
+Underlying cause:
+1. Rename refactor updates the text in source files, but does not fully refresh the PSI/symbol index for modified elements.
+2. The reference cache retains stale symbol pointers pointing to the old identifier PSI node, instead of rebinding to the newly renamed node.
+3. The navigation engine uses this stale index data for Go to Declaration, leading to broken navigation even though source text looks correct.
+*/
+
+// Before rename
+public class OldName {}
+var x = new OldName();
+
+// After rename OldName → NewName
+public class NewName {}
+var x = new NewName();
+// Bug: caret on `NewName` in `new NewName()` → Go to Declaration fails

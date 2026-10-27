@@ -1,0 +1,26 @@
+#include <stdio.h>
+#define c 5;
+int main(){
+    int i,k,r;
+    k = i + 1; /* << extract these */
+    r = k*c;   /* << two lines */
+    printf("%d",k);
+    printf("%d",r);
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: two statement lines `k = i + 1;` and `r = k*c;` inside main()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select the two lines, invoke Extract Function refactoring. Variable r is an out‑variable, passed as pointer argument into extracted function.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: Inside extracted_function, generated code uses `r = k * c ;` instead of dereferencing pointer parameter: `*r = k * c;`. The assignment writes to the formal pointer variable itself rather than dereferencing it to modify the caller‑side variable, producing wrong runtime behaviour.
+Expected behavior: When an out‑variable is passed as pointer `int* r`, assignments to original variable r inside extracted code block should become dereferenced assignment `*r = k * c;`.
+Underlying cause: The extract‑function logic correctly detects that `r` is modified and passes it as pointer to the new function, but fails to rewrite assignment left‑hand‑side to dereference the pointer formal parameter. It keeps original variable name without indirection, leading to assigning to the pointer local copy instead of the target variable in caller.
+*/

@@ -1,0 +1,60 @@
+/* Refactoring Settings:
+Refactoring Type: Move To Another File (cross-project move)
+Refactoring Target: C# class / interface moved from one .NET project to another project in the same solution
+IDE: Rider
+Symptom:
+After cross-project Move refactoring:
+1. The file is physically created on disk in the target project directory.
+2. The type is not visible to IntelliSense, Roslyn compiler reports missing type.
+3. Workaround: manually exclude the file from target project, then re-include it; after that the compiler and Rider can see the type normally.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Cross-project Move refactoring performs filesystem copy/move of the source file, but fails to correctly add the new file as a `<Compile>` item into the target project’s MSBuild model.
+- Rider’s PSI/editor sees the file on disk, but the MSBuild project item model for the target project does not register the file as a source compile item.
+- Roslyn language service and .NET compiler rely on MSBuild’s compile item list, not just raw files on disk.
+- The refactoring also may forget to add a project reference from the original source project to the target project, which is required to reference types across projects.
+
+Two separate missing steps in the refactoring handler:
+1. Add the new file to the target project’s compile items in the .csproj.
+2. If needed, add a project reference (ProjectReference) from the source project to the destination project.
+
+When you manually exclude + re-include the file, Visual Studio/Rider MSBuild model re-adds the `<Compile>` entry, which fixes discovery.
+Within-same-project moves do not hit this because the compile item logic is simpler.
+*/
+
+/* Reproduction Steps
+1. Solution with two projects: ProjectA and ProjectB.
+2. A class `MyService` lives inside ProjectA.
+3. Use Move refactoring to move `MyService` into ProjectB.
+Result:
+- File MyService.cs exists on disk under ProjectB folder.
+- ProjectB csproj does NOT have `<Compile Include="MyService.cs"/>`.
+- Code in ProjectA that references `MyService` reports missing type, IntelliSense cannot resolve it.
+- Manually exclude and re-include MyService.cs in ProjectB fixes the discovery.
+
+Expected Behavior
+Cross-project Move refactoring should:
+1. Move the type file to the target project directory.
+2. Insert the corresponding `<Compile>` entry into target project csproj.
+3. Detect cross-project dependency and prompt/add ProjectReference from source project to target project.
+4. Refresh the solution model automatically so Roslyn and Rider immediately recognize the type.
+*/
+
+/* Workarounds
+1. After moving the type, manually exclude and re-include the file in the target project.
+2. Unload and reload the target project to refresh MSBuild items.
+3. Verify the source project has a ProjectReference to the destination project.
+*/
+
+// Before refactoring: ProjectA/MyService.cs
+namespace MyLib
+{
+    public class MyService {}
+}
+
+// After refactoring
+// Disk: ProjectB/MyService.cs exists with the class
+// ProjectB.csproj is missing <Compile Include="MyService.cs" />
+// Compiler cannot find MyService, even though the file is present on filesystem.

@@ -1,0 +1,30 @@
+<?php
+namespace N1;
+use N2\I2;
+class TestChild implements I2 {
+}
+
+namespace N2;
+class A{}
+interface I2 {
+}
+class Test implements I2 {
+    public function f(A $a) {} // <-- Pull Up refactoring target
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method f() in N2\Test
+Action: enable "Implement methods in child class" checkbox
+Refactoring rule: When generating method stubs in child classes located in a different namespace, the refactoring must automatically add appropriate use statements or fully qualify type names so that type references in parameters and return types resolve correctly in the child's namespace.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After pulling f() up into interface I2 and generating the stub implementation in N1\TestChild, the generated method signature uses `A $a` without importing N2\A. Class A does not exist in namespace N1, which makes the code invalid. No corresponding `use N2\A;` is added to TestChild's namespace.
+Expected behavior:
+The generated stub in TestChild should either use the fully qualified name `\N2\A $a` or insert `use N2\A;` in namespace N1 so that type A can be resolved.
+Underlying cause:
+The stub-generation logic for child class implementations only copies the raw type identifiers from the original method signature. It does not compute the required namespace imports or emit fully qualified names when the child resides in a different namespace.
+*/
+?>

@@ -1,0 +1,17 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function f($a)
+Scope: parameter removal, body variable usage analysis
+Refactoring operation: attempt to delete parameter $a via Change Signature dialog
+*/
+
+/* Error Root Cause:
+Observed failure: When trying to remove parameter $a which is referenced inside the function body `echo $a`, Change Signature allows applying the change without warning. This produces broken code where `$a` is undefined.
+Expected behavior: Run dataflow/usage analysis for the parameter; if the parameter is read inside the function body, show a warning/block the removal, or prompt the user that the body still uses this variable.
+Underlying cause: The refactoring’s validation only checks external call sites, it does not check whether the parameter is consumed within the function’s own implementation body before permitting deletion.
+*/
+function f($a) {
+    echo $a;
+}
+?>

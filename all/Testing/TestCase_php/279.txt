@@ -1,0 +1,20 @@
+```
+<?php
+class UserService {
+    /**
+     * Load user by filters.
+     *
+     * @param string $name
+     * @param int    $status
+     * @param bool   $withTrash
+     *
+     * @return User|null
+     */
+    public function find(string $name, int $status, bool $withTrash): ?User
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, reorder parameters: move `$name` to last. New signature: `find(int $status, bool $withTrash, string $name): ?User`.

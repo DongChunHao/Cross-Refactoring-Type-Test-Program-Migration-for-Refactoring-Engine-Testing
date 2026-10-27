@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+
+runClosureAndCall(); // extract method body
+    }
+    private function runClosureAndCall() // extract inner logic into runClosureAndCall
+    {
+        $a = function () {
+            return $this->fa();
+        };
+        $this->fa();
+    }
+}
+?>

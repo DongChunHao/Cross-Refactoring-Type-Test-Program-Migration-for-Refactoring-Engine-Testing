@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+function foo() {
+function nested() {
+return 1;
+}
+const two = nested() * 2; //{Move Method target expression containing nested local function reference}
+}

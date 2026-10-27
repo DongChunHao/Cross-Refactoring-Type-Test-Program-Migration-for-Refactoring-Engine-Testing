@@ -1,0 +1,27 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring (F6)
+Refactoring target: global namespace class SomeOldEntity, move it into a new target namespace (not Project\Model)
+Refactoring options: Auto-import inside namespaces enabled
+Scope: class SomeOldEntity, its inheritance declaration and method bodies
+*/
+
+/* Error Root Cause:
+Observed failure: After moving SomeOldEntity from global namespace into a new namespace, the refactoring adds an unnecessary use statement for \Project\Model\Entity, even though the existing fully qualified name `\Project\Model\Entity` in the extends clause is already valid and does not require an import.
+Expected behavior: If the parent type is written with a leading backslash (fully qualified name), do not inject a redundant `use Project\Model\Entity;` import. Only add use statements for unqualified or relative names that need resolution in the new namespace.
+Underlying cause: The auto-import logic unconditionally generates a use clause for the parent class when moving the subclass into a namespace, without checking whether the type reference is already a FQN that does not require importing.
+*/
+namespace Project\Model;
+class Entity {
+    public function __construct()
+    {
+    }
+}
+
+class SomeOldEntity extends \Project\Model\Entity {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+}
+?>

@@ -1,0 +1,7 @@
+// Target Refactoring Type: Extract Field
+// Expected Defect Performance: The refactoring usage‑finder does not treat string literals inside **slots** as usages of the instance attribute symbol. The refactoring engine ignores **slots** declarations during symbol processing, even though slot string literals define valid instance‑attribute names
+class Spam(object):
+**slots** = ["eggs", "other_attr"]
+def **init**(self):  // REFACTOR_TARGET
+self.eggs = None
+self.other_attr = 10

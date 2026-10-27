@@ -1,0 +1,22 @@
+#include <stdio.h>
+int z = 2;
+int main(){
+    int x = 5;  //extract constant 5
+    printf("%d", z);
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Constant refactoring
+Refactoring Target: integer literal `5` in `int x =5;`
+Refactoring Scope: current file
+IDE: Eclipse CDT Juno Service Release 1 Build id:20120920-0800
+Operation steps: Select literal 5, run Extract Constant, input name "z" for new constant.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT allows user to name the new constant `z`, which already exists as a global variable `int z=2;`. The refactoring generates `static const int z =5;` in the same translation unit, causing redeclaration compile error "invalid redeclaration of 'z'". No warning or blocking prompt appears during refactoring.
+Expected behavior: Before applying refactoring, perform symbol name lookup. Detect identifier `z` is already declared in the same scope, notify user of name conflict and prevent creation of duplicate symbol.
+Underlying cause: Extract Constant refactoring lacks pre‑generation duplicate symbol validation. It does not check the existing symbol table for name collisions before inserting the new constant declaration, leading to duplicate variable definition and compilation failure.
+*/

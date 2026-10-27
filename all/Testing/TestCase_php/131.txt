@@ -1,0 +1,14 @@
+```
+<?php
+namespace {
+    class MailMessage
+    {
+    }
+}
+namespace Mail\Transport {
+    use MailMessage;
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `MailMessage`, move to namespace `Mail\Entity`

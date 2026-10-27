@@ -1,0 +1,39 @@
+#define Id_1
+int global_0 = 1;
+int f_0() {
+    int LocalVar_0 = 10;
+    return global_0;
+}
+int f_1(int LocalVar_0) {
+    return global_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (global variable rename)
+Refactoring Target: global variable `global_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select global variable `global_0`, invoke Rename refactoring, input string `&global_0` as new name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts input `&global_0` containing ampersand `&`.
+The declaration becomes `int &global_0 = 1;`, and every reference site is replaced to `&global_0`.
+In standard C, `&` is the address‑of operator, not reference declarator. This declaration is syntactically invalid. The return statements `return &global_0;` try returning pointer value from an int‑returning function, producing type mismatch and compilation errors.
+Rename is intended only to substitute identifier token; instead the tool injects operator symbol, changing declaration structure and expression semantics. No warning is raised during refactoring.
+
+Expected behavior:
+All rename operations (variable, parameter, function, macro) must validate candidate name against C identifier lexical rules before any source modification:
+1. Valid identifier starts with a letter or underscore.
+2. Allowed characters: letters, underscores, decimal digits only.
+3. Reject inputs containing special symbols `&`, `*`, `#`, `+`, `-`, whitespace and punctuation.
+4. Reject C reserved keywords and literals starting with digits.
+If validation fails, abort refactoring and show error message to user.
+Type‑modifying declarator symbols such as `&` belong to Change‑Signature refactoring and must never be permitted inside rename input field.
+
+Underlying cause:
+CDT rename does not isolate and validate the identifier token. It treats the whole raw user input as the new identifier fragment and directly substitutes it into declaration and all reference locations. Special characters from user input become part of the AST declarator or expression, silently altering program syntax and semantics.
+*/

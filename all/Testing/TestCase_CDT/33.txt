@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: extracted_func_renamed
+'''
+#include <stdio.h>
+#define F
+main() {
+int a,b,c;
+if (c==0)            /* << extract */ //rename method for selection crossing #ifdef‑#else‑#endif preprocessor boundary scenario
+#ifdef F            /*    these */
+if(a==0) printf("a",a);      /*    five */
+#else                /*    lines */
+if(b==0)    printf("b",b);  /*       >> */
+#endif{}
+}

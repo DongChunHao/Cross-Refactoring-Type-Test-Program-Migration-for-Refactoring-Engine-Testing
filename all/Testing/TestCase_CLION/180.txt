@@ -1,0 +1,28 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include<stdio.h>
+#include<stdlib.h>
+struct Wrapper
+{
+static void wrapper_accept(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m) { //{Move accept logic into static wrapper member}
+int i,j;
+for(i=0;i<*n;i++)
+for(j=0;j<*m;j++)
+N[i][j]=M[i][j]-A[i][j];
+}
+};
+void accept(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m);
+void accept(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m){
+Wrapper::wrapper_accept(A,N,M,W,n,m);
+}
+int main(){
+int A[5][4];
+int M[5][4];
+int N[5][4];
+int W[1][4];
+int n=5,m=4;
+accept(A,N,M,W,&n,&m);
+return 0;
+}

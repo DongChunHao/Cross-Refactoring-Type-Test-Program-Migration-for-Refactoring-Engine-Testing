@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+class C {
+public:
+void caller();
+int callee();
+};
+void C::caller() { //{Change method signature: add int param a}
+int x = 2 + 2;
+// refactor beginning vvv
+this->callee();
+if (x == 4) {
+this->callee();
+}
+// refactor ending ^^^
+}

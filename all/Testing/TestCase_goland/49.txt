@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package one
+type S struct{}
+func (s S) Hello() string {
+return "hello"
+}
+func Call() {
+s := S{}
+_ = s.Hello() // move Hello method from S to standalone function
+}

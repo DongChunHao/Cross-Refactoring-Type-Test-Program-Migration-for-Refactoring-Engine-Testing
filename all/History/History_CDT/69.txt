@@ -1,0 +1,40 @@
+void func_0 ( ){
+  int LocalVar_1 = 0;
+	int LocalVar_0 = 100;
+}
+void Function_0 ( ){
+  int LocalVar_1 = 1;
+  int LocalVar_0 = 4;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring(local variable rename inside func_0)
+Refactoring Target: local variable `LocalVar_0` inside func_0
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select local variable LocalVar_0 inside func_0, invoke Rename refactoring, input string `&old` containing ampersand special symbol as new name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts candidate name `&old` containing ampersand `&`.
+Unexpected scope‑promotion side‑effect occurs: tool extracts local variable and generates top‑level static‑const declaration `static const int &old = 100;`.
+Inside func_0, original local variable declaration is removed, variable reference replaced with `int LocalVar_0 = &old;`.
+Multiple defects appear:
+1. `&` is not a valid character for C identifier; the global declaration `static const int &old = 100;` is invalid standard‑C syntax (reference is C‑only feature of C++).
+2. Unintended transformation: local‑variable rename triggers variable extraction to file‑scope static constant, altering storage location and scope.
+3. Expression `LocalVar_0 = &old;` takes address of the global entity, introducing pointer‑type mismatch for integer variable, causing compile‑time error.
+Lexical scope handling is partially correct: homonymous variables LocalVar_0 and LocalVar_1 inside Function_0 are not modified.
+Refactoring completes without warning and persists malformed source code.
+
+Expected behavior:
+1. Early lexical validation before any source‑code change: reject input containing special symbol `&`, abort rename operation and report error message.
+2. Local‑variable rename must keep variable within original function scope; must not trigger extraction/promotion to global static‑const.
+3. Rename refactoring should only perform identifier token substitution, should not alter variable storage‑class, scope or declaration location.
+
+Underlying cause:
+1. Missing lexical validation: special‑symbol‑bearing input is not filtered.
+2. CDT internal refactoring control‑flow bug: invalid rename inputs accidentally fall into variable‑extraction codepath, promoting local variable to static const global instead of performing simple identifier replacement.
+*/

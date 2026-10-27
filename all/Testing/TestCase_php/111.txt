@@ -1,0 +1,15 @@
+```
+<?php
+interface CacheItemInterface {
+    function __construct();
+}
+class CacheItem implements CacheItemInterface {
+    function __construct()
+    {
+    }
+}
+new CacheItem("key1");
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `__construct` in interface `CacheItemInterface`, rename to `initItem`

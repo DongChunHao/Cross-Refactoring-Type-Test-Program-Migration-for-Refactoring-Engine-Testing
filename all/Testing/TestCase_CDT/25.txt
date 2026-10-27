@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+int x(int a) { // Parameter to be renamed //extract variable for formal parameter with pointer‑declarator input scenario
+return a;
+}
+int main(int a, char** argv) {
+return x(a);
+}

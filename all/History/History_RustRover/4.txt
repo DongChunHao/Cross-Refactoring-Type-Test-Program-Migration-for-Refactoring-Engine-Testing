@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring Type: Symbol resolution / Code insight
+Refactoring Target: Import `use foo::Foo;` relying on Cargo renamed dependency
+Refactoring Scope: Rust crate with Cargo dependency rename (`package = "bar"`)
+Plugin Environment: Latest IntelliJ Rust plugin, Rust nightly toolchain, stabilized `rename-dependency` Cargo feature
+Trigger Operation: Open project with `cargo-features = ["rename-dependency"]` and `foo = { package = "bar", version = "0.1" }` in Cargo.toml
+*/
+/* Error Root Cause:
+Observed failure: After enabling the stabilized `rename-dependency` Cargo feature and declaring a renamed dependency (`foo` as alias for the crate named `bar`), the plugin fails to resolve symbols imported via the alias `use foo::Foo;`. The import and all usages are marked as unresolved with red highlighting.
+Expected behavior: The plugin should respect Cargo’s dependency renaming mapping, treat the alias `foo` as the crate name available in source code, and correctly resolve symbols from the underlying `bar` crate.
+Underlying cause: The IntelliJ Rust plugin’s Cargo project model does not parse or apply the `package = "..."` rename mapping from dependency entries that use `rename-dependency`. It continues to look for a crate named `foo` on disk instead of mapping the alias `foo` to the actual upstream crate `bar`.
+*/
+// Cargo.toml
+/*
+cargo-features = ["rename-dependency"]
+[dependencies]
+foo = { package = "bar", version = "0.1" }
+*/
+
+use foo::Foo;
+
+fn main() {
+    let x = Foo::new();
+}

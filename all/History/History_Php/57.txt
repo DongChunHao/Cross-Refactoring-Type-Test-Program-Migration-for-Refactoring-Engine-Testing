@@ -1,0 +1,22 @@
+<?php
+class A{
+    public static final function f(){
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static final function f() from class A to a stub-provided predefined class (e.g. built-in Exception)
+Refactoring rule: Before attempting to modify the target class, the refactoring processor must check whether the destination class comes from read-only stubs / SDK sources. If the target is a stub class, the operation should be rejected with a clean user-facing conflict warning instead of attempting PSI modification and throwing an exception.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When the user selects a PHP built-in/stub class like Exception as the destination for moving the static method, the processor proceeds and tries to insert the method into the stub class’s PSI tree. Stub files are read-only and cannot be edited, which triggers an unhandled exception.
+
+Expected behavior:
+Detect that the target class originates from read-only stubs/SDK. Show a conflict message such as “Cannot move member into read-only stub class Exception”, prevent the refactoring from proceeding, and avoid internal exceptions.
+
+Underlying cause:
+The Move Static Method processor lacks an upfront read-only/stub origin check for the destination class. It assumes all target classes are located in writable project sources and attempts to perform PSI insertion on stub PSI.
+*/

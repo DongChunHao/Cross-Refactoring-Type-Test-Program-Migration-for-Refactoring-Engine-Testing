@@ -1,0 +1,45 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+if (cipher_char !== from_char) /*aaa*/ result = result + clear_char; else {
+/*a*/ result = result + to_char; //jdsfjdnsf
+//jdsfjdnsf
+}
+/**
+
+- @callback myCallback
+- @param {string} p1
+- @param {number} p2
+*/
+myCallback("a", 1); //{Extract Method target call‑expression with preceding JSDoc @callback comment prone to comment‑loss defect}
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+if (cipher_char !== from_char) /*aaa*/ result = result + clear_char; else {
+/*a*/ result = result + to_char; //jdsfjdnsf
+//jdsfjdnsf
+}
+/**
+- @callback myCallback
+- @param {string} p1
+- @param {number} p2
+*/ //{Move Method target standalone JSDoc @callback comment mis‑attached to following call expression}
+myCallback("a", 1);
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing @callback JSDoc followed by call‑expression for introduce‑variable comment‑deletion bug}
+if (cipher_char !== from_char) /*aaa*/ result = result + clear_char; else {
+/*a*/ result = result + to_char; //jdsfjdnsf
+//jdsfjdnsf
+}
+/**
+  - @callback myCallback
+  - @param {string} p1
+  - @param {number} p2
+  */
+  myCallback("a", 1);
+  }

@@ -1,0 +1,34 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract expression `a.x;` inside `example()` into function `foo()`
+Refactoring rule expectation: When inserting forward declaration `void foo(MyStruct *a);`, respect source order: place declaration **after** `typedef struct A MyStruct;`, otherwise `MyStruct` is not yet defined at the point of forward declaration.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method inserts `void foo(MyStruct *a);` **before** `typedef struct A MyStruct;`. At the line of forward declaration, `MyStruct` is unknown, leading to compilation error.
+Expected result:
+struct A {
+    int x;
+};
+typedef struct A MyStruct;
+void foo(MyStruct *a);
+int example() {
+    MyStruct a;
+    foo(&a);
+    return a.x;
+}
+void foo(MyStruct *a) {
+    (*a).x;
+}
+Underlying cause: Extract Method does not validate the order of type definitions/typedefs when inserting new function declarations. It inserts the forward declaration at the top of the file before the typedef, ignoring that `MyStruct` is only declared later in the source.
+*/
+
+struct A {
+    int x;
+};
+typedef struct A MyStruct;
+int example() {
+    MyStruct a;
+    a.x;
+    return a.x;
+}

@@ -1,0 +1,15 @@
+''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+#define Id_0
+void main_0(float aa_0){ // parameter to be renamed //extract method for rename‑refactoring preprocessor‑branch false‑positive‑block scenario
+#ifdef Id_0
+aa_0 = 2;
+#else
+aa_0 = 0;
+#endif
+#ifdef Id_0
+aa_0 = 100;
+#endif
+}

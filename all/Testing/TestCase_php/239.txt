@@ -1,0 +1,20 @@
+```
+<?php
+/**
+ * Class Test
+ */
+class Test {
+    private static function testA()
+    {
+        // Select this:
+        $var       = new stdClass();
+        $var->val1 = true;
+        // Keep this:
+        $var       = new stdClass();
+        $var->val1 = false;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Extract Method refactoring, select block `$var = new stdClass(); $var->val1 = true;` inside `Test::testA()`, extract into new private static method `testB()`.

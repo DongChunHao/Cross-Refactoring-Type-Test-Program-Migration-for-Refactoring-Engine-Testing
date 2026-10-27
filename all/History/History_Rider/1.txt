@@ -1,0 +1,26 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Class (Rider C# rename refactoring)
+Refactoring Target: Class B, intended new name: A
+Refactoring Scope: Solution-wide rename of type symbol
+Refactoring Rule Expectation: Conflict detection should only consider source-code types present in the current solution, not stale decompiler cache entries. If no source class named A exists in the target scope, rename should proceed normally.
+IDE: Rider 2019.1
+Related tickets: DEXP-448590, DEXP-448332
+*/
+
+/* Error Root Cause:
+Observed failure: After renaming class A → X, then attempting to rename class B → A, Rider reports a naming conflict claiming `A` already exists. The conflict points to a file inside the decompiler cache directory (`DecompilerCache/decompiler/.../A.cs`). Invalidate Caches + Restart does not resolve the issue.
+Expected behavior: Rename conflict resolver should ignore decompiler cache synthetic files. Conflict check should only evaluate user source files and referenced assembly symbols, not stale decompiler cache artifacts.
+Underlying cause: The rename conflict checker queries decompiler cache alongside live source symbols. Even after the original source `A` was renamed away, the decompiler cache still contains a cached synthetic `A` type; the conflict detection logic treats this cached decompiler entry as a real in-solution type and blocks the rename. Cache invalidation does not clear or reset the decompiler cache index responsible for this check.
+*/
+
+// Step 1: Initial state
+public class A {}
+public class B {}
+
+// Step 2: Rename A => X
+public class X {}
+public class B {}
+
+// Step 3: Attempt rename B => A
+// Rider blocks with conflict: "A exists" pointing to decompiler cache A.cs
+// No source-file A exists anymore, only stale decompiler cache entry.

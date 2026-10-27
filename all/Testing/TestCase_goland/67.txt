@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type MathHelper struct{}
+func (mh MathHelper) sum(a, b, c int) int {
+return a + b + c
+}
+func caller() int {
+h := MathHelper{}
+return h.sum(1,2,3) // move sum method from MathHelper to standalone function
+}

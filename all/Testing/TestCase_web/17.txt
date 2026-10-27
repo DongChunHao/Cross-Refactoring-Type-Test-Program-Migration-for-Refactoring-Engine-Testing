@@ -1,0 +1,19 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function foo(){
+return 1 + 2;
+}
+async function fooAsync() { //{Change Method signature with partial await fragment selection}
+return await asyncFunction();
+}
+async function asyncFunction() {
+return Promise.resolve(0);
+}
+
+ 如何确保新的测试用例能够覆盖所有的功能场景？
+
+ 除了以上提到的方法，还有哪些常见的代码重构类型？
+
+ 如何进行代码重构的风险评估？

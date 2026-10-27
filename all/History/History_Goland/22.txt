@@ -1,0 +1,34 @@
+package pack1
+
+/* Refactoring Settings:
+Refactoring type: Extract Interface
+Refactoring target: Extract interface I1 into package pack2
+Refactoring scope: Interface declaration `type I1 interface { Foo() }`
+Refactoring rule: When the target import path's default package name conflicts with an existing identifier (constant, type, variable, func) in the source file, automatically introduce an import alias to avoid name collision.
+*/
+
+/* Error Root Cause:
+Observed failure: The source file already has a constant `pack2`, so the identifier `pack2` is occupied. The refactoring adds an unaliased `import "pack2"`, which produces invalid Go code because `pack2` resolves to the constant instead of the imported package.
+Expected behavior: Detect the name collision, generate an aliased import such as `import pack2pkg "pack2"` and qualify references using the alias.
+Underlying cause: Extract Interface does not scan the current file’s existing top-level identifiers before choosing the import name; it assumes the target package name is available for use without checking for name clashes.
+*/
+
+const pack2 = 0
+
+type I1 interface {
+	Foo()
+}
+
+// Bad generated import reference after extract interface
+/*
+package pack1
+import "pack2" // Conflict: pack2 is already the name of a constant
+var x pack2.I1
+*/
+
+// Expected generated import reference with alias
+/*
+package pack1
+import pack2pkg "pack2"
+var x pack2pkg.I1
+*/

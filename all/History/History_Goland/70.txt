@@ -1,0 +1,48 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Introduce Variables from Result (Cmd+Alt+V for multi-return)
+Refactoring target: call `foo()` returning `(i int, s string)`
+Refactoring rule: When generating variable names for multi-return assignment, perform scope collision check against existing local identifiers. If the proposed name already exists in the current scope, auto-generate a safe variant (i2, s2 etc.) instead of reusing the conflicting name.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Scope already has `i := 1` and `s := ""`. Invoking Introduce Variables from Result on `foo()` suggests `i, s := foo()`. This creates a shadowing declaration, which is legal Go but likely unintended by the user; the refactoring does not detect the name collision for multi-return tuple case.
+
+Observed contrast:
+For single-value/sequence extraction, the collision detection works correctly and generates `i2`.
+The bug is isolated to the multi-return introduce-variable branch: the name resolution for tuple return names ignores existing locals in the block scope.
+
+Expected behavior:
+Produce non-conflicting names such as `i2, s2 := foo()`.
+
+Underlying cause:
+The multi-return name suggestion logic uses the return parameter names directly without running the same scope uniqueness check that single-value extraction uses.
+*/
+
+func main() {
+	i := 1
+	s := ""
+	foo() // <caret> introduce variables from result
+}
+
+func foo() (i int, s string) {}
+
+// Bad actual refactored result
+/*
+func main() {
+	i := 1
+	s := ""
+	i, s := foo() // shadows existing i, s
+}
+*/
+
+// Expected correct refactored result
+/*
+func main() {
+	i := 1
+	s := ""
+	i2, s2 := foo()
+}
+*/

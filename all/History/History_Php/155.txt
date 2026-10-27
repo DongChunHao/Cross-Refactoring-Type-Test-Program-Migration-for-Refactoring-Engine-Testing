@@ -1,0 +1,24 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: getLists($user_id, $contact_type = AB_PERSON,$return_array = false, $limit = 100, $calculate_meta=false, $list_by_name=false)
+Operation: Insert new parameter $list_filter='open' and reorder parameters using up/down arrow controls in the Change Signature dialog
+Scope: Parameter list model state management during interactive reordering and parameter insertion
+*/
+
+/* Error Root Cause:
+Observed failure: When inserting a new parameter with a default value and reordering parameters with the arrow buttons in Change Signature, all existing parameters get overwritten and renamed to the new parameter name ($list_filter).
+Original signature parameters are replaced in bulk, resulting in duplicate $list_filter entries.
+Expected behavior: Insert the new parameter and reorder parameters independently; preserve each existing parameter’s name, type and default value.
+Underlying cause: The dialog’s parameter table model has a state corruption bug. During reorder operations, it incorrectly reuses the new parameter’s data object for all parameter rows instead of maintaining separate model entries for each individual parameter.
+*/
+define('AB_PERSON', 1);
+
+class SomeClass
+{
+    public static function getLists($user_id, $contact_type = AB_PERSON,$return_array = false, $limit = 100, $calculate_meta=false, $list_by_name=false)
+    {
+        // function body omitted for reproduction
+    }
+}
+?>

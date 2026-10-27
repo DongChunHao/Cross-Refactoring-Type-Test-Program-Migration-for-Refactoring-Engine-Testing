@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring type: Move refactoring (move function A::foo() into namespace Namesp)
+Refactoring target: Move member function foo() from namespace A into namespace Namesp
+Refactoring scope: void A::foo() { A::ANNA a; }
+Refactoring rule expectation: Detect symbol declaration order dependency, emit warning when moving function before the definition of A::ANNA. Preserve fully qualified name `A::ANNA` in moved function body.
+*/
+
+/* Error Root Cause:
+Observed failure: Move refactoring moves foo() into namespace Namesp **before** namespace A where ANNA is defined. It drops the `A::` qualifier, turning `A::ANNA a;` into `ANNA a;`, which cannot be resolved. No warning is emitted for this declaration-order issue.
+Expected behavior:
+1. Keep fully qualified name `A::ANNA a;` inside Namesp::foo();
+2. Warn user that moved function appears before namespace A definition if source order is unchanged.
+Underlying cause: The refactoring engine does not track source code declaration order and does not preserve namespace qualification for references inside the moved function body; it also lacks the validation check/warning present for cross-file move operations.
+*/
+
+namespace Namesp {
+}
+namespace A {
+    class ANNA {
+    };
+    void foo() { //move foo
+        A::ANNA a;
+    }
+}

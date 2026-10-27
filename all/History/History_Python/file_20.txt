@@ -1,0 +1,17 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function)
+Refactoring target: function f2 from a.py to new module b.py
+Refactoring scope: function f2 body, cross-module import dependencies for referenced symbols
+Refactoring rule expectation: After moving f2 to b.py, automatically add import of f1 from a in destination module b.py, so call f1() inside f2 can be resolved.
+'''
+''' Error Root Cause:
+Observed failure: After moving f2 into new module b.py, the call `f1()` inside f2 remains unchanged, but no import statement `from a import f1` is added to b.py. This causes unresolved reference error for f1 in b.py.
+Expected behavior: Destination module b.py should insert `from a import f1`, keep `f1()` in function body.
+Underlying cause: Move refactor dependency analysis collects references inside the moved function, but incorrectly treats f1 as a local symbol of original module and fails to generate the required cross-module import in destination file. The resolver assumes f1 is in same module after move and skips import generation.
+'''
+# a.py
+def f1():
+    pass
+
+def f2():
+    f1()

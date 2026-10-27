@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: getRandomInt
+'''
+#include <cstdlib>
+void getRandomInt() //{Rename method test to getRandomInt}
+{
+int x;
+x = rand();
+}

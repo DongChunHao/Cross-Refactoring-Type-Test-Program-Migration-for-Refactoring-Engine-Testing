@@ -1,0 +1,7 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+fn g() {
+!true && !false; //{extract boolean expression logic into new method f}
+}

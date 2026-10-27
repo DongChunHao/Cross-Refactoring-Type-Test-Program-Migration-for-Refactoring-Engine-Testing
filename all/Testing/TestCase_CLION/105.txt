@@ -1,0 +1,21 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#define array_length(arr) (sizeof(arr) / sizeof((arr)[0]))
+struct num {
+int member;
+} num[] = {{ 1 }};
+struct Wrapper
+{
+void wrapperDemo() { //{Move demo logic into struct Wrapper member function}
+const char *str;
+for (const struct num *p = num + array_length(num); p-- != num;)
+if ((str = "expr") != 0)
+return;
+}
+};
+void demo(void) {
+Wrapper w;
+w.wrapperDemo();
+}

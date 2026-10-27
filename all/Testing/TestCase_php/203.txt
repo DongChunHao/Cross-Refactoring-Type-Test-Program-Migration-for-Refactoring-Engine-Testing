@@ -1,0 +1,15 @@
+```
+<?php
+interface I {
+    /**
+     * @param int $a
+     * @param int $b
+     *
+     * @throws \Exception
+     */
+    function foo($a, $b);
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target interface method `I::foo()`, add new parameter `int $c`.

@@ -1,0 +1,32 @@
+/* Refactoring Settings:
+Refactoring type: Extract Function / Extract Method (CLion C++)
+Refactoring target: expression `name + " " + surname` inside const member function `Person::getName(bool full) const`
+Operation: Select expression `name + " " + surname`, invoke Extract Method (Ctrl+Alt+M), name new method getFullName
+Scope: When extracting helper method from inside a const member function that only reads instance members, the generated helper member function must be marked const.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, the newly created `getFullName` member function is missing the `const` qualifier.
+When calling `getFullName()` inside `getName(...) const`, the `this` pointer is const-qualified, invoking a non-const member function is invalid and causes compilation error.
+
+Expected behavior:
+The extracted helper function signature:
+std::string getFullName() const { return name + " " + surname; }
+
+Underlying cause:
+Extract Method refactoring fails to propagate const cv-qualifier to the new extracted member function. The semantic analyzer does not detect that the extracted code only reads class members and is invoked from a const member function, so it omits the const qualifier.
+*/
+
+#include <string>
+struct Person {
+  std::string name;
+  std::string surname;
+
+  std::string getName(bool full) const {
+    if (full) {
+      return name + " " + surname;   // return getFullName()
+    }
+    return name;
+  }
+};

@@ -1,0 +1,43 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+
+---
+
+interface Props {
+name: string, //{Extract Method target symbol defined in astro frontmatter‑ts‑ast, reference exists in separate template‑ast context}
+age: number
+}
+
+const {name = "name", age = 25} = Astro.props
+
+---
+
+<p>{name}</p>
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+---
+interface Props {
+name: string,
+age: number
+}
+const {name = "name", age = 25} = Astro.props
+---
+<p>{name}</p> //{Move Method target template‑interpolation‑reference, symbol‑resolver cannot cross frontmatter‑template ast‑boundary}
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper simulating dual‑ast cross‑context symbol reference scenario reproducing astro rename‑reference‑mapping defect}
+interface Props {
+name: string;
+age: number;
+}
+const props: Props = {name: "name", age: 25};
+const {name = "name", age = 25} = props;
+const templateInterpolation = name;
+}
+'''

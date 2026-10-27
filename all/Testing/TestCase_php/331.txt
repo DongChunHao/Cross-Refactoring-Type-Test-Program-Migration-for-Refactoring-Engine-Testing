@@ -1,0 +1,14 @@
+```
+<?php
+class OrderService
+{
+    public function calculate(int $base, float $tax)
+    {
+    }
+}
+$svc = new OrderService();
+$svc->calculate(tax: 0.08, base: 100);
+?>
+```
+
+【Refactoring Action】: Change Signature on `OrderService::calculate(int $base, float $tax)`; swap parameter order to `$tax, $base`.

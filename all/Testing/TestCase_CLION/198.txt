@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: retrieveStmtText
+'''
+#include "clang-tidy/readability/RedundantVoidArgCheck.h"
+// Other existing includes
+namespace {
+std::string retrieveStmtText(const clang::Stmt *stmt) { //{Rename method getText to retrieveStmtText}
+return "";
+}
+} // anonymous namespace
+void RedundantVoidArgCheck::someFunc() {
+const clang::Stmt *stmt = nullptr;
+std::string text = retrieveStmtText(stmt);
+}

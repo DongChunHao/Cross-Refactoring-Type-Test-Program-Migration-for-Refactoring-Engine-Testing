@@ -1,0 +1,27 @@
+<?php
+/**
+ * Class A
+ */
+/**
+ * Class \A
+ */
+class A{
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class A from global namespace into namespace N
+Refactoring rule: When moving a class out of the global namespace, the refactoring should update class references inside PHPDoc comments, including fully qualified names like `\A` and short names like `A` in doc text.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving class A into namespace N, the PHPDoc comments remain unchanged: they still contain `Class A` and `Class \A`. These comment references are not rewritten to `Class N\A`.
+While comments are not executable code, IDE tooltips, documentation generators, and static analysis read these PHPDoc class references; they become stale and misleading after the move.
+
+Expected behavior:
+Treat class name occurrences in PHPDoc class references as usages. When moving the class, update these doc comment name references consistently with how regular code references are updated.
+
+Underlying cause:
+Move Class processor skips scanning and updating class name references within plain PHPDoc text/comments, only modifying PHP code PSI elements. It does not apply rename/refactor logic to doc comment textual class mentions.
+*/

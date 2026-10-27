@@ -1,0 +1,21 @@
+```
+<?php
+namespace Utils;
+function calcTotal(float $price): float {
+    return calcTax($price) + $price;
+}
+function calcTax(float $price): float {
+    return $price * 0.08;
+}
+function format(float $val): string {
+    return (string)$val;
+}
+calcTotal(100);
+calcTax(50);
+format(123);
+namespace App;
+class Invoice{}
+?>
+```
+
+【Refactoring Action】: Move Utils\calcTotal, Utils\calcTax, Utils\format into App\Invoice as static methods.

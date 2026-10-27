@@ -1,0 +1,21 @@
+/* Refactoring Settings:
+Refactoring type: Extract Function (C++ CLion)
+Refactoring target: expression `"bar"_len` inside `foo()`
+Operation: Select line `auto s = "bar"_len;` and invoke Extract Function refactoring, name new function getInt
+Scope: Handling of C++ user-defined literal operator tokens during extraction; preserve user-defined literal syntax `""_suffix` instead of splitting literal and suffix operator
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Function breaks user-defined literal `"bar"_len` into invalid syntax `"bar"operator;`. The refactoring engine incorrectly splits the user-literal token pair, separating the string literal from the `_len` suffix and producing malformed code.
+Expected behavior: Keep the full user-defined literal `"bar"_len` intact inside the extracted function, generate valid code: `auto s = "bar"_len;`.
+Underlying cause: The PSI tokenizer for older CLion versions (2016.3.2 EAP) does not treat user-defined literals as a single composite PSI node. During the text replacement for extraction, the suffix identifier `_len` is incorrectly parsed as a separate operator token, corrupting the literal syntax.
+*/
+
+unsigned operator""_len(char const* , unsigned long l) {
+    return l;
+}
+
+int foo() {
+    auto s = "bar"_len; //!
+    return s;
+}

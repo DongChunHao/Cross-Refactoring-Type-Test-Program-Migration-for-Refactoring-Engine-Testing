@@ -1,0 +1,61 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: Selected `println!("test");` inside `impl<T> Trait for Foo<T>`
+Refactoring Scope: Generics parameter propagation when creating inherent impl from trait impl
+Plugin Environment: IntelliJ Rust plugin 0.4.154.4085-212, CLion 2021.2.1, Rust 1.56.0-nightly, Arch Linux
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Method on the selected statement within the generic trait implementation
+*/
+/* Error Root Cause:
+Observed failure: Extract Method takes code from `impl<T> Trait for Foo<T>` and generates `impl Foo<T>`, which is invalid Rust syntax. The generic parameter list `<T>` is missing on the impl header.
+Expected behavior: Copy the required generic parameters and bounds from the source trait impl to the new inherent impl, producing `impl<T> Foo<T> { ... }`.
+Underlying cause: The refactor collects the type name `Foo<T>` but fails to carry over the surrounding generic parameter clause `<T>` into the new inherent impl block.
+*/
+// Before
+struct Foo<T> { t: T }
+trait Trait {
+    fn foo(&self);
+}
+
+impl<T> Trait for Foo<T> {
+    fn foo(&self) {
+        println!("test");
+    }
+}
+
+// Actual broken output
+struct Foo<T> { t: T }
+trait Trait {
+    fn foo(&self);
+}
+
+impl<T> Trait for Foo<T> {
+    fn foo(&self) {
+        Self::bar();
+    }
+}
+
+impl Foo<T> {
+    fn bar() {
+        println!("test");
+    }
+}
+
+// Expected output
+struct Foo<T> { t: T }
+trait Trait {
+    fn foo(&self);
+}
+
+impl<T> Trait for Foo<T> {
+    fn foo(&self) {
+        Self::bar();
+    }
+}
+
+impl<T> Foo<T> {
+    fn bar() {
+        println!("test");
+    }
+}

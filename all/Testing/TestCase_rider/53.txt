@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using UnityEditor;
+using UnityEngine;
+
+namespace DefaultNamespace
+{
+public static class MyLog
+{
+[MenuItem("Test/Log")]
+public static void LogSomething() //{Change Method: target log‑emitting method for Unity stale‑path navigation bug reproduction}
+{
+Debug.Log("Test");
+}
+}
+}

@@ -1,0 +1,9 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+class Dog {}
+class LittleDog extends Dog {
+// noInspection unused
+field; // inline //{Pull Up Method for member field with associated comments}
+}

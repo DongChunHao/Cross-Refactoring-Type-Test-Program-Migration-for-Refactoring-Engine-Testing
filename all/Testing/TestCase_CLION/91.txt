@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: MultiplyByScalar
+'''
+namespace PV3D {
+using PV3DNumberType = double;
+class Vector3 {
+public:
+//| Comment line here
+static Vector3 Multiply(Vector3 src, PV3DNumberType scale); //{Rename method Multiply to MultiplyByScalar}
+};
+}

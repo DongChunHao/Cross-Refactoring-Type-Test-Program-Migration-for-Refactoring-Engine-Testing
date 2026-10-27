@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+let {x} = {x: {y: 1}}; //{Extract Method target shorthand destructuring for generate‑destructuring‑patterns bug reproduction}
+let {x: x} = {x: {y: 1}};

@@ -1,0 +1,6 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+const aaa = {};
+const bbb = { ...aaa }; //{Move Method target enclosing scope statement containing spread element}

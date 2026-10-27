@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+
+innerWork(); // extract body logic
+    }
+    private function innerWork() // extract inner logic into innerWork
+    {
+    }
+}
+?>
+'''

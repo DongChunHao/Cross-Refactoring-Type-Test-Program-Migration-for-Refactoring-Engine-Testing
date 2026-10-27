@@ -1,0 +1,21 @@
+```
+<?php declare(strict_types = 1);
+// SourceClass.php
+class SourceClass {
+    const STATUS_ACTIVE = 1;
+}
+// Consumer.php
+use \InvalidArgumentException as IA;
+class Consumer {
+    public function check()
+    {
+        return SourceClass::STATUS_ACTIVE;
+    }
+}
+// DestClass.php
+class DestClass {
+}
+?>
+```
+
+【Refactoring Action】: Move Member To Class refactoring, move constant `SourceClass::STATUS_ACTIVE` to `DestClass`.

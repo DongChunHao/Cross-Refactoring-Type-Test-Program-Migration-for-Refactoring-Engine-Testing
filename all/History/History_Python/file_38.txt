@@ -1,0 +1,16 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function)
+Refactoring target: function a() to another module
+Refactoring scope: exception type references inside except block, built‑in exception import generation
+Refactoring rule expectation: When moving function containing `except KeyError:`, KeyError is Python built‑in exception, no import statement should be added to destination module.
+'''
+''' Error Root Cause:
+Observed failure: After moving function a(), refactor incorrectly inserts `from exceptions import KeyError` into destination module. This import is redundant and invalid in Python3 (exceptions module no longer exists).
+Expected behavior: Recognize KeyError as built‑in symbol; skip adding import for built‑in exceptions.
+Underlying cause: Move refactor’s dependency collector does not maintain a built‑in symbols whitelist. It treats KeyError as a regular user‑defined type and tries to generate import, mistakenly targeting obsolete `exceptions` module which only exists in Python2.
+'''
+def a():
+    try:
+        do_smth()
+    except KeyError:
+        do_smth()

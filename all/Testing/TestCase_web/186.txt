@@ -1,0 +1,30 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+function sample(a) {
+let result = 0
+if (a > 0) {
+result = a + 1 //{Move Method target assignment‑only variable write, data‑flow misclassifies write‑only variable as input‑parameter}
+}
+return result
+}
+function sample2(a) {
+let result = 0
+if (a > 0) {
+result = a
+} else {
+result = 0
+}
+return result
+}
+function sample3(a) {
+let result = 0
+if (a > 0) {
+result = a
+}
+else {
+throw new Error()
+}
+return result
+}

@@ -1,0 +1,15 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+package main
+
+type MyWriter interface {
+Write(p []byte) (error, string)
+}
+type DiscardWriter struct{}
+func (DiscardWriter) Write([]byte) (c error, a string) { // Change method: add new input parameter id int
+return nil, "1"
+}
+
+func main() {}

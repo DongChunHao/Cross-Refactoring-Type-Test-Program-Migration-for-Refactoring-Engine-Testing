@@ -1,0 +1,26 @@
+/* Refactoring Settings:
+Refactoring type: Extract Function (C++ CLion)
+Refactoring target: expression `std::get<1>(student0)` inside main()
+Operation: Select expression `std::get<1>(student0)` and invoke Extract Function refactoring
+Scope: Type highlighting and type deduction for std::tuple and std::get template access; regression checking between CLion 2021.2.3 and later EAP builds
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Function preview shows incorrect type highlighting for std::tuple element type. CLion 2021.2.3 works correctly, but later EAP versions introduce regression. The template argument `<1>` inside `std::get<1>(student0)` is mishandled during type inference/highlighting for the extracted variable/function signature.
+Expected behavior: Correctly deduce the tuple element type (char) for extracted function, render proper C++ type syntax and correct preview highlighting.
+Underlying cause: A regression in the C++ PSI template argument resolution logic. The parser/token highlighter mishandles template parameters inside std::get<> when computing the type for extraction preview. This defect may be related to ticket CPP-26370.
+*/
+
+#include <tuple>
+#include <iostream>
+#include <string>
+
+std::tuple<double, char, std::string> get_student(int id) {
+  return std::make_tuple(3.8, 'A', "Lisa Simpson");
+}
+
+int main() {
+    auto student0 = get_student(0);
+    std::cout << std::get<0>(student0);
+    return 0;
+}

@@ -1,0 +1,22 @@
+// foo.cpp
+#include "f.hpp"
+
+/* Refactoring Settings:
+Refactoring type: Move (free-standing function)
+Refactoring target: Move free function void f() from foo.cpp to new source file f.cpp
+Refactoring scope: Free-standing function definition f()
+Refactoring rule expectation: 1. Generate f.hpp with function declaration void f(); 2. Add #include "f.hpp" in original foo.cpp; 3. Add f.cpp to CMakeLists.txt build targets
+*/
+
+/* Error Root Cause:
+Observed failure: After moving free function f() to f.cpp: 1. f.cpp is not added into CMakeLists.txt, causing link error; 2. Generated f.hpp header file is empty and missing function declaration; 3. Original foo.cpp does not add #include "f.hpp".
+Expected behavior: Create f.hpp containing void f();, add #include "f.hpp" to foo.cpp, add f.cpp to CMakeLists.txt so the linker can find f().
+Underlying cause: The Move refactoring implementation for free functions only moves the function body and creates a blank header skeleton, but fails to emit the function declaration in header, inject the required include directive in caller file, and update CMake build configuration.
+*/
+
+void f() {
+}
+
+void g() {
+    f();
+}

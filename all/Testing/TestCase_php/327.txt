@@ -1,0 +1,16 @@
+```
+<?php
+#[Attribute]
+class Validate
+{
+    public function __construct(string $msg) {}
+}
+
+#[Validate("invalid input")]
+class RequestDto
+{
+}
+?>
+```
+
+【Refactoring Action】: Change Signature on `Validate::__construct`, add **required** parameter `int $code` after `$msg`.

@@ -1,0 +1,21 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+func myFunc(a, b int) (value string, err error) {
+if a < b {
+return
+}
+if b > a {
+return
+}
+return formatString() // extract fmt.Sprintf call into formatString
+}
+func formatString() string {
+return fmt.Sprintf("<caret>")
+}
+func main() {
+println(myFunc())
+}

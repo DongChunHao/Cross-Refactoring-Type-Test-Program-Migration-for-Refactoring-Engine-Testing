@@ -1,0 +1,21 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: Some::foo()
+Operation: Add new parameter `string $param = null`
+Scope: Validation of non-nullable parameter types paired with null default value inside Change Signature dialog
+*/
+
+/* Error Root Cause:
+Observed failure: User adds parameter with non-nullable type `string` and default value `null` in Change Signature. The dialog does not emit a warning, and after applying refactoring the generated signature loses the default value, while call sites are injected with `null`. This produces invalid PHP code, since a non-nullable `string` parameter cannot receive null.
+Expected behavior: The Change Signature dialog should detect the conflict between non-nullable type and null default value, show an explicit warning before applying the refactoring, and prompt the user to either make the type nullable (`?string`) or remove the null default.
+Underlying cause: The refactoring dialog’s type validation logic does not check the combination of parameter type and default value; it allows entering `string $param = null` without diagnostics, and later code generation mishandles this invalid combination.
+*/
+class Some {
+    public function foo()
+    {
+    }
+}
+
+(new Some())->foo();
+?>

@@ -1,0 +1,41 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method (C# async code)
+Refactoring Target: Code snippet containing `CancellationToken` argument
+IDE: Rider
+Rule reference: CA1068 CancellationToken parameters must come last
+*/
+
+/* Error Root Cause:
+Observed failure: When extracting a method from code that uses a `CancellationToken`, Rider orders parameters based purely on the order variables first appear in the selected code. It does **not** apply the CA1068 convention: `CancellationToken` should be placed as the final parameter in the generated method signature.
+
+Expected behavior:
+During Extract Method:
+1. Detect parameters of type `CancellationToken` / `CancellationToken?`
+2. Automatically reorder them to be the last parameter in the new method signature
+3. Adjust the call-site argument order accordingly to match the new signature, preserving semantics
+4. Optionally surface this as a configurable toggle in refactoring settings
+
+Underlying cause:
+The parameter ordering logic for Extract Method only uses the lexical occurrence order of variables in the selected block. There is no special case for .NET design guideline CA1068 to pin `CancellationToken` parameters at the end.
+*/
+
+// Original code
+var httpClient = new HttpClient();
+var response = await httpClient.GetAsync(uri, cancellationToken);
+response.EnsureSuccessStatusCode();
+
+// Actual (buggy) extracted signature
+Task<HttpResponseMessage> NewMethod(CancellationToken cancellationToken, Uri uri)
+{
+    var response = await httpClient.GetAsync(uri, cancellationToken);
+    response.EnsureSuccessStatusCode();
+    return response;
+}
+
+// Expected (CA1068 compliant) signature
+Task<HttpResponseMessage> NewMethod(Uri uri, CancellationToken cancellationToken)
+{
+    var response = await httpClient.GetAsync(uri, cancellationToken);
+    response.EnsureSuccessStatusCode();
+    return response;
+}

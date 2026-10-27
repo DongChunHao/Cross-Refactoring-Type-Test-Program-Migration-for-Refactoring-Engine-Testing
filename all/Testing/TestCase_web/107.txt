@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+import { useState, useEffect } from 'react';
+function FriendStatus(props) {
+const [isOnline, setIsOnline] = useState(null);
+function handleStatusChange(status) { //{Move Method target nested function inside extract‑range selection}
+setIsOnline(status.isOnline);
+}
+useEffect('foo');
+if (isOnline === null) {
+return 'Loading...';
+}
+return isOnline ? 'Online' : 'Offline';
+}

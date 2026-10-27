@@ -1,0 +1,49 @@
+using Core.EventSystem;
+using UnityEngine;
+using LoadModule=Game.CoreModule.Events.ModEvents1.LoadModule1;
+
+/* Refactoring Settings:
+Refactoring Type: Rename (Rider/Visual Studio C# rename refactoring, triggered via Command+R)
+Refactoring Target: Namespace alias `LoadModule` declared in using alias directive
+Refactoring Scope: All usages of the alias within the current source file, including usages inside generic type arguments
+Refactoring Rule Expectation: Rename should correctly replace every occurrence of the alias identifier while preserving surrounding syntax (generic angle brackets, :: token, nested type name ConfigureScenesEvent). The expression EventManager.AddListener<LoadModule::ConfigureScenesEvent>(onLoadModule) should be updated to use the new alias name without corrupting the rest of the generic type argument.
+*/
+
+/* Error Root Cause:
+Observed failure: When previewing/executing rename on a C# namespace alias that appears inside a generic type argument with `::` qualified type syntax, the refactoring engine corrupts the syntax tree. It deletes the `::` token and truncates subsequent characters of the nested type. In the reproduction case, `<LoadModule::ConfigureScenesEvent>` gets mangled and reduces to an incomplete call `EventManager.AddListener`.
+Expected behavior: The rename operation only modifies the alias identifier `LoadModule`, leaving `::ConfigureScenesEvent` and the generic argument structure intact.
+Underlying cause: The rename visitor for namespace aliases has a parsing defect when visiting alias usages nested within generic type parameters combined with C# `::` type qualification syntax. The syntax rewriter incorrectly treats the alias plus `::` as a single token range, instead of isolating just the alias identifier for replacement, which destroys the remaining type expression during rename preview or commit.
+*/
+
+namespace Game.CoreModule.Scenes.Modules
+{
+    public class BattleModuleController : MonoBehaviour
+    {
+        private void Start()
+        {
+            // Target expression containing namespace alias + :: inside generic argument
+            EventManager.AddListener<LoadModule::ConfigureScenesEvent>(onLoadModule);
+        }
+
+        private void onLoadModule(LoadModule::ConfigureScenesEvent evt)
+        {
+        }
+    }
+}
+
+// Compile stub dependencies
+namespace Core.EventSystem
+{
+    public static class EventManager
+    {
+        public static void AddListener<T>(Action<T> listener) {}
+    }
+}
+
+namespace Game.CoreModule.Events.ModEvents1
+{
+    public class LoadModule1
+    {
+        public class ConfigureScenesEvent {}
+    }
+}

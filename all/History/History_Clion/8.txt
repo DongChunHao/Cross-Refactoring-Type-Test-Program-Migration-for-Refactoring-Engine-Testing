@@ -1,0 +1,38 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: expression `string name = first + " " + last;` inside Foo::greet() const
+Operation: Select that line, invoke Refactor -> Extract Method, name new method getFullName
+Scope: Extract method inside const class member function; add `this->` qualifier handling, update original call site, insert method declaration into class definition, add definition in cpp file
+*/
+
+/* Error Root Cause:
+Observed failure: Even though CPP-17563 was marked fixed, CLion 2019.3.2 still reproduces the bug. The refactoring adds redundant `this->` qualifiers to member variables, but fails to replace the selected line with a call to the new method. It also does not add the new method declaration inside the Foo class body. The generated extracted method definition exists in the file but is unused; refactoring transaction partially fails leaving stale code.
+Expected behavior: Insert `getFullName()` declaration into class Foo, create method definition, replace original line with `string name = getFullName();`. Only add `this->` when required, not redundantly.
+Underlying cause: The PSI transaction and class header update logic still has residual bugs for const member functions. The refactoring can generate the method body and rewrite variable references, but fails to complete two critical steps: inserting the declaration into the class and replacing the original selected expression with the call site.
+*/
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Foo {
+public:
+	Foo( string f, string l );
+	void greet() const;
+protected:
+	const string first;
+	const string last;
+};
+
+Foo::Foo( string f, string l ) : first( move( f ) ), last( move( l ) ) { }
+
+void Foo::greet() const {
+	string name = first + " " + last;
+	cout << "Good day " << name << endl;
+}
+
+int main( int argc, char *argv[] ) {
+	Foo* pFoo = new Foo( "Foo", "Bar" );
+	pFoo->greet();
+	delete pFoo;
+}

@@ -1,0 +1,23 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: outputHeaderAndCpp
+'''
+#include <unordered_map>
+#include <memory>
+#include <string>
+#include <iostream>
+// Forward declarations
+class AbstractGenerator {
+public:
+void writeCodeModel(std::ostream& hppout, std::ostream& cppout); //{Rename method writeCodeModel to outputHeaderAndCpp}
+void writeCodeBody(std::ostream& hppout, std::ostream& cppout);
+};
+void AbstractGenerator::someFunc(std::ostream& hppout, std::ostream& cppout)
+{
+std::unordered_map<std::string, std::shared_ptr<AbstractGenerator>> m_siblingClasses;
+for(auto sibling : m_siblingClasses) {
+sibling.second->writeCodeModel(hppout, cppout);
+hppout << std::endl;
+}
+writeCodeBody(hppout, cppout);
+}

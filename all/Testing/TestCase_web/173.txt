@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding two‑class setup for getter‑inline receiver‑context‑loss defect reproduction}
+class First {
+public name: string = 'test';
+get nameTrim() {
+return this.name.trim();
+}
+}
+class Second {
+first: First = new First();
+readName() {
+let trimmedName = this.first.nameTrim;
+}
+}
+}

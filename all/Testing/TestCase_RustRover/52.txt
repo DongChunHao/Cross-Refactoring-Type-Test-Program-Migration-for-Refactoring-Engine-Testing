@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn f(x: bool) -> bool { !x } //{move body of function f into caller scope g}
+fn g() {
+f(true) && f(false);
+}

@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <boost/asio/serial_port.hpp>
+using namespace boost::asio;
+struct Wrapper
+{
+serial_port::character_size fn() { //{Move function fn into struct Wrapper member function}
+serial_port::character_size res = serial_port::character_size(serial_port::character_size(8));
+return res;
+}
+};
+int main() {
+Wrapper w;
+w.fn();
+return 0;
+}

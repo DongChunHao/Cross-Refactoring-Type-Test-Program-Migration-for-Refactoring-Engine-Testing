@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+
+func main() {
+fmt.Println(a) // Extract method wrapping this print statement
+}

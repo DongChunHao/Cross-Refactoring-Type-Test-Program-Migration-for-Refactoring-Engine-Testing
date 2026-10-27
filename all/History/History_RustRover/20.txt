@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring Type: Unused parameter inspection and quick-fix
+Refactoring Target: Parameter `x` in the trait implementation method `fn bar(x: i32)`
+Refactoring Scope: Rust trait impl method signature checking
+Plugin Environment: IntelliJ Rust plugin 0.4.184.5009-223-nightly, CLion 2022.3 EAP, Rust 1.65.0, macOS 12.5.1, Macro expansion enabled
+Trigger Operation: Trigger inspection for unused parameter and apply the top suggested quick fix
+*/
+/* Error Root Cause:
+Observed failure: The plugin offers a quick fix to delete the unused parameter `x` inside the trait implementation. Applying this fix produces a signature mismatch against the trait definition and breaks compilation.
+Expected behavior: The inspection must detect that the method implements a trait and the parameter is required by the trait signature. It should not suggest removing the parameter; the correct quick fix is renaming the parameter to `_x` to suppress the unused warning.
+Underlying cause: The unused parameter inspection does not check whether the function is a trait implementation. It treats the parameter as a regular free function parameter and proposes deletion, ignoring the signature constraints imposed by the trait.
+*/
+struct S {}
+trait T {
+    fn bar(x: i32);
+}
+impl T for S {
+    fn bar(x: i32) {
+        println!("hello")
+    }
+}
+
+use proc_macro::TokenStream;
+#[proc_macro_derive(MyStrangeDerive)]
+pub fn foo(input: TokenStream) -> TokenStream {
+    "struct U{x: i32}".parse().unwrap()
+}

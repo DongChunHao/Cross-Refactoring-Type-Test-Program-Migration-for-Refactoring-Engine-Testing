@@ -1,0 +1,13 @@
+```
+<?php
+class User {
+    public function getMeta(Profile $p) {
+        echo $p->id;
+        return $this;
+    }
+}
+class Profile {}
+?>
+```
+
+【Refactoring Action】: Move Instance Method refactoring, move `getMeta()` from `User` to `Profile`.

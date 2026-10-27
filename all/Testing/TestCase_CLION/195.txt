@@ -1,0 +1,38 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: returnNoneIfPrintParam
+'''
+#include <string>
+// Forward declarations
+constexpr int CMDARG_NONE = 0;
+struct CmdFileContext {
+std::string variable;
+bool is_print_parameter();
+int returnNoneIfPrintParam(); //{Extract method returnNoneIfPrintParam}
+};
+bool CmdFileContext::is_print_parameter()
+{
+return (variable == "printer")
+|| (variable == "printfile")
+|| (variable == "rleps")
+|| (variable == "colorps")
+|| (variable == "epsf")
+|| (variable == "title")
+|| (variable == "translate")
+|| (variable == "plotstyle")
+|| (variable == "halftone")
+|| (variable == "linefeed")
+|| (variable == "comport");
+}
+int CmdFileContext::returnNoneIfPrintParam()
+{
+if (is_print_parameter())
+{
+return CMDARG_NONE;
+}
+return -1;
+}
+void CmdFileContext::someFunction()
+{
+returnNoneIfPrintParam();
+}

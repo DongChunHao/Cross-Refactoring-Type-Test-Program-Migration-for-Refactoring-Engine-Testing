@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: get_char_size
+'''
+#include <boost/asio/serial_port.hpp>
+using namespace boost::asio;
+serial_port::character_size fn(){ //{Rename method fn to get_char_size}
+serial_port::character_size res = serial_port::character_size(serial_port::character_size(8));
+return res;
+}
+int main() {
+return 0;
+}

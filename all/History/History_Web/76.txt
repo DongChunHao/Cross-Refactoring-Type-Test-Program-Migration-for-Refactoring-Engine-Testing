@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Generate destructuring patterns
+Refactoring Target: Identifier `x` inside existing destructuring pattern `let {x} = {x: {y: 1}};`
+Refactoring Scope: JavaScript / TypeScript
+Trigger Operation: Invoke the action on shorthand binding `x`, or on the renamed binding `{x: x}`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Running “Generate destructuring patterns” on the shorthand destructuring `{x}` or the identity binding `{x: x}` produces invalid nested destructuring output. The action does not first expand the shorthand form and resolve the binding target; it directly tries to destructure the binding variable name instead of the underlying object property `x`.
+
+Expected behavior: First expand shorthand `{x}` to `{x: x}` and treat the right-hand `x` as the value `{y:1}`; then generate nested destructuring for the property, e.g. `let {x: {y}} = {x: {y: 1}};`.
+
+Underlying cause: The action’s AST visitor does not distinguish between the destructuring key (property name) and the binding variable name when operating on an already existing destructuring pattern. It treats the binding identifier as the source object instead of the value coming from the object literal.
+*/
+
+// Complete compilable test code
+let {x} = {x: {y: 1}};
+let {x: x} = {x: {y: 1}};

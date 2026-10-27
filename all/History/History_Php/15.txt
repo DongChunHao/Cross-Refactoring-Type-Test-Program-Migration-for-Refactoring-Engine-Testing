@@ -1,0 +1,32 @@
+<?php
+// Source class: Mage_Core_Controller_Varien_Action
+class Mage_Core_Controller_Varien_Action extends Mage_Core_Controller_Varien_ActionAbstract
+{
+    const TEST_CONST = 1;
+    public function testMethod()
+    {
+    }
+}
+
+// Target parent class: Mage_Core_Controller_Varien_ActionAbstract
+class Mage_Core_Controller_Varien_ActionAbstract
+{
+    // Existing members here
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method testMethod() and constant TEST_CONST in Mage_Core_Controller_Varien_Action
+Target destination: parent class Mage_Core_Controller_Varien_ActionAbstract
+Refactoring rule: When pulling multiple members (constants + methods) into the parent class, the refactoring must insert them at a reasonable, consistent location inside the target class, respecting the existing code structure and member ordering conventions, instead of inserting them at an unintended/wrong position.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When pulling the method and constant from the child class into Mage_Core_Controller_Varien_ActionAbstract, the members are inserted at an incorrect position within the parent class (e.g. inside an existing method, after closing braces, or interleaved with unrelated existing members).
+Expected behavior:
+The pulled constant and method are added as top-level class members inside ActionAbstract, in a sensible location (such as after existing class members, or grouped by member type).
+Underlying cause:
+The refactoring’s insertion-position resolver for the target PSI class node uses an incorrect anchor point. It fails to find the proper top-level class body insertion location, and inserts the new nodes relative to the wrong existing element in the parent class file.
+*/
+?>

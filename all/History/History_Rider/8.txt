@@ -1,0 +1,57 @@
+using System.IO;
+
+/* Refactoring Settings:
+Refactoring Type: Extract Method (Rider C# refactoring)
+Refactoring Target: Selected `if(RenderReceipt)` code block inside one of the class methods
+Refactoring Scope: Expectation is whole-class duplicate detection; current Rider behavior limits replacement to only the manually selected occurrence
+Refactoring Rule Expectation: After selecting one instance and running Extract Method, the refactoring engine should scan the containing class for structurally matching duplicate code blocks, automatically identify varying literals (filename strings) as parameters, replace all matching duplicates with calls to the newly extracted method, same as IntelliJ IDEA’s duplicate-aware extract method workflow.
+Current Rider observed scope: Only replaces the single manually selected code snippet, leaving other structurally identical duplicate blocks unchanged.
+*/
+
+/* Error Root Cause:
+Observed failure: Rider’s Extract Method refactoring only rewrites the single selected code fragment and does not search the class for other structurally duplicate code blocks. It does not auto-detect varying literals such as the filename string as parameters for the new method, and leaves all other matching duplicate code untouched.
+Expected behavior: The refactoring should detect structurally equivalent duplicate blocks across the class, treat differing constant values as arguments, and replace every matching duplicate with an invocation of the new extracted helper method.
+Underlying cause: Rider’s Extract Method implementation does not include the cross-occurrence duplicate code search/substitution pass that IntelliJ IDEA provides for this refactoring. The implementation only operates on the selected PSI subtree in isolation, without performing structural duplicate matching over the containing type.
+*/
+
+public class ReceiptRenderer
+{
+    public bool RenderReceipt { get; set; }
+
+    public void Method1()
+    {
+        // Code specific for method1
+        if (RenderReceipt)
+        {
+            var fileInfo = new FileInfo("filename");
+            Transform(fileInfo);
+        }
+        // Code specific for method1
+    }
+
+    public void Method2()
+    {
+        // Code specific for method2
+        if (RenderReceipt)
+        {
+            var fileInfo = new FileInfo("filename2");
+            Transform(fileInfo);
+        }
+        // Code specific for method2
+    }
+
+    public void Method3()
+    {
+        // Code specific for method3
+        if (RenderReceipt)
+        {
+            var fileInfo = new FileInfo("filename3");
+            Transform(fileInfo);
+        }
+        // Code specific for method3
+    }
+
+    private void Transform(FileInfo fileInfo)
+    {
+    }
+}

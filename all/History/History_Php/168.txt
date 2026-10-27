@@ -1,0 +1,26 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function baz($arg1, $arg2)
+Operation: Swap the order of the two parameters $arg1 and $arg2
+Scope: Call-site rewriting for PHP argument unpacking (splat ... operator)
+*/
+
+/* Error Root Cause:
+Observed failure: After reordering parameters via Change Signature, call sites using splat unpacking `...Foo::$bar` and `...$bar2` become broken into `baz(, Foo::$bar); baz(, $bar2);`.
+A splat argument represents a variable-length sequence and cannot be mapped to a single positional parameter; the reordering logic naively treats `...$var` as a normal single argument and produces orphaned commas.
+Expected behavior: Detect unpacking arguments in call sites. Either skip rewriting these call sites and warn the user, or show an error that parameter reordering cannot be safely applied when splat arguments exist.
+Underlying cause: The argument remapper assumes every call argument maps one-to-one with formal parameters. It lacks special handling for splat unpack nodes, which expand to multiple values and do not have a fixed individual parameter position.
+*/
+class Foo {
+    public static $bar = [1, 2];
+}
+
+$bar2 = [1, 2];
+
+function baz($arg1, $arg2) {
+}
+
+baz(...Foo::$bar);
+baz(...$bar2);
+?>

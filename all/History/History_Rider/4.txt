@@ -1,0 +1,29 @@
+namespace FSharpKoans.Core
+
+// Helpers.fs (FSharpKoans.Core project)
+let AssertEquality expected actual =
+    if expected <> actual then failwithf "Assert failed"
+
+// After rename refactoring target: rename AssertEquality → AssertEquality_New
+// Expected: all usages in referencing test project are updated
+// Actual: Usages in FSharpKoans.Test remain old name, show red unresolved code
+
+// AboutLet.fs (FSharpKoans.Test referencing project)
+namespace FSharpKoans
+open FSharpKoans.Core
+
+[<Koan(Sort = 2)>]
+module ``about let`` =
+    [<Koan>]
+    let LetBindsANameToAValue() =
+        let x = 50
+        AssertEquality_New x __
+
+    [<Koan>]
+    let LetInfersTheTypesOfValuesWherePossible() =
+        let x = 50
+        let typeOfX = x.GetType()
+        AssertEquality_New typeOfX typeof<int>
+        let y = "a string"
+        let expectedType = y.GetType()
+        AssertEquality_New expectedType typeof<string>

@@ -1,0 +1,14 @@
+```
+<?php
+namespace Shop\Exceptions {
+    use InvalidArgumentException;
+    class ShopExceptionBase
+    {
+    }
+    class BadInputException extends InvalidArgumentException {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `BadInputException`, destination global namespace.

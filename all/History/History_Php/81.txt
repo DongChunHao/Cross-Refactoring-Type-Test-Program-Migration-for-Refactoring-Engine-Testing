@@ -1,0 +1,19 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: anonymous function inside list() multi-assignment expression
+Scope: the anonymous function and its call site $a()
+Refactoring operation: add new parameter $c to the anonymous function
+*/
+
+/* Error Root Cause:
+Observed failure: When using Change Signature on an anonymous function that is part of a list() multi-assignment, the refactoring may fail to update the call site $a() to pass the new argument, or the signature modification is not applied correctly.
+Expected behavior: Add parameter $c to the anonymous function definition inside the array literal, and update the call $a() to supply an argument (for example a default value).
+Underlying cause: The refactoring scope resolver does not properly track variable bindings created by list() destructuring. It can modify the anonymous function declaration but fails to trace that $a references this closure, so the invocation site is not updated.
+*/
+list($a, $b) = [function () {
+    echo 15;
+}, 15];
+
+$a();
+?>

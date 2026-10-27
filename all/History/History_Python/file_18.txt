@@ -1,0 +1,18 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function)
+Refactoring target: function f from a.py to b.py, caret is placed at call‑site f() in b.py
+Refactoring scope: import statements in b.py, position of moved function definition, existing call‑site of f
+Refactoring rule expectation: After moving f into b.py: 1) Remove stale `from a import f` import; 2) Place `def f(): pass` before the call `f()`; 3) Ensure call‑site can resolve local f definition.
+'''
+''' Error Root Cause:
+Observed failure: After moving f to b.py: old import `from a import f` is retained; moved function definition `def f(): pass` is inserted after the existing call `f()`. Call executes before definition, leading to unresolved reference / runtime NameError.
+Expected behavior: Delete unused import `from a import f`; insert moved function definition above the `f()` call site in b.py.
+Underlying cause: Two bugs co‑occur: (1) Move refactor does not remove the now‑redundant import of f from source module a.py. (2) Code placer inserts moved function at end of target file regardless of existing call‑site location, ignoring Python top‑down execution order; call appears ahead of function definition.
+'''
+# ---- a.py ----
+def f():
+    pass
+
+# ---- b.py ----
+from a import f
+f()

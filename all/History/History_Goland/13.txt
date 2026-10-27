@@ -1,0 +1,36 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Implement Interface (Generate Stub Methods)
+Refactoring target: Generate implementation for interface B on type MyInt
+Refactoring scope: Type MyInt, target interface B (type alias A[int])
+Refactoring rule: Generate complete method signature with parameter list and return type matching the underlying generic interface A[int].
+*/
+
+/* Error Root Cause:
+Observed failure: The generated stub method has invalid Go syntax `func (m MyInt) foo {` missing parentheses and return type, which cannot compile.
+Expected behavior: Generate `func (m MyInt) foo() int { ... }`, resolving that B is an alias for A[int], so foo() returns int.
+Underlying cause: The refactoring engine does not properly resolve the underlying generic interface type from the type alias B; it loses the method signature information during stub generation and emits an incomplete method header.
+*/
+
+type A[T any] interface {
+	foo() T
+}
+
+type B A[int]
+
+type MyInt int
+
+// Bad generated stub from the refactoring
+func (m MyInt) foo {
+	//TODO implement me
+	panic("implement me")
+}
+
+// Expected correct generated stub
+func (m MyInt) foo() int {
+	//TODO implement me
+	panic("implement me")
+}
+
+func main() {}

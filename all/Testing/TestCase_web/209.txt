@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing chained‑var‑declaration reproduction case for initialization‑order‑semantic bug}
+var a = this.a,
+c = a.foo.bar ? a.foo.bar(a) : '';
+}

@@ -1,0 +1,6 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+if (b) {console1.log('lala');} //{Move Method target statement block containing literal subject to constant extraction}
+var year = 1998;

@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import "errors"
+
+type ErrFoo struct{}
+func (errFoo *ErrFoo) Is(err error) bool {
+return errFoo == err // Extract method for this comparison expression
+}
+func main() {
+var e error = &ErrFoo{}
+_ = errors.Is(e, &ErrFoo{})
+}

@@ -1,0 +1,34 @@
+#include <unordered_map>
+#include <memory>
+#include <string>
+#include <iostream>
+
+// Forward declarations
+class AbstractGenerator {
+public:
+    void writeCodeModel(std::ostream& hppout, std::ostream& cppout);
+    void writeCodeBody(std::ostream& hppout, std::ostream& cppout);
+};
+
+/* Refactoring Settings:
+Refactoring type: Rename method
+Refactoring target: Rename AbstractGenerator::writeCodeModel to AbstractGenerator::writeCodeBody
+Refactoring scope: All call sites of method writeCodeModel on AbstractGenerator instances, including calls via smart pointers
+Refactoring rule expectation: Find and rename all invocations of writeCodeModel, including method calls through std::shared_ptr (sibling.second->writeCodeModel(...))
+*/
+
+/* Error Root Cause:
+Observed failure: Rename refactoring successfully renamed the direct call writeCodeBody(hppout, cppout); but missed the call site sibling.second->writeCodeModel(hppout, cppout); invoked via shared_ptr.
+Expected behavior: Both call sites should be updated from writeCodeModel to writeCodeBody.
+Underlying cause: The rename engine fails to resolve the type of sibling.second (std::shared_ptr<AbstractGenerator>) and does not recognize ->writeCodeModel as a call to AbstractGenerator::writeCodeModel, skipping this pointer-based call site during renaming.
+*/
+
+void AbstractGenerator::someFunc(std::ostream& hppout, std::ostream& cppout)
+{
+    std::unordered_map<std::string, std::shared_ptr<AbstractGenerator>> m_siblingClasses;
+    for(auto sibling : m_siblingClasses) {
+        sibling.second->writeCodeModel(hppout, cppout);  //NOT RENAMED
+        hppout << std::endl;
+    }
+    writeCodeBody(hppout, cppout);
+}

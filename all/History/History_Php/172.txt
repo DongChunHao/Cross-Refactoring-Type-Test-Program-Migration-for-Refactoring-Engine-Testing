@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Extract Method (PHP)
+Refactoring target: block `$s .= 'asd'; echo $s;` inside while loop in bar()
+Operation: Extract selected loop body fragment into new function extracted()
+Scope: Detecting mutable outer variables that are read and modified inside the extracted region
+*/
+
+/* Error Root Cause:
+Observed failure: The extracted code mutates and uses `$s`, which is defined in the outer function bar(). The refactoring does not add `$s` as an input parameter to extracted(), and does not return the updated value. The generated extracted() references an undefined local `$s`.
+Expected behavior: Recognize `$s` as a captured mutable variable. Add `$s` as a parameter to extracted(), return the modified `$s`, and replace the original block with `$s = extracted($s);`.
+Underlying cause: The variable usage analysis for Extract Method fails to identify that `$s` is a mutable variable coming from the outer scope; it treats `$s` as local to the extracted function instead of a required inbound value.
+*/
+function bar() {
+    $i = 0;
+    $s = "asd";
+    while ($i <= 5) {
+        /*begin*/$s .= 'asd';
+        echo $s;/*end*/
+        $i++;
+    }
+}
+?>

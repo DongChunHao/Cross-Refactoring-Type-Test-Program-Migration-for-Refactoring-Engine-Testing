@@ -1,0 +1,20 @@
+```
+<?php
+trait T{
+    function f(){
+        echo "a";
+    }
+}
+class C{
+    use T;
+    public function g()
+    {
+        $this->f();
+    }
+}
+$a = new C;
+$a->g();
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, change trait method `T::f()` visibility from implicit public to `private`.

@@ -1,0 +1,9 @@
+```
+<?php
+function f($a, $b){
+}
+f(b: 2, a: 1);
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `function f($a, $b)`; reorder parameters to `$b, $a`.

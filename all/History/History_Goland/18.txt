@@ -1,0 +1,28 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: Function `foo()` with named return parameter `s string`
+Refactoring scope: Remove the only result parameter from the function signature
+Refactoring rule: When deleting all return parameters, rewrite explicit return statements to remove any return operand; convert `return s` to bare `return`.
+*/
+
+/* Error Root Cause:
+Observed failure: After deleting the named return parameter `s string` via Change Signature, the body retains `return s`. This produces invalid Go syntax, because the function no longer has return values and cannot return an operand.
+Expected behavior: The refactoring updates the return statement from `return s` to `return`.
+Underlying cause: The signature change logic removes the return parameter from the function header but does not visit and rewrite return statements in the function body that reference the deleted named return variable.
+*/
+
+func foo() (s string) {
+	return s
+}
+
+// Bad generated result after deleting return parameter
+func foo() {
+	return s
+}
+
+// Expected correct generated result
+func foo() {
+	return
+}

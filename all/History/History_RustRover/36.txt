@@ -1,0 +1,42 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Enum Variant
+Refactoring Target: Enum variant `Bar(i32)` in `Foo`
+Refactoring Scope: Rewriting higher-order usages where variant constructor is passed as an argument to a generic function
+Plugin Environment: IntelliJ Rust plugin 0.2.123.SNAPSHOT-201-dev, IDEA 2020.1.1, Rust 1.45.0-nightly, macOS 10.15.5
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Enum Variant intention on `Bar` variant
+*/
+/* Error Root Cause:
+Observed failure: After extracting `Bar` into a standalone struct, the refactor misrewrites `id(Foo::Bar)(42)` into `id(Bar(Foo::Bar))(42)`. This is wrong: `Foo::Bar` is now a variant constructor that takes a `Bar`, while `Bar(...)` constructs the inner struct. The generated code has inverted nesting and invalid application.
+Expected behavior: Recognize that `Foo::Bar` was used as a function value (passed to `id`), and replace it with a closure `|x| Foo::Bar(Bar(x))` so that calling the returned value with `42` builds the nested variant correctly.
+Underlying cause: The usage resolver assumes every occurrence of `Foo::Bar` is a direct call like `Foo::Bar(42)`. It does not handle the case where the variant constructor is used as a first-class function and passed into another function.
+*/
+// Before
+enum Foo { Bar(i32) }
+
+fn id<T>(x: T) -> T { x }
+
+fn main() {
+    id(Foo::Bar)(42);
+}
+
+// Actual broken output
+struct Bar(pub i32);
+enum Foo { Bar(Bar) }
+
+fn id<T>(x: T) -> T { x }
+
+fn main() {
+    id(Bar(Foo::Bar))(42);
+}
+
+// Expected output
+struct Bar(pub i32);
+enum Foo { Bar(Bar) }
+
+fn id<T>(x: T) -> T { x }
+
+fn main() {
+    id(|x| Foo::Bar(Bar(x)))(42);
+}

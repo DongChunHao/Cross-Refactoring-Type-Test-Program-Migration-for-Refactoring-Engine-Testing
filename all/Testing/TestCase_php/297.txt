@@ -1,0 +1,11 @@
+```
+<?php
+class A {
+  public int $i;
+}
+class B extends A {
+}
+?>
+```
+
+【Refactoring Action】: Push down native typed property `public int $i` from parent class `A` to subclass `B`.

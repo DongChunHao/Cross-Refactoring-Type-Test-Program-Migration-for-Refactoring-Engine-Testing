@@ -1,0 +1,22 @@
+```
+<?php
+class Item{}
+class ItemProcessor
+{
+    public function run(string $mode, Item ...$items): void
+    {
+        print_r($items);
+    }
+}
+class ItemBatch
+{
+    public function test()
+    {
+        $proc = new ItemProcessor();
+        $proc->run('edit', new Item, new Item);
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move instance method `ItemProcessor::run()` into `ItemBatch`.

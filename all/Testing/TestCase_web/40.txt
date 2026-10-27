@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+function bug() {
+const [foo, bar] = [1, 2]; //{Move Method target destructuring declaration statement}
+console.log(foo, bar);
+}

@@ -1,0 +1,36 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Type Alias
+Refactoring Target: Inline object type `{ prop1: string; prop2: string; prop3: string }` used as `props` parameter type
+Refactoring Scope: TypeScript
+Trigger Operation: Invoke “Refactor this → Type alias…” on the object literal type, where the last property `prop3` has no trailing semicolon
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+When extracting the object type into a type alias and the final property does not have a trailing semicolon, the refactoring incorrectly appends an extra `s` character to the generated type alias name or to one of the property identifiers (name mangling).
+
+Expected behavior:
+Generate a clean type alias without spurious extra characters, respecting optional trailing semicolon in object type literals:
+type MyFunctionProps = {
+  prop1: string;
+  prop2: string;
+  prop3: string
+};
+const myFunction = (props: MyFunctionProps) => {
+  console.log(props);
+};
+
+Underlying cause:
+The parser/refactoring logic does not robustly handle object type literals where the last member omits the optional trailing semicolon. The token stream position calculation drifts, causing an accidental character insertion when constructing the new type alias declaration.
+*/
+
+// Complete compilable test code
+const myFunction = (props: {
+    prop1: string;
+    prop2: string;
+    prop3: string
+}) => {
+  console.log(props);
+};

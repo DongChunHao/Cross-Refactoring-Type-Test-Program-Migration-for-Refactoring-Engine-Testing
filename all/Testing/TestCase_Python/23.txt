@@ -1,0 +1,15 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: The refactoring engine does not track the binding relationship between property getter object and its associated setter/deleter decorators; it only processes the getter function definition and ignores updating the decorator’s reference symbol
+class C(object):
+def **init**(self):
+self._x = None
+@property
+def x(self): // REFACTOR_TARGET
+"""I'm the 'x' property."""
+return self._x
+@x.setter
+def x(self, value):
+self._x = value
+@x.deleter
+def x(self):
+del self._x

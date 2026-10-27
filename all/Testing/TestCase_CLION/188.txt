@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+#include <cstddef>
+void dummy() {
+size_t sizes[] = {1, 2, 3};
+auto &arrRef = sizes; //{Extract variable arrRef}
+for (auto x : arrRef) {}
+}

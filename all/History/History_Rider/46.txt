@@ -1,0 +1,55 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Members To Partial
+Refactoring Target: Existing partial class definition, moving selected members into a new partial part
+IDE: Rider 2018.3 EAP5D build 183.4002.7
+*/
+
+/* Error Root Cause:
+Observed failure:
+User selects members inside an existing partial class and runs "Extract Members To Partial".
+The target location is a valid new partial class file/part, but the refactoring reports an error and aborts.
+
+Expected behavior:
+1. Create a new partial class declaration in the target document, matching the same class name, accessibility, type parameters and constraints.
+2. Move the selected members to the new partial part.
+3. Leave the original partial part with the remaining members.
+
+Underlying cause:
+The refactoring’s PSI validation logic incorrectly treats the target as invalid.
+The check for compatible partial declaration compares type metadata, but in this early EAP version:
+- It mishandles namespace context between source file and target file
+- Or it fails to validate that the target can host a partial counterpart
+- Or the selection anchor resolution gets confused when starting from an already-existing partial class part
+
+The validation predicate rejects a perfectly legal partial split before the transformation can run. This is a guard condition false-positive in the refactoring pre-check.
+*/
+
+// Original file (Existing partial part)
+namespace MyNs
+{
+    public partial class MyClass
+    {
+        public void MethodA() { }
+        public void MethodB() { } // Selected for extraction
+    }
+}
+
+// Expected new partial file
+namespace MyNs
+{
+    public partial class MyClass
+    {
+        public void MethodB() { }
+    }
+}
+
+// Original file after refactoring
+namespace MyNs
+{
+    public partial class MyClass
+    {
+        public void MethodA() { }
+    }
+}
+
+// Actual: Rider shows validation error, refuses to perform the move, even though the split is C#-valid.

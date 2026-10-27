@@ -1,0 +1,20 @@
+''' Refactoring Settings:
+Refactoring type: Rename refactoring
+Refactoring target: pytest fixture‑derived parameter "herro_thar_im_a_fixture" in test_foo function signature
+Refactoring new name: asdfghjkl
+Refactoring scope: fixture definition decorated by @pytest.fixture, test‑function formal parameter, variable usages inside test_foo body
+Refactoring rule expectation: Renaming the fixture‑based test argument should rename three places synchronously: the @pytest.fixture decorated fixture‑function name, test_foo formal parameter name, and all variable usages inside test_foo function body.
+'''
+''' Error Root Cause:
+Observed failure: After rename refactor on test_foo’s fixture‑parameter herro_thar_im_a_fixture: fixture‑function is renamed to asdfghjkl, test_foo parameter is renamed to asdfghjkl, but the assert statement inside test_foo still references old name herro_thar_im_a_fixture, producing unresolved‑reference compile/lint error.
+Expected behavior: All in‑body usages of the fixture‑supplied variable inside test_foo should also be updated to asdfghjkl.
+Underlying cause: The rename symbol resolver mishandles pytest fixture injection semantics. It recognizes the link between test‑function parameter and fixture‑definition, but fails to collect and rewrite variable read‑usages inside the test‑function body that refer to this fixture‑provided argument.
+'''
+import pytest
+
+@pytest.fixture
+def herro_thar_im_a_fixture():
+    return 123
+
+def test_foo(herro_thar_im_a_fixture):
+    assert herro_thar_im_a_fixture == 123

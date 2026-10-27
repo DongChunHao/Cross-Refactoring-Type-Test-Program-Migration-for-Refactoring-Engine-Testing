@@ -1,0 +1,27 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+import { of } from 'rxjs';
+declare class Service {}
+describe('x', () => {
+let service: Service;
+beforeEach(async(() => {
+setupMock();
+TestBed.configureTestingModule({
+// ...
+}).compileComponents();
+}));
+it('should do something', () => {
+// ...
+});
+function setupMock() {
+// @ts-ignore
+service = jest.fn();
+service.getX = jest.fn((y) => { //{Extract Method target nested jest.fn callback which has inner return statement}
+if (y === 'something') {
+return of('something');
+}
+});
+}
+});

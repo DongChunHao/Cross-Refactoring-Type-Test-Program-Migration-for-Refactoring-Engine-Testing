@@ -1,0 +1,7 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Inline‑variable logic unconditionally wraps substituted expression in parentheses for function‑argument position, ignoring operator‑precedence analysis and injecting unnecessary redundant parentheses
+foo = 1 + 1
+print(foo) // REFACTOR_TARGET
+foo
+def stub():
+pass

@@ -1,0 +1,30 @@
+package pkg
+
+import (
+	"context"
+)
+
+/* Refactoring Settings:
+Refactoring type: Change Signature (Rename/modify interface method specification)
+Refactoring target: Interface method `Value(val int) Value` inside `type Interface interface{}`
+Refactoring scope: Two available modes: "Refactor method specification and all implementations", "Refactor only current method"
+Refactoring rule: The refactoring engine must distinguish the interface method named Value from the local struct type named Value, and also distinguish from `context.Context.Value` method; update only the intended method’s signature without unintended cross-name collision rewriting.
+*/
+
+/* Error Root Cause:
+Observed failure: When running Change Signature on the interface method `Value(val int) Value`, the refactoring engine may incorrectly treat the identifier `Value` ambiguously. It may mistakenly rewrite calls to `ctx.Value()` (the context package method) or confuse the return type `Value` (local struct) with the method name `Value`, causing unintended edits or compilation errors.
+Expected behavior: The refactoring scope strictly isolates the interface method declaration. References to `context.Context.Value` and the local struct `Value` are untouched unless they are explicit implementations of this interface method.
+Underlying cause: The identifier resolution logic during signature refactoring does not properly distinguish between: (1) the interface method named Value, (2) the local struct type named Value used as return type, (3) the unrelated Value method on context.Context.
+*/
+
+func F(ctx context.Context, a, b string) string {
+	return a + b + ctx.Value("value").(string)
+}
+
+type Value struct {
+	Value int
+}
+
+type Interface interface {
+	Value(val int) Value
+}

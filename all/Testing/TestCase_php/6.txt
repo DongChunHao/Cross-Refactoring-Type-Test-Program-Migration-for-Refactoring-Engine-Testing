@@ -1,0 +1,7 @@
+'''
+Refactoring type: Inline Method
+Refactoring new name: N/A
+'''
+a();
+    }
+}

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pack1
+type S struct{}
+func (s S) foo() string {
+return ""
+}
+func bar() string {
+s := S{}
+return s.foo() // move foo method from S to standalone function
+}

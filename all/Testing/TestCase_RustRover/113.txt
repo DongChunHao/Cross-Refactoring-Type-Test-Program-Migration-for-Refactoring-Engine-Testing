@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Field
+Refactoring new name: N/A
+'''
+#[derive(Debug)]
+enum Color { Red }
+struct A {
+x: i32, //{move selected fields x,y into newly defined substruct Point}
+y: i32,
+name: String,
+color: Color,
+}

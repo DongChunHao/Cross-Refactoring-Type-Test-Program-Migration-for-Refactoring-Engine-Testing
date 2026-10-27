@@ -1,0 +1,53 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <cstdio>
+// Forward declarations
+struct Point { int x, y; };
+struct Segment { Point l, r; Segment(Point a, Point b) : l(a), r(b) {} };
+struct Event {
+enum Type { SEGMENT_OPEN, SEGMENT_CLOSE };
+Event(Type t, int x, int id) {}
+};
+void scanfPoint(Point& p);
+class BaseGeom
+{
+public:
+virtual void example() {}
+};
+class GeomImpl : public BaseGeom //{Push down example implementation from BaseGeom to GeomImpl}
+{
+public:
+void example() override
+{
+int n;
+scanf("%d", &n);
+std::vector<Event> events;
+std::vector<Segment> segs;
+Point first;
+scanfPoint(first);
+Point last = first;
+std::map<int, std::map<int, bool>> vertical;
+for (size_t i = 1; i < n; ++i){
+Point now;
+scanfPoint(now);
+segs.emplace_back(last, now);
+if (segs.back().l.x != segs.back().r.x) {
+events.push_back(Event(Event::SEGMENT_OPEN, segs.back().l.x, i - 1));
+events.push_back(Event(Event::SEGMENT_CLOSE, segs.back().r.x, i - 1));
+} else {
+int x = segs.back().l.x;
+int boty = segs.back().l.y;
+int topy = segs.back().r.y;
+if (boty > topy) std::swap(boty, topy);
+vertical[x][boty] = true;
+vertical[x][topy] = false;
+}
+last = now;
+}
+}
+};

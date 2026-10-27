@@ -1,0 +1,17 @@
+```
+<?php
+class Node { }
+class CompositeNode extends Node {
+    function render()
+    {
+    }
+}
+class ListNode extends CompositeNode {
+}
+class TableNode extends CompositeNode {
+}
+(new ListNode)->render();
+(new TableNode)->render();
+```
+
+【Refactoring Action】: Push Down method `render()` from class `CompositeNode` to both subclasses `ListNode` and `TableNode`.

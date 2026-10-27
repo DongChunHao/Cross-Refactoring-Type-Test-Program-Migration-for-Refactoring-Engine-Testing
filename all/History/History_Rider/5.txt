@@ -1,0 +1,41 @@
+using UnityEngine;
+
+/* Refactoring Settings:
+Refactoring Type: Move to Another Type (Rider C# refactoring)
+Refactoring Target: Static method ToChunkCoord inside a Unity test assembly test class
+Refactoring Scope: Move selected method into an existing target type Grid3DUtility that lives in a separate non-test Assembly Definition
+Refactoring Rule Expectation: When the user selects an existing, resolvable target type, Rider should open that existing .cs file and insert the method into the existing class without modifying or deleting the rest of the file. If Rider cannot resolve the target type, it should block the operation and show a proper validation error instead of allowing file creation.
+Observed special environment: Unity TestRunner Assembly Definition (platforms disabled, Editor-only) as source; normal runtime/editor assembly as target.
+*/
+
+/* Error Root Cause:
+Observed failure: Rider reports "Type with this name doesn't exist" even though the target type autocompletes in the input box. When proceeding, Rider overwrites the existing target script file, replacing all existing content with only the moved method, effectively deleting the original type's code. Outside of test assemblies, the same operation either works correctly or safely does nothing after the warning.
+Expected behavior: Rider should correctly resolve the cross-assembly Unity type from the test assembly context. If resolution fails, the refactoring must abort with a clear error and never perform destructive file overwrite.
+Underlying cause: Rider’s assembly/type resolution logic for Unity test assembly contexts is inconsistent: the autocomplete lookup can discover the cross-assembly type, but the backend validation step of the "Move to Another Type" refactoring fails to recognize the type as existing. The refactoring pipeline then treats the valid existing type as non-existent, falling into the "create new type" path and writing a new file that clobbers the original script on disk.
+*/
+
+// Source file: Tilemap3DTests.cs (Unity TestRunner assembly, Editor-only)
+using UnityEngine;
+using NUnit.Framework;
+
+public class Tilemap3DTests
+{
+    // Method targeted for "Move to Another Type" refactoring
+    public static Vector3Int ToChunkCoord(Vector3Int coord, Vector2Int chunkSize) =>
+        new(coord.x / chunkSize.x, coord.y, coord.z / chunkSize.y);
+
+    [Test]
+    public void ChunkCoordConversionTest()
+    {
+    }
+}
+
+// Target file: Grid3DUtility.cs (separate non-test assembly, this file gets overwritten and destroyed by the bug)
+public static class Grid3DUtility
+{
+    public static Vector3Int WorldToGridPosition(Vector3 worldPos)
+    {
+        return Vector3Int.RoundToInt(worldPos);
+    }
+    // Rider should insert ToChunkCoord here, instead of wiping the whole file
+}

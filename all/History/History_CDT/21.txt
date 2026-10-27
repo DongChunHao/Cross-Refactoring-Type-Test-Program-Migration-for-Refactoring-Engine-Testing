@@ -1,0 +1,22 @@
+int x(int a) { // Parameter to be renamed
+    return a;
+}
+int main(int a, char** argv) {
+    return x(a);
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: formal parameter `a` of function `x()`
+Refactoring Scope: whole project / translation unit
+IDE: Eclipse CDT
+Operation steps: Select parameter `a` in `int x(int a)`, invoke Rename refactoring, manually edit new name to `*a` (introduce pointer modifier).
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT’s rename refactoring accepts `*a` as new parameter name. It rewrites function signature to `int x(int *a)` and modifies return expression into `return *a;`. Call site `x(a)` remains unchanged: main passes an integer value where a pointer is expected. Compilation produces type‑mismatch warning; runtime triggers segmentation fault due to dereferencing invalid pointer.
+Expected behavior: Rename refactoring is intended only to modify the identifier name, not to alter type qualifiers or declarator structure. Detect that user input contains declarator characters (`*`, `[]`) which change variable type. Reject such input and warn user: rename cannot modify type; use Change Signature refactoring for parameter‑type modification.
+Underlying cause: Rename implementation does not separate identifier name from declarator syntax. It treats the whole user input `*a` as new identifier, parses it as declarator, mutates parameter type and body expressions. The call‑site arguments are not updated accordingly, introducing silent type mismatch and runtime crash.
+*/

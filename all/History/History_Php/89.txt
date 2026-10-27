@@ -1,0 +1,24 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Pull Members Up refactoring
+Refactoring target: method foo() from subclass B pulled up to parent class A
+Scope: class A and class B
+Refactoring operation: move foo() from B into A
+*/
+
+/* Error Root Cause:
+Observed failure: After pulling foo() up into class A, `self::DUMMY_CONSTANT` is rewritten to `A::DUMMY_CONSTANT`.
+Expected behavior: `self::DUMMY_CONSTANT` should stay as `self::DUMMY_CONSTANT`. The `self` keyword refers to the current class where the method resides after the pull-up operation, and remains semantically correct.
+Underlying cause: The pull-up refactoring logic resolves `self` to the original subclass B's parent A at the moment of moving, and substitutes the explicit class name. It does not preserve the `self` keyword when the method is relocated into the class that owns the referenced constant.
+*/
+class A {
+    const DUMMY_CONSTANT = 1;
+}
+
+class B extends A {
+    public function foo()
+    {
+        return self::DUMMY_CONSTANT;
+    }
+}
+?>

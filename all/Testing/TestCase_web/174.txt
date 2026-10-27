@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+class MyClass {
+#myFunction() { //{Extract Method target private instance‑method for Make‑Method‑Static private‑#‑prefix‑dropping defect}
+return 123;
+}
+caller() {
+return this.#myFunction();
+}
+}

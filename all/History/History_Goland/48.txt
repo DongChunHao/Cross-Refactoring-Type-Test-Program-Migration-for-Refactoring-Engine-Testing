@@ -1,0 +1,28 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function `demo()`
+Refactoring rule: When adding a new parameter with a default value in the Change Signature dialog, validate that the default value’s type is compatible with the declared parameter type. If there is a type mismatch, show an error and prevent applying the refactoring.
+*/
+
+/* Error Root Cause:
+Observed failure: The Change Signature UI allows users to define an `int` parameter and input a string literal as its default value, with no validation warning. The refactoring can produce invalid Go code.
+Expected behavior: The dialog performs type checking between the parameter type and the default expression; it shows an error message and disables the "Refactor" button when types do not match.
+Underlying cause: The refactoring dialog’s input layer does not run Go type-checking logic on the default value expression, treating it only as raw text instead of a typed AST expression.
+*/
+
+func demo() {
+}
+
+func main() {
+	demo()
+}
+
+// Example invalid configuration that should be blocked:
+// New parameter: `x int`, default value: `"abc"`
+// Bad generated code (should not be allowed):
+/*
+func demo(x int = "abc") {
+}
+*/

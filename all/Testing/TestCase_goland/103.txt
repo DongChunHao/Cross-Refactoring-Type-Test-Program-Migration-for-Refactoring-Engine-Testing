@@ -1,0 +1,28 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"fmt"
+"time"
+)
+type Author struct {
+Namee   string
+Surname time.Time
+}
+type UserFactory struct{}
+func (f UserFactory) buildUser() *User { // move buildUser method from UserFactory to standalone function
+return &User{
+Author:        Author{},
+Name:          "Sammy the Shark",
+Password:      "fisharegreat",
+PreferredFish: nil,
+CreatedAt:     time.Now(),
+}
+}
+func main() {
+factory := UserFactory{}
+u := factory.buildUser()
+fmt.Println(u.Name)
+}

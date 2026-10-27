@@ -1,0 +1,19 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+
+<?php
+class A {
+private function a(){}
+}
+class B extends A {
+private function a(){}
+private function b(){
+$this->callAMethod(); // extract invocation logic
+}
+private function callAMethod() { // extract call $this->a() into new method
+$this->a(); // <caret> invoke Change signature refactoring here
+}
+}
+?>

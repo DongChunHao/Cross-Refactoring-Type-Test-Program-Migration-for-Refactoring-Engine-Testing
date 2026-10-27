@@ -1,0 +1,7 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Dependency collector lacks built‑in‑symbol whitelist; treats built‑in KeyError as user‑defined symbol and generates invalid Python‑2‑style `from exceptions import KeyError` import in destination module
+def a(): // REFACTOR_TARGET
+try:
+do_smth()
+except KeyError:
+do_smth()

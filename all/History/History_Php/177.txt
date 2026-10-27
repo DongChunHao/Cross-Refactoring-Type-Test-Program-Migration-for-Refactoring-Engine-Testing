@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Constant
+Refactoring target: Q\Consts::A
+Operation: Move constant A into a newly created class, enter reserved keyword "New" as the new class name
+Scope: Pre-validation of new class name against PHP reserved keywords
+*/
+
+/* Error Root Cause:
+Observed failure: When creating a target class for the moved constant and inputting the reserved name "New", the Move Constant dialog does not display any validation error and attempts to generate invalid PHP code. "new" is a PHP reserved keyword and cannot be used as a class name.
+Expected behavior: Validate the input class name before refactoring, detect reserved keywords, show an error message and block the refactoring.
+Underlying cause: The name validation logic for the newly created class in the Move Constant dialog does not check against PHP reserved word list.
+*/
+namespace Q;
+final class Consts {
+    const A= "1"; //invoke Move constant
+}
+
+echo Consts::A;
+?>

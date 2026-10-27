@@ -1,0 +1,37 @@
+package pack1
+
+/* Refactoring Settings:
+Refactoring type: Change Signature (quick-fix variant)
+Refactoring target: Function `bar(s string) (s1 string)`
+Refactoring scope: Add an additional named return parameter
+Refactoring rule: When auto-generating a default name for a new result parameter, scan the function’s body, existing parameters, and existing named returns to avoid name collisions.
+*/
+
+/* Error Root Cause:
+Observed failure: The quick fix picks `s` as the name for the new return parameter. `s` is already the name of bar’s input parameter. This creates a name conflict, causing a compile error.
+Expected behavior: The refactoring selects an unused identifier (such as `s2`, `val`, etc.) that does not clash with existing names `s` and `s1`.
+Underlying cause: The automatic naming logic for new parameters does not collect the set of in-scope variable/parameter/return names inside the function, so it reuses an existing name.
+*/
+
+func foo() {
+	var s1, s string = bar()
+	_, _ = s1, s
+}
+
+func bar(s string) (s1 string) {
+	return ""
+}
+
+// Bad actual refactored output (naming collision)
+/*
+func bar(s string) (s1 string, s string) {
+	return "", ""
+}
+*/
+
+// Expected correct refactored output (no collision)
+/*
+func bar(s string) (s1 string, s2 string) {
+	return "", ""
+}
+*/

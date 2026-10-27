@@ -1,0 +1,18 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func main() {
+var i int
+var s string
+i, s = invokeFoo() // extract foo call into invokeFoo method
+_ = i
+_ = s
+}
+func invokeFoo() (int, string) {
+return foo()
+}
+func foo() (int, string) {
+return 0, ""
+}

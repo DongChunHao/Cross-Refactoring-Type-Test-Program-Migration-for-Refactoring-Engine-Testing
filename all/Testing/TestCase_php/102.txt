@@ -1,0 +1,28 @@
+```
+<?php
+namespace Lib {
+    class Request
+    {
+    }
+}
+namespace Lib\Http {
+    class Responder
+    {
+        public function send(Request $req)
+        {
+        }
+    }
+}
+namespace Lib\Json {
+    use Lib\Request;
+    class JsonResponder extends \Lib\Http\Responder
+    {
+        public function render(Request $req)
+        {
+        }
+    }
+}
+?>
+```
+
+【Refactoring Action】: Push Down refactoring, target method `send()` in `\Lib\Http\Responder`, push down to child class `\Lib\Json\JsonResponder`

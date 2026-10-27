@@ -1,0 +1,24 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: Object literal `{ 'name': 'Kate', 'tea': 'green' }` in ES5 JavaScript
+Refactoring Scope: JavaScript (ES5)
+Trigger Operation: Run Extract Variable on the object literal
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: In ES5 mode, extracting the object literal creates a new variable and rewrites the original object using object spread `...spreadElements1`. Object spread is ES2018 syntax and is not valid ES5, producing code that does not match the target language level.
+
+Expected behavior: For ES5 target, extract variable and keep plain object assignment instead of spread:
+var spreadElements1 = { 'name': 'Kate', 'tea': 'green' };
+var spreadElements = spreadElements1;
+
+Underlying cause: The extract variable logic unconditionally uses object spread syntax when extracting an object literal, without checking the configured JavaScript language version. It does not fall back to simple variable reference for ES5.
+*/
+
+// Complete compilable test code
+var spreadElements = {
+    'name': 'Kate',
+    'tea': 'green'
+};

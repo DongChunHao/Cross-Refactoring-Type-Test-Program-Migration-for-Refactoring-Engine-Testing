@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+function demo() {
+const _self = this //{Rename Variable on _self}
+const closure = () => _self
+}

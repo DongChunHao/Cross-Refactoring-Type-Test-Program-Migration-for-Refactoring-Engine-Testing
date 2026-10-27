@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+mod mod1 {
+use foo::Foo;
+fn func(_: Foo) {} //Extract Method: extract logic inside function referencing sibling‑module type
+mod foo {
+pub struct Foo;
+}
+}
+mod mod2;

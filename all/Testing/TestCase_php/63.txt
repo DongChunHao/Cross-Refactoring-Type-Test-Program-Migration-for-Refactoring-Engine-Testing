@@ -1,0 +1,17 @@
+```
+<?php
+namespace Logging\Writer {
+    use Logging\Writer as LOG_ALIAS;
+    class BaseLogWriter
+    {
+    }
+    class FileLogger implements LOG_ALIAS\Contract\ILogWriter{
+    }
+}
+namespace Logging\Writer\Contract {
+    interface ILogWriter{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `FileLogger`, move to global namespace into new separate file.

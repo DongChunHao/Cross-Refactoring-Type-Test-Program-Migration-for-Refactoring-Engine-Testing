@@ -1,0 +1,18 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package bad_refactor_sample
+type Parser struct {
+Patterns []string
+}
+func (p *Parser) Compile() error {
+return nil
+}
+func testLogic() {
+p := &Parser{Patterns: []string{}}
+assertNoError(p) // extract assert.NoError call into assertNoError
+}
+func assertNoError(p *Parser) {
+assert.NoError(t, p.Compile())
+}

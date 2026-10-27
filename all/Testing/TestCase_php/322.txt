@@ -1,0 +1,11 @@
+```
+<?php
+class C{
+    public function __construct(public int $a, private float $b)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `C::__construct(public int $a, private float $b)`; reorder parameters, move `$b` before `$a`.

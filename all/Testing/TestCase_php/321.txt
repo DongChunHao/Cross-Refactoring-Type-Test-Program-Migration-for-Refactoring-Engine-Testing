@@ -1,0 +1,12 @@
+```
+<?php
+class User
+{
+    public function __construct(protected string $name, public int $age)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature on `User::__construct(protected string $name, public int $age)`; swap parameter order, `$age` first then `$name`.

@@ -1,0 +1,14 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+// foo.cpp
+#include "f.hpp"
+struct Base {};
+struct Derived : Base //{Push down static f from Base to Derived}
+{
+static void f() {}
+};
+void g() {
+Derived::f();
+}

@@ -1,0 +1,20 @@
+<?php
+function foo ($a){
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Feature request: Code completion for type-hint types inside the new parameter editor field
+Refactoring rule: The parameter name/type input field in the Change Signature dialog should support PHP type completion, similar to the editor. When the user types a type part such as `\Date` or `DateTime`, offer class/interface/trait completion candidates, resolve namespaces and use aliases, and insert the proper FQN or short type name.
+*/
+
+/* Request Description:
+Current behavior: In Change Signature, when adding a new parameter like `\DateTime $b`, the input field for the new argument does not provide IDE code completion for type names. The user must manually type the full class name or FQN from memory.
+
+Expected behavior:
+The argument input field supports full PHP type completion: built-in types, classes, interfaces, traits, nullable syntax, union types, and respect current file `use` aliases. Completion inserts the type name correctly so the user can quickly compose `\DateTime $b`, `?SomeClass $c`, `int|string $d`.
+
+Use case: Adding many type-hinted parameters during signature modification, reducing manual typing and typos.
+
+Why useful: This matches the main editor experience. Other related dialogs (Create Function, Generate Override) provide type completion; Change Signature’s parameter editor is inconsistent.
+*/

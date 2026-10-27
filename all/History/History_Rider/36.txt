@@ -1,0 +1,89 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: Duplicated conditional blocks inside multiple class methods
+Refactoring Scope: Selected code block + detection/replacement of semantically similar duplicate instances within the class
+IDE: Rider
+*/
+
+/* Error / Feature Request Root Cause:
+Observed behavior: Rider’s Extract Method only rewrites the single selected code snippet and leaves all other matching duplicate blocks untouched. It does not auto-detect other equivalent blocks and replace them with calls to the new extracted method, and it does not automatically promote varying literals (filename strings) into parameters.
+
+Expected behavior (consistent with IntelliJ IDEA):
+When running Extract Method on a block, Rider should:
+1. Detect other semantically matching duplicate code blocks in the class;
+2. Identify varying literals/expressions (filename strings in this case) and suggest them as parameters of the new method;
+3. Optionally apply the refactoring to all duplicates, replacing each block with a call to the new method, passing the appropriate per-block argument.
+
+Underlying cause: Rider’s Extract Method implementation at the time lacked the duplicate-code search and parameter inference phase present in IntelliJ’s Java extract method. Rider only operates locally on the selected PSI subtree, without cross-method duplicate analysis. This is a missing feature rather than a crash bug.
+*/
+
+// Original code
+public class ReceiptRenderer
+{
+    public void method1()
+    {
+        // Code specific for method1
+        if (RenderReceipt)
+        {
+            var fileInfo = new FileInfo("filename");
+            transform(fileInfo);
+        }
+        // Code specific for method1
+    }
+
+    public void method2()
+    {
+        // Code specific for method2
+        if (RenderReceipt)
+        {
+            var fileInfo = new FileInfo("filename2");
+            transform(fileInfo);
+        }
+        // Code specific for method2
+    }
+
+    public void method3()
+    {
+        // Code specific for method3
+        if (RenderReceipt)
+        {
+            var fileInfo = new FileInfo("filename3");
+            transform(fileInfo);
+        }
+        // Code specific for method3
+    }
+}
+
+// Desired refactoring result after Extract Method with duplicate replacement
+public class ReceiptRenderer
+{
+    public void method1()
+    {
+        // Code specific for method1
+        RenderReceiptFile("filename");
+        // Code specific for method1
+    }
+
+    public void method2()
+    {
+        // Code specific for method2
+        RenderReceiptFile("filename2");
+        // Code specific for method2
+    }
+
+    public void method3()
+    {
+        // Code specific for method3
+        RenderReceiptFile("filename3");
+        // Code specific for method3
+    }
+
+    private void RenderReceiptFile(string filePath)
+    {
+        if (RenderReceipt)
+        {
+            var fileInfo = new FileInfo(filePath);
+            transform(fileInfo);
+        }
+    }
+}

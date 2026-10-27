@@ -1,0 +1,26 @@
+<?php
+class A{
+    function a(){} // <-- Change Signature refactoring target
+}
+class B extends A{
+    function b(){
+        $this->a();
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: method a() in class A
+Action: change method visibility from default (public) to private
+Refactoring rule: When modifying method visibility via Change Signature, the refactoring must scan all call sites. If any call site would become inaccessible after the visibility change, a warning should be presented to the user before applying the change.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Changing A::a() to private removes inherited access for class B. After the change, $this->a() inside B::b() becomes invalid PHP code, but the refactoring shows no warning to the user.
+Expected behavior:
+The refactoring should detect that B::b() calls A::a() and will lose access when a() becomes private, and warn the user about this breaking change before applying the modification.
+
+Underlying cause:
+The visibility change validation pass of Change Signature does not check downstream inherited call sites for access violations. It only checks usages within the same class and ignores calls in child classes that rely on inherited public/protected visibility.
+*/

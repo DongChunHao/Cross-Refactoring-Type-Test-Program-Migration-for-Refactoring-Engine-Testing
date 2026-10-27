@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: int
+'''
+#define Id_0
+#define Id_1
+int global_0 = -1;
+void f_0() {
+float LocalVar_0 = 4;
+LocalVar_0 = -1;
+}
+float f_1(float LocalVar_0) {
+return LocalVar_0;
+} //rename field for rename‑refactoring‑reserved‑keyword‑as‑global‑variable‑name‑keyword‑conflict‑syntax‑error defect scenario

@@ -1,0 +1,14 @@
+```
+<?php
+interface Root {}
+interface BaseConstants {
+    const VERSION = "1.0";
+}
+class UserModel implements Root {
+    const VERSION = "1.0"; // Pull Up target, move to Root
+}
+interface UserContract extends Root, BaseConstants { }
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target constant `VERSION` from class `UserModel`, pulled into interface `Root`

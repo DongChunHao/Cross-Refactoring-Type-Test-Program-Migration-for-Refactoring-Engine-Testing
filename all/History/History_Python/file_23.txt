@@ -1,0 +1,18 @@
+''' Refactoring Settings:
+Refactoring type: Rename refactoring for function parameter
+Refactoring target: function formal parameter person
+Refactoring scope: function signature, body usages, docstring @param and @type fields
+Refactoring rule expectation: When renaming parameter person, docstring entries @param person and the corresponding @type person shall both be updated synchronously alongside code‑level usages inside function body.
+'''
+''' Error Root Cause:
+Observed failure: After renaming function parameter person, only the @param entry inside docstring is updated. The variable identifier inside the matching @type doc‑directive remains unchanged, causing docstring metadata inconsistency.
+Expected behavior: Both `@param person` and `@type person` should be renamed together with the formal function parameter.
+Underlying cause: Rename refactoring parses and processes @param directive, but does not establish linkage between @param and its paired @type entry; it fails to locate and rewrite the parameter name in @type docstring annotation.
+'''
+def defparam(person):
+    """
+    @param person: Who should think.
+    @type person: L{Person} or L{Animal}
+    @return:
+    """
+    person.some_method()

@@ -1,0 +1,10 @@
+```
+<?php
+class HttpMarker{
+    public static final function tagRequest(){
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static final function `tagRequest()` from class `HttpMarker` to built-in stub class `RuntimeException`

@@ -1,0 +1,35 @@
+<?php
+namespace NS1 {
+    class A1
+    {
+    }
+}
+
+/*
+ * Comments that describes NS2 namespace
+ */
+namespace NS2 {
+    class A2
+    {
+    }
+    class B
+    {
+    }
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move class refactoring
+Refactoring target: class A2, target namespace N
+Refactoring rule: When splitting a namespace block to move a class out, documentation/comments that logically belong to the original namespace must stay attached to the original remaining namespace, not be placed before the newly created namespace for the moved class.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The comment block intended to document namespace NS2 stays in place, but the new `namespace N` block for A2 is inserted right after that comment. Visually and semantically the comment now incorrectly precedes namespace N instead of NS2. The leftover NS2 namespace (only containing class B) is pushed below the new namespace block and loses its descriptive header comment.
+Expected behavior:
+The comment remains associated with NS2. The new namespace N for A2 should be inserted either before the comment block or after the whole remaining NS2 namespace block, so the comment still describes NS2.
+Underlying cause:
+The refactoring’s insertion logic picks the token position immediately before the original `namespace NS2` statement to insert the new namespace node. It does not consider preceding comment nodes as part of the namespace’s header and does not adjust comment attachment when splitting the namespace.
+*/
+?>

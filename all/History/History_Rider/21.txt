@@ -1,0 +1,20 @@
+/* Refactoring Settings:
+Refactoring Type: Rename File (Rider file rename refactoring)
+Refactoring Target: File `foooo.cs` → `Foooo.cs` (only casing changed)
+Project: .NET Standard 2.0
+Refactoring Rule Expectation: File should stay visible inside the Rider solution explorer; the project file entry is updated to match the new casing, file remains present both on disk and in the solution tree.
+*/
+
+/* Error Root Cause:
+Observed failure: Renaming the file by changing only the letter casing causes the file to vanish from Rider’s Solution Explorer view. The physical file is still present on the filesystem.
+Expected behavior: Rider and the .NET project system should recognize the case-only rename, update the project item path casing, and keep the file visible in the solution.
+Underlying cause: Windows filesystem is case-insensitive. When the new name differs only by casing, the filesystem treats `foooo.cs` and `Foooo.cs` as the same file. Rider/project system logic does not properly refresh the MSBuild item’s path casing; the project item becomes orphaned in the PSI/solution model, so the file stops appearing in the tree even though the disk file exists.
+*/
+
+// Before rename in .csproj
+<Compile Include="foooo.cs" />
+
+// Desired after rename
+<Compile Include="Foooo.cs" />
+
+// Actual bug behaviour: MSBuild item update fails to refresh in Rider UI; file disappears from Solution Explorer

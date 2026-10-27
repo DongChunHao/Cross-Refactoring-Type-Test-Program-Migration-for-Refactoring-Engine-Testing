@@ -1,0 +1,19 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+namespace ClassLibrary4
+{
+public abstract class BaseClass1
+{
+public abstract void Execute();
+}
+
+public class Class1 : BaseClass1
+{
+public override void Execute() //{Push Down Method: target method for move‑cycle‑remove‑source‑file‑duplicate‑class‑declaration‑bug reproduction}
+{
+}
+}
+
+}

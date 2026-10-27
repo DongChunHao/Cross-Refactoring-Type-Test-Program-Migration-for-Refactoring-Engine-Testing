@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package pack1
+// very valuable comment
+const ConstValue = 0 // rename constant to ConstValue
+/* and */
+/* three */
+// more
+'''

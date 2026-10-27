@@ -1,0 +1,23 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+template 
+T someFunctionThatNeedsRefactoring(T a, T b){
+T c = a*b;
+T d = a+b;
+return c+b;
+}
+struct Wrapper
+{
+template 
+T wrappedFunc(T a, T b) { //{Move template function logic into struct Wrapper member function}
+return someFunctionThatNeedsRefactoring(a,b);
+}
+};
+int main()
+{
+Wrapper w;
+auto res = w.wrappedFunc(2,3);
+return 0;
+}

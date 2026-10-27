@@ -1,0 +1,16 @@
+```
+<?php
+class MyClass {
+    public function f($foo = 1)
+    {
+        echo $foo;
+        $this->g();
+    }
+    public function g()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `MyClass::g()`, add new required parameter `array $a`; enable parameter propagation to caller `f()`.

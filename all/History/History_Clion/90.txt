@@ -1,0 +1,28 @@
+#include <memory>
+
+// Forward declaration
+class Panel {
+};
+
+class MyClass {
+public:
+    void func();
+};
+
+/* Refactoring Settings:
+Refactoring type: Extract Variable
+Refactoring target: Extract expression std::shared_ptr<Panel>(this) into a new local variable
+Refactoring scope: Expression std::shared_ptr<Panel>(this)
+Refactoring rule expectation: Generate a local variable declaration with correct template type std::shared_ptr<Panel> and assign the constructed value to it
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Variable refactoring fails to properly handle template type std::shared_ptr<Panel> for the extracted variable, produces invalid type or broken code.
+Expected behavior: Create variable like std::shared_ptr<Panel> panelPtr = std::shared_ptr<Panel>(this);
+Underlying cause: The refactoring engine's type handling logic mishandles template class type when extracting variable from temporary template object construction expression, leading to malformed type name in variable declaration.
+*/
+
+void MyClass::func()
+{
+    std::shared_ptr<Panel>(this);
+}

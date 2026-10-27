@@ -1,0 +1,21 @@
+<?php
+interface I2{}
+class Test implements I2{
+    public static function f(){} // <-- Pull Up refactoring target
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: static method f() in class Test
+Target destination: implemented interface I2
+Refactoring rule: Before pulling a static method into an interface, validate PHP language rules. Interfaces cannot declare static abstract method signatures. The refactoring must detect this case and warn or block the operation.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pull Up allows moving static function f into interface I2 and produces `public static function f();` inside the interface. PHP strict standards forbid abstract static methods; interface method signatures are implicitly abstract, which creates a violation. No warning is presented to the user.
+Expected behavior:
+The refactoring should detect that static methods cannot be declared as abstract in interfaces, show a warning and prevent the refactoring.
+Underlying cause:
+The language rule validator for Pull Up does not check whether the member being pulled up is static when the target is an interface. It does not enforce the PHP restriction that interfaces may not contain abstract static method declarations.
+*/

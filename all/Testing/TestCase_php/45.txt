@@ -1,0 +1,14 @@
+```
+<?php
+class Animal { }
+class Bird extends Animal {
+    static private function getWingCount(){ return 2; }
+    public function describe()
+    {
+        echo self::getWingCount();
+    }
+}
+class Sparrow extends Bird{}
+```
+
+【Refactoring Action】: Pull Up method `describe()` from class `Bird` to parent class `Animal`

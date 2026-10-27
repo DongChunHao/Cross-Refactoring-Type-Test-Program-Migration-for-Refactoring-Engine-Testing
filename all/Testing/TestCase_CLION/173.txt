@@ -1,0 +1,17 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: printKeyValue
+'''
+#include <iostream>
+#include <string>
+void printKeyValue(const std::string& key, int count) //{Rename method original_func to printKeyValue}
+{
+std::cout << count << "|" << key << "\n";
+}
+int main()
+{
+std::string key = "test_key";
+int count = 10;
+original_func(key, count);
+return 0;
+}

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+type Mx<T> = T[];
+interface Tx {
+mx: Mx<T>; //{Extract Method target generic‑alias usage triggering Inline‑Type‑Alias array‑suffix‑loss defect}
+}

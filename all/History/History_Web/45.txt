@@ -1,0 +1,29 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Change Signature
+Refactoring Target: arrow function assigned to variable `anArrow`
+Refactoring Scope: Current TypeScript file
+Trigger Operation:
+Case 1: Arrow with multiple parameters `(name: string, lastName: string) => 1`; remove first parameter via Change Signature.
+Case 2: Zero‑parameter arrow `() => 1`; add a typed parameter via Change Signature.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The Change Signature refactoring throws an internal exception when applied to arrow functions stored in variables, instead of rewriting the function signature and updating all call sites.
+Expected behavior:
+1. After removing first parameter: `var anArrow = (lastName: string) => 1;` and calls become `anArrow("Smith")`, `anArrow("Jones")`.
+2. After adding typed parameter: `var anArrow = (x: number) => 1;` and calls become `anArrow(1)`.
+Underlying cause: The Change Signature processor had incomplete AST handling for variable-bound arrow functions. It could not properly modify parameter lists (removing parameters from multi-parameter arrows or adding parameters to zero-parameter arrows) and crashed during node reconstruction.
+*/
+
+// Complete compilable test code
+// Case 1
+var anArrow = (name: string, lastName: string) => 1;
+anArrow("John", "Smith");
+anArrow("Bill", "Jones");
+
+// Case 2
+var anArrow2 = () => 1;
+anArrow2();
+anArrow2();

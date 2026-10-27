@@ -1,0 +1,18 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+using UnityEditor;
+using UnityEngine;
+
+namespace DefaultNamespace
+{
+public static class MyLog
+{
+[MenuItem("Test/Log")]
+public static void LogSomething()
+{
+Debug.Log("Test"); //{Extract Method: target log‑emitting method for Unity stale‑path navigation bug reproduction}
+}
+}
+}

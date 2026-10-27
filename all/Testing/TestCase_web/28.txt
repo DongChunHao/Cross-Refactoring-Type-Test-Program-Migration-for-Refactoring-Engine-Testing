@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+function BiTimer() {}
+BiTimer.callOnce(function BiSelectionModel_i_ontick__selectAll_PATCH(e) {
+for (var i = start; i < end; i++) {
+var extractedVar = titleLabel; //{Extract Variable for titleLabel identifier}
+extractedVar.setText(i);
+}
+});

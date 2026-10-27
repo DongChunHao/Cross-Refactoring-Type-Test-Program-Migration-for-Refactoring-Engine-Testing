@@ -1,0 +1,36 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method
+Refactoring target: Foo\A::foo()
+Scope: static conversion heuristic for unused instance methods
+Refactoring operation: move foo() from Foo\A to Bar\B
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving an instance method that has zero usages and contains no `$this` references, the refactoring automatically converts the method to static, even though it can exist as a regular instance method inside the target class B.
+There is no requirement to make it static just because it was originally an instance method on the source class.
+
+Expected behavior:
+1. Analyze the method body for `$this` / self / static references and check all call sites.
+2. If the method has no `$this` and no existing call sites that rely on instance invocation:
+   - Do **not** automatically force static conversion.
+   - Offer two options: move as instance method in B, or move and make static.
+3. Only auto-convert to static when the call sites are incompatible with being an instance method on the target class.
+
+Underlying cause:
+Current heuristic treats any cross-class move of an instance method as requiring static conversion by default, without first checking whether the method body is independent of the source instance and can live as an ordinary instance method on the destination class.
+*/
+namespace Foo {
+    class A
+    {
+        public function foo() {
+        }
+    }
+}
+
+namespace Bar {
+    class B {
+    }
+}
+?>

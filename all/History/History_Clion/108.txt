@@ -1,0 +1,29 @@
+#include <vector>
+#include <iostream>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract statement `v.clear();` inside `C::f()`
+Refactoring scope: The call `v.clear()`
+Refactoring rule expectation: Detect `v.clear()` is a mutating operation on member vector, create non-const member function.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method creates a `const` member function for `v.clear()`. Calling `clear()` modifies `std::vector`, which is not allowed inside const member function → compile error.
+Expected behavior: Generated extracted method should be non-const: `void clearVector() { v.clear(); }`
+Underlying cause: The refactoring engine’s side-effect analysis fails to recognize that `std::vector::clear()` mutates the member field `v`. It mistakenly judges the code has no object modification and adds `const` qualifier.
+*/
+
+class C {
+public:
+    void f();
+protected:
+    std::vector<int> v = {1, 2};
+};
+
+void C::f() {
+    for (auto i : v) {
+        std::cout << i << "\n";
+    }
+    v.clear(); // extract this line
+}

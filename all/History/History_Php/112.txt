@@ -1,0 +1,34 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method refactoring
+Refactoring target: anonymous class method `anon(D $d)`
+Scope: anonymous class PSI handling, `self` keyword resolution
+Refactoring operation: attempt to move `anon()` out of the anonymous class
+*/
+
+/* Error Root Cause:
+Observed failure: Triggering Move Instance Method on a method inside an anonymous class throws an AssertionError (`java.lang.AssertionError: cannot create element`).
+The anonymous class is an unnamed, ephemeral class in the PSI tree. The refactoring logic expects a named target class to resolve `self` and rebuild the method’s signature and references, but anonymous classes do not have a stable, resolvable class identifier the factory can use to rewrite the `new self()` expression. The PSI element factory hits an assertion when trying to create type/reference elements for the anonymous class.
+
+Expected behavior:
+Detect that the source method belongs to an anonymous class before running the refactoring. Either disable the Move Instance Method action for anonymous-class methods, or show a user-friendly error dialog explaining this refactoring is not supported for anonymous classes, instead of crashing with an assertion failure.
+
+Underlying cause:
+The Move Instance Method implementation assumes the containing class has a proper, named class type symbol that can be referenced in new PSI nodes. Anonymous classes lack a canonical name symbol, and the code path for rewriting `self` references does not have a guard clause for this case, leading to an assertion in the element factory.
+*/
+class D{}
+class C {
+    public $b;
+    public function f()
+    {
+        $this->b = new class {
+            public function anon(D $d) {
+                var_dump($d);
+                var_dump(new self());
+            }
+        };
+        $this->b->anon(new D());
+    }
+}
+(new C())->f();
+?>

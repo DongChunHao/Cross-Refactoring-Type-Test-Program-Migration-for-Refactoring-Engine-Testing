@@ -1,0 +1,45 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Change Signature
+Refactoring Target: Arrow-function class field `anArrow` that implements an interface and is overridden in a subclass
+Refactoring Scope: TypeScript
+Trigger Operation: Run Change Signature on the arrow function `anArrow`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Change Signature properly propagates changes across the type hierarchy for ordinary class methods, but does not do the same for arrow functions assigned to class fields. Even though these arrow fields implement the interface contract and are overridden in child classes, the refactoring treats each assignment as an independent expression and does not update all implementing/overriding places in the hierarchy.
+
+Expected behavior: Recognize arrow-function class fields that implement interface members or override parent-class arrow fields as part of the same contract. When changing signature, apply the parameter/return-type changes consistently to:
+1. The interface declaration `IFoo.anArrow`
+2. Parent class `FooBase.anArrow`
+3. Subclass `FooImpl.anArrow`
+
+Underlying cause: Change Signature’s hierarchy traversal logic is built around AST method definitions (`methodName() {}`). It does not treat field initializer arrow functions as polymorphic override candidates, so it skips propagating signature updates along the inheritance/implementation chain.
+*/
+
+// Complete compilable test code
+interface IFoo {
+  anArrow: (bar: string, foo: number) => void
+}
+
+class FooBase implements IFoo {
+  anArrow = (bar, foo) => {
+    console.log("FooBase" + foo + bar + foo);
+  };
+}
+
+class FooImpl extends FooBase {
+  anArrow = (bar: string, foo: number): void => {
+    console.log("FooImpl" + bar + foo);
+  };
+}
+
+var fooImpl: FooImpl = new FooImpl();
+fooImpl.anArrow("1", 1);
+
+var fooBase: FooBase = new FooBase();
+fooBase.anArrow("2", 2);
+
+var iFoo: IFoo = fooImpl;
+iFoo.anArrow("3", 3);

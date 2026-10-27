@@ -1,0 +1,28 @@
+<?php
+namespace NS1;
+    class A1
+    {
+    }
+
+namespace NS2;
+    class A2
+    {
+    }
+    class B{}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move class refactoring
+Refactoring target: class A2, target namespace N
+Refactoring rule: When moving a class that lives in a semicolon-style namespace declaration (`namespace NS2;`) inside a file with multiple namespaces, the refactoring must preserve the original namespace syntax style for untouched namespaces and remaining types, and only rewrite the namespace block for the moved class.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Original file uses semicolon syntax `namespace NS1;` / `namespace NS2;` (non-braced namespace). After moving A2 to namespace N, the refactoring rewrites all remaining namespaces to brace-style `namespace NS1 { ... }`, `namespace NS2 { ... }`. It changes the syntax form of unrelated namespace declarations that were not modified by the move.
+Expected behavior:
+Only the namespace containing A2 is split out and adjusted; NS1 and the leftover NS2 containing class B should retain the original semicolon namespace syntax, not be converted to brace blocks automatically.
+Underlying cause:
+The file-level namespace rewriter normalizes the entire file to braced namespace syntax when modifying one namespace section, instead of preserving the existing syntax variant for unchanged namespace nodes.
+*/
+?>

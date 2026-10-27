@@ -1,0 +1,29 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Variable
+Refactoring Target: Destructured variable `text` coming from a ternary object expression
+Refactoring Scope: TypeScript / JavaScript
+Trigger Operation: Inline `text` from `const { text } = cond ? objA : objB;`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+Original destructuring: `const { text } = 'subtype' in callbackEventEvent ? callbackEventEvent.message : callbackEventEvent;`
+The destructuring is equivalent to `(cond ? callbackEventEvent.message : callbackEventEvent).text`.
+After inlining, IDE produces `cond ? callbackEventEvent.message.text : callbackEventEvent.text`, which changes semantics:
+it tries to read `.text` on each branch individually, instead of reading `.text` on the result of the ternary.
+If one branch object does not have a `text` property, this introduces a runtime error that was not present before.
+
+Expected behavior: Wrap the whole ternary expression in parentheses before accessing `.text`:
+extractPullRequestLinks(('subtype' in callbackEventEvent ? callbackEventEvent.message : callbackEventEvent).text)
+
+Underlying cause:
+The variable inliner treats object destructuring `{text} = expr` as `expr.text`, but when `expr` is a ternary conditional expression, it fails to preserve the precedence and group the entire conditional as the receiver of the `.text` property access; instead it distributes the property access into each branch of the ternary.
+*/
+
+// Complete compilable test code
+const { text } = 'subtype' in callbackEventEvent
+    ? callbackEventEvent.message
+    : callbackEventEvent;
+const links = extractPullRequestLinks(text);

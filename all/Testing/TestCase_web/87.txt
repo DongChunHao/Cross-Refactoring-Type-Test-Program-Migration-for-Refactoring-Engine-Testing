@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+declare function isPromise(v: any): boolean;
+declare const ASYNC_START: string;
+const promiseMiddleware = store => next => action => {
+if (isPromise(action.payload)) {
+store.dispatch({ //{Extract Method target statement calling store.dispatch inside curried arrow chain}
+type: ASYNC_START,
+subtype: action.type,
+});
+}
+};

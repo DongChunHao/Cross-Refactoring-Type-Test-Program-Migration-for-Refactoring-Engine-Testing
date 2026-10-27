@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+
+type App struct{}
+func (app App) main() { // Move method main to App struct
+fmt.Println(a)
+}
+func main() {}

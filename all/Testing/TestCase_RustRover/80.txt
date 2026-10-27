@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+enum Foo { Bar(i32) }
+fn id<T>(x: T) -> T { x }
+mod scope {
+pub fn wrapper<T>(v: T) -> T { v } //Move Method: move wrapper function consuming variant‑constructor first‑class value
+}
+fn main() {
+scope::wrapper(Foo::Bar)(42); //Move Method: target first‑class enum variant constructor usage
+}

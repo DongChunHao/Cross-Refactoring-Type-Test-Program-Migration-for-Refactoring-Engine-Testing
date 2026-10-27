@@ -1,0 +1,38 @@
+#define identifier_0
+float gvar_0 = -1;
+void f_0() {
+    int var_0 = -1;
+    var_0 = 100;
+}
+float f_1(float var_0) {
+    return gvar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename)
+Refactoring Target: preprocessor macro `identifier_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro `identifier_0`, invoke Rename refactoring, input string `*identifier_0` as new macro name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts candidate name `*identifier_0` containing asterisk `*`, outputs `#define *identifier_0`.
+Per C preprocessor grammar, macro name must be a valid C identifier. The asterisk `*` is not permitted within identifiers. The generated #define statement is illegal preprocessor syntax and raises compilation error.
+No early‑stage validation inside the refactoring pipeline; invalid source code is persisted without any warning or prompt for the developer.
+
+Expected behavior:
+Before applying macro rename transformation, perform strict lexical validation for candidate macro name:
+1. Valid macro identifier starts with alphabet character or underscore.
+2. Permitted characters: letters, underscores, decimal digits only.
+3. Reject inputs containing special symbols such as `*`, `&`, `#`, `+`, `-`, `/`, whitespace.
+4. Reject reserved C keywords and literals starting with digits.
+5. Abort refactoring and report error message once validation fails.
+Refactoring tool should not rely solely on the compiler to catch syntactic defects introduced by refactoring operations.
+
+Underlying cause:
+CDT macro‑rename implementation lacks lexical grammar validation for user‑supplied macro name. Raw input string is directly inserted into the `#define` line. The tool assumes user always provides well‑formed identifier and does not filter out non‑identifier special characters.
+*/

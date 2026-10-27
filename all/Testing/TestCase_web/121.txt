@@ -1,0 +1,6 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+var { 'a a': a } = { 'a a': 5 };
+a; //{Move Method target reference to variable derived from whitespace‑key destructuring pattern}

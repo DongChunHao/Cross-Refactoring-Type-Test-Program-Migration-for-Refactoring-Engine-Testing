@@ -1,0 +1,32 @@
+package main
+
+import "net/http"
+
+/* Refactoring Settings:
+Refactoring type: Create Function quick-fix
+Refactoring target: undefined call `demo(c)`, `c` has static type `*http.Client`
+Refactoring rule: When generating parameter types for imported qualified types, retain the package qualifier (`http.Client`) instead of emitting bare type name `Client`.
+*/
+
+/* Error Root Cause:
+Observed failure: The quick fix generates signature `func demo(*Client) {}`, which is invalid, as `Client` is not defined in the current package, even though `net/http` is imported.
+Expected behavior: Generate `func demo(c *http.Client) {}`.
+Underlying cause: The type renderer in quick-fix logic strips the package prefix of resolved imported symbols; it does not check whether the type belongs to an external imported package, and only outputs the type’s short name.
+*/
+
+func main() {
+	c := &http.Client{}
+	demo(c)
+}
+
+// Bad actual generated code
+/*
+func demo(*Client) {
+}
+*/
+
+// Expected correct generated code
+/*
+func demo(c *http.Client) {
+}
+*/

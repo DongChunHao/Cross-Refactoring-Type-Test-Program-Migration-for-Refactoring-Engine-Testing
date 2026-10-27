@@ -1,0 +1,28 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Variable
+Refactoring Target: variable bla
+Refactoring Scope: Current JavaScript file, inside async function Foo
+Trigger Operation: Right click variable 'bla', execute Refactor -> Inline Variable.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After inlining variable bla which holds an awaited promise, the engine incorrectly generates `transformBla(await);`, discarding the operand `somePromise()` after the await keyword.
+Expected behavior: The engine should substitute `bla` with its initializer `await somePromise()`, producing `transformBla(await somePromise());`.
+Underlying cause: The inline variable refactoring fails to preserve the full awaited expression; it only keeps the await keyword and drops the promise operand during AST replacement.
+*/
+
+// Complete compilable test code with stub functions
+async function somePromise() {
+    return Promise.resolve(0);
+}
+
+function transformBla(value) {
+    return value;
+}
+
+async function Foo() {
+    const bla = await somePromise();
+    const foo = transformBla(bla);
+}

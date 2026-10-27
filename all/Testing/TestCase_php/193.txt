@@ -1,0 +1,23 @@
+```
+<?php
+class A {
+    /**
+     * @param $a
+     * @param $b
+     */
+    public function foo($a, $b)
+    {
+    }
+}
+class B extends A {
+    /**
+     * {@inheritdoc}
+     */
+    public function foo($a, $b)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `A::foo()`, swap parameter order of `$a` and `$b`, propagate changes to overriding methods.

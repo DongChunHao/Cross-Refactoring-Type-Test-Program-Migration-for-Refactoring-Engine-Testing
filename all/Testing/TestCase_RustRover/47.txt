@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+fn main() { //{rename main function, preserve partial‑statement selection context inside nested block}
+{
+let a = 1;
+let b = 2;
+let c = a + b;
+};
+}

@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// tsconfig.json snippet
+{
+"compilerOptions": {
+"paths": {
+"@lite-components/*": [
+"packages/lite/src/js/components/*",
+"packages/lite/src/js/components/*.js",
+"packages/lite/src/js/components/*.jsx"
+]
+}
+}
+}
+// consumer.ts
+import { Button } from "@lite-components/Button"; //{Move Method target alias‑import consumer‑site, extension‑rename triggers naive‑string‑substitution breaking alias‑resolution}

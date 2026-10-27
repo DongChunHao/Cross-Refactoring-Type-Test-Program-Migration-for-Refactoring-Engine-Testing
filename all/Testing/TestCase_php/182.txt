@@ -1,0 +1,13 @@
+```
+<?php
+class OrderManager {
+    static function calcTotal() {}
+    static function process() {
+        self::calcTotal();
+    }
+}
+class OrderMeta {}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `OrderManager`, target namespace `Shop`, enable "Move class to a new file".

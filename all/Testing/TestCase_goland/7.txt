@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+
+func wrapper() {
+println(myParam) // Extract method for this statement
+}
+func main() {}

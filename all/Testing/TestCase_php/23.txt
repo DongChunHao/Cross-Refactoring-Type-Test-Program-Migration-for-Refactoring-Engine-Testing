@@ -1,0 +1,15 @@
+<?php
+// Source class: Mage_Core_Controller_Varien_Action
+class Mage_Core_Controller_Varien_Action extends Mage_Core_Controller_Varien_ActionAbstract
+{
+    const TEST_CONST = 1;
+    public function testMethod()
+    {
+    }
+}
+
+// Target parent class: Mage_Core_Controller_Varien_ActionAbstract
+class Mage_Core_Controller_Varien_ActionAbstract
+{
+    // Existing members here
+}

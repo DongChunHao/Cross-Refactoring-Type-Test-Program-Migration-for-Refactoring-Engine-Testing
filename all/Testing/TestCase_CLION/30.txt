@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+class Foo {
+explicit Foo() = default;
+int value; //{Rename field value to memberValue}
+public:
+static Foo& getInstance() {
+static Foo inst =  {
+return Foo {};
+}();
+return inst;
+}
+};

@@ -1,0 +1,24 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using UnityEditor;
+using UnityEngine;
+
+namespace DefaultNamespace
+{
+public abstract class BaseLog
+{
+[MenuItem("Test/Log")]
+public static abstract void LogSomething();
+}
+
+public static class MyLog : BaseLog
+{
+public static override void LogSomething() //{Push Down Method: target log‑emitting method for Unity stale‑path navigation bug reproduction}
+{
+Debug.Log("Test");
+}
+}
+
+}

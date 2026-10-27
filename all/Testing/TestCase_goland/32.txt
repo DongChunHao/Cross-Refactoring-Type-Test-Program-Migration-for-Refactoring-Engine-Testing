@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func foo() (s string) {
+return getS() // extract expression s into getS method
+}
+func getS() string {
+return s
+}

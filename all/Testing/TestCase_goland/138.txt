@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+type MyType1 int
+type MyAlias int // rename MyType1 to MyAlias
+func main() {
+_ = MyAlias(0) // <caret>
+}

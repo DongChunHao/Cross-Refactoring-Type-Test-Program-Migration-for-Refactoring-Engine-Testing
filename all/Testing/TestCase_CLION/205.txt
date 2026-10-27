@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: modifyVectorItem
+'''
+#include <vector>
+void modifyVectorItem() { //{Rename method f to modifyVectorItem}
+std::vector<int> x { 1, 2, 3 };
+x[0] = 1;
+}
+
+'''

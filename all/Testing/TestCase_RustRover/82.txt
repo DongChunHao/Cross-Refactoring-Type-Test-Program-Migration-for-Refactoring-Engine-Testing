@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+mod mod1 {
+use foo::Foo;
+fn func_renamed(_: Foo) {} //Rename Method: rename function which references sibling‑module type within containing module
+mod foo {
+pub struct Foo;
+}
+}
+mod mod2;

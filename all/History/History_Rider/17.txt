@@ -1,0 +1,21 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Project (Rider .NET project rename refactoring)
+Refactoring Target: .NET console application project, with all rename-related options enabled
+Refactoring Scope: Project file, namespace references, assembly metadata, and open editor documents
+IDE: Rider 2023.3 RD-233.11799.174; regression introduced after 2023.2.3
+*/
+
+/* Error Root Cause:
+Observed failure: After renaming the project (with all rename options checked), the already-open class editor tab loses syntax/code highlighting. Reopening the file restores highlighting.
+Expected behavior: Project rename should update project model and namespaces, and refresh the PSI/syntax analysis for all currently open editor tabs automatically; code highlighting should remain active without manual file reopening.
+Underlying cause: The project rename transaction does not trigger an automatic reanalysis / PSI refresh for documents that were already open before the refactoring. The editor continues to use the stale pre-rename project context for syntax highlighting until the file tab is closed and reloaded. This is a regression introduced in the 2023.3 release.
+*/
+
+// Before rename
+// ConsoleApp1.csproj, namespace ConsoleApp1
+namespace ConsoleApp1;
+public class MyClass {}
+
+// After project rename to ConsoleAppRenamed
+// Rider updates .csproj and namespaces, but open MyClass.cs editor tab keeps stale project context
+// Symptom: syntax highlighting disappears; close + reopen tab fixes it

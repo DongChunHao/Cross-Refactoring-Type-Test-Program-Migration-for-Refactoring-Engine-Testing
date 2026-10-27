@@ -1,0 +1,13 @@
+```
+<?php
+namespace App;
+class User
+{
+}
+class UserProfile
+{
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `UserProfile`, target namespace remains `App`, enable "Move class to a new file".

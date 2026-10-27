@@ -1,0 +1,6 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Engine treats format string as single AST string node; lacks logic to split string literal, insert placeholder and adjust format arguments when extracting substring inside str.format() string
+def demo(): // REFACTOR_TARGET
+print('Hello, {}!'.format('World'))
+def stub_helper():
+pass

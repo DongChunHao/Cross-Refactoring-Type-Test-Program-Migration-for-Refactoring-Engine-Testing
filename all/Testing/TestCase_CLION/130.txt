@@ -1,0 +1,27 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: invokeSiblingWrite
+'''
+#include <unordered_map>
+#include <memory>
+#include <string>
+#include <iostream>
+// Forward declarations
+class AbstractGenerator {
+public:
+void writeCodeModel(std::ostream& hppout, std::ostream& cppout);
+void writeCodeBody(std::ostream& hppout, std::ostream& cppout);
+private:
+void invokeSiblingWrite(std::shared_ptr<AbstractGenerator> siblingPtr, std::ostream& hppout, std::ostream& cppout) { //{Extract method for sibling method invocation}
+siblingPtr->writeCodeModel(hppout, cppout);
+hppout << std::endl;
+}
+};
+void AbstractGenerator::someFunc(std::ostream& hppout, std::ostream& cppout)
+{
+std::unordered_map<std::string, std::shared_ptr<AbstractGenerator>> m_siblingClasses;
+for(auto sibling : m_siblingClasses) {
+invokeSiblingWrite(sibling.second, hppout, cppout);
+}
+writeCodeBody(hppout, cppout);
+}

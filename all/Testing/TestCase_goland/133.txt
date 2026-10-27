@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func callFoo() (int, string) { // extract foo() call to helper
+return foo()
+}
+func main() {
+i := 1
+s := ""
+callFoo() // <caret> introduce variables from result
+}
+func foo() (i int, s string) {}

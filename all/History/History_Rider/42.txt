@@ -1,0 +1,36 @@
+/* Issue Type: macOS / JBR rendering + fullscreen window state bug
+IDE: Rider 2026.1.0.1 RD-261.22158.394, JRE 25.0.2+10-b329.72 aarch64
+OS: macOS 26.4.1 (Apple Silicon), dual HiDPI 200% screens
+Symptom: Fullscreen Rider windows show blank previews in Mission Control after Mac sleep/wake. Activating the preview creates a new broken window instance drawn underneath the macOS menu bar; window controls (min/zoom) stop working.
+Related: JBR-8637, Metal rendering lifecycle on macOS display sleep.
+*/
+
+/* Root Cause Analysis
+This is a JetBrains Runtime (JBR) Metal rendering + macOS native fullscreen state synchronization defect, not Rider .NET logic.
+1. When macOS enters sleep, the GPU/Metal surface for fullscreen IDE windows is invalidated.
+2. On wake, JBR fails to re-create the Metal drawable surface and sync the native fullscreen window state with the macOS window server.
+3. Mission Control receives stale / empty surface previews (blank thumbnails).
+4. When you select the blank Mission Control thumbnail, the window server creates a new native window surface; the IDE attaches its UI to the new surface incorrectly, with wrong window geometry: origin shifted under the top menu bar, so standard zoom/minimize controls become unusable.
+5. Dual HiDPI external monitors exacerbate the issue because of multiple display-space coordinate mappings.
+The flag `-Dsun.java2d.metal=false` falls back to the older OpenGL rendering path and bypasses the faulty Metal surface lifecycle, but carries minor performance overhead.
+*/
+
+/* Reproduction Steps
+1. Open multiple Rider projects, each in separate macOS fullscreen spaces.
+2. Put the Mac to sleep.
+3. Wake the Mac and open Mission Control.
+4. Rider fullscreen thumbnails appear blank. Clicking one leads to broken window geometry.
+*/
+
+/* Expected Behavior
+After wake:
+1. Mission Control previews refresh with valid IDE content.
+2. Fullscreen window native state and rendering surface are reinitialized automatically.
+3. Window geometry stays correct, menu bar interaction and zoom/minimize work normally.
+
+/* Workarounds
+1. Disable Metal rendering: Help → Edit Custom VM Options, add `-Dsun.java2d.metal=false`, save and fully quit/restart Rider.
+2. Temporary manual fix when broken: exit fullscreen (View → Exit Full Screen) and re-enter fullscreen to force native window re-creation.
+3. Reduce number of concurrent fullscreen Rider spaces if possible.
+4. Test newer JBR builds from JetBrains YouTrack JBR-8637 once available, which include Metal wake-surface fixes.
+*/

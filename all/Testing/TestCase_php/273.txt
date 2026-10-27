@@ -1,0 +1,10 @@
+```
+<?php
+class User {
+    public const ROLE_ADMIN = 'admin';
+}
+class UserMeta{}
+?>
+```
+
+【Refactoring Action】: Move Member refactoring, move constant `ROLE_ADMIN` from `User` to `UserMeta`.

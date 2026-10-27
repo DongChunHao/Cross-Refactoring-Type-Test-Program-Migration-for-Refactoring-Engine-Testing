@@ -1,0 +1,29 @@
+<?php
+trait T{
+    public static $a = 2;
+    public static function f(){
+    }
+}
+class C{
+    use T;
+}
+class D extends C{
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Member refactoring
+Refactoring target: static function f from trait T to class D
+Refactoring rule: When evaluating "member will be hidden" warnings, correctly model PHP static member inheritance semantics. A subclass can redeclare a static method; redeclaring does not create a "hidden" conflict that prevents the operation. The warning should only apply to cases where visibility or override rules make the operation invalid.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving static function f from trait T into class D, the refactoring engine emits the warning "Member Method f will be hidden in Class D".
+In PHP, C receives f via trait T, and D inherits f from C. Adding a new static f directly in D is valid: D::f overrides the inherited C::f, which is normal static inheritance behavior and not an error or invalid hiding condition. The warning is a false positive.
+
+Expected behavior:
+Do not emit a "will be hidden" warning for this scenario. Allow moving the static method to the subclass D, because redeclaring an inherited public static method is legal PHP. Only trigger this warning in scenarios that actually produce invalid visibility/override conflicts (e.g., trying to reduce visibility).
+
+Underlying cause:
+The conflict analysis treats any redeclaration of an inherited static member as problematic hiding, without distinguishing whether the redeclaration is allowed by PHP’s static inheritance rules. It does not differentiate inherited trait-supplied static members from members that would cause an actual compile-time error.
+*/

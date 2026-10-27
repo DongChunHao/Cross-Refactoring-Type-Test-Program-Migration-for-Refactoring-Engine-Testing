@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: runDemoLogic
+'''
+#define array_length(arr) (sizeof(arr) / sizeof((arr)[0]))
+struct num {
+int member;
+} num[] = {{ 1 }};
+void demo(void) //{Rename method demo to runDemoLogic}
+{
+const char *str;
+for (const struct num *p = num + array_length(num); p-- != num;)
+if ((str = "expr") != 0)
+return;
+}

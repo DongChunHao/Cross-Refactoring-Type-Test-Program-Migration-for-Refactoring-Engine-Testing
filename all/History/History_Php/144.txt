@@ -1,0 +1,24 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function f($a, $b)
+Scope: argument list comment and trivia preservation
+Refactoring operation: add new optional parameter $c at the end
+*/
+
+/* Error Root Cause:
+Observed failure:
+When adding a new parameter at the end of the function signature, the call-site argument rewriter rebuilds the entire argument list from scratch. It discards inline comment trivia (`/*2*/`) between the value and comma, resulting in `f(/*1*/ 1, 1, 1);`.
+The original comments attached to each argument node should be retained: `f(/*1*/ 1 /*2*/, /*3*/ 1, 1);`.
+
+Expected behavior:
+1. When modifying argument lists during Change Signature, preserve all associated PSI trivia: inline comments, whitespace attached to each argument element.
+2. Only append the new argument `, 1` at the end of the existing list without rewriting or stripping existing comments inside the original argument entries.
+3. Do not re-serialize the whole argument list as plain text; reuse the original argument nodes and their attached trivia.
+
+Underlying cause:
+The argument list rebuild logic for Change Signature serializes argument values to plain text instead of retaining the original PSI argument nodes and their attached comment/whitespace trivia. It creates brand-new expression nodes for existing arguments, which loses embedded inline comments.
+*/
+function f($a, $b) {}
+f(/*1*/ 1 /*2*/, /*3*/ 1);
+?>

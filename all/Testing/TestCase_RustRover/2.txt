@@ -1,0 +1,11 @@
+'''
+Refactoring type: Move Field
+Refactoring new name: N/A
+'''
+trait MyTrait {
+fn test(&self);
+}
+struct MyStruct;
+impl MyTrait for MyStruct { //{move impl block content into separate inherent impl scope}
+fn test(&self) {}
+}

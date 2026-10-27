@@ -1,0 +1,19 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"net/http"
+)
+//go:generate
+func startServer() { // extract server setup logic into startServer
+mux := http.NewServeMux()
+mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+w.Write([]byte("Hello World"))
+})
+http.ListenAndServe(":8080", mux)
+}
+func main() {
+startServer()
+}

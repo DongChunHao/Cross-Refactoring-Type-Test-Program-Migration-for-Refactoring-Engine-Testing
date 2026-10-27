@@ -1,0 +1,17 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Propagate to destructuring declaration
+Refactoring Target: Combined variable statement `var foo = {x: 2, y: "a", z: true}, {x, y, z} = foo;`
+Refactoring Scope: JavaScript file
+Trigger Operation: Apply "Propagate to destructuring" intention on this compound var statement
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The entire compound variable statement gets deleted. The statement declares `foo` and immediately destructures `foo` in the same comma-separated `var` list.
+Expected behavior: The refactoring should either correctly rewrite the declaration or refuse to run for this edge case, instead of erasing the whole line.
+Underlying cause: The intention’s AST rewrite logic did not handle compound variable lists where the destructuring entry and the source variable belong to the same `var` statement. The rewrite incorrectly treated the whole statement as redundant and removed it.
+*/
+
+// Complete compilable test code
+var foo = {x: 2, y: "a", z: true}, {x, y, z} = foo;

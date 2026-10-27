@@ -1,0 +1,9 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Refactoring logic updates code‑level import and identifier references, but skips parsing and updating reStructuredText‑style :rtype: docstring type annotations; docstring content is treated as plain text and not processed for symbol reference rewriting
+class A:  // REFACTOR_TARGET
+pass
+def foo2(p):
+"""
+:rtype: A
+"""
+pass

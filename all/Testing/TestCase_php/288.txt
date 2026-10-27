@@ -1,0 +1,4 @@
+<?php
+class A extends I { }
+interface I { }
+?>

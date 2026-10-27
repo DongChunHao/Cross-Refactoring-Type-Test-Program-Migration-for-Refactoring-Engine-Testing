@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: callFooFunc
+'''
+#include <iostream>
+void foo();
+void callFooFunc() { //{Extract method callFooFunc}
+foo();
+}
+int main(){
+callFooFunc();
+}
+void foo() {
+std::cout<<"ANNA";
+}

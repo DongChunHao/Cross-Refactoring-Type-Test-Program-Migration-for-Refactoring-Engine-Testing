@@ -1,0 +1,25 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: up - bottom
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select expression "up - bottom" at the caret position, execute Extract Variable refactoring.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After extraction, redundant parentheses are introduced. The result becomes var number = (up - bottom); and nextPrime(( number) * 6 - 3 + greyAtLeast);, which adds unnecessary parentheses around the extracted variable.
+Expected behavior: The refactoring engine should introduce the new variable without wrapping it in redundant parentheses, preserving minimal valid syntax.
+Underlying cause: The refactoring engine blindly wraps the extracted expression and its replacement site with parentheses without checking whether they are syntactically required, leading to extra unnecessary parentheses.
+*/
+
+// Complete compilable test code supplemented with function wrapper and variable declarations
+function nextPrime(n) {
+    // Stub implementation for compilation, returns input value
+    return n;
+}
+
+function computePrime(up, bottom, greyAtLeast) {
+    const prime = nextPrime((up - bottom) * 6 - 3 + greyAtLeast);
+    return prime;
+}

@@ -1,0 +1,8 @@
+```
+<?php
+namespace N;
+class A { }
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target `N\A`. Open dialog, keep all destination settings unchanged, click Refactor (no-op move).

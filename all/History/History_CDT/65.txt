@@ -1,0 +1,43 @@
+int factorial(int n) {
+    int result = 1;
+    for (i=1 ; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+int factorial1(int n);
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (formal parameter rename)
+Refactoring Target: parameter `n` inside function declaration `int factorial1(int n);`
+IDE: Eclipse CDT
+Operation steps: Select parameter `n` in the prototype `factorial1(int n);`, invoke "Search References" first (returns zero matches), then perform rename refactoring with new name `nn`.
+*/
+
+/*
+/* Observed failure:
+1. Search References: selecting `n` in `factorial1(int n);` returns zero references (expected: this parameter only exists in this prototype, zero references is technically correct for usage sites, but symbol binding is messed up).
+2. Rename action incorrectly modifies **the unrelated parameter `n` inside function definition `factorial(int n)`**, changing it to `nn`.
+3. The prototype `factorial1(int n);` is also updated to `factorial1(int nn);`.
+The user’s expectation: rename should only affect the parameter `n` belonging to `factorial1` prototype, and must NOT touch `factorial`’s parameter `n`.
+*/
+
+/*
+Expected behavior:
+1. Symbol resolution must distinguish two separate symbols:
+   - Symbol A: formal parameter `n` of `factorial(int n)` (function definition)
+   - Symbol B: formal parameter `n` of `factorial1(int n)` (function prototype declaration)
+These are two independent local symbols, even sharing same name.
+2. When selecting Symbol B (`factorial1`'s n):
+   - Search References only reports locations of Symbol B.
+   - Rename only replaces Symbol B, must leave Symbol A untouched.
+3. Scope rule: formal parameters are local to their own function/prototype. Same identifier name in different function entities must not be conflated.
+*/
+
+/*
+Underlying cause:
+CDT’s symbol table for function prototype parameters has incorrect symbol binding.
+When parsing the prototype `int factorial1(int n);`, the parameter `n` symbol is either incorrectly linked or there is a symbol collision in the internal index.
+During rename refactoring, the tool’s symbol visitor incorrectly treats the two distinct `n` parameters as the same symbol, leading to cross-function contamination of rename substitution.
+The reference search returns zero matches because the prototype parameter has no body usages, but rename logic mistakenly maps it to the `n` inside `factorial` definition.
+*/

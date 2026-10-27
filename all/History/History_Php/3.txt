@@ -1,0 +1,25 @@
+<?php
+class A{
+    public function a(){
+    }
+}
+class C extends A{
+}
+class B extends A{
+}
+
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring
+Refactoring target: public method a in class A
+Refactoring rule: When a parent class has multiple direct child classes, the Push Down refactoring must display a selection dialog to let the user pick which child classes receive the pushed-down member, instead of automatically pushing the member into all child classes.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When running Push Down on method A::a(), the refactoring unconditionally copies the method to both child classes B and C, with no UI to select only a subset of children.
+Expected behavior:
+Present a selection dialog listing available child classes (B, C), allowing the user to select the specific target child classes to receive method a.
+
+Underlying cause:
+The Push Down implementation defaults to propagating the member to all inheritors when multiple children exist, and lacks the optional child-selection UI flow for selective push-down.
+*/

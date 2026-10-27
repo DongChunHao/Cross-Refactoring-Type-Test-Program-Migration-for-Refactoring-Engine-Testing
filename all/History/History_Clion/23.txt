@@ -1,0 +1,35 @@
+/* Refactoring Settings:
+Refactoring type: Extract Variable / Extract Expression (C++ CLion)
+Refactoring target: pointer-to-member access expression `(foo->*pfnTempCall)` or `(pfoo.*pfnTempCall)`
+Operation: Select pointer-to-member access expression inside function foo() and invoke Extract Variable refactoring
+Scope: Type deduction for C++ pointer-to-member function; emit valid C++ type syntax for pointer-to-member access expressions, avoid malformed type declarations
+*/
+
+/* Error Root Cause:
+Observed failure: Extracting pointer-to-member access expressions like `(foo->*pfnTempCall)` generates invalid malformed local variable type. The refactoring engine fails to properly resolve the combined type of pointer-to-member invocation and emits syntactically invalid type name for the extracted local variable.
+Expected behavior: Resolve the correct type (void) or emit valid C++ type for the extracted variable, never produce syntactically broken type declarations for pointer-to-member function access patterns.
+Underlying cause: The C++ type inference engine lacks full support for pointer-to-member operator (`.*` / `->*`) composite expressions. When calculating the type for extracted variable, the PSI/AST visitor cannot correctly resolve the resulting type of pointer-to-member call and outputs invalid, malformed type syntax.
+*/
+
+class Foo{
+public :
+    void method(){}
+};
+typedef void (Foo::*FOO_call)();
+
+void foo(){
+    Foo* foo = new Foo();
+    Foo pfoo = Foo();
+    FOO_call pfnTempCall = (FOO_call)(&Foo::method);
+
+    (foo->*pfnTempCall)();
+    (pfoo.*pfnTempCall)();
+
+    delete foo;
+}
+
+int main()
+{
+    foo();
+    return 0;
+}

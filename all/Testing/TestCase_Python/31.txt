@@ -1,0 +1,6 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Refactoring applies import‑style rules for symbols inside moved unit but ignores consumer‑side source file; old import gets removed without generating replacement import matching IDE configuration, leaving short‑name references unresolved
+from pack import mod
+def use_imported_from(): // REFACTOR_TARGET
+print(mod)
+return mod

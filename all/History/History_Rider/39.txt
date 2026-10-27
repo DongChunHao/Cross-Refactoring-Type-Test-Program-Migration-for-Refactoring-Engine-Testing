@@ -1,0 +1,59 @@
+/* Refactoring Settings:
+Refactoring Type: Move To Another File
+Refactoring Target: C# class inside a multi-targeted project (<TargetFrameworks>), e.g. net6.0;net8.0
+IDE: Rider
+Build error: CS0101 The namespace 'ConsoleApp2' already contains a definition for 'A'
+*/
+
+/* Error Root Cause:
+Observed failure:
+1. Multi-target project builds fine before refactoring.
+2. Run "Move class A to another file".
+3. After refactoring, MSBuild reports duplicate definition CS0101 for class A.
+
+Expected behavior:
+Rider removes the class declaration from the original source file, creates the new file with class A, project model correctly excludes the old declaration from compilation for all target frameworks.
+
+Actual broken behavior:
+Rider’s refactoring only modifies the editor PSI view, but fails to update the **MSBuild item group / compile inclusion logic for multi-target files**.
+In multi-target projects, Rider sometimes leaves the original file’s type still marked as a compile item in the project model, or the refactoring incorrectly adds both the old and new file to the compile list for every target framework.
+MSBuild sees class A present simultaneously in the original file AND the new moved file → duplicate type definition CS0101.
+
+Key distinction:
+Single-target projects do not trigger this, because the compile item update path works reliably.
+Multi-target projects have separate compilation context per TFM; Rider’s refactoring compile-item update logic does not iterate over all target framework compile items properly.
+*/
+
+/* Reproduction Steps
+1. Create a console project with multi-target frameworks in csproj:
+<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+2. Add class A inside Program.cs.
+3. Build: succeeds.
+4. Invoke "Move To Another File" on class A, create A.cs.
+5. Build project: CS0101 duplicate definition.
+*/
+
+// Before refactoring
+// Program.cs
+namespace ConsoleApp2
+{
+    public class A {}
+}
+
+// After refactoring (Rider editor view looks correct):
+// Program.cs no longer contains class A
+// A.cs
+namespace ConsoleApp2
+{
+    public class A {}
+}
+
+// Underlying project state bug:
+// The csproj / Rider project model still includes both Program.cs AND A.cs as compile items, both containing class A from MSBuild’s perspective.
+// Rider’s PSI shows Program.cs without A, but MSBuild’s compile graph still has stale inclusion.
+
+/* Workarounds
+1. After refactoring, unload/reload the project to refresh Rider + MSBuild compile items.
+2. Manually inspect csproj and ensure the original file is not still contributing the type, or clean + rebuild.
+3. Close all open files, run `dotnet clean` then rebuild.
+*/

@@ -1,0 +1,20 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+export class Test {
+private handleAction = (params) => {
+const a = () => this.customOutput("A")
+a() //{Move Method target orphan‑call risk context, concise‑arrow expression‑body does not accommodate multi‑statement substitution}
+const someFunction = () => {
+this.customOutput("B")
+}
+}
+private customOutput = (greeting) => {
+if (greeting === "world") {
+console.log("Hello world")
+} else {
+console.log("Hello", greeting)
+}
+}
+}

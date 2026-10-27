@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: C::f(array $a): int
+Operation: Change parameter $a's type from array to array|int
+Scope: Preservation of PHPDoc generic array type annotations when modifying parameter type
+*/
+
+/* Error Root Cause:
+Observed failure: After updating the parameter type to array|int, the original PHPDoc `@param array<int, Exception> $a` is incorrectly rewritten to `@param int $a`, losing the generic array type information.
+Expected behavior: Update the PHPDoc to reflect the new union type, for example `@param array<int, Exception>|int $a`, retaining the generic array part instead of discarding it.
+Underlying cause: The PHPDoc type updater only performs simple type replacement and does not preserve the generic array template arguments; it incorrectly parses and overwrites the complex array type annotation.
+*/
+class C{
+    /**
+     * @param array<int, Exception> $a
+     */
+    public function f(array $a): int
+    {
+        return 0;
+    }
+}
+?>

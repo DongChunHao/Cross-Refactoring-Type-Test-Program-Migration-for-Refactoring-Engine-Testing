@@ -1,0 +1,17 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method C::f()
+Scope: method return type input validation inside refactoring dialog
+Refactoring operation: input an invalid return type name in the return type field and apply refactoring
+*/
+
+/* Error Root Cause:
+Observed failure: When entering an invalid return type string in the Change Signature dialog and confirming, the IDE throws an internal exception instead of showing a friendly validation error message in the UI.
+Expected behavior: Validate the return type syntax while the dialog is open, display a clear user-facing error message and block refactoring application, without crashing or throwing an unhandled exception.
+Underlying cause: The return type parsing logic does not catch malformed/undefined type strings gracefully; invalid type text reaches the internal PSI type factory, which raises an uncaught exception instead of returning a validation failure result.
+*/
+class C{
+    function f(){}
+}
+?>

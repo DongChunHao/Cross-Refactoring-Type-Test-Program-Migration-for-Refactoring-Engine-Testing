@@ -1,0 +1,24 @@
+package pack1
+
+type (
+	Type1 struct{}
+	type2 struct{}
+)
+
+func Foo(type2) {}
+
+/* Refactoring Settings:
+Refactoring type: Move (Move function to another package)
+Refactoring target: function Foo
+Refactoring rule: When calculating symbol accessibility conflicts after moving a function to another package, only report conflicts for types that are actually referenced by the function. Do not report unrelated types declared in the same parent type group.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving function Foo, the conflict checker incorrectly reports that both Type1 and type2 become inaccessible in the new package. In reality, Foo only references type2 as its parameter type; Type1 is not used by Foo at all and should not appear in conflict warnings.
+Expected behavior:
+Only unexported type2 should be flagged as an accessibility conflict, while Type1 should be ignored.
+
+Underlying cause:
+The conflict analysis traverses the entire parent `type (` declaration block instead of only collecting the types that are actually referenced in the target function. It treats all types inside the grouped type declaration as dependencies of Foo, even when they are unused.
+*/

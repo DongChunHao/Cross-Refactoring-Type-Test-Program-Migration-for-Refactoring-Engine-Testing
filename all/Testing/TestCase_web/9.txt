@@ -1,0 +1,16 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+// foo.js
+export default class Foo {
+constructor(arg1, arg2) {
+this.arg1 = arg1;
+this.arg2 = arg2;
+}
+voidFunc(arg1, arg2) { //{Rename Method on voidFunc}
+}
+}
+// bar.js
+import Bar from './foo';
+const instance = new Bar(arg1, arg2);

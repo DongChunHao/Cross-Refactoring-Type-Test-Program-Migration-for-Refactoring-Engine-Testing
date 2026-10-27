@@ -1,0 +1,26 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <vector>
+namespace ns {
+template<typename>
+struct foo {
+};
+struct Holder{};
+}
+namespace ns {
+template<typename>
+struct foo {
+};
+struct Holder{
+std::vector<foo<int>> f() { //{Move method f into struct Holder inside namespace ns}
+std::vector<foo<int>> v;
+v.push_back({});
+return v;
+}
+};
+}
+int main() {
+}

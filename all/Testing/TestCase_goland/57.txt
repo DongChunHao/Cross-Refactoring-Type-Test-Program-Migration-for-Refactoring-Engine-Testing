@@ -1,0 +1,22 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+const k1 = "k1"
+const k2 = "k2"
+var myMap = map[string]int{
+k1: 1,
+k2: 2,
+}
+func main() {
+printValues() // extract print and loop logic into printValues
+}
+func printValues() {
+fmt.Printf("k1 = %v\n", k1)
+fmt.Printf("k2 = %v\n", k2)
+for k, v := range myMap {
+fmt.Printf("%v => %v\n", k, v)
+}
+}

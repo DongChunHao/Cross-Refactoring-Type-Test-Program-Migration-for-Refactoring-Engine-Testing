@@ -1,0 +1,34 @@
+```
+<?php
+function say日本語() { echo "日本語\n"; }
+function say®() { echo "®\n"; }
+
+say日本語();
+say®();
+say日本語();
+say®();
+?>
+```
+
+/* Refactoring Settings:
+Refactoring type: Rename identifier refactoring
+Refactoring target: rename `say日本語()` and `say®()` by appending SUFFIX to method names
+Refactoring rule: The rename reference collector must use PHP’s full identifier Unicode rules consistently for both definition lookup and usage matching. Characters that PHP permits in identifiers must be treated as part of the identifier token in rename, the same way they are handled in syntax validation and completion.
+*/
+
+/* Error Root Cause:
+Observed failure:
+PHP accepts both `日本語` and `®` as part of function names; IDE code completion and syntax validation recognize them correctly.
+When renaming `say®()`:
+
+- The function declaration is updated to `say®SUFFIX()`
+- All call sites `say®()` are not renamed and remain `say®()`
+For `say日本語()`, rename works correctly and all invocations are updated.
+Even when the user invokes rename while cursor is on a call site of `say®()`, the usages are missed.
+
+Expected behavior:
+If PHP and the IDE’s lexer accept `®` as a valid identifier character, rename refactoring should match all occurrences: function declaration and every function call. The token’s text must be compared using the same Unicode normalization/character set used by parsing and completion.
+
+Underlying cause:
+Rename’s reference resolution uses a stricter or different character filter than the main PHP lexer. Some Unicode symbol characters like the registered sign ® pass syntax checks and completion, but are excluded from the identifier matching logic used during rename, so call sites are not collected as usages. Japanese CJK characters are covered by the existing Unicode identifier handling, while certain symbol codepoints are omitted.
+*/

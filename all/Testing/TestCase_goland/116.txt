@@ -1,0 +1,21 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"net/http"
+)
+//go:generate
+type Server struct{}
+func (s Server) start() { // move start method from Server to standalone function
+mux := http.NewServeMux()
+mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+w.Write([]byte("Hello World"))
+})
+http.ListenAndServe(":8080", mux)
+}
+func main() {
+svr := Server{}
+svr.start()
+}

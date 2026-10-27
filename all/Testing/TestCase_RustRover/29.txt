@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+use std::fs::read_to_string;
+fn main() { //{rename main function, preserve multi‑let block and subsequent usage context}
+let args: Vec<String> = std::env::args().collect();
+let s: &String = &args[1];
+let file: &String = &args[2];
+let content: String = read_to_string(file).expect("Some error");
+println!("{:#?}", content);
+}

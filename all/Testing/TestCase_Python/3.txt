@@ -1,0 +1,6 @@
+// Target Refactoring Type: Rename Variable
+// Expected Defect Performance: Refactoring’s expression‑finder treats content inside f‑string { ... } interpolation blocks as string‑text trivia instead of executable AST expression nodes; it fails to match and select sub‑expressions nested within f‑string interpolation syntax, leading to partial or complete refactoring failure
+my_dict = {'my_var': 'value'}
+f"{my_dict['my_var']}"
+print(my_dict['my_var'])
+print(my_dict['my_var'])

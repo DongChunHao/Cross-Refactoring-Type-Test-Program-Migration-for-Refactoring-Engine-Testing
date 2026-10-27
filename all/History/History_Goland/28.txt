@@ -1,0 +1,32 @@
+// one/one.go (original)
+package one
+
+// one/one_test.go (original)
+package one_test
+
+/* Refactoring Settings:
+Refactoring type: Move Go files to new directory
+Refactoring target: Move `one.go` and `one_test.go` from folder `one` to folder `two`
+Refactoring scope: Regular Go source file and external test file with `_test` package suffix
+Refactoring rule: When renaming the package declaration based on target directory name, preserve the `_test` suffix for files whose package originally ended with `_test`.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving `one_test.go` into directory `two`, GoLand rewrites its package header to plain `package two` and strips the `_test` suffix, producing `package two` instead of `package two_test`.
+Expected behavior:
+- two/one.go → `package two`
+- two/one_test.go → `package two_test`
+Underlying cause: The package-rename logic for moved files only replaces the base package name from the directory, and does not check whether the original package was an external test package with the `_test` suffix; it overwrites it unconditionally with the directory name alone.
+*/
+
+// Expected after move
+// two/one.go
+package two
+// two/one_test.go
+package two_test
+
+// Actual wrong result
+// two/one.go
+package two
+// two/one_test.go
+package two

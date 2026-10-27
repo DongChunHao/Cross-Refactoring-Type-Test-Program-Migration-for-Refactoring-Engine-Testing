@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: invokeStaticFoo
+'''
+#include <cstdio>
+class Foo {
+public:
+static void foo() {} //{Rename method foo to invokeStaticFoo}
+};
+class Bar {
+void bar();
+};
+void Bar::bar() {
+Foo::foo();
+}

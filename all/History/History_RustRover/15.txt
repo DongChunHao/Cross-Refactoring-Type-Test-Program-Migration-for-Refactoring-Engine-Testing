@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function (Ctrl + Alt + M)
+Refactoring Target: Selected `bar(); bar();` inside the block of a match arm
+Refactoring Scope: Partial statement selection inside match arm block
+Plugin Environment: IntelliJ Rust plugin
+Trigger Operation: Select `bar(); bar();` within `0 => { ... }` match arm and run Extract function
+*/
+/* Error Root Cause:
+Observed failure: The refactor incorrectly treats the entire match arm block as the extraction target. It moves `let x = 3;` into the extracted function and replaces the whole match arm with `extracted()`, discarding the original block structure.
+Expected behavior: Only the selected `bar(); bar();` statements are extracted into `extracted()`. The `let x = 3;` stays in the original match arm block, and the call `extracted()` is inserted after it.
+Underlying cause: The selection boundary analysis for Extract Function fails when the selected statements are a subset inside a match arm block. The logic mistakenly treats the whole arm’s block as the unit to extract, instead of respecting the partial statement range inside the block.
+*/
+fn foo(num: i32) {
+    match num {
+        0 => {
+            let x = 3;
+            bar(); bar();
+        },
+        _ => {}
+    }
+}
+fn bar() {}

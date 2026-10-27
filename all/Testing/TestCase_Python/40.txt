@@ -1,0 +1,8 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Symbol usage collector gets confused by variable reassignment; static analysis treats post‑reassignment variable as separate symbol, loses binding trace and skips f‑string variable reference as valid usage occurrence
+def test(a):
+a = f'{a}'
+y = len(a)
+return f'{a}'
+def helper(): // REFACTOR_TARGET
+pass

@@ -1,0 +1,16 @@
+package pack1
+
+/* Refactoring Settings:
+Refactoring type: Move Declaration (Move variable to another file)
+Refactoring target: Package-level variable `variable`
+Refactoring scope: Move variable to a newly created target file, with Go fmt file watcher enabled in the IDE
+Refactoring rule: The file watcher / go fmt process must not revert or delete the symbol that the refactoring just wrote to the new file.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving the variable to a new file, the variable briefly appears, then gets removed from the new file automatically when the go fmt file watcher runs.
+Expected behavior: The moved variable stays present in the new file; go fmt only reformats whitespace and syntax, it does not delete declarations.
+Underlying cause: Race condition between the refactoring’s PSI write operation and the external file watcher. The file watcher reads an intermediate disk state before the IDE’s PSI model fully commits changes, or the IDE reloads the file from disk and overwrites the in-memory PSI with stale content, discarding the newly added variable. go fmt itself does not delete code; the conflict comes from IDE file synchronization between refactoring edits and external watcher-triggered file reload.
+*/
+
+var variable = ""

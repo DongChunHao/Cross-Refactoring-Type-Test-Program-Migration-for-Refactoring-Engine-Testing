@@ -1,0 +1,7 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// consumer.ts
+import { Button } from "@lite-components/Button"; //{Extract Method target alias‑based import‑specifier, file‑rename uses raw‑string‑rewrite ignoring tsconfig path‑resolver}
+console.log(Button);

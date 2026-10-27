@@ -1,0 +1,18 @@
+```
+<?php
+class UserService
+{
+    /**
+     * @param int $userId
+     * @param string $unusedFilter
+     * @return array
+     */
+    public function findUser(int $userId, string $unusedFilter): array
+    {
+        return [];
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `UserService::findUser()`, remove `$unusedFilter`.

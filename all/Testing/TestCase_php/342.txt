@@ -1,0 +1,17 @@
+```
+<?php
+namespace Foo {
+    class A
+    {
+        public function foo() {
+        }
+    }
+}
+namespace Bar {
+    class B {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Move Instance Method, move `Foo\A::foo()` to `Bar\B`.

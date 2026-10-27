@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// file1.go
+package pack1
+func Foo() {
+fooLogic() // extract body logic into fooLogic
+}
+func fooLogic() {
+}
+
+// file2.go
+package pack2
+func Foo() {
+}

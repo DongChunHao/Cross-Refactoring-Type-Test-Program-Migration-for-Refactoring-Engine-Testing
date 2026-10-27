@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+struct Wrapper {
+static void foo() {} //{Move method foo out of struct Wrapper}
+};
+int main() {
+Wrapper::foo();
+}

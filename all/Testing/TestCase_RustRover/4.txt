@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+fn f(x: bool) -> bool { !x } //{rename method f to negate_bool}
+fn g() {
+f(true) && f(false);
+}

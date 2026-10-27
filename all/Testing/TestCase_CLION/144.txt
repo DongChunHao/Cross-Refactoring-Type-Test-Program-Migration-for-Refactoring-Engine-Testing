@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Field
+Refactoring new name: N/A
+'''
+#include <cstdio>
+class C {
+const char* m_msg; //{Extract const char* field m_msg inside C}
+void foo()
+{
+printf("");
+}
+};

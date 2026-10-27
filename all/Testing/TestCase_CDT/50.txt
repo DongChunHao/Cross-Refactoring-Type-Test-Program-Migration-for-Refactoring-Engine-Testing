@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: 0
+'''
+float func_0 (  float LocalVar_1){
+int LocalVar_0 = 2;
+return LocalVar_1;
+}
+int Function_0 ( ){
+int LocalVar_0 = -1;
+return LocalVar_0;
+} //rename variable for rename‑refactoring‑numeric‑literal‑as‑local‑variable‑name‑lexical‑invalid defect scenario

@@ -1,0 +1,19 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+struct S<R=u32, T=u32>(R, T);
+fn process() {
+let s = S(1u32, 2i32);
+s; //{Change‑Method target: expression statement with generic‑default‑parameter struct instance}
+}
+
+fn main() {
+process();
+}
+
+ 如何确保新的测试用例能够覆盖所有的代码路径？
+
+ 除了以上两种方法，还有哪些常见的代码重构方法？
+
+ 如何选择合适的测试用例迁移策略？

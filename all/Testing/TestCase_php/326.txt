@@ -1,0 +1,10 @@
+```
+<?php
+class C{
+    public function f()
+    {}
+}
+?>
+```
+
+【Refactoring Action】: Project language level set to PHP 7.4; invoke Change Signature on `C::f()`, set return type to `static`.

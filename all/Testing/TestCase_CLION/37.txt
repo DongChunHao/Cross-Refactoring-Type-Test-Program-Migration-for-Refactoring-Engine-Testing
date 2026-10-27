@@ -1,0 +1,9 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+#include <gtest/gtest.h>
+void  f(char const*) { }
+TEST(repro_suite, repro_case) {
+f("extract this literal into constant"); //{Extract variable from string literal}
+}

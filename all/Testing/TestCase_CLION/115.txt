@@ -1,0 +1,19 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: computeValue
+'''
+#include <iostream>
+#include <string>
+class Bug {
+public:
+double foo(double bar[3][2]) //{Rename method foo to computeValue}
+{
+return bar[2][0];
+}
+};
+int main() {
+Bug example;
+double test[3][2];
+std::cout << std::to_string(example.foo(test)) << std::endl;
+return 0;
+}

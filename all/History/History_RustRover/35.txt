@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function (Ctrl + Alt + M)
+Refactoring Target: Selection covering `if` expression initializer plus the variable binding and trailing semicolon: `let y = if ... ;`
+Refactoring Scope: Expression initializer inside a `let` statement
+Plugin Environment: IntelliJ Rust plugin
+Trigger Operation: Select the whole `let y = if ...;` statement (including `let y =` and `;`) and run Extract function
+*/
+/* Error Root Cause:
+Observed failure: The user intends to extract only the right-hand side `if` initializer expression, but the selection covers the full `let` statement. The plugin picks the nearest valid syntax subtree — the whole `let` statement — and extracts the entire binding into the new function. This produces code where `bar` declares its own local `y` and returns nothing, and the original site becomes `bar(x); y`, which is wrong.
+Expected behavior options (user preference):
+1. Detect that the user’s selection includes a `let` binding but visually targets the RHS initializer, extract just the initializer expression and replace the RHS with the function call.
+2. Reject the selection with an error message stating the selection is not a standalone expression, rather than silently extracting the whole `let` statement.
+Underlying cause: The refactor uses simple syntax subtree expansion: when the selection spans a full `let` statement, it treats the entire statement as the unit to extract, without attempting to infer the user’s likely intent of extracting only the initializer expression.
+*/
+fn foo(x: i32) -> i32 {
+    let y = if x == 1 {
+        3
+    } else {
+        5
+    };
+    y
+}

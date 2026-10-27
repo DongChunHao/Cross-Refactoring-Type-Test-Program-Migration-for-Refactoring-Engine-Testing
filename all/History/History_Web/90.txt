@@ -1,0 +1,57 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Statement `result = a + 1` inside `if (a > 0)` block in function sample
+Refactoring Scope: JavaScript
+Trigger Operation: Extract the single assignment line `result = a + 1` into a separate method
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Method treats the left-hand side variable `result` as an input parameter and passes it into the new function, producing `extracted(result, a)` and inside doing `result = a + 1`.
+But the extracted code only writes to `result` and does **not read the incoming value of `result`**. The value of `result` before the call is irrelevant here; the function should simply compute and return `a + 1` without taking `result` as an argument.
+
+The same misdiagnosis appears when extracting multi-statement blocks that assign to `result` without consuming its prior value (sample2, sample3). The refactoring’s data-flow analysis conservatively marks `result` as an “output” variable and automatically adds it as an input parameter, failing to distinguish between:
+1. A variable that is only written (should be the return value only)
+2. A variable that is both read and written (needs to be passed in)
+
+Expected behavior:
+For the first sample, generate a pure function that accepts only `a` and returns `a + 1`, then assign the return value to `result` at the call site.
+
+Underlying cause:
+The extract method dataflow visitor assumes any variable that is assigned inside the extracted region must be passed in as a parameter, without checking whether the region reads the variable’s value before writing it.
+*/
+
+// Complete compilable test code
+function sample(a) {
+    let result = 0
+    if (a > 0) {
+        result = a + 1 // extract this line to method
+    }
+    return result
+}
+
+function sample2(a) {
+    let result = 0
+    // extract from here
+    if (a > 0) {
+        result = a
+    } else {
+        result = 0
+    }
+    // up to here
+    return result
+}
+
+function sample3(a) {
+    let result = 0
+    // extract from here
+    if (a > 0) {
+        result = a
+    }
+    else {
+        throw new Error()
+    }
+    // up to here
+    return result
+}

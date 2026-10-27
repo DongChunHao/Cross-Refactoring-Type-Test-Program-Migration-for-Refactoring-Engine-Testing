@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: invokeFooTwice
+'''
+class C {public: int c; int foo() { return c ++; }};
+int invokeFooTwice() { //{Rename method foo to invokeFooTwice}
+C c;
+c.foo();
+return c.foo();
+}

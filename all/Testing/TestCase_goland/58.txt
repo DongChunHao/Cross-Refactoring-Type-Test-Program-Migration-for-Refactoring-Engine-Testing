@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+type Foo struct{}
+func main() {
+s := Foo{}
+checkEqual(s) // extract if selection into checkEqual
+}
+func checkEqual(s Foo) {
+if x == s {
+// do something
+}
+}

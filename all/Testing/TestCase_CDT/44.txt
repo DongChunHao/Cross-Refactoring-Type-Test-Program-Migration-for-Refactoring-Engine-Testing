@@ -1,0 +1,7 @@
+'''
+Refactoring type: Extract CONSTANT
+Refactoring new name: main
+'''
+int main(int a, char** argv) {
+return 0; // Constant to be extracted //extract constant for extract‑constant variable‑function cross‑kind‑symbol‑collision defect scenario
+}

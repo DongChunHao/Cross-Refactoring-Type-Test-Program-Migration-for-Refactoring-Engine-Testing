@@ -1,0 +1,21 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <iostream>
+class Base
+{
+public:
+virtual void foo() = 0; //{Pull up foo declaration into Base}
+};
+class Derived : public Base
+{
+public:
+void foo() override {
+std::cout<<"ANNA";
+}
+};
+int main(){
+Derived d;
+d.foo();
+}

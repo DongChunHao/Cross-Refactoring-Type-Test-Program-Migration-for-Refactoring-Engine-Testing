@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring type: Inline Function Call (C++ CLion)
+Refactoring target: member function call `circle.getXY()` in main()
+Operation: Invoke Inline Function refactoring on `circle.getXY()`
+Scope: Preserve expression syntax during inlining; avoid generating invalid `()()` call syntax; do not inject unrelated unexpected header includes
+*/
+
+/* Error Root Cause:
+Observed failure: The refactoring substitutes `circle.getXY()` into `(circle.x + circle.y)()` which is invalid syntax. The engine incorrectly retains the function call parentheses after expanding the function body expression. In addition, the refactoring engine automatically inserts unrelated headers `<tclDecls.h>` and `<strsafe.h>`.
+Expected behavior: Expand `circle.getXY()` correctly to `circle.x + circle.y`, producing `cout << "x +y  = " << (circle.x + circle.y)<<endl;` and no extra unexpected includes.
+Underlying cause: The PSI expression substitution logic mishandles return expression extraction from member function. It extracts the inner expression `x+y` but mistakenly preserves the original call parentheses, forming a function call on a temporary value. The second defect: separate include auto-detection pass incorrectly adds unrelated TCL and strsafe headers.
+*/
+#include <iostream>
+using namespace std;
+
+class MyFigure{};
+class MyCircle : public MyFigure {
+ public:
+        void getXY() { return x+y; }
+ private:
+        size_t x;
+        size_t y;
+        size_t r;
+};
+
+int main(int argc, char* argv[]) {
+ MyCircle circle = MyCircle(0,0,0);
+ cout << "x +y  = " << circle.getXY()<<endl;
+ return  0;
+}

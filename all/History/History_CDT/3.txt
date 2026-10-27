@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+typedef struct s
+{
+    char *n;
+} st;
+
+int main()
+{
+    st i;
+    st *p;
+    p = &i;
+    p->n = "Jack"; // extract p
+    printf("%s", p->n);
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: pointer identifier `p` in statement `p->n = "Jack";`
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select identifier `p`, invoke Extract Function refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: The extracted function incorrectly uses return type `st` (value‑type struct), instead of pointer type `st*`. Generated code: `st extracted_function(st* p) { return p; }`. Returning pointer `p` as value of type `st` creates type mismatch. The call site `extracted_function(p)->n = "Jack";` is syntactically misleading and semantically broken.
+Expected behavior: Correct function signature should be `st* extracted_function(st* p) { return p; }`. Return the pointer type matching the expression type of `p`.
+Underlying cause: The type deduction logic for return value loses pointer qualifier. Although the formal parameter is correctly `st* p`, when generating return‑type for `return p;`, refactoring engine unwraps pointer type and selects the underlying pointee struct type `st`, resulting in wrong function prototype.
+*/

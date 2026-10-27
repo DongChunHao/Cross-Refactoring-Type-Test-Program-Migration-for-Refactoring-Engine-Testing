@@ -1,0 +1,25 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Move Module Members
+Refactoring Target: Multiple top-level type declarations with preceding JSDoc / line comments
+Refactoring Scope: TypeScript barrel project
+Trigger Operation: Select multiple type symbols and run Move Module Members to another file
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When moving several module members at once, comments get misassigned — some comments detach from their original type and get attached to the wrong symbol, or become orphaned at the top of the destination file instead of staying with the type they document.
+Expected behavior: Each comment block stays attached to the type it originally precedes; after moving, comment and its type remain paired together in the target file.
+Underlying cause: The multi-member move logic does not preserve the per-symbol comment association correctly. It treats a contiguous block of comments as a single group instead of mapping each comment range to its immediate following declaration node.
+*/
+
+// Source file example
+/**
+ * Comment for TypeA
+ */
+export type TypeA = 1;
+
+/**
+ * Comment for TypeB
+ */
+export type TypeB = 2;

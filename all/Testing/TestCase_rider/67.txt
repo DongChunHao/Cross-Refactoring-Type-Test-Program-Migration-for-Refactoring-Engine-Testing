@@ -1,0 +1,14 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+namespace ConsoleApp1;
+
+public abstract class BaseClass { }
+
+public class MyClass : BaseClass
+{
+public void Execute() //{Pull Up Method: target member for project‑rename stale‑PSI‑context highlighting‑loss reproduction}
+{
+}
+}

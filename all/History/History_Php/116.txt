@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Pull Up Members refactoring
+Refactoring target: constant B::publicConst
+Scope: constant visibility modifier
+Refactoring operation: pull protected constant up from subclass B to parent class A
+*/
+
+/* Error Root Cause:
+Observed failure: After pulling `protected const publicConst = 1;` from B into A, the `protected` visibility modifier is discarded, resulting in `const publicConst = 1;` (implicit public).
+Expected behavior: Preserve the explicit `protected` modifier in the destination parent class A: `protected const publicConst = 1;`.
+Underlying cause: The Pull Up refactoring’s PSI serialization logic for class constants does not persist the explicit access modifier; it only serializes the name and value, dropping the visibility keyword.
+*/
+class A {
+}
+
+class B extends A {
+    protected const publicConst = 1;
+}
+?>

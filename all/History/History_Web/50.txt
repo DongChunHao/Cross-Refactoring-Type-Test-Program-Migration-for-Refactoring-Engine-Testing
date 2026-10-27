@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Replace destructuring with property and index access
+Refactoring Target: Nested destructuring pattern `y: [{z}]`
+Refactoring Scope: TypeScript/JavaScript file
+Trigger Operation: Select `[{z}]` and run "Replace destructuring with property and index access"
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The refactoring introduces a conflicting variable name `x`, producing `y: [x]`. The existing outer variable `x` shadows the intended binding, creating a name collision and invalid logic.
+Expected behavior: Generate a fresh unique variable name instead of reusing an existing identifier, e.g. `y: [item]` and then extract `item.z`.
+Underlying cause: The variable name generator does not check the existing names in the current scope before picking the temporary variable name for the destructured element, leading to accidental shadowing.
+*/
+
+// Complete compilable test code
+function test() {
+  let {x, y: [{z}]} = {x: 2, y: [{z: 7}]}; // select [{z}] - Replace destructuring with property and index access
+}

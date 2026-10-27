@@ -1,0 +1,20 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pkg
+import (
+"context"
+)
+func F(ctx context.Context, a, b string) string {
+return concatParts(ctx, a, b) // extract expression into concatParts method
+}
+func concatParts(ctx context.Context, a, b string) string {
+return a + b + ctx.Value("value").(string)
+}
+type Value struct {
+Value int
+}
+type Interface interface {
+Value(val int) Value
+}

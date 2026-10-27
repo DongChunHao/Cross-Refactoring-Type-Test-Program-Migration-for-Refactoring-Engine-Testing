@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+fn main() {
+fn foo() -> u64 { //{rename nested function foo to bar}
+let x = 0;
+x
+}
+let y = foo();
+}

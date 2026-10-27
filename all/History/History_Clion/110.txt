@@ -1,0 +1,19 @@
+/* Refactoring Settings:
+Refactoring type: Extract Variable
+Refactoring target: Extract boolean condition `a > 10` into a new variable in C source file
+Refactoring scope: Condition expression `a > 10` inside if statement
+Refactoring rule expectation: For pure C (not C++), avoid using `bool` type; use `int` for the extracted variable, or include `<stdbool.h>` if using C99+ bool
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Variable refactoring in C code creates `bool b = a > 10; if (b) ...`. In C89, `bool` is not a built-in type. Even in C99, `bool` is only available after `#include <stdbool.h>`, which the refactoring does not automatically add.
+Expected behavior:
+Option1 (C89 compatible): `int b = a > 10; if (b) ...`
+Option2 (C99): add `#include <stdbool.h>` and use `bool`.
+Underlying cause: The refactoring engine defaults to C++ `bool` type when extracting logical expressions, and does not check if the file is C (not C++). It does not add required header `<stdbool.h>` for C99 bool, leading to compilation error.
+*/
+
+void test(int a)
+{
+    if (a > 10) {}
+}

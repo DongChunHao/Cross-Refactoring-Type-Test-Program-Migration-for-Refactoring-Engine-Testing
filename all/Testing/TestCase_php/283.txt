@@ -1,0 +1,11 @@
+```
+<?php
+class UserService {
+    public function getCount(): int
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Open Change Signature dialog for `UserService::getCount()`, view preview.

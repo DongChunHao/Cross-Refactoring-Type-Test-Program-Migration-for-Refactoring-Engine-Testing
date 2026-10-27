@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: 1 + 2
+Refactoring Scope: Current JavaScript file (ES6 or higher)
+Trigger Operation: Select expression "1 + 2;", execute Extract Variable refactoring.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When performing Extract Variable under ES6 or higher environment, the refactoring engine generates variable declaration with "var" keyword: var number = 1 + 2;
+Expected behavior: For ES6 and above, the refactoring engine should prefer using "let" (or const) instead of legacy "var".
+Underlying cause: The extract variable refactoring does not respect the ECMAScript language version setting and defaults to old-style var declaration.
+*/
+
+// Complete compilable test code
+function demo() {
+    1 + 2;
+}

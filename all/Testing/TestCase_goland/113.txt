@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack1
+type (
+Type1 struct{}
+type2 struct{}
+)
+func Foo(t type2) {
+fooLogic(t) // extract function body logic into fooLogic
+}
+func fooLogic(t type2) {
+}

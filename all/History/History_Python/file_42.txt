@@ -1,0 +1,27 @@
+class A(object):
+    def m(self):
+        print(1)
+
+class B():
+    def m(self):
+        print(2)
+
+class C(B, A):
+    def m(self):
+        super().m()
+        print(3)
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Change Signature refactoring
+Refactoring Target: method m() defined in class C
+Refactoring Scope: current file, method hierarchy
+Operation steps: Place cursor on C.m(), invoke Refactor -> Change Signature.
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: The Change Signature dialog incorrectly proposes modifying the base method m() from class A. According to Python MRO, `super().m()` inside C refers to B.m(), not A.m().
+Expected behavior: The refactoring engine should resolve the correct MRO chain and suggest refactoring the immediate overridden base method from class B instead of A.
+Underlying cause: The refactoring engine’s method inheritance resolution logic ignores Python Method Resolution Order (MRO) for multiple inheritance. It naively traverses the base class list and selects an incorrect ancestor method, rather than following the actual runtime lookup order of `super()`.
+"""

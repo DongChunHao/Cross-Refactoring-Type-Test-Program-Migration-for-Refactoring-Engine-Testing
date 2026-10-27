@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+class Foo {
+foo: any;  // example comment
+init() {
+this.bar = 1; //{Extract Method target statement referencing unresolved this.bar}
+}
+}

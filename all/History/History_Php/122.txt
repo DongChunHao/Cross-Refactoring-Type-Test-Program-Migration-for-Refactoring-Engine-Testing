@@ -1,0 +1,31 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: trait method T::f()
+Scope: visibility validation, trait method usage in consuming class C
+Refactoring operation: change visibility of T::f() from default (public) to private
+*/
+
+/* Error Root Cause:
+Observed failure: The refactoring emits a warning that changing T::f() to private will break usages inside class C where $this->f() is called.
+Expected behavior: Recognize that trait methods become members of the consuming class; changing T::f() to private makes it private within C, and calls $this->f() inside C::g() remain valid. The warning should not be shown for in-class usages.
+Underlying cause: The reference checker treats T::f as a separate external symbol instead of resolving it as an in-class member after trait composition. It incorrectly thinks private visibility blocks access from C, even though trait private methods are accessible inside the class that uses the trait.
+*/
+trait T{
+    function f(){
+        echo "a";
+    }
+}
+
+class C{
+    use T;
+
+    public function g()
+    {
+        $this->f();
+    }
+}
+
+$a = new C;
+$a->g();
+?>

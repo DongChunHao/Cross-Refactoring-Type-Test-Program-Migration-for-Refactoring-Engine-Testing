@@ -1,0 +1,58 @@
+/* Refactoring Settings:
+Refactoring Type: Move type to new file (quick-fix variant)
+Refactoring Target: C# custom exception class defined inline inside a source file
+IDE: Rider 2025.1.6 RD-251.27812.115, Apple Silicon macOS
+Symptom:
+Selecting the highlighted quickfix option "Move type to new file" silently deletes the class definition from the original file.
+The expected new .cs file is never created on disk, does not appear in the project tree, is not present in VCS change lists. Rider immediately marks the class reference as unresolved.
+Critical hazard: Closing the editor tab removes the ability to undo, and the class source is permanently lost.
+Distinction:
+The alternative menu path: "Move to [ClassName].cs" / "Move To Another File" (F6 refactoring) works correctly for the same type.
+Only the **quick-fix "Move type to new file" action** is broken.
+*/
+
+/* Root Cause Analysis
+Two separate Rider code paths implement similar-looking "move type out to its own file" functionality:
+1. Quickfix / highlight popup action ("Move type to new file", the red-highlighted suggestion): This path fails.
+   Its logic is responsible for: creating the new file on disk, adding it to the project model, removing the type node from the original file.
+   In this environment, the file creation/project-add step fails silently with no error dialog or warning. The PSI node deletion step still runs, so the class is erased from the original source, but no corresponding file is persisted.
+2. Full refactoring action (F6 "Move To Another File" / "Move to ClassName.cs"): This uses a different handler, which correctly performs filesystem + project model operations.
+
+Hypothesized environmental trigger (since other macOS ARM users do not hit it):
+- Filesystem / sandbox permission issue, or file-watch / project model refresh race on this machine.
+- The quickfix handler lacks exception handling around file creation, swallowing IO/project-add errors instead of surfacing an error message to the user.
+The refactoring dialog path has more robust error reporting and rollback logic.
+*/
+
+/* Reproduction Steps
+1. Define a new class/exception inside an existing C# file.
+2. Trigger the quickfix popup on the class declaration.
+3. Choose the top option: "Move type to new file".
+Result:
+- Class is deleted from the source file.
+- No new file written to disk, nothing added to the project.
+- Rider reports missing type. If editor tab is closed, undo is lost.
+
+Expected Behavior
+When selecting "Move type to new file":
+1. Create `TypeName.cs` on disk in the same directory.
+2. Add the new file to the project.
+3. Remove the type declaration from the original file.
+4. If file creation fails for any reason, roll back the PSI change and display an error notification to the user.
+
+Workarounds
+1. Avoid the top quickfix option "Move type to new file". Use the lower menu option "Move to TypeName.cs" or F6 "Move To Another File".
+2. Before running the problematic quickfix, copy the class text to clipboard as a backup.
+3. Check Rider logs for IO / project model exceptions at the time of the operation.
+*/
+
+// Original
+public class ThisExceptionIsGoingToShowABugInRiderWatchMe : Exception
+{
+}
+
+// After broken quickfix action
+// Original file: class declaration is deleted
+// Filesystem: No ThisExceptionIsGoingToShowABugInRiderWatchMe.cs created
+// Project: No new file added
+// Code that throws `new ThisExceptionIsGoingToShowABugInRiderWatchMe()` gets red unresolved highlight

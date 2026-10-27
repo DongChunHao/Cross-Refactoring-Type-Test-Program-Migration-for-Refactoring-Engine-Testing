@@ -1,0 +1,21 @@
+```
+<?php
+class D{}
+class C {
+    public $b;
+    public function f()
+    {
+        $this->b = new class {
+            public function anon(D $d) {
+                var_dump($d);
+                var_dump(new self());
+            }
+        };
+        $this->b->anon(new D());
+    }
+}
+(new C())->f();
+?>
+```
+
+【Refactoring Action】: Move Instance Method refactoring, move method `anon(D $d)` out of the anonymous class.

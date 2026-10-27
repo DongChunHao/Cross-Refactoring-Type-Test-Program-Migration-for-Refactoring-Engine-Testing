@@ -1,0 +1,17 @@
+```
+<?php
+namespace Service;
+use IO\Stream as IOStream;
+class UserManager {
+    public static function validateUser()
+    {
+        self::checkRules();
+    }
+    public static function checkRules()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Method refactoring, move static method `checkRules()` from `Service\UserManager` to `Service\RuleHelper` (same namespace)

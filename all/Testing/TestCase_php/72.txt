@@ -1,0 +1,17 @@
+```
+<?php
+namespace Queue\Worker {
+    use Queue\Worker as WORKER_ALIAS;
+    class WorkerBase
+    {
+    }
+    class JobRunner implements WORKER_ALIAS\Tasks\ITask{
+    }
+}
+namespace Queue\Worker\Tasks {
+    interface ITask{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `JobRunner`, target namespace `Queue\Runtime`.

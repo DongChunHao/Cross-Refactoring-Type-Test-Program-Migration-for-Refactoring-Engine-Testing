@@ -1,0 +1,7 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+let map2 = new Map([ [ 'a', 1 ], [ 'b', 2 ], [ 'c', 3 ] ]);
+let obj222 = Object.fromEntries(map2); //{Extract Method target assignment invoking d‑ts‑declared Object.fromEntries}
+console.log(obj222)

@@ -1,0 +1,31 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Code range inside FriendStatus containing useState declaration + nested handleStatusChange function + useEffect call
+Refactoring Scope: JavaScript React file
+Trigger Operation: Select the marked block and run Extract Method
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After extraction, the call site `const isOnline = extracted();` is followed by an extra unnecessary newline. The formatter/ast serializer emits extra blank lines when the extracted block contains a nested function declaration inside the selected range.
+Expected behavior: No extraneous blank line after the extracted method call; only normal line spacing.
+Underlying cause: When the source selection includes nested function nodes, the text range processor preserves internal line breaks from the original block and inserts an extra newline after the generated call statement when reconstructing the surrounding code.
+*/
+
+// Complete compilable test code
+import { useState, useEffect } from 'react';
+
+function FriendStatus(props) {
+    /*selection start*/const [isOnline, setIsOnline] = useState(null);
+
+    function handleStatusChange(status) {
+        setIsOnline(status.isOnline);
+    }
+
+    useEffect('foo');/*selection end*/
+    if (isOnline === null) {
+        return 'Loading...';
+    }
+    return isOnline ? 'Online' : 'Offline';
+}

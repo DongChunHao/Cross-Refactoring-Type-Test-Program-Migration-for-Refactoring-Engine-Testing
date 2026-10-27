@@ -1,0 +1,21 @@
+```
+<?php
+class Shape { }
+class Polygon extends Shape {
+    public function getSides()
+    {
+        return 0;
+    }
+}
+class Triangle extends Polygon {
+    function computeArea() {
+        if($this->getSides() === 3) {
+            return 10;
+        }
+    }
+}
+$tri = new Triangle();
+echo $tri->getSides();
+```
+
+【Refactoring Action】: Push Down method `getSides()` from class `Polygon` to subclass `Triangle`

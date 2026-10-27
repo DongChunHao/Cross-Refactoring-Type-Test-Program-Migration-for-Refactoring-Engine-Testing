@@ -1,0 +1,38 @@
+// Assume required forward declarations
+class StaticHelper {
+public:
+    static int GetVersion();
+};
+
+class CSimpleTimer {
+private:
+    bool mIsRunning;
+    void Restart();
+public:
+    CSimpleTimer();
+    double GetElapsedMillis();
+};
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract the two lines using variable someTime: double someTime = GetElapsedMillis(); someTime += 10;
+Refactoring scope: Two statements defining and modifying someTime inside CSimpleTimer constructor
+Refactoring rule expectation: Recognize that someTime is used later in the original function; either make the extracted method return someTime and assign back to caller, or keep the variable in the original scope
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method creates a void extracted function and does not return the computed someTime value. The original code after extraction continues to reference someTime, which is no longer defined in the constructor scope, leading to compilation error.
+Expected behavior: The refactoring engine should detect that someTime is consumed after the extracted block, generate an extracted function returning double, and assign the return value back to someTime at the call site.
+Underlying cause: The refactoring engine fails to analyze variable usage after the extracted region; it treats someTime as a local variable fully contained inside the extracted method and does not track that the variable is still used by remaining code in the original function.
+*/
+
+CSimpleTimer::CSimpleTimer() {
+    int internalVersion = 0;
+    double someTime = GetElapsedMillis();
+    someTime += 10; // random silly code using static helper
+    internalVersion = StaticHelper::GetVersion();
+    if (internalVersion>1) mIsRunning = false;
+    double somethingElse = someTime;
+    double stuff = somethingElse;
+    Restart();
+}

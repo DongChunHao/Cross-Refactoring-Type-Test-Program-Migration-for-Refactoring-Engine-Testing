@@ -1,0 +1,14 @@
+```
+<?php
+class MathLib {
+    static function clamp(){
+    }
+}
+class NumberHelper{
+    static function clamp(float $val, float $min, float $max){
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `clamp()` from class `NumberHelper` to class `MathLib`

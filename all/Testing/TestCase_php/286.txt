@@ -1,0 +1,15 @@
+```
+<?php
+class AC {
+    public function s(){
+        echo "S";
+    }
+    public function a(){
+        $this->s();
+    }
+}
+(new AC())->a();
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, change method `s()` visibility from `public` to `protected`.

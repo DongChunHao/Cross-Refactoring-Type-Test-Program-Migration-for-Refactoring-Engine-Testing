@@ -1,0 +1,87 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: full code block inside `if (variable == "makepar") { ... }`
+Operation: Select the entire marked code segment and invoke Extract Method, name new method command_make_par
+Scope: Preserve original indentation level and preprocessor directive (#if) indentation when moving code into extracted method; avoid adding extra indent level to all nested blocks
+*/
+
+/* Error Root Cause:
+Observed failure: After Extract Method runs, every conditional block and the content inside the `#if !defined(XFRACT)` preprocessor block receives an extra level of indentation. Running explicit Reformat Code fixes the indentation, so this is separate from user formatter settings.
+Expected behavior: Copy the selected source code into the extracted method body without adding extra indentation to statements, braces and preprocessor blocks.
+Underlying cause: The refactoring engine’s text rewriting pass adds one extra indentation level when transplanting the selected PSI subtree into the new method body. The auto-indent adjustment logic does not skip preprocessor directives when re-indenting. This is only a token layout issue, the AST/semantics are intact; manual reformat can repair it.
+*/
+
+if (variable == "makepar")
+{
+    char *slash, *next = nullptr;
+    if (totparms < 1 || totparms > 2)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    slash = strchr(value, '/');
+    if (slash != nullptr)
+    {
+        *slash = 0;
+        next = slash+1;
+    }
+
+    CommandFile = value;
+    if (strchr(CommandFile.c_str(), '.') == nullptr)
+    {
+        CommandFile += ".par";
+    }
+    if (readname == DOTSLASH)
+    {
+        readname = "";
+    }
+    if (next == nullptr)
+    {
+        if (!readname.empty())
+        {
+            CommandName = extract_filename(readname.c_str());
+        }
+        else if (!MAP_name.empty())
+        {
+            CommandName = extract_filename(MAP_name.c_str());
+        }
+        else
+        {
+            argerror(curarg);
+            return CMDARG_ERROR;
+        }
+    }
+    else
+    {
+        CommandName = next;
+        assert(CommandName.length() <= ITEMNAMELEN);
+        if (CommandName.length() > ITEMNAMELEN)
+        {
+            CommandName.resize(ITEMNAMELEN);
+        }
+    }
+    make_parameter_file = true;
+    if (!readname.empty())
+    {
+        if (read_overlay() != 0)
+        {
+            goodbye();
+        }
+    }
+    else if (!MAP_name.empty())
+    {
+        make_parameter_file_map = true;
+    }
+    xdots = filexdots;
+    ydots = fileydots;
+    x_size_d = xdots - 1;
+    y_size_d = ydots - 1;
+    calcfracinit();
+    make_batch_file();
+#if !defined(XFRACT)
+    ABORT(0, "Don't call standard I/O without a console on Windows");
+    _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
+#endif
+    goodbye();
+    return CMDARG_NONE;
+}

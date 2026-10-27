@@ -1,0 +1,9 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+int main() {
+enum class X : char { One, Two, Three };
+X x = X::One; //{Extract variable for X::One}
+return 0;
+}

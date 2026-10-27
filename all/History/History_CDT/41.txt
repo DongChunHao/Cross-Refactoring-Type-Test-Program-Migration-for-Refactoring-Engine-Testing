@@ -1,0 +1,30 @@
+int x(int a) { // function to be renamed
+    return a;
+}
+int main(int a, char** argv) {
+    return x(a);
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: function `x`
+Refactoring Scope: entire translation unit
+IDE: Eclipse CDT
+Operation steps: Select function name `x`, invoke Rename refactoring, input `* x` (asterisk + whitespace + x) as new‑name string.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts input `* x` containing pointer declarator `*` and whitespace. It injects this fragment into function declarator yielding `int * x(int a)`. Every call site `x(a)` is rewritten as `* x(a)`. The transformation does **not only rename identifier**, it mutates function return type from `int` to `int*`. The function still returns integer value `a` which is implicitly converted to pointer. At call‑site `* x(a)` dereferences this invalid pointer value, triggering segmentation fault at runtime. No warning is emitted during refactoring; compiler may produce implicit‑conversion warning only at compile time.
+
+Expected behavior:
+Rename refactoring’s sole responsibility is replacing the identifier token. Input string must strictly comply with C identifier lexical rules:
+1. Only letters, underscores, digits; no whitespace, no `* & [] ()` or other declarator/operator symbols.
+2. First character must be letter or underscore.
+3. Reject any violating input immediately with error message.
+Modifying function return type belongs to Change‑Signature refactoring and must not be achievable via rename dialog.
+
+Underlying cause:
+CDT rename logic does not extract pure identifier token from user input. Instead it parses the whole input string as declarator fragment and merges it into existing function declaration. Operator symbols and whitespace inside user input alter AST structure, silently changing function type and all call‑sites semantics. There is no lexical filter on user‑provided rename text, allowing abuse of rename UI to perform unintended type mutation.
+*/

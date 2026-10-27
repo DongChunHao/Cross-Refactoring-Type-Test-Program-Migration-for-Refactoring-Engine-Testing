@@ -1,0 +1,17 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+func main() {
+oldFWithVariadic(
+"The beginning of the alphabet is %s %s %s",
+"a",
+"b",
+"c",
+) // rename oldFWithVariadic to fWithVariadic
+}
+func oldFWithVariadic(format string, a ...interface{}) {
+fmt.Printf(format, a...)
+}

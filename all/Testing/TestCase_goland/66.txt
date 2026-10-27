@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func sum(a, b, c int) int {
+return a + b + c
+}
+func invokeSum() int {
+return calcSum(1,2) // extract sum call into calcSum
+}
+func calcSum(x,y int) int {
+return sum(x,y)
+}
+var _ = invokeSum()

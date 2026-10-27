@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+type MyType1 int
+func getConvertedValue() MyType1 { // extract conversion expression into helper function
+return MyType1(0)
+}
+func main() {
+_ = getConvertedValue() // <caret>
+}

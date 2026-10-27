@@ -1,0 +1,19 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (CLion C++ refactoring)
+Refactoring target: type alias `num` defined by `using num = std::uint16_t;`
+Operation: Invoke Rename refactoring to rename alias `num` to `word`
+Scope: Rename all occurrences of the type alias in the code, including return type and all parameter type positions of the function signature.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming `num` to `word`, only the function return type is updated, the parameter type `num x` remains unchanged.
+When removing `#include <iostream>`, this bug disappears.
+
+Expected behavior:
+After rename:
+```cpp
+using word = std::uint16_t;
+word func(word x) {
+    return x;
+}

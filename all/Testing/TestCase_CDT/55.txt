@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: *gvar_0
+'''
+int gvar_0 = 100;
+float f_0(float var_0) {
+return var_0;
+}
+int f_1() {
+float var_0 = 100;
+return gvar_0;
+} //rename field for rename‑refactoring‑asterisk‑global‑variable‑rename‑pointer‑type‑mutation‑runtime‑crash defect scenario

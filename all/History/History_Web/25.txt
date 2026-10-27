@@ -1,0 +1,40 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Function
+Refactoring Target: Expression `return this.x + this.y;` inside method main() of class Z
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Execute Extract Function and check the 'Declare static' checkbox, covering two scenarios:
+1. Extract from instance main() which references instance properties this.x, this.y
+2. Extract from static main() which references static properties this.x, this.y
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+1. The "Declare static" checkbox is enabled when extracting code from an instance method that accesses instance properties via `this`. Enabling it produces invalid static function that tries to read instance members.
+2. When the source method is already static, the "Declare static" checkbox is still available instead of being disabled, which is redundant and confusing.
+Expected behavior:
+1. Disable the "Declare static" option when the selected fragment references instance properties, as static functions cannot access instance `this`.
+2. Automatically disable the "Declare static" checkbox if the source containing method is static, since the extracted function can only be static.
+Underlying cause:
+The Extract Function UI precondition checker does not analyze whether the selected fragment accesses instance members and does not check the static modifier of the containing method to control the checkbox state.
+*/
+
+// Complete compilable test code
+class Z {
+  x = 1;
+  y = 2
+  main() {
+    //select this line
+    return this.x + this.y;
+  }
+}
+
+class Z2 {
+  static x = 1;
+  static y = 2
+  static main() {
+    //select this line
+    return this.x + this.y;
+  }
+}

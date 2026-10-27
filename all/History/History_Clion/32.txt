@@ -1,0 +1,49 @@
+```
+/* Refactoring Settings:
+Refactoring type: Move function definition out of template class (CLion C++)
+Refactoring target: `print` member function inside template class `testT<T>`
+Operation: Invoke intention "Move function definition out of class for Template-class"
+Scope: When moving member definition out of template class, automatically retain template parameter header `template <typename T>` and qualify class name as `testT<T>`
+*/
+
+/* Error Root Cause:
+Observed failure:
+The refactoring generates:
+```
+
+void testT::print(T t) {
+std::cout << t << std::endl;
+}
+
+```
+This is invalid. Missing template header and missing template argument for the class name.
+
+Expected generated code:
+```cpp
+template <typename T>
+void testT<T>::print(T t) {
+    std::cout << t << std::endl;
+}
+```
+
+Underlying cause:
+The refactoring logic does not preserve template metadata when extracting the member function out of template class. It strips the `template <typename T>` prefix and writes `testT::print` instead of `testT<T>::print`. The symbol resolver fails to recognize that `testT` is a template and requires template parameter list on out-of-line definition.
+*/
+
+#include <iostream>
+
+template 
+class testT{
+public:
+testT() {}
+virtual ~testT(){}
+
+void print(T t) {
+std::cout << t << std::endl;
+}
+};
+
+int main() {
+testT<int> tt;
+tt.print(1);
+}</int>

@@ -1,0 +1,44 @@
+// Assume required headers and forward declarations are present
+#define ASSET_DOUBLE_TAP_TIMEOUT_MS 100
+#define ASSET_LONG_TAP_TIMEOUT_MS 500
+#define YI_TRUE true
+
+class Timer {
+public:
+    void SetInterval(int ms);
+    void SetSingleShot(bool enable);
+    template<typename Slot>
+    void Connect(Slot&& slot);
+};
+
+class AssetView {
+protected:
+    Timer m_tapCountTimer;
+    Timer m_longTapTimer;
+    void OnTapTimer();
+    void OnLongTapTimer();
+    void PrepareTimers();
+};
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract the timer configuration statements into new member function AssetView::PrepareTimers()
+Refactoring scope: Selected block with m_tapCountTimer and m_longTapTimer setup calls
+Refactoring rule expectation: Preserve original member function pointer syntax &AssetView::OnTapTimer, do not wrap with &this->
+*/
+
+/* Error Root Cause:
+Observed failure: After Extract Method refactoring, the function pointer arguments incorrectly become &this->OnTapTimer and &this->OnLongTapTimer. This syntax is invalid C++ and causes compilation failure.
+Expected behavior: Keep original syntax &AssetView::OnTapTimer and &AssetView::OnLongTapTimer.
+Underlying cause: The refactoring engine incorrectly generates member pointer expression using `this->` when capturing the member function reference inside the extracted method, producing invalid mixed syntax &this->func() instead of the correct class-scoped member pointer &Class::func.
+*/
+
+void AssetView::PrepareTimers()
+{
+    m_tapCountTimer.SetInterval(ASSET_DOUBLE_TAP_TIMEOUT_MS);
+    m_tapCountTimer.SetSingleShot(YI_TRUE);
+    m_tapCountTimer.TimeoutSig.Connect(*this, &AssetView::OnTapTimer);
+    m_longTapTimer.SetInterval(ASSET_LONG_TAP_TIMEOUT_MS);
+    m_longTapTimer.SetSingleShot(YI_TRUE);
+    m_longTapTimer.TimeoutSig.Connect(*this, &AssetView::OnLongTapTimer);
+}

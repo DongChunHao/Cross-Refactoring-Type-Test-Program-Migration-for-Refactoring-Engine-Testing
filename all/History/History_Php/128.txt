@@ -1,0 +1,27 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Pull Up / Push Down Members refactoring
+Refactoring target: grouped property declaration `public static int $field, $property;`
+Scope: caret position resolution for comma-separated grouped field declarations
+Refactoring operation: caret placed after `$property`, invoke Pull Up
+*/
+
+/* Error Root Cause:
+Observed failure:
+In a grouped multi-property declaration `public static int $field, $property;`, when the caret is positioned after the `$property` identifier and Pull Up is triggered, the refactoring incorrectly selects `$field` instead of the intended `$property`.
+The PSI position resolver for grouped declarations does not correctly map the caret offset to the individual variable element; it picks the first variable in the comma group rather than the one under the caret.
+
+Expected behavior:
+For grouped comma-separated field declarations:
+1. Resolve which specific property variable node the caret is inside/adjacent to.
+2. Pre-select that exact member (`$property`) in the Pull Up dialog, not the first field in the declaration group.
+
+Underlying cause:
+The visitor for member lookup on caret position treats the entire grouped declaration as a single container and defaults to the first child variable, without performing fine-grained offset comparison to pick the correct individual property element.
+*/
+class A extends B {
+    public static int $field, $property;
+}
+class B {
+}
+?>

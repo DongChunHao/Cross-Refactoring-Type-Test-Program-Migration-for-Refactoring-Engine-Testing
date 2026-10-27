@@ -1,0 +1,16 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (move code element to another file)
+Refactoring target: code snippet which uses resource_filename imported from pkg_resources
+Refactoring scope: original source file import statements
+Refactoring rule expectation: After moving target code element to another file, keep original import statement "from pkg_resources import resource_filename" intact in original file or properly adjust imports without corrupting imported‑symbol name.
+'''
+''' Error Root Cause:
+Observed failure: After move‑refactor operation, valid import `from pkg_resources import resource_filename` gets incorrectly rewritten into `from pkg_resources import __all__`. IDE reports unresolved reference error for resource_filename.
+Expected behavior: Move refactor must preserve correct imported symbol name resource_filename; should not replace imported identifier with __all__.
+Underlying cause: The move‑refactor import‑rewrite logic has a bug when adjusting leftover imports; it mistakenly emits `__all__` as imported‑symbol name instead of the original function name resource_filename, corrupting the import statement syntax.
+'''
+from pkg_resources import resource_filename
+
+def example():
+    path = resource_filename("my_package", "data/config.json")
+    return path

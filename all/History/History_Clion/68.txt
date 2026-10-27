@@ -1,0 +1,36 @@
+/* Refactoring Settings:
+Refactoring type: Move refactoring (Move function/type definition to another file, CLion C++)
+Refactoring target: struct `bar` defined inside dir/foo.hpp
+Operation: Invoke Refactor → Move on struct bar, set target filename bar.hpp, allow creation of new file.
+Scope: When moving type to a new header inside subdirectory `dir/`, update include directives in dependent source files to use proper relative path `#include "dir/bar.hpp"`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The new file bar.hpp is created in dir/ folder. However, main.cpp gets `#include "bar.hpp"` instead of `#include "dir/bar.hpp"`.
+This include path is wrong; compiler cannot locate bar.hpp, CLion reports cannot find header file.
+
+Expected behavior:
+main.cpp should have:
+`#include "dir/bar.hpp"`
+foo.hpp loses definition of bar and becomes declaration-only.
+
+Underlying cause:
+Move refactoring correctly creates the new file in the subdirectory `dir/`, but fails to generate the correct relative include path. It only writes the plain filename without preserving the subdirectory path segment in the #include directive.
+*/
+
+// dir/foo.hpp
+#ifndef UNTITLED1_FOO_HPP
+#define UNTITLED1_FOO_HPP
+
+struct bar {
+};
+
+#endif
+
+// main.cpp
+#include "dir/foo.hpp"
+
+int main() {
+  bar b;
+}

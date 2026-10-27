@@ -1,0 +1,16 @@
+```
+<?php
+namespace UploadLib;
+class FileMeta { }
+
+namespace Front;
+use UploadLib\FileMeta as Meta;
+class UploadHandler {
+    static function inspect(Meta $meta)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `inspect()` from class `UploadHandler` (namespace `Front`) to class `FileMeta` (namespace `UploadLib`).

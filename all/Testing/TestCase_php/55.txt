@@ -1,0 +1,17 @@
+```
+<?php
+class Message { }
+class AlertMessage extends Message {
+    private function formatRaw(string $in): string
+    {
+        return "MSG: ".$in;
+    }
+}
+class ErrorAlert extends AlertMessage {
+    function buildMessage(string $input){
+        return parent::formatRaw($input);
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `buildMessage()` from class `ErrorAlert` to parent class `AlertMessage`

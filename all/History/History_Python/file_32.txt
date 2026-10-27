@@ -1,0 +1,18 @@
+def demo():
+    path = "directory/file.html"
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Introduce Variable refactoring
+Refactoring Target: substring literal "directory" inside string constant "directory/file.html"
+Refactoring Scope: current function demo()
+Issue ID: PY-107.130
+Operation: Select substring "directory" within the string literal and trigger Introduce Variable refactoring
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: When selecting only the substring "directory" inside the string "directory/file.html" and run Introduce Variable, the refactoring engine extracts the entire string "directory/file.html" as the new variable instead of just the selected substring.
+Expected behavior: Two acceptable options: (1) correctly extract only the selected substring "directory" and rewrite the expression as `path = var + "/file.html"`, OR (2) disable the refactoring action and show warning, because partial substring inside a single string literal cannot be extracted directly.
+Underlying cause: The refactoring engine’s selection parser treats the entire string literal AST node as the selected element, and cannot recognize or operate on partial text substrings within a single string AST node.
+"""

@@ -1,0 +1,27 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring (Ctrl+F6)
+Refactoring target: class method with existing PHPDoc @param tags
+Scope: method signature and associated docblock
+Refactoring operation: remove or rename a method argument
+*/
+
+/* Error Root Cause:
+Observed failure: When an argument is removed or renamed via Change Signature, the IDE inserts an `@internal param Type $removedArgument` tag into the docblock. This causes the whole method to be marked as internal, resulting in strikethrough usages and warnings that the method should not be used.
+Expected behavior: Removed parameters should have their corresponding @param tags deleted entirely. Renamed parameters should have their @param variable names updated. No @internal tag for old parameters should be added.
+Underlying cause: The Change Signature docblock handler uses @internal as a fallback way to preserve old parameter metadata, incorrectly treating the leftover parameter entry as an internal API marker. The logic does not fully delete obsolete @param entries and misuses the @internal annotation, which applies to the entire element rather than only the retired parameter.
+*/
+class Example
+{
+    /**
+     * @param string $otherArgument
+     * @param int $removedArgument
+     *
+     * @return bool
+     */
+    public function test(string $otherArgument, int $removedArgument): bool
+    {
+        return true;
+    }
+}
+?>

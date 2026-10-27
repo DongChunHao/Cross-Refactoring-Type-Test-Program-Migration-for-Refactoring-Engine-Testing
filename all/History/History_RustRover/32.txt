@@ -1,0 +1,37 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Trait
+Refactoring Target: `pub fn red()` inside `impl Color` block
+Refactoring Scope: Visibility and import handling for extracted trait
+Plugin Environment: IntelliJ Rust plugin 0.4.165.4391-213-nightly, IDEA 2021.3.1, Rust 1.59.0-nightly, macOS 11.5.1
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Refactor → Extract Trait on the `pub fn red()` associated function
+*/
+/* Error Root Cause:
+Observed failure:
+1. The newly created trait `ExtractedTrait` is generated without `pub`, even though the original method is `pub`. External code that calls `Color::red()` cannot access the trait.
+2. The refactor does not insert the required `use` import (`use crate::values::ExtractedTrait;`) at call sites, so method resolution fails.
+Expected behavior:
+- Propagate visibility: since the original method is `pub`, generate `pub trait ExtractedTrait`.
+- Add necessary trait imports at places where the method is used, so that associated method call syntax continues to resolve.
+Underlying cause:
+Extract Trait logic does not copy the method’s visibility modifier to the new trait declaration, and it does not compute and inject the required trait imports for existing usages of the method.
+*/
+// Original code
+pub mod color {
+    pub struct Color(pub u8, pub u8, pub u8);
+}
+
+pub mod values {
+    use super::color::Color;
+    impl Color {
+        pub fn red() -> Color {
+            Color(255, 0, 0)
+        }
+    }
+}
+
+pub use self::color::Color;
+fn main() {
+    color::Color::red();
+}

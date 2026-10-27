@@ -1,0 +1,9 @@
+```
+<?php
+function handleRequest($method, $headers = null, &...$extra) {
+    var_dump($method, $headers, $extra);
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `handleRequest`, remove reference `&` from variadic parameter `&...$extra`

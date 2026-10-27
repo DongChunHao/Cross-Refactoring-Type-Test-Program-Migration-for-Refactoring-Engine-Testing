@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+"use strict";
+function callMe(a, b, someBool) { //{Move Method for callMe}
+console.log("a = " + a + ", b = " + b + ", someBool = " + someBool);
+}
+let a = 1;
+let b = 2;
+callMe(a, b, true);
+callMe(a, b, false);
+callMe(a, b);

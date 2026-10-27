@@ -1,0 +1,18 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <cstdlib>
+class Base
+{
+public:
+virtual void test() = 0; //{Pull up test declaration into Base}
+};
+class Impl : public Base
+{
+public:
+void test() override {
+int x;
+x = rand();
+}
+};

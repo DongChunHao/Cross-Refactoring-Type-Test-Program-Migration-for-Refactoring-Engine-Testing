@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+// main
+func main() {
+runMainLogic() // extract main body content into runMainLogic
+}
+func runMainLogic() {
+}

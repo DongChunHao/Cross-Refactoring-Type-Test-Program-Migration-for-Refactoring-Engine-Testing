@@ -1,0 +1,13 @@
+```
+<?php
+class TargetLib {  }
+class SourceHolder{
+    protected static $secretKey = 'abc123';
+    public static function printKey(){
+        echo self::$secretKey;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, multi-selection: static field `$secretKey` and static method `printKey()` from class `SourceHolder` to class `TargetLib`

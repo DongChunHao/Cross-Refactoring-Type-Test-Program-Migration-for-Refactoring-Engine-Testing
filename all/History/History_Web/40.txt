@@ -1,0 +1,50 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inspection quick-fix "Join variable declaration and assignment"
+Refactoring Target: Loop counter variable declared outside the loop header
+Refactoring Scope: JavaScript file
+Trigger Operation: Invoke the inspection on `var i` / `var x` before for / for…in / for…of
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+I) For classic `for` loop: joining declaration and assignment only moves the initializer to the outer variable, producing `var i = 0; for (; i < 5; i++)`; it does NOT migrate the variable into the for header as `let i = 0`.
+II) For `for…in`: the inspection does nothing when invoked on `var x`.
+III) For `for…of`: the inspection also does nothing when invoked on `var x`.
+
+Expected behavior:
+For all three loop forms, the quick-fix should recognize that the variable is used solely as the loop iteration variable and offer to move the declaration into the loop header, preferably using `let` to get per-iteration binding semantics.
+
+Underlying cause:
+The "Join variable declaration and assignment" inspection’s JS implementation only handles plain sequential assignment (`var x; x = value;`). It lacks special-case logic for loop constructs: it does not treat assignments in the `for` init slot, nor recognize `for…in` / `for…of` iteration targets as eligible to be moved into the loop header. It treats those loop forms as non‑joinable, so the quick-fix is not available for II and III.
+*/
+
+// I) Classic for case
+function f776() {
+     var i; //Call here 'Join variable declaration and assignment'
+    for (i = 0; i < 5; i++) {
+        console.log(i)
+    }
+}
+f776();
+
+// II) for...in case
+function f654() {
+    var person = {fname: "John", lname: "Doe", age: 25};
+    var text = "";
+    var x; //Call here
+    for (x in person) {
+        text += person[x];
+    }
+}
+
+// III) for...of case
+function f654() {
+    var persons = [{fname: "John", lname: "Doe", age: 25}, {fname: "Vassily", lname: "Pupkin", age: 80}];
+    var text = "";
+    var x; //Call here
+    for (x of persons) {
+        text += person.fname + " is " + person.age + " years old!\r\n";
+    }
+}

@@ -1,0 +1,29 @@
+struct Foo {
+public:
+    float GetNum(int) {}
+};
+
+Foo GetFoo() {}
+
+int main() {
+    GetFoo().GetNum(0);
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: expression `GetFoo().GetNum(0)` inside main()
+Refactoring Scope: current function main()
+IDE Environment: Eclipse CDT 8.1.0.201202161734, Bug ID: 371838
+Operation steps: Select expression GetFoo().GetNum(0), invoke Extract Local Variable refactoring.
+Baseline comparison cases:
+Case1: GetFoo().GetNum(a); → suggested variable name "num" (correct)
+Case2: GetFoo(0); → suggested variable name "foo" (correct)
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: When extracting `GetFoo().GetNum(0)`, the refactoring engine suggests variable name `i` instead of expected `num`. When passing a variable argument `GetFoo().GetNum(a)`, the suggestion "num" works correctly.
+Expected behavior: Extract Local Variable should infer the identifier `num` from the method name GetNum() for both scenarios, regardless of whether the argument is literal or variable.
+Underlying cause: The variable name inference logic behaves differently when the method argument is a literal constant versus a named variable. When the argument is a literal integer, the naming heuristic falls back to generic fallback name "i" instead of extracting the stem "num" from the called method GetNum().
+*/

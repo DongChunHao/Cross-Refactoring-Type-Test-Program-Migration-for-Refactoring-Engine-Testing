@@ -1,0 +1,46 @@
+using System;
+
+/* Refactoring Settings:
+Refactoring Type: Rename Symbol (Rider C# rename refactoring)
+Refactoring Target: Interface `IExceptionEvaluator` → `IRetryExceptionEvaluator`
+Refactoring Scope: Interface type and its members, all implementing classes and call sites across solution
+Refactoring Rule Expectation: When renaming an interface, Rider should only rename the interface type itself, and show a clear, inspectable preview list of every symbol it proposes to rename (interface, methods in interface, implementing class method overrides). The preview dialog should list symbol names + file locations so user can review each change before applying. If user accepts, only the intended symbols are updated; method signatures, overrides and implementations must stay consistent and compile after rename.
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure: While renaming interface IExceptionEvaluator to IRetryExceptionEvaluator, Rider automatically suggests renaming the interface method `evaluateExceptionCondition` → `evaluateRetryExceptionCondition`. There is a usability defect: the rename preview window lacks clear per-symbol/file details, making it hard to see exactly what will be modified. If the user accepts the suggestion, unintended or mismatched renames may happen on implementing classes, breaking override/interface-implementation contracts and causing compile errors.
+Expected behavior:
+1. Separate the rename of the interface type from the rename of its member; do not auto-suggest renaming the method just because the interface name changed.
+2. Rename preview panel should explicitly list every candidate symbol with its file path and kind (interface / method / implementation).
+3. If the member rename is accepted, all implementing classes' corresponding method must be updated consistently to satisfy the interface contract.
+Underlying cause: The rename heuristic over-associates method identifier words with the containing interface name, leading to an automatic suggestion to rename the method when only the interface type was meant to be renamed. The preview UI provides insufficient granular information for the user to audit proposed changes.
+*/
+
+// Before rename
+public interface IExceptionEvaluator
+{
+    bool evaluateExceptionCondition(Exception ex);
+}
+
+public class RetryPolicyEvaluator : IExceptionEvaluator
+{
+    public bool evaluateExceptionCondition(Exception ex)
+    {
+        return ex is TimeoutException;
+    }
+}
+
+// After user accepts Rider's suggested extra rename (the problematic path)
+public interface IRetryExceptionEvaluator
+{
+    bool evaluateRetryExceptionCondition(Exception ex);
+}
+
+public class RetryPolicyEvaluator : IRetryExceptionEvaluator
+{
+    public bool evaluateRetryExceptionCondition(Exception ex)
+    {
+        return ex is TimeoutException;
+    }
+}

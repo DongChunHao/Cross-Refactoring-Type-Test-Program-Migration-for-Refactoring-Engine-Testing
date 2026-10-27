@@ -1,0 +1,41 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: three push_back() statements inserting Quadrilateral objects into quadrilaterals vector
+Operation: Invoke Extract Method on the three push_back lines
+Scope: Preserve object construction syntax; do not inject `this->` before type name when constructing a new object, `this->` is only for member access, not for type/class names
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, refactoring incorrectly inserts `this->` before `Quadrilateral(...)`:
+`quadrilaterals.push_back(this->Quadrilateral(centerAB, triangle->n2(), centerBC, center));`
+`this->Quadrilateral(...)` is invalid syntax. Quadrilateral is a class type, not a member function/member variable of current class. There is no member named Quadrilateral.
+
+Expected behavior:
+Leave constructor calls unchanged:
+`quadrilaterals.push_back(Quadrilateral(centerAB, triangle->n2(), centerBC, center));`
+
+Underlying cause:
+The refactoring’s AST symbol resolution has confusion between class name and member symbol inside the extracted code block. When moving the code subtree into a new method, the visitor incorrectly treats the identifier `Quadrilateral` as a member of `this` and injects `this->` qualifier, even though Quadrilateral is a standalone type name.
+*/
+#include <vector>
+
+struct Quadrilateral {
+    Quadrilateral(int a, int b, int c, int d) {}
+};
+struct Triangle {
+    int n1() {return 0;}
+    int n2() {return 0;}
+    int n3() {return 0;}
+};
+
+void demo()
+{
+    std::vector<Quadrilateral> quadrilaterals;
+    Triangle* triangle = nullptr;
+    int centerAB = 0, centerBC = 0, centerCA = 0, center = 0;
+
+    quadrilaterals.push_back(Quadrilateral(centerAB, triangle->n2(), centerBC, center));
+    quadrilaterals.push_back(Quadrilateral(centerBC, triangle->n3(), centerCA, center));
+    quadrilaterals.push_back(Quadrilateral(centerCA, triangle->n1(), centerAB, center));
+}

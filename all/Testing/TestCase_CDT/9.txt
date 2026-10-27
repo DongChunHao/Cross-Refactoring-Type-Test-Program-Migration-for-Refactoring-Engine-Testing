@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: renamed_main
+'''
+#include <stdio.h>
+#define c 5;
+int main(){//rename method for function containing out‑variable pointer assignment scenario
+int i,k,r;
+k = i + 1;
+r = k*c;
+printf("%d",k);
+printf("%d",r);
+return 0;
+}

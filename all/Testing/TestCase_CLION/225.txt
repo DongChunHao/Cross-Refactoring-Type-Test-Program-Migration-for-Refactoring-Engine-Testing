@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <cstdlib>
+struct Wrapper
+{
+static void wrapper_test() { //{Move test logic into static wrapper member}
+int x;
+x = rand();
+}
+};
+void test()
+{
+Wrapper::wrapper_test();
+}

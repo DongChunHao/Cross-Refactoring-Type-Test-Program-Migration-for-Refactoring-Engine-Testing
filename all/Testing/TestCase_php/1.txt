@@ -1,0 +1,6 @@
+'''
+Refactoring type: Change Signature
+Refactoring new name: N/A
+'''
+
+<?php trait A{ function a($a = 2){ print $a; //{Change Signature: add default parameter $a} } } interface C{ function a(); } class B implements C{ use A; public function b(){ $this->a(2); //{Change Signature: update call site with new argument} } } '''

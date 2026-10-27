@@ -1,0 +1,10 @@
+```
+<?php
+class C{
+	public function f() {
+	}
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `C::f()`, add parameter `int|bool $a = 1`.

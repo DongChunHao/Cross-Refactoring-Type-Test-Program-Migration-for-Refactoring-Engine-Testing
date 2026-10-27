@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: renamed_main_logic
+'''
+#include <stdio.h>
+typedef struct s
+{
+char *n;
+} st;
+int main()//rename method for function containing pointer‑qualified expression
+{
+st i;
+st *p;
+p = &i;
+p->n = "Jack";
+printf("%s", p->n);
+return 0;
+}

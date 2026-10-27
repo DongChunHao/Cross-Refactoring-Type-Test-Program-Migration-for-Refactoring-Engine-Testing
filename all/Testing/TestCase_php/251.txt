@@ -1,0 +1,8 @@
+```
+<?php declare(strict_types = 1);
+function foo(int $i = 0, float $f = 0.0, float $b = 0.0) {}
+foo(1, 0.0, 0.0);
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, modify parameter default values in refactoring dialog for `foo(int $i = 0, float $f = 0.0, float $b = 0.0)`.

@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+func main() {
+idx := 1 // rename original i to idx
+str := "" // rename original s to str
+foo()
+}
+func foo() (i int, s string) {}

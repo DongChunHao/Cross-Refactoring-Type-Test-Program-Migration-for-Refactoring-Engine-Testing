@@ -1,0 +1,26 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: releaseItemPointer
+'''
+typedef typeof(sizeof 0) size_t;
+void free(void *);
+typedef struct memory_pool {
+struct memory_pool_item {
+void *p;
+} *items;
+size_t	len;
+} memory_pool;
+static void releaseItemPointer(void *ptr) //{Extract method for pointer free logic}
+{
+free(ptr);
+}
+static void mpool_free(memory_pool *pool)
+{
+for (; pool->len > 0; pool->len--)
+{
+struct memory_pool_item *item = pool->items + pool->len - 1;
+struct memory_pool_item *item2 = item;
+void *p = item2->p;
+releaseItemPointer(p);
+}
+}

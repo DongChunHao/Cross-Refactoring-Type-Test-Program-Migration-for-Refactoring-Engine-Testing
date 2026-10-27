@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pack1
+var variable = ""
+type Holder struct{}
+func (h Holder) Read() string {
+return variable
+}
+func caller() {
+holder := Holder{}
+_ = holder.Read() // move Read method from Holder to standalone function
+}

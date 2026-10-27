@@ -1,0 +1,57 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Enum Variant
+Refactoring Target: Enum variant `V4` from `IpAddr` enum
+Refactoring Scope: Propagating parent enum attributes (derive attributes) to the newly extracted struct
+Plugin Environment: IntelliJ Rust plugin 0.2.122.3056-201-nightly, IDEA 2020.1, Rust 1.42.0, macOS 10.13.6
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Enum Variant refactoring on the `V4` variant inside the `#[derive(Debug)]` enum
+*/
+/* Error Root Cause:
+Observed failure: When extracting an enum variant into a standalone struct, the refactor does not copy compiler-builtin attributes such as `#[derive(Debug)]` from the parent enum to the new struct. The original enum retains `#[derive(Debug)]`, but the extracted `V4` struct lacks the derive, causing a compile error because `IpAddr` now contains a `V4` field that does not implement `Debug`.
+Expected behavior: Automatically propagate well-known derive attributes (Debug, Clone, Copy, Eq, PartialEq, etc.) from the source enum to the generated variant struct. Custom procedural macro attributes may be skipped due to unknown semantics.
+Underlying cause: The extract variant logic only moves the variant’s fields into a new struct and does not inherit the parent enum’s derive attributes.
+*/
+// Before
+#[derive(Debug)]
+enum IpAddr {
+    V4(u8, u8, u8, u8),
+    V6(String),
+}
+
+fn main() {
+    let home = IpAddr::V4(127, 0, 0, 1);
+    let loopback = IpAddr::V6(String::from("::1"));
+    println!("{:?} {:?}", home, loopback)
+}
+
+// Actual bad output (compile error)
+struct V4(pub u8, pub u8, pub u8, pub u8);
+
+#[derive(Debug)]
+enum IpAddr {
+    V4(V4),
+    V6(String),
+}
+
+fn main() {
+    let home = IpAddr::V4(V4(127, 0, 0, 1));
+    let loopback = IpAddr::V6(String::from("::1"));
+    println!("{:?} {:?}", home, loopback)
+}
+
+// Expected output
+#[derive(Debug)]
+struct V4(pub u8, pub u8, pub u8, pub u8);
+
+#[derive(Debug)]
+enum IpAddr {
+    V4(V4),
+    V6(String),
+}
+
+fn main() {
+    let home = IpAddr::V4(V4(127, 0, 0, 1));
+    let loopback = IpAddr::V6(String::from("::1"));
+    println!("{:?} {:?}", home, loopback)
+}

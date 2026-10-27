@@ -1,0 +1,7 @@
+```
+<?php
+const C = 1;
+?>
+```
+
+【Refactoring Action】: Invoke Move Constant refactoring on global constant `C`; select PHP built-in stub class `\DateTime` as target class to move constant into.

@@ -1,0 +1,30 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Method refactoring
+Refactoring target: static method f() from N\AnotherClass to N\MyClass
+Scope: files MyClass.php and AnotherClass.php
+Refactoring operation: move method f() into MyClass; preserve existing grouped use statement in MyClass.php
+*/
+
+/* Error Root Cause:
+Observed failure: After moving method f() that references Baz into MyClass, the refactoring does not reuse the existing grouped use Foo\Bar\{Baz} in MyClass.php. It may add an extra separate use Foo\Bar\Baz; or fail to recognize that Baz is already imported via the grouped syntax.
+Expected behavior: Detect that Baz is already available through the existing grouped use statement in the target class’s file, do not add redundant import statements, and leave the grouped use intact.
+Underlying cause: The import reconciliation logic treats grouped use syntax and single use syntax as distinct and does not resolve that the symbol Baz from Foo\Bar is already imported by the grouped use clause, leading to unnecessary new use statement insertion.
+*/
+// MyClass.php
+namespace N;
+use Foo\Bar\{
+    Baz
+};
+class MyClass {
+}
+
+// AnotherClass.php
+namespace N;
+use Foo\Bar\Baz;
+class AnotherClass {
+    public static function f() {
+        var_dump(new Baz());
+    }
+}
+?>

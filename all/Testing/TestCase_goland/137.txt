@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func main() {
+callHello() // extract hello invocation
+}
+func callHello() {
+hello("")
+}
+func hello(s string) {
+}

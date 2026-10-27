@@ -1,0 +1,28 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+class BaseFoo
+{
+public:
+virtual void SetFoo(bool foo) = 0; //{Pull up SetFoo declaration into BaseFoo}
+virtual bool IsFoo() const = 0;
+};
+class Foo : public BaseFoo {
+public:
+bool IsFoo() const override
+{
+return m_foo;
+}
+void SetFoo(bool foo) override
+{
+m_foo = foo;
+}
+private:
+bool m_foo;
+};
+int main() {
+Foo foo;
+foo.SetFoo(true);
+return foo.IsFoo()? 1:0;
+}

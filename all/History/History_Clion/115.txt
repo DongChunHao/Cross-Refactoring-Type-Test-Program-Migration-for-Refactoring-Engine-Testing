@@ -1,0 +1,20 @@
+#include <cstdlib>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract statements `int x; x = rand();` into a new method
+Refactoring scope: Variable declaration and assignment expression
+Refactoring rule expectation: Offer option to return the value of `x` as return type `int`, not only `void`
+*/
+
+/* Error Root Cause:
+Observed failure: CLion Nova Extract Method only provides `void` in return type dropdown, cannot select `int` as return type to return the generated random value.
+Expected behavior: The refactoring should detect that `x` holds the result of `rand()` and offer `int` as a candidate return type, allowing extraction of a function returning the integer value.
+Underlying cause: The extract method logic in Nova treats the local variable assignment as a side-effect only; it fails to recognize that the variable `x` can be promoted to the function return value, so it only proposes void return type.
+*/
+
+void test()
+{
+    int x;
+    x = rand();
+}

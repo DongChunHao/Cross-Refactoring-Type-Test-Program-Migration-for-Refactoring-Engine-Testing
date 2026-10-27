@@ -1,0 +1,62 @@
+package demo
+
+/* Refactoring Settings:
+Refactoring type: Create Method quick-fix
+Refactoring target: Undefined method call `d.demo1.call()` where `d.demo1` is the embedded `demo1` field
+Refactoring scope: Type declaration block using grouped `type()` syntax
+Refactoring rule: When generating the new method for `demo1`, insert the method outside of the grouped `type` block, not inside the type declaration parentheses.
+*/
+
+/* Error Root Cause:
+Observed failure: The "Create method" quick fix inserts the generated `func (d demo1) call()` inside the grouped `type ( ... )` block, which is invalid Go syntax.
+Expected behavior: Generate the method after the closing `)` of the grouped type block, outside the type declaration group.
+Underlying cause: The insertion position resolver incorrectly selects the interior range of the grouped `type` statement as the target insertion point, instead of placing the new method in the top-level package scope after the type group.
+*/
+
+type (
+	demo1 struct {
+		Field1 string
+		Field2 string
+	}
+
+	demo2 struct {
+		demo1
+	}
+)
+
+func (d demo2) name() {
+	d.demo1.call()
+}
+
+// Bad actual generated code (method placed inside type() block):
+/*
+type (
+	demo1 struct {
+		Field1 string
+		Field2 string
+	}
+	func (d demo1) call() {
+	}
+	demo2 struct {
+		demo1
+	}
+)
+*/
+
+// Expected correct generated code (method outside type() block):
+/*
+type (
+	demo1 struct {
+		Field1 string
+		Field2 string
+	}
+	demo2 struct {
+		demo1
+	}
+)
+func (d demo1) call() {
+}
+func (d demo2) name() {
+	d.demo1.call()
+}
+*/

@@ -1,0 +1,29 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (C++ CLion refactoring)
+Refactoring target: local variable `j` in the second for loop
+Operation: Invoke Rename refactoring to rename `j` to `i`
+Scope: Detect name collision in enclosing scope before performing rename; prevent generating duplicate local variable names and emit proper warning.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming `j` to `i`, the refactoring detects that `i` already exists in an outer sibling scope and shows warning.
+Critical semantic point: The two variables are in separate non-overlapping scopes. The first `i` lives only inside the first if-block, and does not exist in the scope of the second for-loop. There is no actual name collision and C++ allows this. The warning is a false positive.
+
+Expected behavior:
+Allow renaming j to i without warning. The two variables are in separate scopes, no conflict.
+
+Underlying cause:
+Rename refactoring’s scope analysis treats the identifier `i` as present in the whole function scope, instead of strictly respecting block-level lexical boundaries. It incorrectly reports a name collision even though the two variables exist in non-overlapping scopes.
+*/
+
+#include <iostream>
+
+void f(bool b) {
+    if (b) {
+        for (int i = 0; i < 10; ++i)
+            std::cout << i << "\n";
+    }
+    for (int j = 0; j < 10; ++j)
+        std::cout << j << "\n";
+}

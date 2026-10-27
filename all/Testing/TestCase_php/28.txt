@@ -1,0 +1,7 @@
+<?php
+class MyException extends Exception {
+    function a(){} // <-- Pull Up refactoring target
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring

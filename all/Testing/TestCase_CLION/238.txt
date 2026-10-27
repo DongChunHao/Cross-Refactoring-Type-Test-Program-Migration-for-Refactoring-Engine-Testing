@@ -1,0 +1,29 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+class BaseFoo
+{
+public:
+virtual void SetFoo(bool foo) {}
+virtual bool IsFoo() const { return false; }
+};
+class Foo : public BaseFoo //{Push down SetFoo and IsFoo implementation from BaseFoo to Foo}
+{
+public:
+bool IsFoo() const override
+{
+return m_foo;
+}
+void SetFoo(bool foo) override
+{
+m_foo = foo;
+}
+private:
+bool m_foo;
+};
+int main() {
+Foo foo;
+foo.SetFoo(true);
+return foo.IsFoo()? 1:0;
+}

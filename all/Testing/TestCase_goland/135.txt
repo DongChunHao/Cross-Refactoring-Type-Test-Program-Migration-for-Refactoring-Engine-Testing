@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+func f1(i int, ints []int) {}
+func f2(i int, ints ...int) {}
+func _(i int, nums ...int) {
+f1(i, nums)
+f2(i, nums...)
+}
+// rename f1 to runF1, f2 to runF2
+func runF1(i int, ints []int) {}
+func runF2(i int, ints ...int) {}

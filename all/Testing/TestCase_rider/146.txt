@@ -1,0 +1,28 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+namespace RiderNugetBugDemo
+{
+public interface IClass2
+{
+void DoWork(); //{Push Down Method: target method for move‑single‑top‑level‑type‑moves‑all‑file‑types‑bug reproduction}
+}
+
+public abstract class Class2Base
+{
+public abstract void DoWork();
+}
+
+public class Class2 : Class2Base, IClass2
+{
+public override void DoWork() { }
+}
+
+}
+
+ 如何确保新的测试用例能够覆盖所有的功能场景？
+
+ 除了Change Method，还有哪些常见的有效同级别重构类型？
+
+ 如何进行历史缺陷测试用例的筛选和迁移？

@@ -1,0 +1,39 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Function
+Refactoring Target: Function that contains throw statement, called inside concise-arrow (expression-body) callback
+Refactoring Scope: JavaScript / TypeScript
+Trigger Operation: Inline a function whose body contains `throw`, when the call site is inside shorthand `=> expr` arrow function
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When inlining a throwing function invoked in concise-expression arrow callbacks (`p => callFn()`), the refactoring incorrectly lifts the throw-containing statements out of the callback entirely, deleting the surrounding `forEach`/IIFE wrapper.
+The root reason: `throw` is a statement, not an expression. The inliner does not automatically convert the concise arrow `() => fnCall()` into block-body `() => { ...statements... }` before substituting the function body; instead it replaces the whole surrounding expression context.
+
+Expected behavior: Detect that the inlined body contains statements like `throw`, convert the concise arrow to block arrow, then insert the inlined statements inside the callback:
+['a', 'b', 'c'].forEach(p => {
+  if (!existsSync(p)) {
+    throw new Error(`${p} does not exist`);
+  }
+});
+
+Underlying cause: Inline function logic does not check whether the function body contains statement-only constructs (throw, return, if blocks). It fails to expand shorthand expression-arrow syntax to block-arrow syntax before substitution, leading to statements escaping their callback context.
+*/
+
+// Complete compilable test code
+const fn1 = () => {
+  throw new Error();
+};
+
+const fn2 = () => {
+  (() => fn1())();
+};
+
+const assertFileExists = (path: string, message: string): void => {
+  if (!existsSync(path)) {
+    throw new Error(message);
+  }
+};
+
+['a', 'b', 'c'].forEach(p => assertFileExists(p, `${p} does not exist`));

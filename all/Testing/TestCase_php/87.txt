@@ -1,0 +1,22 @@
+```
+<?php
+namespace Shop\Foundation {
+    class ShopKernel
+    {
+    }
+}
+/*
+ * Cart related business classes and value objects
+ */
+namespace Shop\Cart {
+    class CartItem
+    {
+    }
+    class CartTotals
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `CartItem`, target namespace `Shop\Cart\ValueObject`

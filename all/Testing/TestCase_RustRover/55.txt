@@ -1,0 +1,19 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+use uuid::Uuid;
+use itertools::Itertools;
+
+fn demo(data: &[u8]) {
+let result = data
+.array_chunks()
+.map(|data| Uuid::from_bytes(*data))
+.collect_vec(); //{Rename‑Method target: chain expression statement with trailing semicolon}
+println!("{:?}", result);
+}
+
+fn main() {
+let buf = [0u8;16];
+demo(&buf);
+}

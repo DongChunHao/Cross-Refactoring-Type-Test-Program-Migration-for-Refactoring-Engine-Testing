@@ -1,0 +1,18 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <iostream>
+class BaseIO {
+public:
+virtual void print(const char *string);
+};
+class IOUtil : public BaseIO {
+public:
+void print(const char *string) override { std::cout << string; } //{Push down method print from BaseIO}
+};
+int main() {
+IOUtil util;
+util.print("Hello world!\n");
+return 0;
+}

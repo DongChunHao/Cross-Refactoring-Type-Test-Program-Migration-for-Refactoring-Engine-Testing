@@ -1,0 +1,34 @@
+package pack1
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: Method `(Type) foo()` with named return `i int` and naked `return`
+Refactoring scope: Add an additional named result parameter to the function signature
+Refactoring rule: When adding new named return parameters, keep the naked `return` statement intact instead of expanding it into an explicit return list.
+*/
+
+/* Error Root Cause:
+Observed failure: After adding a new result parameter via Change Signature, the refactoring replaces the naked `return` with `return s` (explicit operand list), which breaks compilation when the function has named returns and the return was intended to be naked.
+Expected behavior: Leave the bare `return` statement unchanged. A naked return automatically returns the values of all named return variables, which remains valid after adding more named return parameters.
+Underlying cause: The signature change logic assumes all return statements need explicit operands after modifying the result list, and does not preserve naked return syntax for functions with named return values.
+*/
+
+type Type struct{}
+
+func (Type) foo() (i int) {
+	return
+}
+
+// Bad actual refactoring output after adding a new named return `s string`
+/*
+func (Type) foo() (i int, s string) {
+	return s
+}
+*/
+
+// Expected correct refactoring output
+/*
+func (Type) foo() (i int, s string) {
+	return
+}
+*/

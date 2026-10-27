@@ -1,0 +1,14 @@
+```
+<?php
+class Repository { }
+class UserRepo extends Repository {
+    static function normalizeEmail(string $raw): string { return strtolower($raw); }
+    function saveUser(string $email)
+    {
+        $clean = UserRepo::normalizeEmail($email);
+        return $clean;
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `saveUser()` from class `UserRepo` to parent class `Repository`

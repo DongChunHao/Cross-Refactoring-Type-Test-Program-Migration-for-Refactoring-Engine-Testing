@@ -1,0 +1,16 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: spPanel
+'''
+#include <memory>
+// Forward declaration
+class Panel {
+};
+class MyClass {
+public:
+void func();
+};
+void MyClass::func()
+{
+std::shared_ptr<Panel> ptr = std::shared_ptr<Panel>(this); //{Rename variable ptr to spPanel}
+}

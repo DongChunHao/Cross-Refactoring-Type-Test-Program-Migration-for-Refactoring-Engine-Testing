@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: 0
+'''
+#define identifier_0
+float gvar_0 = -1;
+void f_0() {
+int var_0 = -1;
+var_0 = 100;
+}
+int f_1(int var_0) {
+return var_0;
+} //rename field for rename‑refactoring‑numeric‑literal‑macro‑rename‑preprocessor‑syntax‑invalid defect scenario

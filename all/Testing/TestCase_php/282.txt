@@ -1,0 +1,12 @@
+```
+<?php
+/**
+ * @return Response bar
+ */
+function foo() {
+    return true;
+}
+?>
+```
+
+【Refactoring Action】: Quick-fix Change return type, update return type from `Response` to `bool`.

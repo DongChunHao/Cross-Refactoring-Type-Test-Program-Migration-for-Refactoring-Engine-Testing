@@ -1,0 +1,42 @@
+/* Refactoring Settings: */
+/* Refactoring Type: Inline Function */
+/* Refactoring Target: `customOutput` arrow property method, invoked inside nested arrow functions `a()` and `someFunction` */
+/* Refactoring Scope: TypeScript class with arrow-function class fields */
+/* Trigger Operation: Run Inline Function on `customOutput` */
+
+/* Error Root Cause: */
+/*
+Observed failure:
+When inlining `customOutput`, the refactoring incorrectly lifts the inlined statement block out of the wrapper arrow function `a`.
+Original: `const a = () => this.customOutput("A"); a();`
+Expected after inline: `const a = () => { if ("A" === "world") { console.log("Hello world"); } else { console.log("Hello", "A"); } }; a();`
+Actual output drops the `a` arrow wrapper entirely and puts the if-statement directly in `handleAction` top-level, leaving orphaned `a()`.
+The second call inside `someFunction` works correctly because `someFunction` already has curly braces.
+
+The inliner fails to recognise that the call `this.customOutput("A")` is the body of a concise arrow function (`() => expr`). It does not convert the concise arrow into a block arrow (`() => { ... }`) before substituting the multi-statement function body. Instead, it extracts the statements and replaces the whole arrow expression, breaking the nesting and leaving an invalid orphaned `a()` call.
+
+Expected behavior:
+For concise arrow functions whose single expression is the function call being inlined, expand the arrow to a block body and insert the inlined statements inside that block, preserving the arrow variable and its later invocation.
+
+Underlying cause:
+The inline function processor does not check whether the call site is the sole expression of a concise arrow function. It does not perform the required conversion from expression-body arrow to block-body arrow when the inlined code contains multiple statements.
+*/
+
+// Complete source
+export class Test {
+  private handleAction = (params) => {
+    const a = () => this.customOutput("A")
+    a()
+    const someFunction = () => {
+      this.customOutput("B")
+    }
+  }
+
+  private customOutput = (greeting) => {
+    if (greeting === "world") {
+      console.log("Hello world")
+    } else {
+      console.log("Hello", greeting)
+    }
+  }
+}

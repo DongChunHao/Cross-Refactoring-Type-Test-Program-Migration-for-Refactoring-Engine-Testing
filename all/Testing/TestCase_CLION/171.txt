@@ -1,0 +1,17 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <string>
+void original_func(const std::string& key, int count, int dummyParam) //{Change method signature add int dummyParam parameter}
+{
+std::cout << count << "|" << key << "\n";
+}
+int main()
+{
+std::string key = "test_key";
+int count = 10;
+original_func(key, count, 0);
+return 0;
+}

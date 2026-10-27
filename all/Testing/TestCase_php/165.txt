@@ -1,0 +1,13 @@
+```
+<?php
+function send_message($content) {
+    $template = "empty";
+    if (strlen($content) > 10) {
+        $template = "long text";
+    }
+    return $template;
+}
+?>
+```
+
+【Refactoring Action】: Rename parameter refactoring, target rename parameter `$content` to `$template`.

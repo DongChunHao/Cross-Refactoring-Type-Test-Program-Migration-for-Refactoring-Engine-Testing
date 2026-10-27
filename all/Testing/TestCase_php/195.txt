@@ -1,0 +1,12 @@
+```
+<?php
+function say日本語() { echo "日本語\n"; }
+function say®() { echo "®\n"; }
+say日本語();
+say®();
+say日本語();
+say®();
+?>
+```
+
+【Refactoring Action】: Rename identifier refactoring, target function `say®`, append `SUFFIX` to function name.

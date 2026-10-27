@@ -1,0 +1,25 @@
+int main(int a, char** argv) {
+    int b = 0; // constant to be extracted to a variable
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: integer literal `0` inside main()
+Refactoring Scope: function‑local scope of main
+IDE: Eclipse CDT
+Operation steps: Select literal `0`, invoke Extract Local Variable refactoring, input C reserved keyword `int` as new variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts reserved keyword `int` as new local‑variable name. Generated declaration `int int = 0;` is syntactically invalid C code, raises compile‑time error. No warning or blocking prompt appears during refactoring operation.
+
+Expected behavior: Before generating AST nodes, validate user‑provided variable name against C reserved‑keyword list and well‑formed identifier grammar rules.
+1. If input matches any C keyword, reject refactoring immediately and display error message to user.
+2. Valid identifier rule: first character must be underscore or alphabetic character; subsequent characters may be underscore, alphabet, digit.
+Keyword names cannot be used for variable, function, macro or typedef identifiers.
+
+Underlying cause: Extract Local Variable refactoring lacks keyword‑filtering and identifier‑grammar validation for user‑supplied names. It only checks for existing symbol collisions in scope, but does not verify whether the candidate name itself is a legal C identifier, permitting reserved keywords to become variable names and producing uncompilable output code.
+*/

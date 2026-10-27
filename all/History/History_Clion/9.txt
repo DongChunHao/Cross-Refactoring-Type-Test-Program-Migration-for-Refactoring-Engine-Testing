@@ -1,0 +1,29 @@
+/* Refactoring Settings:
+Refactoring type: Move Method (C++ AppCode)
+Refactoring target: free function trim()
+Operation: Move trim() function into a target class
+Scope: Type rendering for std::string alias; preserve typedef/using alias std::string instead of expanding to underlying template std::basic_string<char>
+*/
+
+/* Error Root Cause:
+Observed failure: After moving the trim function into a class, AppCode replaces every `std::string` with the underlying template `std::basic_string`. This breaks code readability and may cause compilation issues in contexts where the alias is expected.
+Expected behavior: Keep the `std::string` typedef alias, do not expand it to raw `std::basic_string<char>`.
+Underlying cause: The refactoring type resolver renders the canonical underlying template type instead of the user-facing typedef alias `std::string` when rewriting signatures and type annotations during method movement.
+*/
+
+#include <string>
+
+std::string trim(const std::string &str,
+        const std::string &whitespace = " \t")
+{
+    const size_t strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos)
+    {
+        return ""; // no content
+    }
+
+    const size_t strEnd = str.find_last_not_of(whitespace);
+    const size_t strRange = strEnd - strBegin + 1;
+
+    return str.substr(strBegin, strRange);
+}

@@ -1,0 +1,22 @@
+''' Refactoring Settings:
+Refactoring type: Pull members up (pull‑up class attribute) refactoring
+Refactoring target: class‑level attribute PullMeUp defined in subclass B
+Refactoring destination superclass: class A
+Refactoring scope: target attribute definition site inside B, all reference usages of B.PullMeUp within subclass B
+Refactoring rule expectation: Move PullMeUp = 0 from subclass B to parent superclass A; update all references B.PullMeUp inside B to A.PullMeUp after pull‑up operation.
+'''
+''' Error Root Cause:
+Observed failure: Refactoring engine cannot correctly perform pull‑members‑up operation for class variable PullMeUp from subclass B to superclass A (feature request scenario, expected pull‑up support for class‑level attributes).
+Expected behavior: After invoking "Refactor->Pull members up...", PullMeUp definition is moved into class A, and the self‑class reference B.PullMeUp in B.__init__ is adjusted to A.PullMeUp.
+Underlying cause: The pull‑members‑up refactoring logic may only handle instance‑level members or methods, lacking complete support for pulling up class‑level attributes; it fails to recognize class variable PullMeUp as eligible pull‑up candidate and does not rewrite corresponding class‑attribute references.
+'''
+class A(object):
+    pass
+
+
+class B(A):
+    PullMeUp = 0
+
+    def __init__(self):
+        A.__init__(self)
+        B.PullMeUp += 1

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func demo() {
+innerDemo() // extract empty body into innerDemo
+}
+func innerDemo() {
+}
+func main() {
+demo()
+}

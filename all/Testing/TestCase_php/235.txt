@@ -1,0 +1,11 @@
+```
+<?php
+class foo {
+    public function bar (\Exception $e) {
+        echo $e->getMessage();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Rename refactoring, target method parameter `$e` inside `foo::bar()`, select completion suggestion `$exception`.

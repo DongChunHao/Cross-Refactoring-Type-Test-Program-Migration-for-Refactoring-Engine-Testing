@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+var spreadElements = {
+'name': 'Kate',
+'tea': 'green'
+}; //{Move Method target ES5 object‑literal assignment statement for extract‑variable spread‑syntax bug reproduction}
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding ES5 object‑literal for language‑level‑unaware object‑spread extraction defect}
+var spreadElements = {
+'name': 'Kate',
+'tea': 'green'
+};
+}

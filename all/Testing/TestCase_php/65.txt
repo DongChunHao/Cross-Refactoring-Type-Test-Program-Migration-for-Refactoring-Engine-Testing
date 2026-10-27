@@ -1,0 +1,17 @@
+```
+<?php
+namespace Lib\Network {
+    use Lib\Network as NET;
+    class SocketBase
+    {
+    }
+    class HttpClient implements NET\Sub\IRequest{
+    }
+}
+namespace Lib\Network\Sub {
+    interface IRequest{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `HttpClient`, move to global namespace into new separate file.

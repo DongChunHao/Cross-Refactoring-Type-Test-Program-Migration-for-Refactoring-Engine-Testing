@@ -1,0 +1,23 @@
+#include <stdio.h>
+int y = 20;
+int main(){
+    int x = 10; //extract local variable from literal 10
+    printf("%d", y);
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: integer literal `10` inside main()
+Refactoring Scope: function‑local scope within main()
+IDE: Eclipse CDT
+Operation steps: Select literal `10`, invoke Extract Local Variable, manually input variable name `y`.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts name `y` for new local variable without warning. A new local `int y =10;` shadows the existing global variable `int y=20;`. Program behaviour silently changes: printf outputs 10 instead of original 20. No compile error, only runtime‑behaviour mutation introduced by refactoring.
+Expected behavior: Detect that the proposed local‑variable name `y` already exists in outer (global) scope and will cause variable shadowing. Present explicit warning to user about shadowing risk, give option to abort or continue. Must not perform this transformation silently.
+Underlying cause: Extract Local Variable does not perform scope‑aware shadowing detection. It only checks for duplicate declarations inside the immediate local scope, ignoring outer‑scope (global) symbols that would be shadowed. Refactoring completes successfully but alters program semantics without notification.
+*/

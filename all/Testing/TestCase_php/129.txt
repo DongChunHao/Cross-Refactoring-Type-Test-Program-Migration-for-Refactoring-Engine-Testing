@@ -1,0 +1,15 @@
+```
+<?php
+class BaseTransport { }
+class Car extends BaseTransport {
+    function prepare() {
+        Car::checkBattery();
+    }
+    function checkBattery() {
+        echo "battery ok";
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target method `prepare()` in class `Car`, pull up to parent class `BaseTransport`

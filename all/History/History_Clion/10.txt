@@ -1,0 +1,23 @@
+/* Refactoring Settings:
+Refactoring type: Rename (Shift+F6) C++ refactoring
+Refactoring target: class name Foo
+Operation: Invoke rename refactoring to rename class Foo to a new name
+Scope: Rename symbol reference range calculation; PSI/AST token boundary handling inside lambdas with static local variable and defaulted constructor
+*/
+
+/* Error Root Cause:
+Observed failure: When renaming class Foo, the refactoring preview incorrectly selects part of the `return` keyword inside the lambda (`return Foo {};`). If ESC is pressed during interactive rename, `return` gets corrupted to `retuFoo`. This bug only appears when the class has an explicit/non-explicit defaulted constructor `Foo() = default;`.
+Expected behavior: Only rename identifier `Foo` (the class name) and never touch unrelated keywords such as `return`.
+Underlying cause: The presence of `Foo() = default;` triggers a defect in the PSI reference range computation. The range for the class name reference inside `return Foo {};` incorrectly extends backwards and consumes part of the preceding `return` keyword token. The interactive rename UI then treats this extended token range as part of the symbol to replace, leading to text corruption when aborting the rename operation.
+*/
+
+class Foo {
+    explicit Foo() = default;
+public:
+    static Foo& getInstance() {
+        static Foo inst = []() {
+            return Foo {};
+        }();
+        return inst;
+    }
+};

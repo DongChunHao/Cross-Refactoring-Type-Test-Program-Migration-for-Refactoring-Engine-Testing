@@ -1,0 +1,49 @@
+// main.go
+package main
+
+type MyFirstType struct {
+	field *MySecondType
+}
+
+func (m *MyFirstType) Name() {
+	m.field.S<caret>et()
+}
+
+func main() {}
+
+// another.go
+package main
+
+type MySecondType struct{}
+
+/* Refactoring Settings:
+Refactoring type: Introduce Method quick-fix (Create method `Set` on `MySecondType`)
+Refactoring target: unresolved call `m.field.Set()`; receiver type is `*MySecondType`
+Refactoring rule: When generating a new method for pointer receiver `*MySecondType`, the generated method must use pointer receiver `func (s *MySecondType) Set() {}`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The quick fix generates the method with value receiver `func (s MySecondType) Set() {}` instead of pointer receiver.
+Call site `m.field.Set()` is `*MySecondType`; Go allows calling value methods on pointer values (automatic dereference), but this is mismatched semantics: the user is calling on a pointer field and likely intends to mutate the struct inside `Set()`. Worse, in some older GoLand plugin paths, it may emit invalid receiver or generate the method on `MyFirstType` by mistake.
+
+Expected behavior:
+Generate method on `*MySecondType`:
+
+```
+func (s *MySecondType) Set() {}
+```
+
+Underlying cause:
+The quick-fix inference logic extracts the underlying type `MySecondType` and defaults to value receiver, instead of preserving the pointer receiver type from the expression `m.field` (type `*MySecondType`).
+*/
+
+// Bad actual generated method (value receiver):
+/*
+func (s MySecondType) Set() {}
+*/
+
+// Expected correct generated method (pointer receiver):
+/*
+func (s *MySecondType) Set() {}
+*/

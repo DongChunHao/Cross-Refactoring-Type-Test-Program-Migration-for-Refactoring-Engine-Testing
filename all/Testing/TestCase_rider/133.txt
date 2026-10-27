@@ -1,0 +1,19 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using UnityEngine;
+using GridCoord = UnityEngine.Vector3Int;
+
+namespace DefaultNamespace
+{
+public class AliasExample : MonoBehaviour
+{
+private GridCoord x;
+
+public void ProcessCoord() //{Change Method: target method for move‑file‑type‑alias‑expansion‑bug reproduction}
+{
+}
+}
+
+}

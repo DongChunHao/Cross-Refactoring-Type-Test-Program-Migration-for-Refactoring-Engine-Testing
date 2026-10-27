@@ -1,0 +1,15 @@
+```
+<?php
+class BaseModel {
+    const STATUS_OK = 200;
+}
+class_alias(BaseModel::class, 'ModelAlias');
+class User extends ModelAlias {
+    public function get() {
+        return self::STATUS_OK;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Push Down Members refactoring, push constant `STATUS_OK` from `BaseModel` to its subclasses.

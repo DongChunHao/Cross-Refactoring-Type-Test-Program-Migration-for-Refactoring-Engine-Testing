@@ -1,0 +1,17 @@
+```
+<?php
+abstract class UserRepositoryAbstract
+{
+    abstract public function findUser();
+}
+class DbUserRepo extends UserRepositoryAbstract
+{
+    public function findUser()
+    {
+        return null;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `DbUserRepo::findUser()`, add parameter `$email`, do not propagate to abstract parent.

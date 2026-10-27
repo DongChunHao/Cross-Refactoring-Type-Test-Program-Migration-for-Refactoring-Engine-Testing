@@ -1,0 +1,10 @@
+```
+<?php
+list($handler, $timeout) = [function (string $msg) {
+    echo $msg;
+}, 30];
+$handler("hello");
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target anonymous function inside list assignment, add parameter `int $level = 1`.

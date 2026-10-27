@@ -1,0 +1,14 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Symbol resolution fails to distinguish homonymous symbols from different scopes. It conflates local‑scope entities with outer‑scope homonymous entities, incorrectly treating outer‑scope symbol occurrences as usages of the local‑scope target
+from sqlalchemy import Column, Integer
+from sqlalchemy.orm import validates
+from sqlalchemy.orm.decl_api import DeclarativeBase
+class Base(DeclarativeBase):
+pass
+class DeviceState(Base):
+batt = Column(Integer, nullable=True, doc="Battery level: 0..100%")
+@validates(batt)
+def validate_batt(self, key, batt): // REFACTOR_TARGET
+local_val = batt
+assert local_val is None or 0 <= local_val <= 100, 'Battery charge must be in [0..100]'
+return local_val

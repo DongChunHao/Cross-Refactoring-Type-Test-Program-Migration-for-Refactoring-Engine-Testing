@@ -1,0 +1,11 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn main() { //{change main method, retain nested block with selected partial statements and subsequent unselected statement}
+{
+let a = 1;
+let b = 2;
+let c = a + b;
+};
+}

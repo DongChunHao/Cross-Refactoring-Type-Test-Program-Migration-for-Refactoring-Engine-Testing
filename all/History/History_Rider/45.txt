@@ -1,0 +1,37 @@
+/* Refactoring Settings:
+Refactoring Type: Move To Another File
+Refactoring Target: C# class, with "Remove source file" option enabled
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure:
+1. Move Class1 from Class1.cs → Class2.cs, remove source file.
+2. Move Class1 again from Class2.cs → Class1.cs, remove source file.
+Resulting Class1.cs contains **two identical `Class1` declarations** in the same namespace, which is compile error.
+
+Expected behavior:
+When moving the type back to the original filename with “Remove source file”:
+1. Create target file and write the single class into it.
+2. Delete the old source file completely.
+3. The target file should contain exactly one copy of the class.
+
+Underlying cause:
+The refactoring operation has a cleanup/delete logic defect.
+When the target file name matches the name of the **originally deleted source file**, Rider’s file-model logic incorrectly:
+1. Creates the new file and writes the class into it;
+2. Instead of fully discarding the old PSI tree, it merges the existing leftover type node with the incoming one, resulting in duplicate class declarations inside the same file.
+The “Remove source file” path does not properly purge stale type information when the target filename cycles back to the original name.
+*/
+
+// Final broken result in Class1.cs
+namespace ClassLibrary4
+{
+    public class Class1
+    {
+    }
+
+    public class Class1
+    {
+    }
+}

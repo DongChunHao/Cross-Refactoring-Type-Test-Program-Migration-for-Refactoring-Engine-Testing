@@ -1,0 +1,34 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Convert to async/await
+Refactoring Target: Function `f()` with nested .then() promise chain
+Refactoring Scope: TypeScript file
+Trigger Operation: Run intention "Convert to async function" on function `f`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The conversion to async/await loses intermediate variables (`var1`, `var2`) from the nested promise chain; variables do not get assigned and lifted correctly into the outer function scope.
+Expected behavior: Rewrite nested `.then` chain using await while preserving assignments to `var1` and `var2` in the outer function scope.
+Underlying cause: The converter’s scope tracking for assignments inside nested promise callbacks is incomplete. It assumes all await values are only returned or used locally, and fails to propagate assignments to variables declared in the outer function body.
+*/
+
+// Complete compilable test code
+declare class Response {}
+declare function fetch(url: string): Promise<Response>;
+
+function f () {
+    var var1: Response, var2;
+    return fetch('https://typescriptlang.org').then( _ =>
+      Promise.resolve().then( res => {
+        var2 = "test";
+        return fetch("https://microsoft.com");
+      }).then(res =>
+          var1 === res
+      )
+    ).then(res);
+}
+
+function res(response){
+    console.log(response);
+}

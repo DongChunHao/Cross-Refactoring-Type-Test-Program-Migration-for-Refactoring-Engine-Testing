@@ -1,0 +1,11 @@
+// Target Refactoring Type: Extract Field
+// Expected Defect Performance: Refactoring logic only handles instance‑level members or methods, lacking complete support for class‑level attributes; it fails to recognize class‑variable entities as valid processing candidates and omits rewriting corresponding class‑attribute references
+class A(object):
+pass
+class B(A):
+PullMeUp = 0
+def **init**(self):
+A.**init**(self)
+B.PullMeUp += 1
+class C(B):  // REFACTOR_TARGET
+pass

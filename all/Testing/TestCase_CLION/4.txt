@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+int main() {
+enum class X : char { One, Two, Three };
+X x = X::One; //{Rename variable x to enumVal}
+return 0;
+}

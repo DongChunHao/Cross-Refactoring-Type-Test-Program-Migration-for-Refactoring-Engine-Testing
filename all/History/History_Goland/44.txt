@@ -1,0 +1,38 @@
+package pack
+
+/* Refactoring Settings:
+Refactoring type: Change Signature (Refactor method specification and all implementations)
+Refactoring target: Interface method `foo() string` and its implementation `func (S) foo() (s string) { return s }`
+Refactoring scope: Add a new input parameter to the method signature
+Refactoring rule: Preserve existing named return parameters on implementing types when propagating signature changes from the interface method.
+*/
+
+/* Error Root Cause:
+Observed failure: After adding an input parameter and applying refactor to specification + all implementations, the named return `s string` on `S.foo()` is stripped, turning the signature into an unnamed return. The statement `return s` then becomes invalid, because `s` no longer exists as a named return variable.
+Expected behavior: The signature change adds the new input argument while retaining the named return `(s string)` in the implementation.
+Underlying cause: When synchronizing signatures from the interface specification to implementations, the refactoring logic overwrites the entire result clause using only the interface’s result type information, discarding the implementation-specific return parameter names.
+*/
+
+type I interface {
+	foo() string
+}
+
+type S struct{}
+
+func (S) foo() (s string) {
+	return s
+}
+
+// Bad actual refactored result (named return stripped, code broken)
+/*
+func (S) foo(newParam int) string {
+	return s
+}
+*/
+
+// Expected correct refactored result (named return preserved)
+/*
+func (S) foo(newParam int) (s string) {
+	return s
+}
+*/

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn foo(x: u32) -> u32 {
+x *= 2;
+x += 1;
+x
+}
+fn helper(x: u32) -> u32 { //{move existing helper method into foo as nested function}
+x += 1;
+x
+}

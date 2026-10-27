@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: extracted_constant_renamed
+'''
+int main(){
+char c;
+switch( c )
+{
+case 'A': //select 'A' //rename field for case‑label character‑literal extract‑constant scenario
+break;
+}
+return 0;
+}

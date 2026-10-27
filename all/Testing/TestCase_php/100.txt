@@ -1,0 +1,13 @@
+```
+<?php
+interface MailContract{}
+interface MailHeadersContract extends MailContract{
+    const CHARSET = "utf-8"; // Pull Up target
+}
+class SmtpSender implements MailContract{
+    const CHARSET = "utf-8";
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target constant `CHARSET` in interface `MailHeadersContract`, target destination: `MailContract`

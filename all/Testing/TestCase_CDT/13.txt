@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: renamed_subexpr_var
+'''
+void demo()
+{
+int a = 1, b = 2, c = 3, d = 4, p = 5, q = 6, r = 7, s = 8;
+int asd = (a+b) * (c+d) *p;//rename variable for statement with repeated side‑effect‑free subexpression
+int qwe = (a+b) * (c+d) *q;
+int zxc = (a+b) * (c+d) *r;
+int rty = (a+b) * (c+d) *s;
+}

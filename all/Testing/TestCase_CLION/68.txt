@@ -1,0 +1,22 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: memberFuncPtr
+'''
+class Foo{
+public :
+void method(){}
+};
+typedef void (Foo::*FOO_call)();
+void foo(){
+Foo* foo = new Foo();
+Foo pfoo = Foo();
+FOO_call pfnTempCall = (FOO_call)(&Foo::method); //{Rename variable pfnTempCall to memberFuncPtr}
+(foo->*pfnTempCall)();
+(pfoo.*pfnTempCall)();
+delete foo;
+}
+int main()
+{
+foo();
+return 0;
+}

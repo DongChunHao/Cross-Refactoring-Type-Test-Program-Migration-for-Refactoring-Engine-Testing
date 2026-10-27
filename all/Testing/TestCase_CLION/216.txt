@@ -1,0 +1,24 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Foo {
+int f{0};
+public:
+void test();
+};
+struct Wrapper
+{
+static void wrapper_test(Foo* obj) { //{Move test logic into static wrapper member}
+int Foo::*pF = &Foo::f;
+obj->*pF = 1;
+}
+};
+void Foo::test () {
+Wrapper::wrapper_test(this);
+}
+int main() {
+Foo x;
+x.test();
+return 0;
+}

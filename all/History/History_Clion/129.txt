@@ -1,0 +1,26 @@
+#include <vector>
+
+/* Refactoring Settings:
+Refactoring type: Extract Function
+Refactoring target: Extract statement `v.push_back(1);` inside `main()`
+Refactoring rule expectation: Detect local variable `v` of type `std::vector<int>` which is used inside the extracted statement, propose it as a function parameter in the Extract Function dialog.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Function dialog fails to suggest `v` as candidate parameter. It may only offer void function without parameter, or miss the variable from the candidate list.
+Expected behavior:
+Dialog proposes parameter `std::vector<int>& v`; extracted code:
+void addOne(std::vector<int> &v) {
+    v.push_back(1);
+}
+void main() {
+    std::vector<int> v;
+    addOne(v);
+}
+Underlying cause: The refactoring scope analysis does not correctly collect local variables from `main()` scope for extraction candidate list. It ignores `v` even though the extracted statement mutates it, so developer cannot select it as a parameter in the popup dialog.
+*/
+
+void main() {
+    std::vector<int> v;
+    v.push_back(1);  // Extract function
+}

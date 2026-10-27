@@ -1,0 +1,45 @@
+/* Refactoring Settings:
+Refactoring type: Extract Variable (C language)
+Refactoring target: expression `c` inside `if (c == red)`
+Operation: Extract `c` into new local variable
+Scope: Type inference for nested enum types inside structs; validation of generated C type syntax for extracted variable; avoid fallback to bool or invalid qualified type names
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Variable infers incorrect type. For `enum color c`, extraction produces `bool color = c;` instead of correct `enum color color = c;`. Additional related defects: 1) Nested enum types may be rendered as C++-style qualified name `parser_state::enum psym_part`, which is invalid C syntax. 2) Member access expressions like `paren->item[paren->len -1]` produce malformed type `item item = ...`.
+Expected behavior: Resolve the proper C type (enum color) for the extracted variable and emit valid C type syntax, never use C++ namespace-style qualifiers. For array-of-struct member access, resolve the full struct element type correctly.
+Underlying cause: The C type inference/fallback logic incorrectly falls back to bool for enum comparison contexts. The type renderer does not distinguish C vs C++ type syntax rules, and fails to fully resolve composite/struct array element types when creating the extracted variable declaration.
+*/
+
+struct color_space {
+	enum color {
+		red
+	} color;
+};
+
+void demo(enum color c) {
+	if (c == red)
+		return;
+}
+
+struct paren_stack_item {
+    int cast;
+};
+struct paren_stack {
+    struct paren_stack_item* item;
+    int len;
+};
+struct parser_state {
+    struct paren_stack paren;
+};
+enum cast_kind {
+    cast_unknown,
+    cast_maybe
+};
+
+void demo2(struct parser_state* ps)
+{
+    struct paren_stack *paren = &ps->paren;
+    if (paren->item[paren->len - 1].cast == cast_unknown)
+        paren->item[paren->len - 1].cast = cast_maybe;
+}

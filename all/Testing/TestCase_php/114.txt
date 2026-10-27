@@ -1,0 +1,17 @@
+```
+<?php
+interface UserContract {
+    public function getUserInfo();
+}
+interface AdminContract extends UserContract {
+}
+class User implements UserContract {
+    public function getUserInfo(){}
+}
+class Admin implements UserContract {
+    public function getUserInfo(){}
+}
+?>
+```
+
+【Refactoring Action】: Push Members Down refactoring, target `interface UserContract`, select newly added method `public function saveUser();` to push down.

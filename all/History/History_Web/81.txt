@@ -1,0 +1,27 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Change Signature
+Refactoring Target: Test.method() returning TestChild and passing `this` into TestChild constructor
+Refactoring Scope: TypeScript
+Trigger Operation: Run Change Signature on Test.method
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When modifying the signature of `method()` which returns `new TestChild(this)`, the refactoring incorrectly alters the `this` argument inside the constructor call or misinferrs the type of `this`, breaking the argument being passed to `TestChild`.
+
+Expected behavior: Preserve the identity and type of `this` in the `new TestChild(this)` argument when modifying the method signature. Only change the method’s own parameters, return type, modifiers, name; leave the expression that uses `this` untouched unless explicitly requested.
+
+Underlying cause: The Change Signature visitor does not distinguish between the method’s own signature parameters and the `this` value used inside the method body. It mistakenly treats `this` as a regular parameter and rewrites it when adjusting the method signature.
+*/
+
+// Complete compilable test code
+class Test {
+  method(): TestChild {
+    return new TestChild(this);
+  }
+}
+
+class TestChild {
+  constructor() {}
+}

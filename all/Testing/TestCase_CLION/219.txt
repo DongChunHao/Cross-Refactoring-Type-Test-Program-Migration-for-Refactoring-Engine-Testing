@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: thresholdExceeded
+'''
+void test(int a)
+{
+int thresholdExceeded = a > 10; //{Rename variable b to thresholdExceeded}
+if (thresholdExceeded) {}
+}

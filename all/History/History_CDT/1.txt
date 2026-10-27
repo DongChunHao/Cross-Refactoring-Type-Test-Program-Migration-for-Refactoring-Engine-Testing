@@ -1,0 +1,21 @@
+#include <stdio.h>
+int main() {
+    fprintf(stdout, "\n");
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: library symbol `fprintf` or `stdout` declared inside system header stdio.h
+Refactoring Scope: whole project
+IDE: Eclipse CDT
+Operation steps: Select `fprintf` or `stdout` in main function, invoke Rename refactoring and apply changes.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT permits rename refactoring on symbols imported from system headers or external third‑party libraries without warning or error. Only the project‑local call sites get renamed; the original symbol definition resides inside system/library files which cannot be modified. After refactoring, code references non‑existent symbol and fails compilation.
+Expected behavior: Before executing rename, detect that the symbol’s definition location belongs to system header / external read‑only library. Block the refactoring or show explicit warning dialog explaining that the original definition cannot be modified, to prevent producing uncompilable code.
+Underlying cause: Rename refactoring does not check whether the symbol definition is located inside project source files versus external system/library headers. It treats external symbols the same as user‑defined project symbols and proceeds to rewrite only local references, leaving original definitions untouched.
+*/

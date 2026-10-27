@@ -1,0 +1,11 @@
+```
+<?php
+class Base {
+}
+class User extends Base {
+    protected const STATUS_LOCKED = 2;
+}
+?>
+```
+
+【Refactoring Action】: Pull Up Members refactoring, target constant `STATUS_LOCKED` from `User` up to `Base`.

@@ -1,0 +1,23 @@
+#include "NewCppClass.h"
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract the two static member assignment statements inside NewCppClass::foo()
+Refactoring scope: Code block: NewCppClass::mVSyncUpdates = true; NewCppClass::mFrameTime = (1 / 30.0f) * 1000.0f;
+Refactoring rule expectation: When extracting code inside class member function that references class static members, create a new member function (static member function of NewCppClass), not a free-standing C-style global function fooBar()
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method refactoring creates a free global function void fooBar() instead of a static member function belonging to NewCppClass. The extracted free function still uses NewCppClass:: qualified static member access.
+Expected behavior: Generate a static member function inside NewCppClass (e.g. static void NewCppClass::fooBar()), and call it as fooBar(); inside NewCppClass::foo().
+Underlying cause: The refactoring engine does not detect that the selected code belongs to the context of class NewCppClass and references class static members; it defaults to creating a top-level free function rather than a class static member function.
+*/
+
+void fooBar(){
+    NewCppClass::mVSyncUpdates = true;
+    NewCppClass::mFrameTime = (1 / 30.0f) * 1000.0f;
+}
+
+void NewCppClass::foo() {
+    fooBar();
+}

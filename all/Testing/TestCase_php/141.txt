@@ -1,0 +1,14 @@
+```
+<?php
+trait TaxCalcTrait{
+    public static $rate = 0.08;
+    public static function calculate(){
+    }
+}
+class Order{
+    use TaxCalcTrait;
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target static property `$rate` and static function `calculate()` from trait `TaxCalcTrait` to class `Order`

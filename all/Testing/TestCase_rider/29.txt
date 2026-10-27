@@ -1,0 +1,38 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+using Core.EventSystem;
+using UnityEngine;
+using LoadModule=Game.CoreModule.Events.ModEvents1.LoadModule1;
+using System;
+
+namespace Game.CoreModule.Scenes.Modules
+{
+public class BattleModuleController : MonoBehaviour
+{
+private void Start()
+{
+EventManager.AddListenerLoadModule::ConfigureScenesEvent(onLoadModule); //{Extract Method: refactor target containing alias with :: inside generic argument}
+}
+private void onLoadModule(LoadModule::ConfigureScenesEvent evt)
+{
+}
+}
+}
+
+namespace Core.EventSystem
+{
+public static class EventManager
+{
+public static void AddListener<T>(Action<T> listener) {}
+}
+}
+
+namespace Game.CoreModule.Events.ModEvents1
+{
+public class LoadModule1
+{
+public class ConfigureScenesEvent {}
+}
+}

@@ -1,0 +1,34 @@
+package main
+
+import (
+	"github.com/labstack/echo/v4"
+)
+
+/* Refactoring Settings:
+Refactoring type: Create Function quick-fix
+Refactoring target: Undefined call `makeFunc(ctx)`; `ctx` has static type `echo.Context`
+Refactoring rule: When generating function parameter types for imported qualified types, preserve the package qualifier (`echo.Context`) instead of emitting the bare type name `Context`.
+*/
+
+/* Error Root Cause:
+Observed failure: The generated function signature uses unqualified `Context` instead of `echo.Context`. This creates an undefined identifier compile error, even though the import for `echo` exists. The issue appears across multiple refactorings that auto-generate type annotations.
+Expected behavior: Generate `func makeFunc(ctx echo.Context) {}`.
+Underlying cause: The type renderer in the refactoring/quick-fix logic strips the package qualifier from the resolved type symbol, assuming the type is in the current package scope, without checking whether the symbol comes from an imported package.
+*/
+
+func main() {
+	var ctx echo.Context
+	makeFunc(ctx)
+}
+
+// Bad actual generated code
+/*
+func makeFunc(ctx Context) {
+}
+*/
+
+// Expected correct generated code
+/*
+func makeFunc(ctx echo.Context) {
+}
+*/

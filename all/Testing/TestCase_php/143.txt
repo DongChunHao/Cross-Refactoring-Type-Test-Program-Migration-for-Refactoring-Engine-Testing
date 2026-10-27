@@ -1,0 +1,13 @@
+```
+<?php
+class MathBucket {  }
+class MathSource{
+    protected static $precision = 4;
+    public static function showPrecision(){
+        echo self::$precision;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, multi-selection: static field `$precision` and static method `showPrecision()` from class `MathSource` to class `MathBucket`

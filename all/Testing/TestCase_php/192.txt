@@ -1,0 +1,19 @@
+```
+<?php
+class UserRepository {
+    /**
+     * @param int $id
+     * @param string $name
+     */
+    public function find(int $id, string $name) {}
+}
+class CachedUserRepository extends UserRepository {
+    /**
+     * {@inheritdoc}
+     */
+    public function find(int $id, string $name) {}
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `UserRepository::find()`, swap `$id` and `$name` parameter order, propagate to overrides.

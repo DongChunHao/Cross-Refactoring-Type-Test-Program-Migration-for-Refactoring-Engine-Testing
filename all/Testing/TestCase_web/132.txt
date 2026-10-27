@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper function enclosing destructuring pattern with default initializer clause}
+var foo = {x: undefined, y: "a", z: true}, {x = 5, y, z} = foo;
+var g = x;
+}

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+func main() {
+if s, val := 0, ""; false {} // rename v to val
+}

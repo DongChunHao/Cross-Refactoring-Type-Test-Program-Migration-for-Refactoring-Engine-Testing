@@ -1,0 +1,30 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+function sample(a) {
+let result = 0
+if (a > 0) {
+result = a + 1
+}
+return result
+}
+function sample2(a) {
+let result = 0 //{Extract Variable target outer‑scope variable only‑written inside extracted block, never read prior value}
+if (a > 0) {
+result = a
+} else {
+result = 0
+}
+return result
+}
+function sample3(a) {
+let result = 0
+if (a > 0) {
+result = a
+}
+else {
+throw new Error()
+}
+return result
+}

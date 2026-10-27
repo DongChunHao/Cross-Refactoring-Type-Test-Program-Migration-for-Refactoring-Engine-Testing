@@ -1,0 +1,18 @@
+```
+<?php
+class ProductClone
+{
+    public string $sku;
+    public function getSku(): string
+    {
+        return $this->sku;
+    }
+    public function setSku(string $sku): void
+    {
+        $this->sku = $sku;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Rename refactoring (Shift+F6), target property `$sku` inside `ProductClone`. Options: Rename accessors checked, Search for text unchecked, Search in comments unchecked.

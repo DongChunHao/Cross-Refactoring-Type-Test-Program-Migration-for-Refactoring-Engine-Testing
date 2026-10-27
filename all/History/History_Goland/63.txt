@@ -1,0 +1,28 @@
+// file1.go
+package pack1
+
+func Foo() {
+}
+
+// file2.go
+package pack2
+
+func Foo() {
+}
+
+/* Refactoring Settings:
+Refactoring type: Move (Move symbol to another package)
+Refactoring target: function Foo in package pack1
+Target package: pack2
+Refactoring rule: Before applying move refactoring, check if the target package already contains a top-level symbol with the same name and same kind. If such a duplicate exists, display a name conflict warning/error to the user and prevent the refactoring or show conflict preview.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving pack1.Foo into pack2, the refactoring engine does not detect or report that pack2 already has an existing top-level function Foo. No conflict notification is shown to the user.
+Expected behavior:
+The refactoring should detect the duplicate top-level function Foo in the destination package pack2 and present a name conflict warning before performing the move.
+
+Underlying cause:
+The conflict checking logic for cross-package move refactoring fails to scan the target package’s top-level symbol table for existing identifiers of the same kind and name, so the duplicate declaration is not identified prior to applying the refactoring.
+*/

@@ -1,0 +1,27 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function f1($x): mixed
+Scope: caret position availability predicate
+Refactoring operation: caret placed on the return type `mixed`
+*/
+
+/* Error Root Cause:
+Observed failure:
+When the caret is placed on the return type identifier (`mixed` in `function f1($x): mixed`), the Change Signature refactoring cannot be triggered.
+It only works when the caret is on the function name or within the parameter list, not on the return type part of the signature.
+
+Expected behavior:
+The Change Signature action should be available for any position within the function signature node, including:
+- function name
+- parameter list
+- colon and return type (including the return type identifier like `mixed`)
+When invoked from the return type, it opens the same Change Signature dialog for editing parameters, return type, modifiers, etc.
+
+Underlying cause:
+The action’s PSI element filter only matches function identifier / parameter list elements, and excludes the return-type type-reference subtree. The availability check does not treat return-type nodes as part of the function signature for the purpose of this refactoring.
+*/
+function f1($x): mixed {
+    return f();
+}
+?>

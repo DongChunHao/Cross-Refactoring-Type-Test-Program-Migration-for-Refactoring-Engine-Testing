@@ -1,0 +1,6 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+const aaa = {}; //{Rename Field target variable aaa referenced inside spread element}
+const bbb = { ...aaa };

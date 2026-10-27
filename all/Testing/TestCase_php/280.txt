@@ -1,0 +1,20 @@
+```
+<?php
+class C {
+    /**
+     * F constructor.
+     *
+     * @param CachingIterator $a
+     * @param int             $b
+     * @param array           $c
+     *
+     * @return array
+     */
+    public function g(CachingIterator $a, int $b, array $c): array
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, reorder parameters: move `$a` to last position. New signature: `g(int $b, array $c, CachingIterator $a): array`.

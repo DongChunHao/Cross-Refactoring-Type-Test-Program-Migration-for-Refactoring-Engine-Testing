@@ -1,0 +1,21 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <iostream>
+class Base
+{
+public:
+virtual void foo() {}
+};
+class Derived : public Base //{Push down foo implementation from Base to Derived}
+{
+public:
+void foo() override {
+std::cout<<"ANNA";
+}
+};
+int main(){
+Derived d;
+d.foo();
+}

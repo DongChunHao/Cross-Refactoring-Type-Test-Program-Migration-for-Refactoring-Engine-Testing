@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: runTestLogic
+'''
+class TestClass {
+public:
+virtual int test(int testval) { //{Rename method test to runTestLogic}
+return 0;
+}
+};

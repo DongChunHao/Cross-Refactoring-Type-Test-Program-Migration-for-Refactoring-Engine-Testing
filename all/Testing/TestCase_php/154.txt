@@ -1,0 +1,13 @@
+```
+<?php
+class TargetHolder { }
+class Service extends BaseUnknown {
+    static function setVal()
+    {
+        Service::$missingField = 10;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `setVal()` from class `Service` to class `TargetHolder`

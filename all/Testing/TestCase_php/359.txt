@@ -1,0 +1,20 @@
+```
+<?php
+trait T{
+    public static function foo(int $p){
+        return 1;
+    }
+}
+class C{
+    use T {
+        foo as ddd;
+    }
+    public static function g(){
+        echo self::ddd(1);
+    }
+}
+C::g();
+?>
+```
+
+【Refactoring Action】: Place caret on `self::ddd(1)` call site inside `C::g()`; invoke Quick Fix and select "Change signature manually".

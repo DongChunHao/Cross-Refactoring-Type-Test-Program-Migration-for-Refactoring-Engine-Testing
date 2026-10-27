@@ -1,0 +1,7 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function test2222() { } //{Change Method target function definition with separate string‑literal matching identifier}
+test2222()
+console.log('test2222')

@@ -1,0 +1,11 @@
+```
+<?php
+class A extends B {
+    public static int $field, $property;
+}
+class B {
+}
+?>
+```
+
+【Refactoring Action】: Caret placed after `$property` identifier in grouped property declaration

@@ -1,0 +1,8 @@
+<?php
+trait T{}
+class Test {
+    use T;
+    public function test()
+    {
+    }
+}

@@ -1,0 +1,38 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Base {};
+class Derived : public Base {};
+void f(Base     const &);
+void f(Derived  const &);
+void f(Base     const *);
+void f(Derived  const *);
+void f(int);
+void f(double);
+class C {
+public:
+C(int);
+operator bool () const;
+};
+void f(C);
+void f(bool);
+struct Wrapper
+{
+void test_wrapper() { //{Move test logic into struct Wrapper member function}
+Base const & b = Derived();
+f(b);
+Base const * bptr = new Derived();
+f(bptr);
+double x = 10;
+f(x);
+C c = 239;
+f(c);
+bool flag = c;
+f(flag);
+}
+};
+void test() {
+Wrapper w;
+w.test_wrapper();
+}

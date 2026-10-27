@@ -1,0 +1,37 @@
+/* Refactoring Settings:
+Refactoring type: Extract Variable (C language CLion), with related "Add braces to for statement" intention bug
+Refactoring target: assignment expression `str = "expr"` inside the if condition in for loop body
+Operation: Select `str = "expr"`, invoke Extract Variable
+Scope: Preserve for-loop block structure; correctly add curly braces around extracted statements when extracting code from loop body; handle preprocessor macro `array_length` in for loop header
+*/
+
+/* Error Root Cause:
+Observed failure:
+1. Extract Variable does not wrap the loop body into `{ }`. It lifts the assignment out of the if condition and inserts `const char *string = str = "expr";` directly after the for header, breaking the control flow: the assignment is moved outside the loop iteration body.
+2. The related "Add braces to 'for' statement" intention corrupts the for syntax completely, mangling the semicolons and parentheses of the for loop header.
+3. Bug is sensitive to macro `array_length(num)`; substituting macro with literal `1` makes the bug vanish.
+
+Expected behavior:
+Automatically add braces to the for loop body, keep all logic inside the loop:
+for (const struct num *p = num + array_length(num); p-- != num;)
+{
+    const char *string = str = "expr";
+    if (string != 0)
+        return;
+}
+
+Underlying cause:
+The PSI parser / control flow analysis is confused by the preprocessor macro inside the for loop’s increment/condition header. The macro expression disrupts the AST range selection and block boundary detection. The refactoring cannot correctly identify the boundaries of the for body and fails to inject braces around the loop body when extracting code from within it. The "Add braces" intention also mishandles macro-containing for headers and corrupts the for syntax tokens.
+*/
+
+#define array_length(arr) (sizeof(arr) / sizeof((arr)[0]))
+struct num {
+    int member;
+} num[] = {{ 1 }};
+
+void demo(void) {
+	const char *str;
+	for (const struct num *p = num + array_length(num); p-- != num;)
+		if ((str = "expr") != 0)
+			return;
+}

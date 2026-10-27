@@ -1,0 +1,22 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace CaseOnlyRenameRepro
+{
+public abstract class BaseType
+{
+public abstract void ExecuteLogic();
+}
+
+public class Foooo : BaseType
+{
+public override void ExecuteLogic() //{Push Down Method: target method for Windows case‑only file‑rename solution‑explorer‑disappear bug reproduction}
+{
+Console.WriteLine("demo");
+}
+}
+
+}

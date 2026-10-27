@@ -1,0 +1,18 @@
+#include <string>
+
+/* Refactoring Settings:
+Refactoring type: Move Declaration
+Refactoring target: Move the member declaration `std::string text;` of class A to another source/header file
+Refactoring scope: Class member variable declaration
+Refactoring rule expectation: Preserve the user-written type alias `std::string` instead of expanding it to the underlying template type `std::basic_string<char>`
+*/
+
+/* Error Root Cause:
+Observed failure: After performing Move Declaration refactoring, `std::string text;` is replaced with `basic_string<char> text;`.
+Expected behavior: The type should remain `std::string` as written by the user.
+Underlying cause: The refactoring engine resolves the type to its underlying template instantiation during AST processing and emits the expanded raw template name, discarding the user-friendly typedef/alias `std::string`.
+*/
+
+class A {
+    std::string text;
+};

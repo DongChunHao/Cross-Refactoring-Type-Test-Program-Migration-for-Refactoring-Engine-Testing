@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: innerBody
+'''
+
+innerBody($a);
+    }
+    private function innerBody(A $a){}
+}
+?>

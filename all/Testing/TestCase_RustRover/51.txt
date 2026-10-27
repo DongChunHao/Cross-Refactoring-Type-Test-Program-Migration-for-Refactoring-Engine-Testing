@@ -1,0 +1,25 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+// Simple identifier case
+fn f(x: bool) { //{change function f metadata, retain non‑mut parameter accepting simple identifier argument}
+let _ = x;
+}
+fn g() {
+let y = true;
+f(y);
+}
+// Mutable parameter cases
+fn foo(mut x: usize) -> usize { //{change function foo metadata, retain mutable function parameter}
+x += 1;
+x
+}
+fn bar() -> usize {
+let a = 5;
+foo(a)
+}
+fn quux() -> usize {
+let mut a = 5;
+foo(a)
+}

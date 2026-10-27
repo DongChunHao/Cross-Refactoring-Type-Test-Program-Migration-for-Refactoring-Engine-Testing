@@ -1,0 +1,10 @@
+```
+<?php
+function calculateTax($rate) {
+    $amount = 100.0;
+    return $rate * $amount;
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `calculateTax`, rename parameter `$rate` to `$amount`.

@@ -1,0 +1,30 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using UnityEngine;
+using GridCoord = UnityEngine.Vector3Int;
+
+namespace DefaultNamespace
+{
+public abstract class BaseBehaviour : MonoBehaviour
+{
+public abstract void ProcessCoord();
+}
+
+public class AliasExample : BaseBehaviour
+{
+private GridCoord x;
+
+public override void ProcessCoord() //{Push Down Method: target method for move‑file‑type‑alias‑expansion‑bug reproduction}
+{
+}
+}
+
+}
+
+ How to ensure the correctness of migrated test cases?
+
+ Can cross-refactoring test case migration be automated?
+
+ What are the common challenges in cross-refactoring test case migration?

@@ -1,0 +1,29 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Introduce Variable
+Refactoring Target: Call expression `myCallback("a", 1)`
+Refactoring Scope: JavaScript with JSDoc
+Trigger Operation: Run Introduce Variable on `myCallback("a", 1)`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The JSDoc callback comment block immediately before `myCallback("a", 1)` gets deleted during extraction, and the `myCallback` identifier becomes unresolved in the editor after refactoring.
+
+Expected behavior: Keep the preceding JSDoc comment intact, attach it to the original callback declaration, only wrap the call expression into the new variable.
+
+Underlying cause: The AST rewrite logic incorrectly associates the preceding standalone JSDoc with the call expression node, instead of treating it as a separate JSDoc declaration for the callback type. When replacing the call site it discards the comment.
+*/
+
+// Complete compilable test code
+if (cipher_char !== from_char) /*aaa*/ result = result + clear_char; else {
+    /*a*/ result = result + to_char; //jdsfjdnsf
+    //jdsfjdnsf
+}
+
+/**
+ * @callback myCallback
+ * @param {string} p1
+ * @param {number} p2
+ */
+myCallback("a", 1);

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+namespace ClassLibrary4
+{
+public class Class1
+{
+public void Execute() //{Rename Method: target method for move‑cycle‑remove‑source‑file‑duplicate‑class‑declaration‑bug reproduction}
+{
+}
+}
+}

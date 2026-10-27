@@ -1,0 +1,14 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn foo(num: i32) { //{change foo method, retain match arm containing mixed let‑binding and partial selected statements}
+match num {
+0 => {
+let x = 3;
+bar(); bar();
+},
+_ => {}
+}
+}
+fn bar() {}

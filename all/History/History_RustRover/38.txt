@@ -1,0 +1,101 @@
+/* Refactoring Settings:
+Refactoring Type: Inline Function
+Refactoring Target: Two `use_mutex(&m)` call sites used as left and right arguments of `foo`
+Refactoring Scope: Preserve left-to-right argument evaluation order and drop semantics during inlining
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4293-213-nightly, CLion 2021.3, Rust 1.57.0, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Inline function on `use_mutex`, select “Inline all and remove the method”
+*/
+/* Error Root Cause:
+Observed failure:
+Rust evaluates function arguments strictly left-to-right. In the original program, the left `use_mutex(&m)` runs to completion, drops its `MutexGuard`, then the right `use_mutex(&m)` runs, so the code succeeds and prints `2`.
+The inliner flattens both function bodies directly into the outer statement scope: all the lock operations run before `foo` is invoked. This keeps both guards live at the same time, causing a deadlock when trying to acquire the mutex a second time.
+
+The inliner treats argument subexpressions as if they were unordered statements, losing the rule that each argument subexpression is fully evaluated (with all temporaries dropped) before starting the next argument.
+
+Expected behavior:
+Each function argument call that gets inlined must be wrapped in its own block expression `{ ... }`. Block expressions preserve the lexical scope, so all temporaries inside that argument are dropped before evaluation proceeds to the next argument.
+
+Two valid approaches:
+1. Directly wrap each inlined argument body in its own block, placed in the argument position (Fix 1 in the report).
+2. Evaluate each argument into a binding inside an outer block, then pass those bindings to the function call (Fix 2 in the report).
+
+Both preserve left-to-right evaluation and drop-on-scope-exit, including drop during panics. Flattening into the parent scope is incorrect for expressions with non-trivial `Drop` types.
+
+Underlying cause:
+The inliner does not isolate each argument’s inlined code into its own evaluation scope. It emits all the statements from all argument calls sequentially in the outer scope before the function call, which changes when temporaries are dropped.
+*/
+// Before
+use std::sync::Mutex;
+
+fn foo(x: u32, y: u32) -> u32 { x + y }
+
+fn use_mutex(m: &Mutex<u32>) -> u32 {
+    let mut mx = m.lock().unwrap();
+    *mx + 1
+}
+
+fn main() {
+    let m = Mutex::new(0);
+    let bar = foo(use_mutex(&m), use_mutex(&m));
+    println!("{}", bar);
+}
+// Output: 2
+
+// Actual broken output (deadlocks)
+use std::sync::Mutex;
+
+fn foo(x: u32, y: u32) -> u32 { x + y }
+
+fn main() {
+    let m = Mutex::new(0);
+    let m_argument = &m;
+    let mut mx = m_argument.lock().unwrap();
+    let m_argument = &m;
+    let mut mx = m_argument.lock().unwrap();
+    let bar = foo(*mx + 1, *mx + 1);
+    println!("{}", bar);
+}
+
+// Expected Fix 1: each argument in its own block expression
+use std::sync::Mutex;
+
+fn foo(x: u32, y: u32) -> u32 { x + y }
+
+fn main() {
+    let m = Mutex::new(0);
+    let bar = foo({
+        let m_argument = &m;
+        let mut mx = m_argument.lock().unwrap();
+        *mx + 1
+    }, {
+        let m_argument = &m;
+        let mut mx = m_argument.lock().unwrap();
+        *mx + 1
+    });
+    println!("{}", bar);
+}
+
+// Expected Fix 2: bind each argument inside an outer block
+use std::sync::Mutex;
+
+fn foo(x: u32, y: u32) -> u32 { x + y }
+
+fn main() {
+    let m = Mutex::new(0);
+    let bar = {
+        let x = {
+            let m_argument = &m;
+            let mut mx = m_argument.lock().unwrap();
+            *mx + 1
+        };
+        let y = {
+            let m_argument = &m;
+            let mut mx = m_argument.lock().unwrap();
+            *mx + 1
+        };
+        foo(x, y)
+    };
+    println!("{}", bar);
+}

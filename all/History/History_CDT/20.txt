@@ -1,0 +1,20 @@
+int main(int a, char** argv) {
+    int b = 1; // Variable to be renamed
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: local variable `b` inside main()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select variable `b`, invoke Rename refactoring, input `&b` as the “new name”.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts `&b` as the new identifier. Generated code becomes `int &b =1;`. The `&` is not part of an identifier; it is C++ reference declarator. In pure‑C mode this code is syntactically invalid, even in C++ initializing a non‑const reference with literal `1` is illegal. Refactoring produces uncompilable code without any early warning.
+Expected behavior: Rename refactoring should strictly validate user input against C/C++ well‑formed identifier grammar. An identifier can only start with letter/underscore and contain letters, digits, underscores. Reject input containing `* & [] ()` and other declarator/operator tokens, prompt error and abort transformation. Type modification, adding reference/pointer should only be done by Change‑Signature refactoring, not rename.
+Underlying cause: The rename dialog does not perform identifier‑grammar validation on user‑supplied text. Instead of treating input purely as identifier name, CDT parses input as part of declarator syntax, accidentally injecting reference operator into variable declaration, producing malformed code.
+*/

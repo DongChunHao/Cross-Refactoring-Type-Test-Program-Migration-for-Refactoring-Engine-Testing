@@ -1,0 +1,33 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+/* Refactoring Settings:
+Refactoring type: Rename function
+Refactoring target: function name "accept" -> "accept_new"
+Refactoring scope: function declaration and function definition
+Refactoring rule expectation: Only modify the function identifier name, keep all original parameter types unchanged
+*/
+
+/* Error Root Cause:
+Observed failure: After renaming function accept to accept_new, the refactoring engine incorrectly converted all 2D array parameters (int A[][4], int N[][4], int M[4][4], int W[1][4]) into double pointer type int **.
+Expected behavior: Only change the function name from accept to accept_new, preserve the original array parameter types completely.
+Underlying cause: The refactoring engine mishandles C-style fixed-size 2D array parameters during rename refactoring; it incorrectly normalizes array parameters to double pointers when updating the function signature, even though only the function name should be modified.
+*/
+
+void accept(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m);
+void accept(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m){
+    int i,j;
+    for(i=0;i<*n;i++)
+        for(j=0;j<*m;j++)
+            N[i][j]=M[i][j]-A[i][j];
+}
+
+int main(){
+    int A[5][4];
+    int M[5][4];
+    int N[5][4];
+    int W[1][4];
+    int n=5,m=4;
+    accept(A,N,M,W,&n,&m);
+    return 0;
+}

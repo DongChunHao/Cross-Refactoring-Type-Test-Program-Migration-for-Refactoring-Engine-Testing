@@ -1,0 +1,32 @@
+<?php
+class A {
+}
+class B extends A{
+    private function fa()
+    {
+        return 1;
+    }
+    function fa2() // <-- Pull Up refactoring target
+    {
+        $a = function () {
+            return $this->fa();
+        };
+        $this->fa();
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method fa2() in class B, pulling up to parent class A
+Refactoring rule: When pulling a method upward into a parent class, the refactoring must analyze all code inside the method, including anonymous functions/closures, and detect references to members that are private to the original child class. If those members become inaccessible in the target parent class, a warning must be shown.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling fa2() up to class A produces no warning. After refactoring, fa2() resides in A and still calls $this->fa(). But fa() is private inside B, so it is not visible to A, resulting in invalid PHP code. The closure inside fa2() that also references $this->fa() was not analyzed.
+Expected behavior:
+The refactoring should traverse the full AST of fa2(), including nested closure bodies, detect the dependency on private B::fa(), warn the user that this reference will become inaccessible in the parent class A, and prevent or confirm the risky refactoring.
+Underlying cause:
+Dependency scanning for Pull Up only scans top-level statements of the method and does not recurse into closure AST nodes. It misses the references to private child members inside anonymous functions, so no accessibility conflict is detected.
+*/
+?>

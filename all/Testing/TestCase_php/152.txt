@@ -1,0 +1,24 @@
+```
+<?php
+namespace  {
+    class UserModel
+    {
+        public function match(UserModel $u)
+        {
+        }
+    }
+}
+namespace App\Models {
+    use UserModel;
+    class AdminUser extends \UserModel
+    {
+        public function match(UserModel $u)
+        {
+            parent::match($u);
+        }
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `UserModel` from global namespace to namespace `App\Models`

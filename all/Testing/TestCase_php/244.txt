@@ -1,0 +1,20 @@
+```
+<?php
+class UserBase
+{
+    public function validate()
+    {
+    }
+}
+class AdminUser extends UserBase {}
+/**
+ * Class UserService
+ * @see UserBase::validate()
+ */
+class UserService
+{
+}
+?>
+```
+
+【Refactoring Action】: Push Members Down refactoring, push method `validate()` from `UserBase` down to subclass `AdminUser`.

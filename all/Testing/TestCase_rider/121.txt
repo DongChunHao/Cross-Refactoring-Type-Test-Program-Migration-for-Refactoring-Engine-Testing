@@ -1,0 +1,19 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+namespace MyLib
+{
+public abstract class ServiceBase
+{
+public abstract void Execute();
+}
+
+public class MyService : ServiceBase
+{
+public override void Execute() //{Push Down Method: target method for cross‑project‑move‑missing‑Compile‑item‑bug reproduction}
+{
+}
+}
+
+}

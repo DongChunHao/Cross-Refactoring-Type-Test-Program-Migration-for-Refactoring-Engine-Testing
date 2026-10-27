@@ -1,0 +1,13 @@
+```
+<?php declare(strict_types=1);
+namespace Logic;
+interface GateInterface
+{
+    public function not(): GateInterface;
+    public function and(GateInterface $other): GateInterface;
+    public function or(GateInterface $other): GateInterface;
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `Logic\GateInterface::and()`, add parameter `$enable`.

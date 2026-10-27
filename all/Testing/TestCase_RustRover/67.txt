@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+struct S<R=u32, T=u32>(R, T);
+fn wrapper() {
+let s = S(1u32, 2i32);
+s; //{Rename‑Method target: expression statement with generic‑default‑parameter struct instance}
+}
+
+fn main() {
+wrapper();
+}

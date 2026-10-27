@@ -1,0 +1,12 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+class Computer {
+static notMoved() {
+return 'ping';
+}
+static moved() { //{Pull Up Method for static moved}
+return this.notMoved() + ' pong';
+}
+}

@@ -1,0 +1,16 @@
+/* Refactoring Settings:
+Refactoring type: Move refactoring
+Refactoring target: Move type alias `using Alias_t = bool;` into namespace foo
+Refactoring scope: The type alias declaration `using Alias_t = bool;`
+Refactoring rule expectation: Support moving `using` type alias symbol via Move refactoring; allow selecting target namespace/file in the popup dialog
+*/
+
+/* Error Root Cause:
+Observed failure: Right-click the `using Alias_t = bool;` and invoke Refactor → Move, the popup dialog does not allow completing the move operation for the type alias.
+Expected behavior: Move refactoring should handle type aliases: move the alias definition into target namespace, update all usages of `Alias_t` to `foo::Alias_t`.
+Underlying cause: The refactoring engine’s symbol handling excludes `using` type aliases from Move refactoring implementation. It treats them as non-movable symbols, even though C++ `using` aliases are symbols that can be relocated between namespaces/files.
+*/
+
+namespace foo {
+}
+using Alias_t = bool; // cannot be move refactored into

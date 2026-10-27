@@ -1,0 +1,28 @@
+template <class T>
+class CSome {
+public:
+    void Foo () {}; //Rename run here.
+};
+
+int main () {
+    CSome <int> A;
+    A.Foo();
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: method Foo inside template class CSome<T>
+Refactoring Scope: entire current file, all references to Foo
+Operation steps: Place cursor on Foo method definition inside CSome, execute rename refactoring to change method name.
+IDE: Eclipse CDT
+Related code: org.eclipse.cdt.internal.ui.refactoring.rename.ASTManager
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: After rename refactoring, the reference `A.Foo()` in main() is not renamed. The first reference is recognized as CPPMethod, while the instantiated reference from `CSome<int>` is treated as CPPMethodSpecialization. ASTManager.fKnownBindings does not recognize these two entities as the same symbol. The method analyzeAstTextMatchPair marks the second reference as CRefactoringMatch.AST_REFERENCE_OTHER and skips updating it.
+Expected behavior: The refactoring engine should recognize that CPPMethod (template declaration) and CPPMethodSpecialization (instantiated template method) refer to the same symbol, and rename all corresponding references consistently.
+Underlying cause: The binding tracking logic in ASTManager.fKnownBindings does not unify template method declaration (CPPMethod) and its instantiated specialization (CPPMethodSpecialization). They are treated as separate unrelated symbols, so references from template instantiations are ignored during rename refactoring.
+*/

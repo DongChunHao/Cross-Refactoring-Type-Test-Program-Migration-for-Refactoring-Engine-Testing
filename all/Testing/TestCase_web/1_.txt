@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+function nextPrime(n) {
+// Stub implementation for compilation, returns input value
+return n;
+}
+function computePrime(up, bottom, greyAtLeast) {
+const diffVal = up - bottom; //Rename Variable target for diffVal variable
+const prime = nextPrime((diffVal) * 6 - 3 + greyAtLeast);
+return prime;
+}

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+function BiTimer() {
+this.titleLabel = null; //{Rename Field for titleLabel field}
+}
+BiTimer.callOnce(function BiSelectionModel_i_ontick__selectAll_PATCH(e) {
+var instance = new BiTimer();
+for (var i = start; i < end; i++) {
+instance.titleLabel.setText(i);
+}
+});

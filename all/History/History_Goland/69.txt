@@ -1,0 +1,23 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Rename
+Refactoring target: global variable `b`
+Refactoring rule: When generating rename name suggestions for a top-level/global variable, scan the **package-level scope** for existing identifiers and exclude names that are already declared globally.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Global scope already contains `var s = 3`. When renaming `b`, the suggestion list includes `s`, which is an existing global variable name.
+Expected behavior: The rename suggestion engine filters out identifiers already present in the same scope (package scope here) to avoid duplicate declarations.
+Single-scope local rename correctly filters duplicates; the global/package scope suggestion path misses this collision check.
+
+Underlying cause:
+The name candidate validator for rename suggestions uses only local block scope lookup and does not check package-level top-level declarations for name conflicts.
+*/
+
+var s = 3
+var b = "" // <caret> rename here
+
+// Bad suggestion list: [b, s]
+// Expected suggestion list: exclude "s" because `s` is already declared in package scope

@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+/* Refactoring Settings:
+Refactoring type: Extract Function
+Refactoring target: Extract the block `int pi=3.142324; if(pi>3.14){ pi = 3.14; }` from `toExtract()`
+Refactoring rule expectation: Generate correctly formatted function definition `void getPi() { ... }`, place it outside of `bool toExtract()` and preserve the original function signature `bool toExtract()`
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Function produces broken syntax `bool void getPi() { ... }`. The new function `getPi` is incorrectly prefixed with the return type `bool` from the parent function `toExtract()`, creating two conflicting return types. The original `toExtract()` also loses its return type `bool`.
+Expected result:
+void getPi() {
+    int pi=3.142324;
+    if(pi>3.14){
+        pi = 3.14;
+    }
+}
+bool toExtract(){
+    getPi();
+    return true;
+}
+Underlying cause: The parser for Extract Function corrupts the surrounding function signature. It mistakenly copies the outer function’s return type `bool` and prepends it to the new extracted function, while stripping `bool` from the original `toExtract()` function header, leading to invalid C syntax.
+*/
+
+bool toExtract(){
+    //here starts example part to extract
+    int pi=3.142324;
+    if(pi>3.14){
+        pi = 3.14;
+    }
+    //here it ends
+    return true;
+}
+int main() {
+    printf("Hello, World result is %d!\n", toExtract());
+    return 0;
+}

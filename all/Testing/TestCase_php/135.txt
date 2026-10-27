@@ -1,0 +1,16 @@
+```
+<?php
+trait MathCalc{
+    public static function calculate(){
+    }
+}
+trait MathSpec{
+    abstract static function calculate();
+}
+class Equation{
+    use MathSpec, MathCalc;
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target abstract static function `calculate()` from trait `MathSpec` to class `Equation`

@@ -1,0 +1,30 @@
+<?php
+/**
+ * @method f()
+ */
+class C {
+    public function g()
+    {
+        $this->f();
+    }
+}
+class C1 extends C {
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring, multi-selection: push down both method f (magic @method) and method g from C to C1
+Refactoring rule: When multiple methods are selected for simultaneous Push Down / Pull Up, the reference validator must evaluate call relationships in the context of the full set of selected members that are moving together. If caller and callee are both in the move set, the cross-method call should not be treated as an unresolved external dependency.
+*/
+
+/* Error Root Cause:
+Observed failure:
+User selects both the magic `@method f()` and concrete method `g()` to push down from parent C to child C1.
+The refactoring validator emits warning: “Class C uses Method f, which is pushed down”.
+The validator checks references one-by-one against the current state of the class, without considering that f is also scheduled to be moved together with g. After the refactoring completes, both g and f will live in C1; `$this->f()` inside g will be valid. The warning is a false positive.
+
+Expected behavior:
+Build a projected post-refactoring model containing all selected members being moved. When validating `$this->f()` inside g, recognize that f is also in the push-down set and will reside in the same target class after the operation. Suppress this dependency warning for call pairs that travel together.
+
+Underlying cause:
+Push Down’s dependency analysis runs against the pre-refactoring PSI tree only. It does not track the set of other members selected for the same refactoring transaction, so it sees f leaving C while g remains in C during validation.
+*/

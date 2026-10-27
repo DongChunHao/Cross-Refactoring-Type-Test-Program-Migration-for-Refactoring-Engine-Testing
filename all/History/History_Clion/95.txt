@@ -1,0 +1,23 @@
+/* Refactoring Settings:
+Refactoring type: Inline Parameter
+Refactoring target: Inline function parameter `b` of templated anonymous-namespace function `foo(int a, test b)`
+Refactoring scope: Template function parameter `test b`
+Refactoring rule expectation: Do not offer inline parameter refactoring for templated type parameters when substitution will break template instantiation; preserve template parameter semantics
+*/
+
+/* Error Root Cause:
+Observed failure: The Inline Parameter refactoring action is offered for the templated parameter `b`. If applied, it substitutes the argument `a` directly into the return statement `return a;`, which may break template type deduction and the generic template logic.
+Expected behavior: The IDE should skip offering inline parameter for templated function parameters, or safely preserve template type semantics during substitution.
+Underlying cause: The refactoring engine does not detect that `b` is a template-type parameter of a generic function. It treats it like an ordinary non-template parameter and offers inlining, which can invalidate template instantiation logic.
+*/
+
+namespace{
+template<typename test>
+int foo(int a, test b) { //inlining b will break the code
+    return b;
+}
+}
+int main(){
+    int a = 1;
+    foo(a,a);
+}

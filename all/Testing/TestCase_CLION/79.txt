@@ -1,0 +1,23 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <tuple>
+#include <iostream>
+#include <string>
+std::tuple<double, char, std::string> get_student(int id) {
+return std::make_tuple(3.8, 'A', "Lisa Simpson");
+}
+struct Wrapper {
+char getStudentSecondField(int id) { //{Move tuple access logic into struct Wrapper member function}
+auto student0 = get_student(id);
+return std::get<1>(student0);
+}
+};
+int main() {
+Wrapper w;
+auto student0 = get_student(0);
+std::cout << std::get<0>(student0);
+(void)w.getStudentSecondField(0);
+return 0;
+}

@@ -1,0 +1,19 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+namespace JbrMetalSleepRepro
+{
+public abstract class BaseRenderFixture
+{
+public abstract void SimulateFullscreenUiUpdate();
+}
+
+public class RenderTestFixture : BaseRenderFixture
+{
+public override void SimulateFullscreenUiUpdate() //{Push Down Method: target method for JBR‑Metal‑macOS‑sleep‑wake‑blank‑mission‑control‑preview bug reproduction fixture}
+{
+}
+}
+
+}

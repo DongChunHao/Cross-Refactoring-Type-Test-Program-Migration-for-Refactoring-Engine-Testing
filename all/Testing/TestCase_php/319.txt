@@ -1,0 +1,15 @@
+```
+<?php
+#[Attribute]
+class Validate{ }
+class OrderService
+{
+    public function save(#[Validate] string $orderNo): bool
+    {
+        return true;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature on `OrderService::save(#[Validate] string $orderNo): bool`; add `int $userId` as second parameter.

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// index.ts
+export * from './type/base'; //{Move Method target barrel file with existing wildcard re‑export statement}
+// type/base.ts
+export type ITSPropertyKey = string | symbol;

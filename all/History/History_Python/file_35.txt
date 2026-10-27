@@ -1,0 +1,23 @@
+class Point:
+    def reset(self):
+        self.x = 0
+        self.y = 0
+
+    def set(self):
+        self.x = new_x   #<---here
+        self.y = new_y   #<---here
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Introduce Parameter (Ctrl + Alt + P)
+Refactoring Target: Literal/undefined values new_x, new_y inside Point.set() method
+Refactoring Scope: Current method Point.set()
+Expected Operation: Introduce new_x and new_y as formal parameters of set() method, replace in‑place usages with parameter references, consistent with behavior of other IDEs.
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: Introduce parameter refactoring is not implemented for this scenario. The undefined identifiers new_x and new_y inside set() cannot be extracted into method parameters via Ctrl+Alt+P shortcut.
+Expected behavior: Triggering "Introduce parameter" at new_x / new_y should add formal parameters new_x and new_y to the signature of def set(self), and keep existing assignment statements.
+Underlying cause: The Python refactoring engine lacked implementation for the Introduce Parameter feature for local undefined identifiers inside method bodies, which was already available in other language IDE backends. Issue identifier PY‑108.97.
+"""

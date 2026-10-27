@@ -1,0 +1,39 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Generate Getter and Setter
+Refactoring target: struct field `age int` in `Person`
+Refactoring rule: When generating a setter method, the receiver completion dropdown should offer both value receiver `Person` and pointer receiver `*Person`. Setters that mutate fields typically require pointer receivers.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Getter receiver completion: shows both `Person` and `*Person`.
+Setter receiver completion: only shows `Person` (value receiver). A value receiver makes a copy of the struct; `p.age = age` modifies only the copy and has no effect on the original instance, which is almost never what users intend for a setter.
+
+Expected behavior:
+Setter receiver selector should include `*Person` as an option, and default to pointer receiver `func (p *Person) SetAge(age int) { p.age = age }`.
+Underlying cause: The generator’s receiver candidate list is filtered differently for setters; it incorrectly excludes pointer receiver candidates in the completion popup for setter methods, even though mutation requires a pointer.
+*/
+
+type Person struct {
+	name string
+	age int
+}
+
+// Generated getter (correct, both receiver types available)
+func (p Person) Age() int {
+	return p.age
+}
+
+// Bad generated setter (only value receiver offered)
+func (p Person) SetAge(age int) {
+	p.age = age
+}
+
+// Expected correct setter (pointer receiver)
+/*
+func (p *Person) SetAge(age int) {
+	p.age = age
+}
+*/

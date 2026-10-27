@@ -1,0 +1,32 @@
+''' Refactoring Settings:
+Refactoring type: Inline function refactoring, with "delete declaration" option enabled
+Refactoring target: function foo()
+Refactoring scope: whole file scope, all call‑sites of foo()
+Refactoring rule expectation: Inline the body of foo() at every call‑site, preserve original identifier casing, remove the foo() function declaration after inline completes
+'''
+''' Error Root Cause:
+Observed failure: After performing inline‑function refactoring with delete‑declaration on foo(), the class name "File(...)" is incorrectly transformed to lowercase "file(...)", changing the first‑character capitalization.
+Expected behavior: Inline substitution should retain original source‑code casing for all identifiers including class name File, only expand function body and remove foo declaration.
+Underlying cause: The refactoring engine’s name‑replacement logic mishandles the capitalized class identifier "File" during function inlining; it incorrectly applies lower‑casing transformation to the class constructor call when substituting the return expression of foo() into call‑sites.
+'''
+class File:
+    def __init__(self, filename, mode):
+        self.filename = filename
+        self.mode = mode
+
+    def __enter__(self):
+        self.open_file = open(self.filename, self.mode)
+        return self.open_file
+
+    def __exit__(self, *args):
+        self.open_file.close()
+
+def foo():
+    file_path = '/tmp/nice_file'
+    return File(file_path, 'w')
+
+files = []
+for _ in range(10000):
+    with foo() as infile:
+        infile.write('foo')
+        files.append(infile)

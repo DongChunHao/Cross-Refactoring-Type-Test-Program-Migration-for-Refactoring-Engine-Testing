@@ -1,0 +1,9 @@
+```
+<?php
+function f1($x): mixed {
+    return f();
+}
+?>
+```
+
+【Refactoring Action】: Place caret on return type identifier `mixed`; attempt to invoke Change Signature refactoring.

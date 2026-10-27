@@ -1,0 +1,14 @@
+```
+<?php
+class UserContainer {}
+$userObj = new class(){
+    protected function getUserId(): int
+    {
+        return 123;
+    }
+};
+echo $userObj->getUserId();
+?>
+```
+
+【Refactoring Action】: Caret on `getUserId` method inside anonymous class; invoke Move Instance Method to move into `UserContainer`.

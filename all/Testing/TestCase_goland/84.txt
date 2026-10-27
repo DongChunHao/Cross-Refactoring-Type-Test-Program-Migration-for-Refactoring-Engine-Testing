@@ -1,0 +1,17 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package goo
+// Bar is exported (public, uppercase)
+func Bar() {
+innerBar() // extract empty body logic into innerBar
+}
+func innerBar() {}
+
+package boo
+// baz is unexported (private, lowercase)
+func baz() {
+innerBaz() // extract empty body logic into innerBaz
+}
+func innerBaz() {}

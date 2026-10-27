@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+#include <cstdio>
+class C {
+void foo()
+{
+const char* msg = ""; //{Extract variable for printf string literal}
+printf(msg);
+}
+};

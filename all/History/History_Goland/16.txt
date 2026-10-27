@@ -1,0 +1,52 @@
+// Before move: alpha_test.go
+package alpha_test
+
+import (
+	"fmt"
+	"testing"
+
+	"example.test/example/alpha"
+)
+
+func Test(t *testing.T) {
+	fmt.Println(alpha.Alpha{})
+}
+
+/* Refactoring Settings:
+Refactoring type: Move Package
+Refactoring target: Move package `alpha` to new path `beta/alpha`
+Refactoring scope: External test files with package suffix `_test` (package alpha_test)
+Refactoring rule: For files in the external test package `alpha_test`, update the import path of the moved package, preserve the qualified selector `alpha.Alpha{}`, and do not delete the import or remove the package qualifier.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving package alpha to beta/alpha, the refactoring deletes the import of the alpha package in `alpha_test.go` and removes the package qualifier, changing `alpha.Alpha{}` to `Alpha{}`. This breaks compilation because `Alpha` is not in scope in package alpha_test.
+Expected behavior: The refactoring updates the import path to `example.test/example/beta/alpha`, keeps the imported package identifier `alpha`, and leaves the expression `alpha.Alpha{}` unchanged.
+Underlying cause: The move package refactoring treats external `_test` packages the same as internal test packages; it incorrectly assumes the type will be available without a package qualifier, and removes the import statement instead of rewriting the import path.
+*/
+
+// Bad actual result after refactoring
+package alpha_test
+
+import (
+	"fmt"
+	"testing"
+)
+
+func Test(t *testing.T) {
+	fmt.Println(Alpha{})
+}
+
+// Expected correct result after refactoring
+package alpha_test
+
+import (
+	"fmt"
+	"testing"
+
+	"example.test/example/beta/alpha"
+)
+
+func Test(t *testing.T) {
+	fmt.Println(alpha.Alpha{})
+}

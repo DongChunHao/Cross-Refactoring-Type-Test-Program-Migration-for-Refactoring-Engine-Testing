@@ -1,0 +1,26 @@
+void main (  int aa_0){ }
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: formal function parameter `aa_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select parameter `aa_0`, invoke Rename refactoring, input string `a v` containing whitespace as new name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts user‑provided string `a v` which contains embedded whitespace. The parameter declaration becomes `int a v`. Whitespace separates tokens in C; compiler interprets `a` as one identifier and `v` as a second parameter declarator, producing syntax error. No validation or warning is raised during refactoring.
+
+Expected behavior:
+Enforce C identifier lexical rules before applying any rename transformation:
+1. Valid identifier can only contain letters, underscores and decimal digits.
+2. First character must be a letter or underscore.
+3. Whitespace, operators, punctuation are strictly forbidden.
+Reject input `a v` immediately and display an error message to the user, aborting refactoring.
+
+Underlying cause:
+The rename operation does not perform lexical validation on the input string. The raw user input is directly inserted into the parameter declarator without checking whether it conforms to identifier grammar. Whitespace inside the input breaks tokenization and yields ill‑formed source code.
+*/

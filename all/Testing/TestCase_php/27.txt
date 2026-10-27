@@ -1,0 +1,6 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+
+<?php class A{ private function a(){} //{changed method visibility from public to private} } class B extends A{ function b(){ $this->a(); } } ?>

@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class First {
+public name: string = 'test';
+get nameTrim() {
+return this.name.trim();
+}
+}
+class Second {
+first: First = new First();
+readName() {
+let trimmedName = this.first.nameTrim; //{Move Method target getter access site with receiver this.first for Inline‑Field this‑binding‑loss defect}
+}
+}

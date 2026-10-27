@@ -1,0 +1,27 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <vector>
+#include <string>
+class X{};
+struct Wrapper
+{
+static void wrapper_f() { //{Move function f logic into static wrapper member}
+std::vectorstd::string strings{"foo"};
+X x(strings[0]);
+std::string str = "bar";
+X x2(str);
+}
+};
+void f() {
+Wrapper::wrapper_f();
+}
+template  struct vec {
+typedef T value_type;
+value_type& bar();
+};
+void test_vec() {
+vecstd::string v;
+X x(v.bar());
+}

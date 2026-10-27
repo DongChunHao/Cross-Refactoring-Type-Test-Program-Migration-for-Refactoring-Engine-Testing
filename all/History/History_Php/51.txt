@@ -1,0 +1,29 @@
+<?php
+trait T{
+    public static function f(){
+    }
+}
+trait T1{
+    abstract static function f();
+}
+class C implements I{
+    use T1, T;
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Member refactoring
+Refactoring target: abstract static function f() from trait T1 to class C
+Refactoring rule: When moving an abstract static method into a class, the conflict checker must verify the PHP trait composition rules: if the class already has a concrete implementation of the same method (from another trait), adding an abstract declaration for the same method name is invalid PHP and must be surfaced as a refactoring conflict warning.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Moving abstract static f() from T1 into C completes without warning. After refactoring, C contains `abstract public static function f();`, while also using trait T which supplies a concrete `public static function f()`.
+PHP fatal error: cannot declare an abstract method that already has a concrete implementation in the class.
+
+Expected behavior:
+Detect that the destination class C already resolves a concrete `f()` via trait T. Show a conflict warning that adding abstract static f() to C is invalid, since a concrete implementation already exists.
+
+Underlying cause:
+Conflict validation for moved abstract static members does not check whether the target class already has a concrete method of the same name from trait merging. It does not recognize the PHP rule that you cannot combine an abstract declaration with an existing concrete implementation in the same class.
+*/

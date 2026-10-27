@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func before(a, b, c int) int {
+sum := b + c
+return calcSub(a, sum) // extract return expression into calcSub
+}
+func calcSub(a, sum int) int {
+return a - sum
+}

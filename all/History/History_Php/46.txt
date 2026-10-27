@@ -1,0 +1,27 @@
+<?php
+class A { }
+abstract class B extends A {
+    abstract public function f();
+}
+class C extends B{
+    public function f()
+    {
+    }
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method f() in class C, pull up to parent class A
+Refactoring rule: When pulling a concrete implementation upward, the refactoring must check the inheritance chain for existing abstract declarations of the same method in intermediate parents. If pulling the concrete method creates a conflict where an intermediate ancestor declares the same method as abstract while the newly introduced inherited method is concrete, the refactoring must warn about the resulting inheritance conflict.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling f() from C to A does not emit any warning. After refactoring: A contains concrete `public function f()`, B extends A and redeclares `abstract public function f()`. PHP forbids a child class from redefining an inherited concrete method as abstract.
+Expected behavior:
+Detect that intermediate class B already has abstract `f()`, warn the user that moving the concrete implementation into A will create an invalid inheritance hierarchy (concrete method cannot be overridden as abstract in subclass B).
+Underlying cause:
+The conflict checker only scans the immediate target parent and source class, it does not traverse the full inheritance hierarchy to check for abstract redeclaration constraints in intermediate classes further down the hierarchy.
+*/
+?>

@@ -1,0 +1,19 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+namespace ConsoleApp2
+{
+public abstract class BaseA
+{
+public abstract void Run();
+}
+
+public class A : BaseA
+{
+public override void Run() //{Push Down Method: target method for multi‑target‑project‑move‑to‑file‑CS0101‑duplicate‑definition‑bug reproduction}
+{
+}
+}
+
+}

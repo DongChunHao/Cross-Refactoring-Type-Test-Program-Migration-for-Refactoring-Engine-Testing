@@ -1,0 +1,7 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+unsafe fn this_is_unsafe(ptr: *const u32) -> u32 {
+*ptr //{move pointer‑dereference expression body into separate moved‑out function item}
+}

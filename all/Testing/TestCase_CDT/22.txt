@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+#define A 2 // Token to be renamed
+#define C 3
+int main(int a, char** argv) {//extract method for function containing #ifdef macro conditional reference
+int b =0;
+#ifdef A
+b = C;
+#endif
+return b;
+}

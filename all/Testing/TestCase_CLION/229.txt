@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class C {public: int c; int foo() { return c ++; }};
+struct Wrapper
+{
+static int wrapper_foo() { //{Move foo logic into static wrapper member}
+C c;
+c.foo();
+return c.foo();
+}
+};
+int foo() {
+return Wrapper::wrapper_foo();
+}

@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring Type: Rename
+Refactoring Target: Loop variable `i` in `for i in ["One", "Two", "", "Last"]`
+Refactoring Scope: Rust function body, string interpolation inside `println!` macro
+Plugin Environment: IntelliJ Rust plugin 0.4.170.4627-221, PyCharm 2022.1.1 Professional, Rust 1.60.0, Windows 10
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select the loop variable `i`, run Refactor → Rename, change name to `name`
+*/
+/* Error Root Cause:
+Observed failure: Rename updates `i` in the positional format argument `println!("This was {}", i)` but fails to rename the implicit named argument `{i}` inside the format string literal `println!("Hello, world! {i}")`.
+Expected behavior: Both the variable binding and all corresponding named placeholder usages inside format string literals of macros like `println!` should be renamed consistently.
+Underlying cause: The rename processor does not treat `{i}` named placeholders inside macro format strings as references to the Rust variable `i`. The format string content is parsed as plain string text rather than resolved variable references, so those placeholder identifiers are excluded from rename reference search.
+*/
+fn main() {
+    for i in ["One", "Two", "", "Last"] {
+        if !i.is_empty() {
+            println!("Hello, world! {i}");
+            println!("This was {}", i)
+        }
+    }
+}

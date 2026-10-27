@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Field
+Refactoring new name: N/A
+'''
+trait MyTrait { //{extract trait‑associated item into separate definition}
+fn test(&self);
+}
+struct MyStruct;
+impl MyTrait for MyStruct {
+fn test(&self) {}
+}

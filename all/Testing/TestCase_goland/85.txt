@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package goo
+// Bar is exported (public, uppercase)
+type Helper struct{}
+func (h Helper) Bar() {} // move Bar method from Helper to standalone function
+
+package boo
+// baz is unexported (private, lowercase)
+type Helper struct{}
+func (h Helper) baz() {} // move baz method from Helper to standalone function

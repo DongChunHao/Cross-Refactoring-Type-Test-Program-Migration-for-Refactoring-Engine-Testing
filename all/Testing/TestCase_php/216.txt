@@ -1,0 +1,17 @@
+```
+<?php
+namespace App\Base;
+class BaseModel {
+    public function __construct(string $name) {}
+}
+
+class User extends \App\Base\BaseModel {
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring(F6), target global `User`, move to `App\User\Entity`.

@@ -1,0 +1,27 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: C::f()
+Scope: parameter default value validation for union types
+Refactoring operation: add parameter `int|bool $a = 1`
+*/
+
+/* Error Root Cause:
+Observed failure:
+When adding a union-type parameter `int|bool $a = 1`, the refactoring validator emits the warning: "Default value for parameters with a class type hint can only be NULL".
+This message is meant for **single class/object type hints** (e.g. `SomeClass $x = null`), but it incorrectly triggers for a union of scalar types `int|bool`.
+`int|bool $a = 1` is valid PHP syntax; no such restriction applies to scalar unions.
+
+Expected behavior:
+1. Separate validation logic: only apply the "class type hint default must be null" rule when the type is a non-nullable single class/interface type.
+2. Skip this check for union types composed of scalars, or unions mixing scalar and nullable object types where the default is legal.
+3. Show no false warning for `int|bool $a = 1`.
+
+Underlying cause:
+The validator does not distinguish between single class type hints and scalar union types; it uses a shared predicate that incorrectly matches union types and shows the class-specific diagnostic.
+*/
+class C{
+	public function f() {
+	}
+}
+?>

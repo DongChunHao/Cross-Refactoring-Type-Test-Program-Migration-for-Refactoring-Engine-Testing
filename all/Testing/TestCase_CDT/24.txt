@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+int main(int a, char** argv) {
+int b = 1; // Variable to be renamed //extract variable for local variable with reference‑declarator input scenario
+return 0;
+}

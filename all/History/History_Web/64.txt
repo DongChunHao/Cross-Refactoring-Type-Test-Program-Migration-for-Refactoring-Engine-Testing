@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Rename
+Refactoring Target: Function `test2222`
+Refactoring Scope: JavaScript file
+Trigger Operation: Rename with "Search in comments and strings" enabled; only string literals match besides real code references
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When rename matches only string literal occurrences (no other comment matches), the rename executes without showing the preview panel, even though the setting says strings should be renamed.
+Expected behavior: Even when the hits are solely string literals, the rename preview dialog should display all candidate locations so the user can review and deselect string matches before applying.
+Underlying cause: The preview display condition assumes there must be non-string/code references to trigger the preview. If the search results are exclusively string matches, it skips the preview step and applies changes directly.
+*/
+
+// Complete compilable test code
+function test2222() { }
+test2222()
+console.log('test2222')

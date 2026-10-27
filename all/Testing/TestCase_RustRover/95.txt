@@ -1,0 +1,13 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+struct Foo(usize);
+fn new(x: usize) -> usize { //{change method new signature, add local let binding inside body}
+let x = x;
+x
+}
+fn consume<T>(_: T) {}
+fn main() {
+consume(new(3))
+}

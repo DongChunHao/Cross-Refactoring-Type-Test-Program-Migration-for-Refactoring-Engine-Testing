@@ -1,0 +1,77 @@
+/* Refactoring Settings:
+Refactoring Type: Move Item / Move Module
+Refactoring Target: `fn func` and nested `mod foo` inside `mod1`
+Refactoring Scope: Adding necessary imports when moving items that have intra-module self-references
+Plugin Environment: IntelliJ Rust plugin 0.4.155.4114-212, CLion 2021.2.2, Rust 1.56.0-nightly, Linux 5.14.6-zen1-1-zen
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Move refactoring to move `func` and `mod foo` from `mod1` into `mod2.rs`
+*/
+/* Error Root Cause:
+Observed failure: When moving a function and a nested module that the function refers to (`func` references `foo::Foo`), the refactor does not emit the required `use` import in the new location. After moving, `func(_: Foo)` has an unresolved reference to `Foo`.
+
+Original code structure:
+mod mod1 {
+    use foo::Foo;
+    fn func(_: Foo) {}
+    mod foo {
+        pub struct Foo;
+    }
+}
+
+After move split into two files:
+lib.rs:
+mod mod1 {}
+mod mod2;
+
+mod2.rs:
+fn func(_: Foo) {}
+pub mod foo {
+    pub struct Foo;
+}
+
+In `mod2.rs`, `func` needs to refer to its sibling `foo::Foo`. The original `use foo::Foo;` was local to `mod1` and not carried over or recreated in `mod2`. The move logic fails to track intra-module relative imports required after relocation.
+
+Expected behavior:
+In the destination module (mod2.rs), add the appropriate `use foo::Foo;` so that `func` can resolve `Foo`.
+
+Expected mod2.rs:
+use foo::Foo;
+fn func(_: Foo) {}
+
+pub mod foo {
+    pub struct Foo;
+}
+
+Underlying cause:
+The move item logic only moves the AST nodes themselves and does not re-evaluate relative paths or regenerate necessary `use` directives for references between items being moved together. It assumes existing `use` clauses remain valid in the new module scope, which is not true when the entire group is relocated.
+*/
+// Before (lib.rs)
+mod mod1 {
+    use foo::Foo;
+    fn func(_: Foo) {}
+    mod foo {
+        pub struct Foo;
+    }
+}
+
+mod mod2;
+
+// Actual after move
+// lib.rs
+mod mod1 {}
+mod mod2;
+
+// mod2.rs
+fn func(_: Foo) {}
+pub mod foo {
+    pub struct Foo;
+}
+
+// Expected mod2.rs
+use foo::Foo;
+fn func(_: Foo) {}
+
+pub mod foo {
+    pub struct Foo;
+}

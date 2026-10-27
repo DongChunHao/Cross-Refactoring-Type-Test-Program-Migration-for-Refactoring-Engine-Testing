@@ -1,0 +1,27 @@
+<?php
+class C { }
+abstract class A0{
+    abstract static function f();
+}
+class A extends A0 {
+    static function f()
+    {
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static function f() from class A to class C
+Refactoring rule: Before moving a static method, check whether the method fulfills an abstract contract from a parent abstract class, interface, or abstract trait. If the method is the concrete implementation required by an abstract declaration in the inheritance hierarchy, the refactoring must warn that removing this implementation from the class will leave the class unfulfilling the contract.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Moving static f() from A to C completes without warning. After refactoring, A no longer provides an implementation for A0::abstract static f(). PHP fatal error: Class A contains abstract method and must be declared abstract. The same defect exists when the method implements an interface static method.
+
+Expected behavior:
+Detect that A::f is the concrete implementation for an abstract method in its parent abstract class / interface / abstract trait. Show a warning: moving this method out of A will cause A to fail to satisfy the inherited abstract contract.
+
+Underlying cause:
+The refactoring’s dependency checker only looks for regular call-site usages of the static method. It does not check whether the method serves as a required implementation for abstract signatures in the type’s inheritance chain.
+*/

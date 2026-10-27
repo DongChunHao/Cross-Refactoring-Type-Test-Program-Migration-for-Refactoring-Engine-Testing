@@ -1,0 +1,22 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+type T struct{}
+func (t T) mainBody() {
+fWithVariadic(
+"The beginning of the alphabet is %s %s %s",
+"a",
+"b",
+"c",
+)
+}
+func main() {
+t := T{}
+t.mainBody() // move mainBody method from T to standalone function
+}
+func fWithVariadic(format string, a ...interface{}) {
+fmt.Printf(format, a...)
+}

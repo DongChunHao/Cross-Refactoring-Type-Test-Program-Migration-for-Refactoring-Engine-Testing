@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn foo(x: i32) -> i32 {
+let y = if x == 1 {
+3
+} else {
+5
+}; //Move Method: move entire let‑statement subtree containing if‑expression initializer
+y
+}

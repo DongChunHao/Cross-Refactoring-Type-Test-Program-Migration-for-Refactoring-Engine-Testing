@@ -1,0 +1,21 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+type Person struct {
+name string
+age int
+}
+func (p Person) Age() int {
+return getAgeVal(p) // extract field return expression into getAgeVal
+}
+func getAgeVal(p Person) int {
+return p.age
+}
+func (p Person) SetAge(age int) {
+setAgeField(&p, age) // extract field assignment into setAgeField
+}
+func setAgeField(p *Person, age int) {
+p.age = age
+}

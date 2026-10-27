@@ -1,0 +1,17 @@
+```
+<?php
+/**
+ * @method loadConfig()
+ */
+class BaseService {
+    public function init()
+    {
+        $this->loadConfig();
+    }
+}
+class UserService extends BaseService {
+}
+?>
+```
+
+【Refactoring Action】: Push Down refactoring, multi-selection: push down magic `@method loadConfig()` and concrete method `init()` from `BaseService` to `UserService`

@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: renamed_foo
+'''
+void foo() {//rename method for target bare function identifier
+}
+int main() {
+foo();
+return 0;
+}

@@ -1,0 +1,12 @@
+```
+<?php
+class Helper{}
+function calculate(int $a, int $b):int {
+    return $a + $b;
+}
+$fn = calculate(...);
+echo $fn(2,3);
+?>
+```
+
+【Refactoring Action】: Move global `calculate()` into `Helper` as static method.

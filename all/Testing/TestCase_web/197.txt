@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding string‑literal test‑cases for partial‑inside‑quote‑selection validation defect}
+document.body.style.display = "block";
+var elvisLives = (Math.PI > 4) ? "Да" : "Нет";
+}

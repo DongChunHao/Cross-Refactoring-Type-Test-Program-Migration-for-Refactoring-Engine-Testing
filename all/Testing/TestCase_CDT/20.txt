@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: a_renamed
+'''
+int main(int a, char** argv) {
+int b = 0;//rename variable for literal with potential parameter name collision scenario
+return 0;
+}

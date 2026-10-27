@@ -1,0 +1,41 @@
+<?php
+namespace NS1\NS2 {
+    use NS1\NS2 as BAR;
+    class A2
+    {
+    }
+    class T implements BAR\Ns3\I1{
+    }
+}
+
+namespace NS1\NS2\NS3 {
+    interface I1{}
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class T, target: global namespace, new separate file
+Refactoring rule: When generating a new file for a moved class, all auto-generated use statements must be placed after the file-level header comment/docblock and after the opening <?php tag, not inserted before the file comments.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The new file created for T puts `use NS1\NS2 as BAR;` directly after `<?php` and before the auto-generated file header comment. This breaks the expected file structure; file-level comments should appear before class code and use imports.
+Expected behavior:
+<?php
+/**
+ * Created by JetBrains PhpStorm.
+ * User: Maxim.Kolmakov
+ * Date: 12/27/12
+ * Time: 7:46 PM
+ * To change this template use File | Settings | File Templates.
+ */
+use NS1\NS2 as BAR;
+class T implements BAR\Ns3\I1
+{
+}
+Underlying cause:
+The refactoring's new-file node insertion logic places use statements immediately after the opening PHP tag, without respecting the file template’s header comment anchor position. It does not reserve the top position for the template-generated file docblock.
+*/
+?>

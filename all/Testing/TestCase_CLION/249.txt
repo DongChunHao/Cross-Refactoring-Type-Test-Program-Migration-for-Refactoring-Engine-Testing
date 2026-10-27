@@ -1,0 +1,20 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <exception>
+class Base
+{
+public:
+virtual void test(int y) = 0; //{Pull up test declaration into Base}
+};
+class Impl : public Base
+{
+public:
+void test(int y) override {
+if(y == 5) {
+throw std::exception();
+} else {
+}
+}
+};

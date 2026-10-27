@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring Type: Rename variable (Refactor -> Rename)
+Refactoring Target: Any local Rust variable
+Refactoring Scope: Local variable rename while the project is undergoing background indexing
+Plugin Environment: IntelliJ Rust plugin 0.3.142.3661-211-nightly, CLion 2021.1 EAP, Rust 1.52.0-nightly, Windows 10
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Execute rename refactor on a local variable while the IDE is still indexing the project
+*/
+/* Error Root Cause:
+Observed failure: Performing variable rename during project indexing throws `IndexNotReadyException`. The stack trace shows the code attempts to query stub indexes and resolve PSI references while the index is in a dumb, incomplete state.
+Expected behavior: The rename refactoring should either be deferred until indexing finishes, or it should guard index accesses and avoid running symbol resolution logic when the index is not ready.
+Underlying cause: The suggested refactoring / rename logic does not check whether the project is in dumb mode (indexing in progress) before attempting stub index lookups and PSI resolution. It directly accesses the stub index while indexing is ongoing, violating IntelliJ’s dumb-mode API contract and triggering IndexNotReadyException.
+*/
+fn main() {
+    let test_var = 10;
+    println!("{}", test_var);
+}

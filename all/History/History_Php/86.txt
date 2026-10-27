@@ -1,0 +1,38 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Rename refactoring (AutomaticRenamer)
+Refactoring target: class D
+Scope: entire file, including the anonymous class returned inside D::getArrayAccess()
+Refactoring operation: rename class D to a new name
+*/
+
+/* Error Root Cause:
+Observed failure: Renaming class D triggers an exception inside AutomaticRenamer. The anonymous class extends D and captures D as its parent type.
+Expected behavior: The renamer should correctly update the parent type reference inside the anonymous class to the new class name of D without throwing an exception.
+Underlying cause: AutomaticRenamer’s symbol visitor lacks handling for parent type references within anonymous classes. When traversing the anonymous class `new class(...) extends D`, it encounters this special unnamed class node and fails to resolve or rewrite the parent class symbol properly, resulting in an unhandled exception.
+*/
+class D {
+    protected $data;
+
+    public function __construct($data) {
+        $this->data = $data;
+    }
+
+    public function getArrayAccess() {
+        return new class($this->data) extends D implements ArrayAccess {
+            public function offsetGet($offset)
+            { return $this->data[$offset]; }
+            public function offsetSet($offset, $data)
+            { return ($this->data[$offset] = $data); }
+            public function offsetUnset($offset)
+            { unset($this->data[$offset]); }
+            public function offsetExists($offset)
+            { return isset($this->data[$offset]); }
+        };
+    }
+}
+
+$outer = new D(array(
+    rand(1, 100)
+));
+?>

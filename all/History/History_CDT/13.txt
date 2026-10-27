@@ -1,0 +1,34 @@
+typedef struct TestReporter TestReporter;
+typedef struct Constraint Constraint;
+
+void expect_(TestReporter *test_reporter, const char *function, const char *test_file, int test_line, ...);
+Constraint *where_(const char *parameter, Constraint *constraint);
+
+#define expect(f, ...) expect_(get_test_reporter(), #f, __FILE__, __LINE__, (Constraint *)__VA_ARGS__ +0, (Constraint *)0)
+#define where(parameter, constraint) where_(#parameter, constraint)
+
+void Ensure(const char *test_name);
+TestReporter* get_test_reporter(void);
+int mock_walker(void);
+Constraint* is_equal_to_string(const char*);
+
+void single_item_breadcrumb_does_calls_walker_only_once(void) {
+    Ensure("single_item_breadcrumb_does_calls_walker_only_once");
+    expect(mock_walker, where(name, is_equal_to_string("Hello")));
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename macro refactoring
+Refactoring Target: C pre‑processor macro `where` defined in #define where(parameter, constraint)
+Refactoring Scope: project‑wide across source files including breadcrumb_tests.c
+IDE Build Identifier: 201012031515
+Operation steps: Select `where` macro declaration, trigger rename shortcut alt+shift+R, rename macro from where to when().
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: Rename refactoring fails to update the macro invocation `where(name, is_equal_to_string("Hello"))` inside the expect() macro argument. Some usages across project files remain unchanged, leading to compilation failure after refactoring.
+Expected behavior: All invocation sites of the preprocessor macro `where` across the whole project should be renamed consistently, code should compile correctly after refactoring.
+Underlying cause: The refactoring engine’s macro reference resolver cannot properly track macro invocations that appear as arguments inside another pre‑processor macro. The occurrence inside expect(...) is not identified as a reference to the `where` macro and is omitted during rename processing.
+*/

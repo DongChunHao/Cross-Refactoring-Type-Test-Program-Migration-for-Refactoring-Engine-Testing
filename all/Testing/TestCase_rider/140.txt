@@ -1,0 +1,16 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+namespace JbrMetalSleepRepro
+{
+public abstract class BaseRenderFixture { }
+
+public class RenderTestFixture : BaseRenderFixture
+{
+public void SimulateFullscreenUiUpdate() //{Pull Up Method: target method for JBR‑Metal‑macOS‑sleep‑wake‑blank‑mission‑control‑preview bug reproduction fixture}
+{
+}
+}
+
+}

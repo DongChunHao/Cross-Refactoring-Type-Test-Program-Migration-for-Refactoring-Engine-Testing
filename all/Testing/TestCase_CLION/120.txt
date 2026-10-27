@@ -1,0 +1,33 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+// Assume required forward declarations
+class StaticHelper {
+public:
+static int GetVersion();
+};
+class TimerBase
+{
+public:
+virtual double GetElapsedMillis() = 0;
+private:
+bool mIsRunning;
+void Restart();
+};
+class CSimpleTimer : public TimerBase //{Pull up GetElapsedMillis, Restart, mIsRunning into TimerBase}
+{
+public:
+CSimpleTimer();
+double GetElapsedMillis() override;
+};
+CSimpleTimer::CSimpleTimer() {
+int internalVersion = 0;
+double someTime = GetElapsedMillis();
+someTime += 10;
+internalVersion = StaticHelper::GetVersion();
+if (internalVersion>1) mIsRunning = false;
+double somethingElse = someTime;
+double stuff = somethingElse;
+Restart();
+}

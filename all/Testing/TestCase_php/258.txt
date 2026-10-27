@@ -1,0 +1,22 @@
+```
+<?php
+class Request {}
+class App
+{
+    public function boot()
+    {
+        $worker = new class {
+            public function process(Request $req): void
+            {
+                $inst = new self();
+                var_dump($inst, $req);
+            }
+        };
+        $worker->process(new Request());
+    }
+}
+(new App())->boot();
+?>
+```
+
+【Refactoring Action】: Move Instance Method refactoring, move `process(Request $req)` out of anonymous class.

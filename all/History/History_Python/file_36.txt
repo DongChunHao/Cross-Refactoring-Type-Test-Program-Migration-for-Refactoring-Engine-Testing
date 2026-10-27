@@ -1,0 +1,29 @@
+''' Refactoring Settings:
+Refactoring type: Move Class / Move Function refactoring（F6）
+Refactoring target: Class / Function move to target file, auto‑fix all consumer‑side imports and references
+Refactoring scope: class/function definition itself, source file leftover code, all external caller files’ import statements, qualified/bare‑name call‑sites, docstring references
+Refactoring rule expectation:
+1) Remove class/function definition from original source file；
+2) Insert definition into target destination file；
+3) For every file that used this symbol:
+   ‑ If previously `from mod import MyClass`: update import source module path；
+   ‑ If previously `import mod`: update qualified reference `mod.MyClass`；
+4) Preserve semantics, keep all call‑sites resolvable, no stale imports, no syntax error；
+5) The same logic applies for moving top‑level functions.
+'''
+# demo original code
+# src.py
+class MyClass:
+    def hello(self):
+        pass
+
+def my_func():
+    obj = MyClass()
+    return obj
+
+# consumer.py
+from src import MyClass, my_func
+
+def caller():
+    ins = MyClass()
+    my_func()

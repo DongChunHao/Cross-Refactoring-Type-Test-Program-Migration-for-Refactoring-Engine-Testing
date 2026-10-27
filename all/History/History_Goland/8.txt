@@ -1,0 +1,20 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Introduce Variable (Extract Variable)
+Refactoring target: Extract literal `3` inside the slice literal `[]int{1, 2, 3}`
+Refactoring scope: Selected expression `3` in function killTheIDE
+Refactoring context: The source file already contains invalid Go syntax (`xs<zzz>` is not a valid identifier) before running the refactoring action
+*/
+
+/* Error Root Cause:
+Observed failure: When invoking Introduce Variable on expression `3` within already invalid code, the IDE enters a broken state; file editors stop functioning.
+Expected behavior: The refactoring engine should gracefully abort the operation on invalid PSI/parse tree, show a user-facing error message, and leave the IDE UI and editors responsive.
+Underlying cause: The refactoring implementation does not properly guard against malformed/incomplete parse trees. It attempts to perform AST modification on a corrupted syntax tree, triggering an unhandled internal exception that corrupts the editor subsystem state.
+*/
+
+func killTheIDE() {
+	xs<zzz> := []int{1, 2, 3}
+}
+
+func main() {}

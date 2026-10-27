@@ -1,0 +1,26 @@
+/* Refactoring Settings:
+Refactoring type: Rename (Shift+F6) C++ refactoring
+Refactoring target: static method `test2::foo::run`
+Operation: Place caret after identifier `run` at `foo::run<caret>();` and invoke Rename refactoring
+Scope: Caret position resolution at end of identifier token; resolve the correct symbol for static method call, handle namespace/struct qualified names
+*/
+
+/* Error Root Cause:
+Observed failure: When caret sits at the end of the identifier token `run` (after the name, before parentheses), rename refactoring fails to correctly resolve the `run` static method symbol, may corrupt syntax or select wrong PSI node.
+Expected behavior: Recognize the caret at the end of the identifier as referencing the `run` method, select only the identifier `run` for rename and update all occurrences including definition `void foo::run()`.
+Underlying cause: The PSI symbol resolver only matches caret positions inside the identifier token, not at the trailing token boundary. When caret is placed after the identifier, the resolver fails to bind to the `run` method symbol, leading to broken rename operation.
+*/
+
+namespace test2 {
+    struct foo {
+        static void run();
+    };
+}
+using namespace test2;
+void foo::run() { }
+
+int main() {
+    using namespace test2;
+    foo::run(); //<caret> placed after run here for rename
+    return 0;
+}

@@ -1,0 +1,23 @@
+'''
+Refactoring type: Extract Field
+Refactoring new name: N/A
+'''
+typedef typeof(sizeof 0) size_t;
+void free(void *);
+typedef struct memory_pool {
+struct memory_pool_item {
+void *p;
+size_t marker; //{Extract size_t field marker inside memory_pool_item}
+} *items;
+size_t	len;
+} memory_pool;
+static void mpool_free(memory_pool *pool)
+{
+for (; pool->len > 0; pool->len--)
+{
+struct memory_pool_item *item = pool->items + pool->len - 1;
+struct memory_pool_item *item2 = item;
+void *p = item2->p;
+free(p);
+}
+}

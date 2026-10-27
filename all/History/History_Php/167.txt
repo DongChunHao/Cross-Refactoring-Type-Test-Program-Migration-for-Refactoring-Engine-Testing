@@ -1,0 +1,18 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Function
+Refactoring target: function bar()
+Operation: Enter "FooBar" as the target class name in the Move Function dialog
+Scope: Target class name validation when multiple classes with the same name exist in the current scope
+*/
+
+/* Error Root Cause:
+Observed failure: There are two duplicate FooBar class declarations. When the user inputs FooBar as the target class for moving bar(), the dialog does not warn or disambiguate the multiple matching class definitions.
+Expected behavior: Validate the target class name, detect multiple declarations of FooBar, and present a warning or disambiguation UI so the user can select the intended FooBar class.
+Underlying cause: The target class resolver does not check for duplicate type declarations; it picks one candidate silently without reporting ambiguity.
+*/
+class FooBar {}
+class FooBar {}
+
+function bar() {}
+?>

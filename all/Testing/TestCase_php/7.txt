@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+
+a();
+    }
+}

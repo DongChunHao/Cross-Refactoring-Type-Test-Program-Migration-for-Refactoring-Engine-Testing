@@ -1,0 +1,32 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type / Intention action: "Remove keys from struct literal" and "Fill struct"
+Refactoring target: Struct literal `demo{FieldA:""}` for type `demo` with fields `FieldA string`, `FieldB [1]int`
+Refactoring rule: When removing keyed field initializers (turning keyed literal into positional literal), use the same zero-value generation logic that "Fill struct" intention uses, respecting each field's type.
+*/
+
+/* Error Root Cause:
+Observed failure: Running "Remove keys from struct literal" on `demo{FieldA:""}` produces invalid code, substituting an incorrect nil-like value for `FieldB`. The "Fill struct" intention correctly computes the proper zero value for `[1]int`.
+Expected behavior: After removing keys, the positional literal should be `demo{"", [1]int{}}` (or the valid zero initializer for array type `FieldB`), matching the zero-value strategy of Fill struct.
+Underlying cause: The "Remove keys from struct literal" intention uses a simplified zero-value emitter that incorrectly emits nil for non-reference types like fixed-size arrays, while the separate "Fill struct" intention has correct per-type zero-value rendering logic. The two code paths are not shared.
+*/
+
+type demo struct {
+	FieldA string
+	FieldB [1]int
+}
+
+func main() {
+	// Original literal
+	_ = demo{FieldA: ""}
+
+	// Bad output after "Remove keys from struct literal" (incorrect FieldB value)
+	// _ = demo{"", nil}
+
+	// Expected correct output (matches Fill struct behavior)
+	_ = demo{"", [1]int{}}
+
+	// Reference: Fill struct produces correct zero values
+	_ = demo{}
+}

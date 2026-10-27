@@ -1,0 +1,27 @@
+<?php
+class A {
+    private function a(){}
+}
+
+class B extends A {
+    private function a(){}
+    private function b(){
+        $this->a(); // <caret> invoke Change signature refactoring here
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: call $this->a() inside B::b()
+Refactoring rule: When resolving the target method for Change Signature in PHP, respect PHP visibility rules: private methods are not inherited and cannot be overridden. The call $this->a() inside class B should resolve exclusively to B::a(), not A::a(). The refactoring should only modify B::a() and not treat A::a() as an overridden related method.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Change Signature refactoring incorrectly identifies A::a() as an overridden parent method for B::a(), creating ambiguity.
+Expected behavior:
+PHP private methods are scoped to their declaring class; B::a() is a separate unrelated method and does not override A::a(). The refactoring should select only B::a() for signature modification.
+
+Underlying cause:
+The refactoring inheritance analysis ignores PHP private visibility semantics. It only matches method names across parent and child classes and assumes an override relationship, without checking if the methods are private.
+*/

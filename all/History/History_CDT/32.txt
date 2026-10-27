@@ -1,0 +1,41 @@
+#define Id_0
+void main_0(float aa_0){ // parameter to be renamed
+  #ifdef Id_0
+    aa_0 = 2;
+  #else
+    aa_0 = 0;
+  #endif
+  #ifdef Id_0
+    aa_0 = 100;
+  #endif
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: function formal parameter `aa_0` inside `main_0()`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select parameter `aa_0`, invoke Rename refactoring, input new name `x`.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+All references to variable `aa_0` appear inside preprocessor conditional blocks (`#ifdef Id_0 / #else`). Every branch of the conditionals references `aa_0`. The transformation is semantically safe and behavior-preserving: all occurrences of `aa_0` can be uniformly replaced by `x`.
+However, CDT rejects the rename transformation and emits a warning message, blocking the refactoring. This is a **false positive (overly conservative constraint)**.
+
+Expected behavior:
+1. Collect all references of `aa_0` across all preprocessor branches.
+2. Check symbol binding: in every reachable branch, the token `aa_0` resolves to the same function parameter.
+3. Since every occurrence of the identifier refers to exactly the same parameter, allow rename and replace all instances with `x`.
+4. Only block rename when references exist in **only a subset of conditional branches** (some branches reference the symbol, others do not; then the binding may become inconsistent after preprocessing).
+
+Underlying cause:
+CDT’s rename safety check uses a simple heuristic: **if any reference of the target symbol is located inside preprocessor conditional directives, mark the refactoring as unsafe and abort**.
+It does not distinguish two scenarios:
+- ✅ Safe case (this example): symbol appears in all conditional branches; every possible preprocessor path uses the same variable. Renaming is safe.
+- ❌ Unsafe case: symbol only appears in some branches; different preprocessor paths have different symbol bindings.
+
+The tool uniformly treats any symbol usage inside `#ifdef`/`#else` as risky, leading to false positives and blocking valid, semantics-preserving refactorings.
+*/

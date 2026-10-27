@@ -1,0 +1,15 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <iostream>
+class BaseIO {};
+class IOUtil : public BaseIO {
+public:
+void print(const char *string) { std::cout << string; } //{Pull up method print to BaseIO}
+};
+int main() {
+IOUtil util;
+util.print("Hello world!\n");
+return 0;
+}

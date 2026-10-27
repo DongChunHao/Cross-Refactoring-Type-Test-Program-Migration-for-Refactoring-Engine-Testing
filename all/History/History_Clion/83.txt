@@ -1,0 +1,33 @@
+#include <vector>
+#include <string>
+
+/* Refactoring Settings:
+Refactoring type: Create constructor (quick-fix)
+Refactoring target: Generate missing constructor for class X at the call site X x(strings[0]); and X x2(str);
+Refactoring scope: Constructor creation quick-fix triggered by missing constructor error
+Refactoring rule expectation: Use user-written type alias std::string in generated constructor signature instead of expanding to underlying template type std::basic_string<char>; prefer const reference overload option
+*/
+
+/* Error Root Cause:
+Observed failure: When creating constructor for X from std::vector<std::string>::operator[] return value (value_type& reference), the quick-fix generates constructor X(std::basic_string<char>& basic_string) instead of X(std::string&). For a custom template with typedef value_type, the problem worsens and expands the full template qualified name. Call site using a standalone std::string variable correctly produces X(std::string str).
+Expected behavior: The quick-fix should preserve the std::string alias for value_type& returned by vector::operator[], creating X(std::string&) or X(std::string const&).
+Underlying cause: The refactoring type resolver resolves the typedef value_type to its raw underlying template instantiation std::basic_string<char> when the expression comes from a typedef member of a template class, losing the std::string type alias information during AST type extraction. Direct use of std::string variable retains the alias correctly.
+*/
+
+class X{};
+void f() {
+  std::vector<std::string> strings{"foo"};
+  X x(strings[0]);
+  std::string str = "bar";
+  X x2(str);
+}
+
+template <class T> struct vec {
+  typedef T value_type;
+  value_type& bar();
+};
+
+void test_vec() {
+  vec<std::string> v;
+  X x(v.bar());
+}

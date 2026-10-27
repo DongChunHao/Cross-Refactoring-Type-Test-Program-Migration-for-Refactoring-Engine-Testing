@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Function to Class
+Refactoring target: global function test()
+Operation: Move test() into class C as a static method
+Scope: Rewriting first-class callable expressions referencing the moved global function
+*/
+
+/* Error Root Cause:
+Observed failure: After moving global function test() into class C as a static method, the first-class callable `test(...)` is not updated. The code remains `$b = test(...);`, which no longer resolves, causing a runtime error.
+Expected behavior: Rewrite the first-class callable to the static method form `$b = C::test(...)`.
+Underlying cause: The Move Function reference rewriter does not recognize first-class callable syntax as a reference to the original global function, so it skips updating this expression.
+*/
+declare(strict_types=1);
+class C{}
+function test(){}
+//move to class C
+$b = test(...);
+$b();
+?>

@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Calc struct{}
+func (c Calc) before(a, b, c int) int {
+sum := b + c
+return a - sum
+}
+func caller() int {
+calc := Calc{}
+return calc.before(1,2,3) // move before method from Calc to standalone function
+}

@@ -1,0 +1,25 @@
+```
+<?php
+class C {
+    public function f()
+    {
+        $a = new A;
+        $a->foo(null);
+    }
+}
+class A {
+    public function foo(C $c1 = null, C ...$c2)
+    {
+        var_dump($c2);
+    }
+    public function bar()
+    {
+        $this->foo(new C, new C, new C, new C);
+    }
+}
+$a = new A;
+$a->bar();
+?>
+```
+
+【Refactoring Action】: Invoke Move Instance Method, move `A::foo()` into class `C`.

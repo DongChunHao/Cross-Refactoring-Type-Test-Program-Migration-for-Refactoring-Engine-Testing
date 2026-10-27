@@ -1,0 +1,23 @@
+<?php
+/* Refactoring/Highlighting Settings:
+Refactoring type: Syntax error highlighting for class extends clause
+Scope: error range marking for invalid/ unresolved parent type in extends list
+Code: class A extends I { } where I is an interface
+*/
+
+/* Error Root Cause:
+Observed failure:
+The error highlight marker is placed only on the identifier `I` (`extends <error>I</error>`).
+Semantically, the whole construct `extends I` is invalid: a class cannot extend an interface in PHP; classes `implements` interfaces, while `extends` is only for other classes.
+The current narrow range can mislead users into thinking only the name `I` is missing or mistyped, instead of the wrong keyword (`extends` vs `implements`).
+
+Expected behavior:
+Highlight the full problematic segment `extends I` as the error range.
+Message: Classes may not extend interfaces; use `implements` for interfaces.
+
+Underlying cause:
+PSI parser / error annotator attaches the error marker to the type reference node alone, not the entire `extends` clause element. The validator does not expand the highlight range to cover the `extends` keyword when the kind of referenced symbol (interface) is incompatible with `extends`.
+*/
+class A extends I { }
+interface I { }
+?>

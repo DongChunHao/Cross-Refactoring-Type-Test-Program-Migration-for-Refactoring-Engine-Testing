@@ -1,0 +1,21 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Rename Variable
+Refactoring Target: destructured variable x
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Place caret on x in console.log(x), execute Rename, select option 'rename destructuring var only'.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When renaming only the destructured variable in shorthand object destructuring pattern, the engine keeps the shorthand syntax, which incorrectly renames the object property key as well and breaks the code.
+Expected behavior: The engine should expand shorthand destructuring syntax to long form. For example renaming x to newX should produce var {x: newX} = func();, preserving the original property name x while changing only the local variable name.
+Underlying cause: The rename refactoring for shorthand destructuring does not distinguish between the object property key and the local binding; it treats the shorthand identifier as a single node and fails to expand to explicit key-value destructuring syntax when "rename destructuring var only" is selected.
+*/
+
+// Complete compilable test code
+function func() {
+    return {x: "x"}
+}
+var {x} = func();
+console.log(x)

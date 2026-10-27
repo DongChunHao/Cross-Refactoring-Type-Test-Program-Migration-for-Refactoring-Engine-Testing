@@ -1,0 +1,14 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function transformErrorForSerialization(error: any): any { //{Change Method target function containing destructuring plus subsequent shorthand‑property references}
+if (error instanceof Error) {
+var { name, message } = error;
+return {
+$isError: true,
+name,
+message
+};
+}
+}

@@ -1,0 +1,18 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move class A), regression PY-142.318
+Refactoring target: class A from m1.py to another module
+Refactoring scope: m2.py star import `from m1 import *` and reference `A()`
+Refactoring rule expectation: After moving class A out of m1, refactor should handle the star import usage in m2: either add new import for A in m2, or warn user that star imports cannot be automatically updated.
+'''
+''' Error Root Cause:
+Observed failure: After moving class A away from m1, m2.py still retains `from m1 import *` and `A()`. Since A no longer exists in m1, `A()` becomes unresolved. The refactor does not modify m2’s code or add new import for A.
+Expected behavior: Detect star import (`from X import *`) and either: (1) expand star import into explicit import for A, or (2) notify user that star imports cannot be auto-refactored and require manual fix.
+Underlying cause: Star imports create implicit, non-explicit symbol dependencies; refactoring’s usage collector cannot reliably track which names come from `*` import. The analyzer ignores references resolved via wildcard import, fails to update references once A is moved out of m1. This is a regression issue PY-142.318.
+'''
+# ---- m1.py ----
+class A():
+    pass
+
+# ---- m2.py ----
+from m1 import *
+A()

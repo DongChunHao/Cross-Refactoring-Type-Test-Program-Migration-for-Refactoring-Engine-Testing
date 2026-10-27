@@ -1,0 +1,8 @@
+```
+<?php declare(strict_types=1);
+use BaseActiveRecord;
+class Foo extends BaseActiveRecord {}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move root-namespace class `Foo` into namespace `Bar`.

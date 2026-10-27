@@ -1,0 +1,16 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+namespace RiderNugetBugDemo
+{
+public interface IClass2
+{
+void DoWork(); //{Rename Method: target method for move‑single‑top‑level‑type‑moves‑all‑file‑types‑bug reproduction}
+}
+
+public class Class2
+{
+}
+
+}

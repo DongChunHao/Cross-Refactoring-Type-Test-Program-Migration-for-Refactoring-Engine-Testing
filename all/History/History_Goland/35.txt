@@ -1,0 +1,64 @@
+package jetbrainsbug
+
+import "testing"
+
+/* Refactoring Settings:
+Refactoring type: Introduce Local Variable (Extract Variable)
+Refactoring target: Expression `Sum(tt.args.a, tt.args.b)` inside the anonymous subtest callback passed to `t.Run()`
+Refactoring scope: Anonymous function literal (subtest closure)
+Refactoring rule: The new variable declaration must be inserted inside the innermost containing function (the `t.Run` anonymous callback), not in the outer `TestSum` function.
+*/
+
+/* Error Root Cause:
+Observed failure: When invoking "Introduce local variable" on `Sum(tt.args.a, tt.args.b)` inside the `t.Run` callback, GoLand inserts the variable declaration in the outer `TestSum` function body instead of inside the anonymous subtest function.
+Expected behavior: Insert `insertedVariable := Sum(tt.args.a, tt.args.b)` within the anonymous function.
+Underlying cause: The scope resolution logic for the extract variable action incorrectly selects the outer parent function (`TestSum`) as the insertion scope, rather than resolving to the innermost anonymous function PSI node that directly encloses the selected expression.
+*/
+
+func Sum(a int, b int) int {
+	return a + b
+}
+
+func TestSum(t *testing.T) {
+	type args struct {
+		a int
+		b int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "test",
+			args: args{
+				a: 0,
+				b: 0,
+			},
+			want: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			Sum(tt.args.a, tt.args.b)
+		})
+	}
+}
+
+// Expected correct refactored result
+/*
+for _, tt := range tests {
+	t.Run(tt.name, func(t *testing.T) {
+		insertedVariable := Sum(tt.args.a, tt.args.b)
+	})
+}
+*/
+
+// Bad actual refactored result (variable placed in outer TestSum scope)
+/*
+for _, tt := range tests {
+	insertedVariable := Sum(tt.args.a, tt.args.b)
+	t.Run(tt.name, func(t *testing.T) {
+	})
+}
+*/

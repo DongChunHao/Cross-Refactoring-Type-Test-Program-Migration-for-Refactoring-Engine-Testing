@@ -1,0 +1,20 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper simulating class‑field arrow‑functions with concise‑arrow call‑site for inline‑function nesting‑escape defect}
+const customOutput = (greeting) => {
+if (greeting === "world") {
+console.log("Hello world")
+} else {
+console.log("Hello", greeting)
+}
+}
+const handleAction = (params) => {
+const a = () => customOutput("A")
+a()
+const someFunction = () => {
+customOutput("B")
+}
+}
+}

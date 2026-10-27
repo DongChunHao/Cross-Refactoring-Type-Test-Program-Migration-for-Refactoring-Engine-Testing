@@ -1,0 +1,28 @@
+// test.h
+#ifndef GGG
+#define GGG
+struct XYZ {
+    int a;
+};
+#endif
+
+// main.c
+#include "test.h"
+
+/* Refactoring Settings:
+Refactoring type: Rename
+Refactoring target: Rename local static variable `uuu` in main.c
+Refactoring scope: Variable declaration static struct XYZ uuu = {0};
+Refactoring rule expectation: Only rename the variable identifier "uuu", must NOT modify the struct type name "XYZ"
+*/
+
+/* Error Root Cause:
+Observed failure: When renaming variable uuu, the refactoring engine incorrectly treats the variable name and struct name as the same entity. Typing a new name for the variable also renames the struct XYZ in the header file, breaking all code relying on struct XYZ.
+Expected behavior: Rename only the variable uuu; struct XYZ definition remains unchanged.
+Underlying cause: The rename engine confuses variable identifier and struct type symbol during lookup, incorrectly matching the variable rename operation to the struct type declaration instead of only the variable symbol.
+*/
+
+static struct XYZ uuu = {0};
+int main() {
+    return 0;
+}

@@ -1,0 +1,19 @@
+''' Refactoring Settings:
+Refactoring type: Rename refactoring (class rename)
+Refactoring target: class AClass, rename to new class name
+Refactoring scope: class definition, runtime code usages, reStructuredText docstring type annotations `:class:` / `:py:class:`
+Refactoring rule expectation: When renaming AClass, all occurrences inside rst docstring type fields `:type p: :class:`AClass`` and `:py:class:`AClass`` should be updated together with code references.
+'''
+''' Error Root Cause:
+Observed failure: Rename refactor updates code references of AClass, but leaves the name unchanged inside reStructuredText docstring roles `:class: AClass` / `:py:class: AClass`. The docstring metadata becomes inconsistent and documentation generation will reference old class name.
+Expected behavior: Parse RST docstring roles `:class:` and `:py:class:`, locate the referenced class symbol and rename the class name within these roles.
+Underlying cause: The rename refactor’s docstring parser only handles simple `@type` style tags; it does not implement parsing for Sphinx RST semantic roles `:class:` / `:py:class:`. These roles are treated as plain text, so symbol references inside them are not captured in the usage graph and skipped during rename.
+'''
+class AClass:
+    pass
+
+def foo2(p):
+    """
+    :type p: :class:`AClass`
+    """
+    pass

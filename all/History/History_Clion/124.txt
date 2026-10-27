@@ -1,0 +1,26 @@
+/* Refactoring Settings:
+Refactoring type: Move class into namespace
+Refactoring target: Move struct A into namespace N
+Refactoring rule expectation: After moving `struct A` into namespace `N`, update **all type references and temporary constructor calls** like `A()` → `N::A()` in the whole codebase.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving struct A to namespace N, CLion updates variable type `N::A a1` but forgets to qualify the temporary `A()` inside `f(A())`. It remains `A()` which is now out of scope, compilation error.
+Expected result:
+int main() {
+   N::A a1 = f(N::A());
+}
+And function signature:
+N::A f(N::A a) { return a; }
+
+Underlying cause: The refactoring scope analysis only updates explicit type annotations for variables. It fails to recognize that `A()` is a temporary object construction (class-name constructor call), and does not add namespace qualifier `N::` to constructor-style type names in expression context.
+*/
+
+struct A
+{
+    A() {}
+};
+A f(A a) { return a; }
+int main() {
+    A a1 = f(A());
+}

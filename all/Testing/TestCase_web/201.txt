@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+const numbers = [1, 4, 9];
+const doubles = numbers.map(num => num * 2); //{Extract Method target concise‑body‑arrow inside map‑call, token‑writer mis‑orders } and ) when expanding to block‑body}

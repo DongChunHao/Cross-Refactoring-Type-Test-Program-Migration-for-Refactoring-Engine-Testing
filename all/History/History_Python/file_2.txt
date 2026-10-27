@@ -1,0 +1,15 @@
+''' Refactoring Settings:
+Refactoring type: Extract to variable refactoring
+Refactoring target: expression my_dict['my_var']
+Refactoring scope: all occurrences of target expression, including inside f‑string literal and standalone print call‑sites
+Refactoring rule expectation: When invoking extract‑to‑variable on my_dict['my_var'], create new local variable, replace every matching occurrence: inside f‑string and in print() arguments with the newly‑defined variable name.
+'''
+''' Error Root Cause:
+Observed failure: Extract‑to‑variable refactoring cannot handle expression my_dict['my_var'] that appears inside f‑string `f"{my_dict['my_var']}"`. It either skips the f‑string occurrence completely, or the refactoring operation fails entirely, while it works fine for the same expression in normal print() call arguments.
+Expected behavior: Extract target expression into a new local variable, substitute all usages including the interpolated expression inside f‑string curly‑braces with the new variable.
+Underlying cause: The refactoring expression‑finder treats content inside f‑string `{ ... }` interpolation blocks as string‑text trivia instead of executable AST expression nodes; it fails to match and select sub‑expressions nested within f‑string interpolation syntax for extract‑variable refactoring.
+'''
+my_dict = {'my_var': 'value'}
+f"{my_dict['my_var']}"
+print(my_dict['my_var'])
+print(my_dict['my_var'])

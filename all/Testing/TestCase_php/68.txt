@@ -1,0 +1,14 @@
+```
+<?php
+namespace Http\Faults {
+    use LogicException;
+    class HttpBaseException
+    {
+    }
+    class RequestLogicFault extends LogicException {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `RequestLogicFault`, destination global namespace.

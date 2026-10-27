@@ -1,0 +1,13 @@
+```
+<?php
+class Bin { }
+class Calculator extends MissingParent {
+    static function assign()
+    {
+        Calculator::$unknownNumber = 99;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `assign()` from class `Calculator` to class `Bin`

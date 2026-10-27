@@ -1,0 +1,22 @@
+<?php
+function fn($reqParam, $optParam = null, ...$params) {
+    var_dump($reqParam, $optParam, $params);
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function with required parameter, optional parameter, and trailing variadic parameter `...$params`
+Refactoring rule: The Change Signature dialog and parser must natively recognize PHP variadic syntax `...$paramName` as a valid parameter. It should support editing existing variadic parameters and adding new trailing variadic parameters, respecting PHP rules (variadic must be last parameter, cannot have default value).
+*/
+
+/* Error Root Cause:
+Observed failure:
+When opening Change Signature on a function that contains a trailing variadic `...$params`, the refactoring parser reports an error: "Parameter type '...' is invalid". The dialog cannot load the function signature for editing.
+The `...` token is interpreted as an invalid type annotation instead of the PHP variadic parameter marker.
+
+Expected behavior:
+Treat `...$params` as a valid parameter entry. The UI should separate the variadic marker from the type hint: e.g. `array ...$params` or plain `...$params`. Enforce PHP constraints: variadic parameter must be the last parameter in the list and must not have a default value. Allow reordering only when PHP rules permit, and prevent invalid placements.
+
+Underlying cause:
+The parameter parser for Change Signature does not have special handling for the `...` variadic token. It attempts to parse `...` as a type name, which fails, leading to validation error and aborting the refactoring dialog load.
+*/

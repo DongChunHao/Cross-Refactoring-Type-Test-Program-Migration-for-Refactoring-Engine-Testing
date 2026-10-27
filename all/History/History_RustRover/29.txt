@@ -1,0 +1,28 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Constant
+Refactoring Target: Selected expression `C + 2` inside function `foo`
+Refactoring Scope: Extracting an expression that references an existing constant
+Plugin Environment: IntelliJ Rust plugin 0.4.157.4136-212-nightly, IDEA 2021.2.2, Rust 1.56.0-nightly, macOS 10.15.6
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select `C + 2` in `foo()` and run Extract Constant
+*/
+/* Error Root Cause:
+Observed failure: Extract Constant refactoring fails on expressions containing another existing constant (`C`). The action either does nothing or errors, instead of creating a new `const` that uses `C + 2`.
+Expected behavior: Generate a new constant declaration, e.g. `const D: i32 = C + 2;`, and replace the selected expression with `D`.
+Underlying cause: The extract constant logic incorrectly rejects expressions that refer to other named constants, treating them as non-const or non-extractable even though Rust allows constant expressions built from other constants.
+*/
+// Before
+const C: i32 = 1;
+
+fn foo() {
+    C + 2;
+}
+
+// Expected
+const C: i32 = 1;
+const D: i32 = C + 2;
+
+fn foo() {
+    D;
+}

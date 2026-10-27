@@ -1,0 +1,13 @@
+```
+<?php
+class Doc { }
+class MarkdownDoc extends Doc {
+    static private function escapeText(string $in): string { return htmlspecialchars($in); }
+    private function renderLine(string $raw) {
+        return self::escapeText($raw);
+    }
+}
+class ArticleDoc extends MarkdownDoc{}
+```
+
+【Refactoring Action】: Pull Up method `renderLine()` from class `MarkdownDoc` to parent class `Doc`.

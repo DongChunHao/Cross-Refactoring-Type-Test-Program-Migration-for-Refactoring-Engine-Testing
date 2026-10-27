@@ -1,0 +1,10 @@
+// Target Refactoring Type: Extract Field
+// Expected Defect Performance: The refactoring engine’s symbol‑resolution logic mis‑identifies the target symbol at the caret location; it confuses the instance reference self with the instance attribute id, leading to wrong symbol selection for refactoring operation
+class Foo:
+def **init**(self, id_value):
+pass
+class WrapperFoo:
+def **init**(self, id_value):
+self.id = id_value  // REFACTOR_TARGET
+f = WrapperFoo(3)
+f.id

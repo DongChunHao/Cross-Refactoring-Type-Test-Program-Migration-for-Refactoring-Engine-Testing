@@ -1,0 +1,5 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+let a = (x ? y : z) + t; //{Extract Method target parenthesized‑ternary expression, refactoring retains redundant grouping‑parentheses around simple‑identifier replacement}

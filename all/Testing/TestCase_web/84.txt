@@ -1,0 +1,7 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target enclosing wrapper function holding compound var statement}
+var foo = {x: 2, y: "a", z: true}, {x, y, z} = foo;
+}

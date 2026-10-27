@@ -1,0 +1,20 @@
+/* Refactoring Settings:
+Refactoring Type: Rename (Refactor -> Rename)
+Refactoring Target: Trait name with associated impl blocks located in the same file
+Refactoring Scope: Rust trait definition and its impl items
+Plugin Environment: IntelliJ Rust plugin
+Trigger Operation: Run rename refactor on a trait that has impls within the same file
+*/
+/* Error Root Cause:
+Observed failure: Executing rename on the trait throws a `java.lang.UnsupportedOperationException` from `RustStubbedNamedElementImpl.setName`. The rename operation crashes with a null exception stack trace and fails to apply the refactor.
+Expected behavior: The trait name and all its references, including associated impl blocks, should be renamed correctly without runtime exceptions.
+Underlying cause: The stub-based PSI implementation for the trait element (`RustStubbedNamedElementImpl`) does not implement the `setName` method required by the IntelliJ rename framework. When the rename processor attempts to modify the trait’s identifier, it invokes an unimplemented method, triggering the UnsupportedOperationException.
+*/
+trait MyTrait {
+    fn test(&self);
+}
+
+struct MyStruct;
+impl MyTrait for MyStruct {
+    fn test(&self) {}
+}

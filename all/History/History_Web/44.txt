@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: expression `square(2, 2) + "Str";` (with trailing semicolon) inside concise-body arrow function
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select expression including trailing semicolon and run Extract Method
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When selecting the expression together with the trailing semicolon from a concise arrow function (no curly braces), Extract Method replaces the whole arrow function `param1 => param1 + square(2, 2) + "Str"` with `param1 => extracted();`. The extracted function incorrectly omits the `param1 +` part because the selection does not include the full right-hand side of the return expression, breaking the original logic.
+When the arrow body is wrapped in `{}`, the same selection works correctly.
+Expected behavior: The refactoring should either reject selections that include an extraneous trailing semicolon in concise arrow expressions, or correctly preserve the full expression context and only extract the selected subexpression without discarding surrounding code.
+Underlying cause: The parser treats concise arrow return expressions differently from block statements. A semicolon in the selection confuses the range analysis, causing the refactoring to treat the entire arrow body as the thing to replace, instead of only the selected subexpression.
+*/
+
+// Complete compilable test code
+declare function square(a, b): number;
+
+let bbbb = param1 => param1 + square(2, 2) + "Str";

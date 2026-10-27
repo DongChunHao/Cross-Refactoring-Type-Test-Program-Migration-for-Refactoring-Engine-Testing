@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring type: Move class to namespace
+Refactoring target: Move primary template `template<class T> class A` into namespace N
+Refactoring scope: Primary template definition and all associated template specializations / partial specializations
+Refactoring rule expectation: After moving primary template A into namespace N, automatically qualify partial and explicit specializations as `N::A` in their return/type names, so they refer to the template inside namespace N
+*/
+
+/* Error Root Cause:
+Observed failure: After moving primary template class A into namespace N, the partial specialization `template<class T> class A<T *>` and explicit specialization `template<> class A<int>` remain unqualified `A`. They are treated as separate, unrelated templates in global namespace instead of specializations of `N::A`.
+Expected behavior:
+namespace N {
+    template<class T> class A { };
+}
+template<class T> class N::A<T *> { };
+template<> class N::A<int> { };
+Underlying cause: Move refactoring engine does not track template partial/explicit specializations as dependent entities of the primary template. It only moves the primary template definition into namespace N and leaves specializations unqualified in global scope, creating separate unrelated template symbols.
+*/
+
+template<class T> class A {
+};
+template<class T> class A<T *> { };
+template<> class A<int> { };

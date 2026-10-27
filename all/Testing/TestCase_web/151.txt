@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding shorthand and identity‑binding destructuring test patterns}
+let {x} = {x: {y: 1}};
+let {x: x} = {x: {y: 1}};
+}

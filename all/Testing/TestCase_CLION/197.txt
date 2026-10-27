@@ -1,0 +1,21 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include "clang-tidy/readability/RedundantVoidArgCheck.h"
+// Other existing includes
+namespace {
+struct Wrapper
+{
+static std::string wrapper_getText(const clang::Stmt *stmt) { //{Move getText logic into static wrapper member}
+return "";
+}
+};
+std::string getText(const clang::Stmt *stmt) {
+return Wrapper::wrapper_getText(stmt);
+}
+} // anonymous namespace
+void RedundantVoidArgCheck::someFunc() {
+const clang::Stmt *stmt = nullptr;
+std::string text = getText(stmt);
+}

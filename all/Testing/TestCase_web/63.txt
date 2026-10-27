@@ -1,0 +1,6 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+declare function square(a, b): number;
+let bbbb = param1 => param1 + square(2, 2) + "Str"; //{Change Method target concise‑body arrow function, modify signature}

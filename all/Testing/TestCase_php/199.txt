@@ -1,0 +1,19 @@
+```
+<?php
+class Example
+{
+    /**
+     * @param string $otherArgument
+     * @param int $removedArgument
+     *
+     * @return bool
+     */
+    public function test(string $otherArgument, int $removedArgument): bool
+    {
+        return true;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `Example::test()`, remove parameter `$removedArgument`.

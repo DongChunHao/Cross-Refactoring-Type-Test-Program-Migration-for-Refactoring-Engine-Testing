@@ -1,0 +1,15 @@
+// Target Refactoring Type: Rename Field
+// Expected Defect Performance: The refactoring import‑cleanup logic fails to properly analyse which imported names from source module are still being consumed in destination file; it does not correctly distinguish partially‑used module imports when only one among multiple variables is modified
+
+# ---- file a.py content ----
+
+FOO = 1   // REFACTOR_TARGET
+something_else = 2
+
+# ---- file b.py content ----
+
+import a
+def bar():
+print(a.FOO)
+def some_other_fn():
+print(a.something_else)

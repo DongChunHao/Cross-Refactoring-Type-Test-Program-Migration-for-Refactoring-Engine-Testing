@@ -1,0 +1,19 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+func helper(a int) int {
+return baz(a)
+}
+func Foo() int {
+v := struct{ a int }{0}
+x := helper(v.a) // rename method helper to newFuncName
+return x
+}
+func baz(a int) int {
+return a
+}
+func main() {
+_ = Foo()
+}

@@ -1,0 +1,46 @@
+// C++ example: template function rename bug
+template<typename T>
+void foo(T t)
+{
+}
+
+void bar()
+{
+    foo<int>(10); // reference to template function foo
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring for C++ template function, invoked via Eclipse CDT plugin API RenameSupport / CRenameProcessor
+IDE: Eclipse CDT, custom plugin using CDT internal refactoring API
+Operation steps:
+1. Plugin uses CRenameProcessor + RenameSupport.create(processor) to trigger rename refactoring programmatically.
+2. Works correctly for ordinary non-template functions.
+3. For template functions: references in source file are NOT updated; refactoring preview dialog fails to include the .cpp file as refactoring target.
+Manual Alt+Shift+R path uses similar code path but exhibits this template-specific defect.
+*/
+
+/*
+Observed failure:
+When renaming a C++ template function via CDT’s `RenameSupport` / `CRenameProcessor` API:
+1. The refactoring preview dialog **does not list the .cpp source file containing template function references** as a target for modification.
+2. After applying rename, call sites / references to the template function in the source file remain unchanged.
+3. Normal non-template functions work perfectly with identical API calling pattern.
+The symbol index fails to collect cross-references for template function instantiations. The references (e.g. `foo<int>(10)`) are not found, so they are excluded from rename transformation.
+
+Expected behavior:
+When renaming a template function:
+1. Collect all references: template definition, declarations, and all instantiated call sites (implicit/explicit template instantiations like `foo<int>`).
+2. Include all source files containing these references in the refactoring preview / target file list (including .cpp).
+3. Substitute the template function identifier at definition, declaration and all instantiated call sites consistently.
+4. The same API path for RenameSupport / CRenameProcessor must treat template function symbols as a unified symbol entity, just like plain functions.
+
+Underlying cause:
+CDT’s symbol index and reference finder separate the primary template symbol from its instantiated symbols.
+- Ordinary function: one single symbol entry, all references link to it.
+- Template function: primary template symbol and each instantiation (`foo<int>`, `foo<double>`) are stored as separate symbol entries inside CDT’s AST/index.
+When `CRenameProcessor` collects references for the primary template, it does **not traverse all instantiation symbol entries**.
+The reference search only looks for references to the primary template definition, but misses references to template instantiations in .cpp.
+Thus the .cpp file is omitted from the preview target list, and call sites remain unmodified after rename.
+This bug manifests when using RenameSupport API from plugin code; the root issue is template instantiation symbol linkage in CDT’s index, not a plugin coding error.
+*/

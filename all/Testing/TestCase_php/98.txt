@@ -1,0 +1,13 @@
+```
+<?php
+interface StorageInterface{}
+interface FileMetaInterface extends StorageInterface{
+    const CHUNK_SIZE = 4096; // Pull Up target
+}
+class LocalDisk implements StorageInterface{
+    const CHUNK_SIZE = 4096;
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target constant `CHUNK_SIZE` in interface `FileMetaInterface`, target destination: `StorageInterface`

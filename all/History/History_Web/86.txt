@@ -1,0 +1,31 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Make Method Static
+Refactoring Target: JS private instance method `#myFunction()` called via `this.#myFunction()` inside class
+Refactoring Scope: JavaScript, private class fields (# syntax)
+Trigger Operation: Run “Make method static” on `#myFunction`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+When converting private instance method `#myFunction()` to static private method, the refactoring updates the method definition to `static #myFunction() {}`, but rewrites call sites from `this.#myFunction()` into `MyClass.myFunction()` — it drops the `#` character in the call.
+The resulting code is invalid: static private members must still be referenced with `#`, like `MyClass.#myFunction()`. Missing `#` triggers the “Private member cannot be referenced without #-syntax” error.
+
+Expected behavior:
+After making `#myFunction` static, all call sites should be replaced with `MyClass.#myFunction()`, retaining the `#` token.
+
+Underlying cause:
+The “Make method static” visitor handles private method conversion incorrectly. It knows to add `static` modifier to the method declaration, but when rewriting `this.#name` into class-name-qualified access, it strips the `#` identifier marker, forgetting that private static identifiers still require the `#` prefix.
+*/
+
+// Complete compilable test code
+class MyClass {
+  #myFunction() {
+    return 123;
+  }
+
+  caller() {
+    return this.#myFunction();
+  }
+}

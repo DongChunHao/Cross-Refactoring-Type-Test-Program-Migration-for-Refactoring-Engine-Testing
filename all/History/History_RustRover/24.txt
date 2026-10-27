@@ -1,0 +1,20 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method / Extract Function
+Refactoring Target: Method chain expression including trailing semicolon
+Refactoring Scope: Expression selection with terminating semicolon
+Plugin Environment: IntelliJ Rust plugin 0.3.146.3826-211, CLion 2021.1.1, Rust 1.54.0-nightly, Windows 10
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select the full expression including the trailing `;` and run Extract method
+*/
+/* Error Root Cause:
+Observed failure: If the selection includes the trailing semicolon of an expression statement, Extract Method does not activate and performs no refactoring. When the semicolon is excluded from the selection, the refactor works normally.
+Expected behavior: The refactor should intelligently ignore the trailing semicolon when computing the extraction target, treat the underlying expression as the candidate, and show the extraction dialog.
+Extra improvement request: When extracting into a static method inside an impl block, prefer `Self::` over fully qualified type names at call sites.
+Underlying cause: The selection parser treats the semicolon as part of the candidate expression and rejects it, because the refactoring logic expects an expression rather than an expression statement.
+*/
+// Reproducer
+let result = data
+    .array_chunks()
+    .map(|data| Uuid::from_bytes(*data))
+    .collect_vec();

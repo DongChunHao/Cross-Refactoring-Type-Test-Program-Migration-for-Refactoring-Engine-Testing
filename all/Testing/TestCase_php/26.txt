@@ -1,0 +1,9 @@
+<?php
+interface TestInterface {
+}
+
+class Test implements TestInterface {
+    public function test()
+    {
+    }
+}

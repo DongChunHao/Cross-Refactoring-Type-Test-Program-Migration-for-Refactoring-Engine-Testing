@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: val_i
+'''
+void f() {
+int i; //{Rename variable i to val_i}
+if (i = 4) {
+int j = i;
+}
+}

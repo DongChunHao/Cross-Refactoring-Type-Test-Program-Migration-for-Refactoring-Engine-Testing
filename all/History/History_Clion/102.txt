@@ -1,0 +1,44 @@
+#include <string>
+
+// Forward declarations
+constexpr int CMDARG_NONE = 0;
+struct CmdFileContext {
+    std::string variable;
+    bool is_print_parameter();
+};
+
+/* Refactoring Settings:
+Refactoring type: Inline Method
+Refactoring target: Inline call to member function is_print_parameter() in cmdfiles.cpp line 1829
+Refactoring scope: Call site `if (is_print_parameter())` inside CmdFileContext member function
+Refactoring rule expectation: Inline body of is_print_parameter() and keep implicit member access `variable`, do not introduce artificial nullReceiver reference
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining is_print_parameter(), the generated code uses unresolved artificial `nullReceiver->variable` instead of plain `variable`.
+Expected behavior: Inlined code retains implicit this access to `variable` without introducing nullReceiver.
+Underlying cause: The refactoring engine incorrectly synthesizes a dummy null receiver variable named nullReceiver when expanding the member function body, then uses this dummy receiver to access member fields, producing invalid unresolved reference.
+*/
+
+bool CmdFileContext::is_print_parameter()
+{
+    return (variable == "printer")
+        || (variable == "printfile")
+        || (variable == "rleps")
+        || (variable == "colorps")
+        || (variable == "epsf")
+        || (variable == "title")
+        || (variable == "translate")
+        || (variable == "plotstyle")
+        || (variable == "halftone")
+        || (variable == "linefeed")
+        || (variable == "comport");
+}
+
+void CmdFileContext::someFunction()
+{
+    if (is_print_parameter())
+    {
+        return CMDARG_NONE;
+    }
+}

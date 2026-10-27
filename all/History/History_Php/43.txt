@@ -1,0 +1,20 @@
+<?php
+$b = 3;
+$a = function () use($b) { };
+?>
+
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: anonymous function; add new parameter $b
+Refactoring rule: When adding a new parameter to a closure, check for name collisions with variables captured by `use()` list. A parameter with the same name shadows the captured variable inside the closure; the refactoring should warn about this name hiding.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Adding parameter $b to the closure does not trigger a warning. After change signature, the signature becomes `function($b) use($b) {}`. Inside the closure body, $b refers to the function parameter, not the captured variable from use(), shadowing the original captured value.
+Expected behavior:
+Detect that the proposed new parameter name conflicts with a variable in the closure’s use list, show a warning that the parameter will shadow the captured variable.
+Underlying cause:
+Change Signature’s name collision validator only checks existing parameters and local variables inside the function body; it does not inspect the closure `use()` capture list for identifier conflicts.
+*/
+?>

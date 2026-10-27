@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring type: Extract to Local Variable (CLion Objective-C refactoring)
+Refactoring target: expression `pinchRecognizer.scale` inside `NSLog(@"%f", pinchRecognizer.scale);`
+Operation: Invoke "Extract to Local Variable" refactoring on `pinchRecognizer.scale`
+Scope: Preserve original program semantics; do not rewrite the later assignment `pinchRecognizer.scale = 1;` into assignment to extracted local variable
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extracting to local variable, refactoring incorrectly replaces `pinchRecognizer.scale = 1;` with `scale = 1;`. The local variable `scale` is a separate stack variable, so this assignment no longer modifies the property on pinchRecognizer, breaking program semantics.
+Expected behavior: Only substitute the read occurrence inside NSLog, keep `pinchRecognizer.scale = 1;` untouched. Valid result:
+CGFloat scale = pinchRecognizer.scale;
+NSLog(@"%f", scale);
+pinchRecognizer.scale = 1;
+Underlying cause: The refactoring’s variable substitution logic treats all simple identifier `scale` tokens as references to the new local variable, instead of distinguishing between reading `pinchRecognizer.scale` and assigning to the object’s property. It fails to track that the later assignment targets the object property, not the newly created local variable.
+*/
+
+#import <UIKit/UIKit.h>
+typedef CGFloat double;
+
+void demo(UIPinchGestureRecognizer *pinchRecognizer) {
+    NSLog(@"%f", pinchRecognizer.scale);
+    pinchRecognizer.scale = 1;
+}

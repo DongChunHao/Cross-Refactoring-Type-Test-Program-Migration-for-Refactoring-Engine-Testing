@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Z {
+x = 1;
+y = 2;
+main() {
+return this.x + this.y; //{Move Method target expression fragment within main}
+}
+}
+class Z2 {
+static x = 1;
+static y = 2;
+static main() {
+return this.x + this.y; //{Move Method target expression fragment within static main}
+}
+}

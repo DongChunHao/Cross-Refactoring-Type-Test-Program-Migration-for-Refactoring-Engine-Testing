@@ -1,0 +1,24 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+using System;
+
+class InlineBug
+{
+private bool _done = false;
+public string F1()
+{
+return _done ? "Always get this" : F2();
+}
+private string F2() //{Move Method: refactor target method invoked inside ternary operand}
+{
+_done = true;
+DoSomeStuff();
+return "Never get this";
+}
+private void DoSomeStuff()
+{
+throw new NotImplementedException();
+}
+}

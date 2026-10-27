@@ -1,0 +1,16 @@
+/* Refactoring Settings:
+Refactoring Type: Rename (Shift+F6)
+Refactoring Target: Variable `hello`
+Refactoring Scope: Rust, `format!` macro with named format placeholder inside string literal
+Plugin Environment: IntelliJ Rust plugin
+Trigger Operation: Select the variable definition, run Shift+F6 rename to change variable name
+*/
+/* Error Root Cause:
+Observed failure: Rename refactor skips the named variable placeholder `{hello:?}` inside the string literal of `format!("{hello:?}")`. Additionally, the placeholder text is not highlighted when the variable is selected.
+Expected behavior: Identifiers used as named format placeholders inside `format!` string literals should be treated as variable references, included in rename scope, and highlighted along with other usages of the variable.
+Underlying cause: The plugin’s reference resolver does not parse named format placeholders within the macro’s string literal as symbol references. The content of the format string is treated as raw text instead of resolved variable usages, so rename and highlight ignore these placeholders.
+*/
+fn main() {
+    let hello: &str = "hello";
+    format!("{hello:?}");
+}

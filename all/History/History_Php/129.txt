@@ -1,0 +1,33 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Rename (interface)
+Refactoring target: My\Project\Api\MyInterface
+Scope: related file name sync logic for implementing classes
+Refactoring operation: rename MyInterface to MyOrderInterface
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming the interface `MyInterface` to `MyOrderInterface`, the rename refactoring incorrectly tries to modify the filename of the implementing class file `Order.php`.
+The rename preview shows a broken proposed rename `Order.phpOrder` — it appends the new interface name onto the existing filename instead of only modifying the interface’s own file `MyInterface.php`.
+The refactoring correctly updates the interface name inside `Order.php`, but the file-rename logic mistakenly treats the implementing class’s source file as something that should be renamed along with the interface.
+
+Expected behavior:
+1. Only rename the interface’s own file: `MyInterface.php` → `MyOrderInterface.php`.
+2. Update all references and `use` statements for the interface in implementing classes (Order.php).
+3. Do NOT propose renaming the source files of classes that merely implement this interface.
+File name synchronization should only apply to the interface’s own file, not its implementors.
+
+Underlying cause:
+The rename refactoring’s “rename file together with type” feature has an overly broad scope. It incorrectly collects implementing-class files into the set of files to rename, rather than limiting file rename logic strictly to the file that defines the renamed interface type. The filename concatenation bug `Order.phpOrder` comes from flawed string concatenation in the file-rename preview when applying the new type name to unrelated files.
+*/
+
+// Api/MyInterface.php
+namespace My\Project\Api;
+interface MyInterface { }
+
+// Model/Order.php
+namespace My\Project\Model;
+use My\Project\Api\MyInterface;
+class Order implements MyInterface { }
+?>

@@ -1,0 +1,16 @@
+```
+<?php
+namespace LogStorage;
+class LogRecord { }
+
+namespace App;
+use LogStorage\LogRecord as Rec;
+class Logger {
+    static function write(Rec $rec, string $msg)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `write()` from class `Logger` (namespace `App`) to class `LogRecord` (namespace `LogStorage`)

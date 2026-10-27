@@ -1,0 +1,74 @@
+// go.mod
+// module awesomeProject13
+// go 1.12
+
+// source.go
+package awesomePackage13
+
+import "fmt"
+
+/* Refactoring Settings:
+Refactoring type: Extract Interface
+Refactoring target: Extract interface from type InMemoryItemStorage
+Refactoring scope: Methods Load and Save of InMemoryItemStorage
+Refactoring destination: New separate folder/file with its own package; Go module name is awesomeProject13 while source package name is awesomePackage13 (different names)
+Refactoring rule: Generate correct package references in extracted interface file, respect source package name instead of module name, suppress false unused import warnings.
+*/
+
+/* Error Root Cause:
+Observed failure: After extracting the interface to a separate package, the generated import statement is syntactically correct, but type references use the module name `awesomeProject13` instead of the actual source package name `awesomePackage13`. The unused import inspection also triggers a false positive warning on the valid import.
+Expected behavior: The extracted interface file references types using the source package name `awesomePackage13`; the import inspection recognizes the import is used and does not mark it as unused.
+Underlying cause: The Extract Interface logic confuses Go module name with the actual package name. It resolves imports and type qualifiers against the module path rather than the declared package name of the imported source file. The unused import inspection shares this faulty resolution and produces a false positive.
+*/
+
+type (
+	Item struct {
+		ID    string
+		Price int
+	}
+
+	InMemoryItemStorage struct {
+		items map[string]Item
+	}
+
+	DatabaseItemStorage struct {
+		itemsCache map[string]Item
+	}
+)
+
+func (imis *InMemoryItemStorage) Load(id string) (*Item, error) {
+	panic("implement me")
+}
+
+func (imis *InMemoryItemStorage) Save(Item Item) error {
+	panic("implement me")
+}
+
+func (dis *DatabaseItemStorage) Load(id string) (*Item, error) {
+	_ = ItemProcessor
+	panic("implement me")
+}
+
+// Expected extracted interface file (separate package)
+/*
+package storage
+
+import "awesomeProject13"
+
+type ItemStorage interface {
+	Load(id string) (*awesomePackage13.Item, error)
+	Save(Item awesomePackage13.Item) error
+}
+*/
+
+// Bad generated extracted interface file produced by refactoring
+/*
+package storage
+
+import "awesomeProject13"
+
+type ItemStorage interface {
+	Load(id string) (*awesomeProject13.Item, error)
+	Save(Item awesomeProject13.Item) error
+}
+*/

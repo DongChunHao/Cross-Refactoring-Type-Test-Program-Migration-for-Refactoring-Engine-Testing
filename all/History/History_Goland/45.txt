@@ -1,0 +1,56 @@
+package main
+
+import "fmt"
+
+/* Refactoring Settings:
+Refactoring type: Add return value quick-fix
+Refactoring target: Function `finder(mine [5]string)`; call site `foundOre := finder(theMine)` expects a return value
+Refactoring rule: When adding a return type to a function, keep existing local variables and use the correct local variable as the return operand.
+*/
+
+/* Error Root Cause:
+Observed failure: The quick fix detects that `finder` is being assigned to `foundOre`, so it adds a return type `[]string` to `finder`. Instead of producing `return r`, it may alter or drop the local variable `r`, breaking the assignment `foundOre := finder(theMine)`.
+Expected behavior: Update function signature to `func finder(mine [5]string) []string` and keep `return r;` intact.
+Underlying cause: The quickfix logic for adding return values does not scan the function body to find the appropriate existing variable to return; it blindly rewrites the return statement without respecting existing local declarations.
+*/
+
+func finder(mine [5]string) {
+	var r []string
+	for _, v := range mine {
+		if v == "ore" {
+			r = append(r, v)
+		}
+	}
+	return r
+}
+
+func main() {
+	theMine := [5]string{"rock", "ore", "ore", "rock", "ore"}
+	foundOre := finder(theMine)
+	fmt.Println(foundOre)
+}
+
+// Expected correct refactored result
+/*
+func finder(mine [5]string) []string {
+	var r []string
+	for _, v := range mine {
+		if v == "ore" {
+			r = append(r, v)
+		}
+	}
+	return r
+}
+*/
+
+// Bad actual refactored result (variable r ignored/discarded)
+/*
+func finder(mine [5]string) []string {
+	for _, v := range mine {
+		if v == "ore" {
+			r = append(r, v)
+		}
+	}
+	return // or a newly created slice literal, losing var r
+}
+*/

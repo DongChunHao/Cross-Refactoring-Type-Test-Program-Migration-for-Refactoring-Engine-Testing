@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Caller struct{}
+func (c Caller) runCall() { // move runCall method from Caller to standalone function
+f := func(string) int { return 42 }
+f("a-constant")
+}
+func main() {
+caller := Caller{}
+caller.runCall()
+}

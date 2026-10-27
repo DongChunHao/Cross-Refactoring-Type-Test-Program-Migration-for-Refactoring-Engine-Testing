@@ -1,0 +1,18 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+void foo(int(*)());
+class Base
+{
+public:
+virtual void bar() {}
+};
+class Impl : public Base //{Push down bar implementation from Base to Impl}
+{
+public:
+void bar() override {
+int(*fp1)();
+foo(fp1);
+}
+};

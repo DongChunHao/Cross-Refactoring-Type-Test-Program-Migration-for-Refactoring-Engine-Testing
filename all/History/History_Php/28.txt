@@ -1,0 +1,30 @@
+<?php
+namespace NS1\NS2 {
+    use NS1\NS2 as BAR;
+    class A2
+    {
+    }
+    class T implements BAR\Ns3\I1{
+    }
+}
+
+namespace NS1\NS2\NS3 {
+    interface I1{}
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class T, target namespace N
+Refactoring rule: When moving a class that relies on namespace alias imports (use X as Alias), the refactoring must resolve the original fully qualified type instead of naively copying short names or guessing leaf namespace segments. It must preserve the original type resolution semantics in the new namespace.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving T to namespace N, the refactoring incorrectly adds `use NS1\NS2\Ns3\I1;` and keeps the original `BAR\Ns3\I1` in the implements clause. In namespace N, alias BAR is not defined, so `BAR\Ns3\I1` cannot be resolved. The added use statement is mismatched and unused.
+Expected behavior:
+Either import `use NS1\NS2 as BAR;` in namespace N and retain `BAR\Ns3\I1`, or rewrite the type reference to the fully qualified form `\NS1\NS2\NS3\I1`.
+Underlying cause:
+The refactoring’s type resolution only extracts the final leaf class/interface name and constructs a naive use statement. It does not track namespace aliases created by `use ... as`; it treats `BAR\Ns3\I1` as a simple identifier chain instead of expanding the alias BAR back to its original namespace `NS1\NS2`.
+*/
+?>

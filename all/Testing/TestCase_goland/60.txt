@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package bad_refactor_sample
+type Parser struct {
+Patterns []string
+}
+func (p *Parser) oldCompile() error {
+return nil
+}
+func testLogic() {
+p := &Parser{Patterns: []string{}}
+assert.NoError(t, p.oldCompile()) // rename method oldCompile to Compile
+}

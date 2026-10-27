@@ -1,0 +1,32 @@
+<?php
+class C { }
+class A0{
+    protected static function g(){
+    }
+}
+class A extends A0 {
+    static function f()
+    {
+        A0::g();
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static function f() from class A to class C
+Refactoring rule: When moving a static method to a new destination class, analyze all member accesses inside the method body. If the body references:
+1. protected members (methods/fields) from parent classes of the original source class
+2. private members (methods/fields) declared in the original source class
+the refactoring must emit a warning, because the destination class will not have the required visibility to access those members after relocation.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Moving static f() from A to C proceeds with no warning. After the move, C::f() still contains `A0::g();`. Since `A0::g()` is protected, and C is not a subclass of A0, this call becomes a PHP fatal visibility error. The same issue applies to protected properties, and private members defined in the original source class A.
+
+Expected behavior:
+Traverse the body of the method being moved and resolve each accessed member’s visibility relative to the **target class C**, not the original source class A. If any accessed member becomes inaccessible in the new context, warn the user that the moved method will have visibility violations at runtime.
+
+Underlying cause:
+The visibility validation check runs against the original lexical scope (class A) only. It does not re-evaluate access permissions using the destination class as the new caller scope after the method is moved.
+*/

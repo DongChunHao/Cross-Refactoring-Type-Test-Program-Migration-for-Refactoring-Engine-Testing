@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding literal value for extract‑constant declaration‑kind bug scenario}
+if (b) {console1.log('lala');}
+var year = 1998;
+}

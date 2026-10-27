@@ -1,0 +1,35 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: JSX element <div><div>baz</div></div>
+Refactoring Scope: Render method inside React component class Blah
+Trigger Operation: Select the target JSX fragment in render(), run Refactor -> Extract -> Method.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After extraction, the call site uses `{extracted()}` instead of `{this.extracted()}` to invoke the new class method.
+Expected behavior: The refactoring engine should generate a class member method `extracted()` and invoke it with `this.extracted()` inside the JSX.
+Underlying cause: The Extract Method logic for JSX inside React class components fails to add the `this.` receiver when calling the newly created class method in the JSX expression.
+*/
+
+// Complete compilable React class component test code
+import React, { Component } from 'react';
+
+export default class Blah extends React.Component {
+    render() {
+        return (
+            <div>
+                <div>
+                    <div>foo</div>
+                </div>
+                <div>
+                    <div>bar</div>
+                </div>
+                <div>
+                    <div>baz</div>
+                </div>
+            </div>
+        )
+    }
+}

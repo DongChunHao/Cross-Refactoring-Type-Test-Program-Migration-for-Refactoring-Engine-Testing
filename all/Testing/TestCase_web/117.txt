@@ -1,0 +1,7 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+function test2222() { } //{Move Method target function with code reference and string‑literal occurrence of identifier}
+test2222()
+console.log('test2222')

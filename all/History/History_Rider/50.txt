@@ -1,0 +1,43 @@
+/* Refactoring Settings:
+Refactoring Type: Move Static Members (F6 Move method on static C# method)
+IDE: Rider 2022.3.1 RD-223.8214.53
+Symptom:
+User invokes F6 on static method, selects target type, clicks Next, dialog closes, refactoring does nothing (silent failure).
+Backend log exception: ElementFactoryException: Cannot create statement '.Responses();'
+*/
+
+/* Error Root Cause
+The crash point is inside `RemoveQualification` in the move-static-members refactoring:
+1. Rider’s refactoring engine walks all references to the static method being moved.
+2. It tries to strip the old type qualifier from call sites, to update them to point to the new target type.
+3. To rewrite the reference, it uses `CSharpElementFactory.CreateStatement` with fragment `.Responses();`.
+4. This is invalid partial C# syntax — you cannot parse/construct a statement starting with a bare dot. The C# element factory throws `ElementFactoryException`.
+5. The refactoring has no exception handling for this parse failure; the entire refactoring transaction aborts silently with no UI error message, and no source changes are saved.
+
+This occurs when the call site uses a **conditional access / chained method call structure** that leaves a receiverless dotted expression fragment after removing the original qualifier, for example:
+`someObj.Foo().Responses();`
+If `Foo()` was the static method being moved, the refactoring tries to delete `Foo()`'s qualifier and is left with the dangling `.Responses()` fragment, which is not a valid standalone statement/expression for the PSI factory to construct.
+
+Key stack trace function:
+`MoveStaticMembersRefactoring.TryRemoveQualification` → `RemoveQualification` → factory fails to create statement from `.Responses();`
+*/
+
+/* Reproduction Steps
+1. Have a static method inside a class.
+2. Call that static method in a chained expression like `Receiver.StaticMethod().Responses();`
+3. Place caret on static method name, press F6 (Move).
+4. Pick a destination type for the static method.
+5. Click Next, dialog disappears, nothing is modified.
+Logs capture `Cannot create statement '.Responses();'`.
+
+Expected Behavior
+1. Detect that removing the old qualifier would produce invalid syntax.
+2. Show a conflict warning in the refactoring UI instead of silently crashing.
+3. Either skip rewriting that reference with a user warning or emit valid rewritten syntax.
+4. Never abort the whole refactoring silently with no notification.
+
+Workarounds
+1. Manually rewrite chained call sites to a temporary local variable to break the dotted chain before running Move Static Members:
+```csharp
+var temp = Receiver.StaticMethod();
+temp.Responses();

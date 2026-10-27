@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+class AccountingDepartment {
+name;
+printName() {
+console.log("Department name: " + this.name);
+}
+printMeeting() {
+console.log("The Accounting Department meets each Monday at 10am.");
+}
+generateReports() { //{Extract Method target member for secondary extract‑superclass operation on already‑subclassed class}
+console.log("Generating accounting reports...");
+}
+}

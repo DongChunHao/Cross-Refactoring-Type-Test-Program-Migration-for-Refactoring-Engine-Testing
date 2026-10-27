@@ -1,0 +1,25 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding interface‑class‑subclass hierarchy with polymorphic arrow‑function class fields}
+interface IFoo {
+anArrow: (bar: string, foo: number) => void
+}
+class FooBase implements IFoo {
+anArrow = (bar, foo) => {
+console.log("FooBase" + foo + bar + foo);
+};
+}
+class FooImpl extends FooBase {
+anArrow = (bar: string, foo: number): void => {
+console.log("FooImpl" + bar + foo);
+};
+}
+var fooImpl: FooImpl = new FooImpl();
+fooImpl.anArrow("1", 1);
+var fooBase: FooBase = new FooBase();
+fooBase.anArrow("2", 2);
+var iFoo: IFoo = fooImpl;
+iFoo.anArrow("3", 3);
+}

@@ -1,0 +1,8 @@
+package main
+
+func main() {
+	x := 999
+	for i := 0; i < 999; i++ { // select "Replace all two occurences" here and type "i2" for variable name
+		println(x)
+	}
+}

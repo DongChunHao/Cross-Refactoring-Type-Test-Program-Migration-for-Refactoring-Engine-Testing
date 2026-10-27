@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn f(x: bool) -> bool { !x } //{change function f metadata, retain parameter name x prone to scope shadowing during inlining}
+fn g() {
+f(true) && f(false);
+}

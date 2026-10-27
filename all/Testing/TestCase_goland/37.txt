@@ -1,0 +1,23 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pkg
+import (
+"context"
+)
+type Impl struct{}
+func (i Impl) Value(val int) Value {
+return Value{Value: val}
+}
+func F(ctx context.Context, a, b string) string {
+impl := Impl{}
+return a + b + impl.Value(10).String() // move Value method from Impl to standalone function
+}
+type Value struct {
+Value int
+}
+func (v Value) String() string { return "" }
+type Interface interface {
+Value(val int) Value
+}

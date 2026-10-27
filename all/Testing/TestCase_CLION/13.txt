@@ -1,0 +1,16 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+namespace test2 {
+struct foo {
+static void run(); //{Change method signature of run, add int parameter}
+};
+}
+using namespace test2;
+void foo::run() { }
+int main() {
+using namespace test2;
+foo::run();
+return 0;
+}

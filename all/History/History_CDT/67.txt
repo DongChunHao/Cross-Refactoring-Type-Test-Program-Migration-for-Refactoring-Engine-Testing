@@ -1,0 +1,44 @@
+int GlobalVar_0 = 2;
+float func_0 ( ){
+	float LocalVar_0 = 2;
+	return LocalVar_0;
+}
+float Function_0 (  float LocalVar_0){
+	return LocalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring(global variable rename)
+Refactoring Target: global variable `GlobalVar_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select global variable GlobalVar_0, invoke Rename refactoring, input string `*old` containing asterisk special symbol as new name.
+Related bug pattern: Eclipse CDT Bug #435129 family
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts rename candidate `*old` with pointer asterisk `*`.
+Unintended extraction‑promotion behaviour occurs: tool creates top‑level static‑const pointer declaration `static const int *old = 2;`.
+Original global variable `GlobalVar_0` is kept, its initializer replaced to `GlobalVar_0 = *old;`.
+All reference sites of original global variable inside func_0 are substituted to `*old`.
+Function_0 formal parameter `LocalVar_0` remains untouched (lexical scope handling correct).
+
+Multiple defects:
+1. Lexical defect: accept special symbol `*` inside rename candidate name. Asterisk becomes pointer declarator in generated declaration.
+2. Incorrect transformation logic: global‑variable rename is supposed to substitute identifier everywhere, instead CDT creates an extra static‑const pointer variable and rewrites all usages into pointer‑dereference expression `*old`.
+3. Severe type‑safety & runtime hazard: `static const int *old = 2;` assigns integer value 2 to pointer variable, this converts integer into memory address. Dereferencing `*old` accesses invalid memory address, leads to segmentation fault at runtime.
+4. Original global variable is not renamed away; it is retained and assigned with dereferenced pointer value, program semantics are completely changed.
+Refactoring finishes without warning, outputs compilable‑but‑faulty code.
+
+Expected behavior:
+1. Early lexical validation: reject candidate containing special symbol `*`, abort rename and output error message.
+2. Global‑variable rename should only perform identifier token replacement across all reference sites. Must not create additional static‑const pointer variable, must not rewrite variable usages as pointer dereference expressions.
+3. Must preserve original variable entity; should not introduce extra indirection layers that change runtime behaviour.
+
+Underlying cause:
+1. Missing lexical validation: inputs containing declarator/operator symbols are not filtered.
+2. CDT rename refactoring control‑flow bug: invalid rename inputs trigger wrong transformation branch (extract‑to‑constant), even for global variables, not only for local variables. The tool builds pointer‑typed static‑const entity and injects dereference operations instead of simple identifier substitution.
+*/

@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring type: Rename (Shift+F6) C++ refactoring
+Refactoring target: member field `f` inside class Foo
+Operation: Trigger rename refactoring on `int f;` member of Foo
+Scope: Rename refactoring cross-template instantiation; find references to Foo::f inside templated function `test<T>` where T is Foo
+*/
+
+/* Error Root Cause:
+Observed failure: After renaming member `f` in Foo, the expression `t.f;` inside templated function `test<T>` is not updated. When instantiated with `T=Foo`, this reference becomes invalid and causes compilation error.
+Expected behavior: Recognize that `t.f` refers to Foo::f when T is Foo, update `t.f` to the new member name in the templated function body.
+Underlying cause: The rename reference collector does not resolve dependent name lookups inside uninstantiated template functions. The PSI treats `t.f` as an unresolved dependent member access and skips it during rename search, so the reference inside template `test<T>` is not detected and modified.
+*/
+
+template <typename T> void require_equal(T expected, T actual) {}
+
+class Foo {
+public:
+    explicit Foo(int i) : f(i) {}
+    int f; // rename f
+};
+
+template <class T> int test(T t) { return t.f; }
+
+int main() {
+    require_equal(3, test<Foo>(Foo{2}));
+    return 0;
+}

@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: printValue
+'''
+#include <iostream>
+template 
+class testT{
+public:
+testT() {}
+virtual ~testT(){}
+void print(T t) { //{Rename method print to printValue}
+std::cout << t << std::endl;
+}
+};
+int main() {
+testT<int> tt;
+tt.print(1);
+}

@@ -1,0 +1,12 @@
+```
+<?php
+class MathBase {
+    const PI_APPROX = 3.1415;
+}
+class Circle extends MathBase {
+}
+class Sphere extends MathBase {
+}
+```
+
+【Refactoring Action】: Push Down class constant `PI_APPROX` from parent class `MathBase` to both child classes `Circle` and `Sphere`.

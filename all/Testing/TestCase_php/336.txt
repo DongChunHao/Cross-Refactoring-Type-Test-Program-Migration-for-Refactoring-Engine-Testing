@@ -1,0 +1,31 @@
+```
+<?php
+final class ClassA {
+    public function someMethod() { }
+}
+final class ClassB {
+    public function someMethod() { }
+}
+final class SomeOtherClass {
+    private ClassA $a;
+    private ClassB $b;
+    public function testSomething()
+    {
+        $this->a = $this->process(new ClassA());
+        $this->b = $this->process(new ClassB());
+        $this->a->someMethod();
+        $this->b->someMethod();
+    }
+    /**
+     * @param ClassA|ClassB $obj
+     * @return ClassA|ClassB
+     */
+    public function process($obj)
+    {
+        return $obj;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Rename method on `ClassA::someMethod()`, rename to `someMethodA`.

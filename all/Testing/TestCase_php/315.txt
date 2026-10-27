@@ -1,0 +1,14 @@
+```
+<?php
+class A { }
+$c = new class(){
+    public function f()
+    {
+        return 55;
+    }
+};
+$c->f();
+?>
+```
+
+【Refactoring Action】: Place caret on method `f` inside anonymous class; invoke Move Instance Method refactoring to move `f()` into named class `A`.

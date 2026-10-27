@@ -1,0 +1,18 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Documentation content gap; topic describes Extract‑Superclass concept but lacks runnable Python before‑after sample for two classes with duplicate constructor and method members
+class Order:
+def **init**(self, order_id: int):
+self.order_id = order_id
+def get_identifier(self) -> int:
+return self.order_id
+def calculate_total(self) -> float:
+return 0.0
+class RefundOrder: // REFACTOR_TARGET
+def **init**(self, order_id: int):
+self.order_id = order_id
+def get_identifier(self) -> int:
+return self.order_id
+def calculate_refund_amount(self) -> float:
+return 0.0
+def stub_helper():
+pass

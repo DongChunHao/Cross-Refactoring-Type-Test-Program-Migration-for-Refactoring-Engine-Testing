@@ -1,0 +1,27 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: C::f()
+Scope: return type language version validation and error reporting
+Refactoring operation: PHP 7.4 language level, enter `static` as return type
+*/
+
+/* Error Root Cause:
+Observed failure:
+PHP 7.4 does not support `static` as a return type; `static` return type was introduced in PHP 8.0.
+When language level is set to 7.4 and user inputs `static` in the Change Signature dialog, the refactoring either accepts it silently and generates invalid code, or fails with a generic exception instead of a clear, version-specific error message.
+
+Expected behavior:
+1. Validate the entered return type against the project’s PHP language level inside the Change Signature dialog.
+2. Detect that `static` return type is unavailable in PHP 7.4.
+3. Display a descriptive error message: "Return type 'static' requires PHP 8.0 or newer; current project language level is PHP 7.4."
+4. Prevent applying the refactoring until the type is changed or the language level is upgraded.
+
+Underlying cause:
+The type parser inside Change Signature does not perform language-level capability checks for return type keywords like `static`. It only checks syntactic validity, not whether the feature exists in the selected PHP version.
+*/
+class C{
+    public function f()
+    {}
+}
+?>

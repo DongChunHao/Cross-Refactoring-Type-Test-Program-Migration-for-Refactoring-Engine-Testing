@@ -1,0 +1,22 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type holder struct {
+a int
+}
+func (h holder) wrappedBaz() int {
+return baz(h.a)
+}
+func Foo() int {
+v := holder{a: 0}
+x := v.wrappedBaz() // move wrappedBaz to be a standalone function
+return x
+}
+func baz(a int) int {
+return a
+}
+func main() {
+_ = Foo()
+}

@@ -1,0 +1,25 @@
+/* Refactoring Settings:
+Refactoring type: Move class into namespace
+Refactoring target: Move class `enclose` into namespace N
+Refactoring rule expectation: Preserve global scope resolution operator `::x`. Do not generate invalid syntax `:: ::x` (double colon pair separated by space).
+*/
+
+/* Error Root Cause:
+Observed failure: After moving class into namespace N, CLion incorrectly rewrites `::x` → `:: ::x`. The syntax `:: ::x` is invalid C++; only a single leading `::` denotes global namespace lookup.
+Expected result inside N::enclose::f():
+i = x;
+int j = ::x;
+::x = i;
+
+Underlying cause: The refactoring’s scope-qualification logic mishandles existing global scope resolution operator `::`. It thinks it needs to add an extra namespace qualifier when inside the new namespace scope, and mistakenly inserts an additional `::` before the existing `::`, creating redundant, broken double `:: ::`.
+*/
+
+int x;
+class enclose {
+    int x;
+    void f(int i) {
+        i = x;
+        int j = ::x;
+        ::x = i;
+    };
+};

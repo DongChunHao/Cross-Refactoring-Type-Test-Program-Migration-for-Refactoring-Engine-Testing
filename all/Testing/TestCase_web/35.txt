@@ -1,0 +1,20 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+type State = {
+entities: Record<string, { children: string[] }>;
+};
+declare const entityAdapter: {
+updateOne: <T>(opts: { id: string; changes: Partial<T> }, state: T) => T;
+};
+class Wrapper {}
+const updateParent = (state: State, parentName: string, name: string): State => { //{Move Method target arrow‑function variable updateParent}
+const parent = state.entities[parentName];
+return entityAdapter.updateOne({
+id: parentName,
+changes: {
+children: parent.children.concat(name)
+}
+}, state);
+}

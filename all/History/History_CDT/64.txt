@@ -1,0 +1,50 @@
+void test(bool cond) {
+    int x, y;
+    (cond ? x : y) = 1 + 2;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring (C++ only, because this uses lvalue ternary operator)
+Refactoring Target: expression `(cond ? x : y)` inside the assignment statement
+IDE: Eclipse CDT
+Operation steps: Select expression `(cond ? x : y)`, invoke Extract Local Variable refactoring.
+*/
+
+/*
+Observed failure:
+The generated code after refactoring:
+void test(bool cond) {
+    int x, y;
+    int extracted = cond ? x : y;
+    extracted = 1 + 2;
+}
+
+The original statement `(cond ? x : y) = 1 + 2;` relies on the C++ rule: the ternary conditional operator `?:` can produce an lvalue when both branches are lvalues of the same type.
+The original code means: evaluate cond, then assign `1+2` into either variable x or y (depending on cond).
+
+The refactoring creates a separate copy `int extracted = cond ? x : y;` — this copies the value of x or y into a new local variable extracted.
+Then `extracted = 1+2;` only modifies this temporary extracted variable, **not the original x or y**.
+The original write-to-target semantics are completely lost.
+The tool infers value type `int` instead of reference type `int&`.
+
+Expected behavior:
+For C++ lvalue ternary expression extraction:
+1. Recognize that `cond ? x : y` yields an lvalue reference.
+2. Declare extracted variable as reference type: `int& extracted = cond ? x : y;`
+3. Preserve the original assignment semantics: `extracted = 1 + 2;` will write back to either x or y as intended.
+Correct output:
+void test(bool cond) {
+    int x, y;
+    int& extracted = cond ? x : y;
+    extracted = 1 + 2;
+}
+*/
+
+/*
+Underlying cause:
+CDT’s expression type analysis only computes the **value type (int)** rather than the **value category (lvalue/rvalue)** of the expression.
+The refactoring logic assumes all expressions produce rvalues and creates a plain value variable (copy semantics).
+It does not track whether the selected expression is an lvalue that can be used as the left-hand side of assignment.
+The type inference engine ignores lvalue-reference qualification for ternary operator, leading to loss of mutation semantics after extraction.
+*/

@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+class Z {
+x = 1;
+y = 2;
+main() { //{Change Method target instance method main, modify static modifier}
+return this.x + this.y;
+}
+}
+class Z2 {
+static x = 1;
+static y = 2;
+static main() { //{Change Method target static method main, modify static modifier}
+return this.x + this.y;
+}
+}

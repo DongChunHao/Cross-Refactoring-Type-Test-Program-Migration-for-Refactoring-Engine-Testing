@@ -1,0 +1,7 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper function enclosing {x:x} identity destructuring pattern}
+const { x: x } = { x: 7, y: 3 };
+}

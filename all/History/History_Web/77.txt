@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Constant
+Refactoring Target: Literal substring/value inside the code block
+Refactoring Scope: JavaScript
+Trigger Operation: Run Extract Constant on literal value
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The “Extract Constant” refactoring does not enforce the use of `const`. Instead it reuses the variable declaration kind (`var`) from the older Extract Variable logic, producing `var year = 1998;` rather than `const year = 1998;`.
+
+Expected behavior: Extract Constant should always generate a `const` declaration for the extracted literal constant, matching the intent of the refactoring action.
+
+Underlying cause: The implementation for Extract Constant shared too much code with Extract Variable, inheriting the declaration kind selection logic from Extract Variable instead of hardcoding `const`.
+*/
+
+// Complete compilable test code
+if (b) {console1.log('lala');}
+var year = 1998;

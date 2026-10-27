@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack1
+func foo() {
+var s1, s string = bar()
+ignoreVals(s1, s) // extract blank assignment into ignoreVals
+}
+func ignoreVals(s1, s string) {
+_, _ = s1, s
+}
+func bar(s string) (s1 string) {
+return ""
+}

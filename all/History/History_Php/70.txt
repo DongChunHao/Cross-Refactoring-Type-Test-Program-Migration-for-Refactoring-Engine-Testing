@@ -1,0 +1,26 @@
+<?php
+namespace Test;
+class Foo{
+}
+class Bar{
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class Bar from namespace Test to namespace TestMe
+Refactoring rule: When the new namespace is a string that starts with the original namespace name (original: Test, new: TestMe), the automatic target directory calculation must treat TestMe as a fully separate namespace, not as a subdirectory appended to Test. The target folder path should map to the full namespace name, not do prefix matching on the old namespace.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Source: Test/Foo.php, class Bar in namespace Test.
+User changes the target namespace to TestMe.
+The IDE incorrectly treats TestMe as if it is a child/sub-namespace of Test, and computes target path as Test/TestMe/Bar.php.
+Expected path is TestMe/Bar.php, matching PSR namespace-to-directory mapping for the complete new namespace TestMe.
+
+Expected behavior:
+Calculate the output file path using the entire new namespace string. Do not perform prefix matching against the source namespace. Namespace `TestMe` maps to directory `TestMe/`, independent of `Test`.
+
+Underlying cause:
+The directory inference logic uses simple string prefix matching. When the new namespace starts with the characters of the old namespace, it incorrectly appends the suffix to the original source directory instead of using the full new namespace for root directory resolution.
+*/

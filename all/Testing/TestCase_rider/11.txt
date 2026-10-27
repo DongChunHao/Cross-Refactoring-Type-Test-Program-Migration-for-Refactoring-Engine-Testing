@@ -1,0 +1,24 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+using UnityEngine;
+using NUnit.Framework;
+
+public class Tilemap3DTests
+{
+public static Vector3Int ToChunkCoord(Vector3Int coord, Vector2Int chunkSize) => //{Extract Method: trigger refactoring on cross‑assembly context static method}
+new(coord.x / chunkSize.x, coord.y, coord.z / chunkSize.y);
+[Test]
+public void ChunkCoordConversionTest()
+{
+}
+}
+
+public static class Grid3DUtility
+{
+public static Vector3Int WorldToGridPosition(Vector3 worldPos)
+{
+return Vector3Int.RoundToInt(worldPos);
+}
+}

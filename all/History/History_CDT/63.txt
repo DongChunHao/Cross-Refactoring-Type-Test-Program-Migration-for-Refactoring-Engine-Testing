@@ -1,0 +1,42 @@
+#include <iostream>
+
+template<typename Func> void printMyInt(Func func) {
+	std::cout << "result: " << func();
+}
+
+int main() {
+	printMyInt([]() {return 1;});
+	return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring (C++11 / C++0x lambda)
+IDE: Eclipse CDT, project compile flag -std=c++0x
+Operation steps: Select the full expression `printMyInt([]() {return 1;});` inside main(), invoke Extract Function refactoring.
+Observed error message popup: "Extracting 'return' statements is not supported".
+*/
+
+/*
+Observed failure:
+The selected code fragment is a single function call `printMyInt(...)`, whose argument is a C++0x lambda `[](){return 1;}`.
+The return statement `return 1;` lives **inside the lambda body**, not inside the code scope being extracted.
+CDT’s extract-function analysis naively scans the AST and finds any `return` token within the text range of the selected region.
+It treats the return inside the lambda body as if it were a return belonging to the outer scope that would be extracted into the new function.
+Thus it incorrectly rejects the refactoring and emits the error message, even though extracting the outer call expression is semantically valid.
+
+Expected behavior:
+When scanning for return statements during Extract Function:
+1. Distinguish the lexical/text position of return statements and their **AST scope context**.
+2. Ignore return statements that are nested inside child scopes such as lambdas, nested classes, or nested template definitions.
+Only flag return statements that belong directly to the target code block being extracted (returns that would exit the newly created extracted function).
+In this example, the `return 1;` belongs to the lambda’s own function body, not the outer code to extract. The refactoring should be permitted.
+*/
+
+/*
+Underlying cause:
+CDT’s pre-check for extract function uses a simplistic text / range-based scan or shallow AST visitor.
+It does not properly track the **function boundary of each return statement**.
+It sees any return AST node located inside the selected source range, without checking which function the return belongs to.
+The return inside the lambda is part of a separate, nested function object, but the visitor counts it as a return in the outer extraction scope, triggering the unsupported-return error.
+*/

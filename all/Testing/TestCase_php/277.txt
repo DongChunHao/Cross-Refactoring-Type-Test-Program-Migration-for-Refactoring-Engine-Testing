@@ -1,0 +1,23 @@
+```
+<?php
+trait UserHelper
+{
+    function getUserId()
+    {
+        return $this->id;
+    }
+}
+class User
+{
+    use UserHelper;
+    public function dump()
+    {
+        echo $this->getUserId();
+    }
+}
+$u = new User();
+$u->dump();
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, change trait method `getUserId()` from implicit public to `private`.

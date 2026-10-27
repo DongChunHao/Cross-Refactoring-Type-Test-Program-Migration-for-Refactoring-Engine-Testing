@@ -1,0 +1,15 @@
+```
+<?php
+class A {
+    const DUMMY_CONSTANT = 1;
+}
+class B extends A {
+    public function foo()
+    {
+        return self::DUMMY_CONSTANT;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Members Up refactoring, target method `foo()` from subclass `B`, pull up to parent class `A`.

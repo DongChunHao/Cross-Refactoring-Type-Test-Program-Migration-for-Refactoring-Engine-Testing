@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+const fn1 = () => {
+throw new Error();
+};
+const fn2 = () => {
+(() => fn1())();
+};
+const assertFileExists = (path: string, message: string): void => {
+if (!existsSync(path)) {
+throw new Error(message);
+}
+};
+['a', 'b', 'c'].forEach(p => assertFileExists(p, `${p} does not exist`)); //{Extract Variable target shorthand‑arrow callback context unable to host throw statement after naive substitution}

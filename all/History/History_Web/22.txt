@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Replace with template string
+Refactoring Target: Binary plus expression ``xxx ${var1}` + var2`
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select the `+` operator of the concatenation expression where the left-hand side is already a template literal, execute "Replace with template string" refactoring.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When converting a concatenation whose left operand is an existing template string, the engine escapes backticks and ${} markers, producing ``\`xxx $\{var1}\`${var2}``.
+Expected behavior: The engine should merge the existing template literal content directly into the new template string without escaping backticks and substitution markers, resulting in ``xxx ${var1}${var2}``.
+Underlying cause: The refactoring logic treats the existing template literal as an ordinary string value and performs general string escaping, failing to recognize that the left operand is already a template literal node whose inner content should be reused raw.
+*/
+
+// Complete compilable test code
+const var1 = 'a';
+const var2 = 'b';
+const result = `xxx ${var1}` + var2;

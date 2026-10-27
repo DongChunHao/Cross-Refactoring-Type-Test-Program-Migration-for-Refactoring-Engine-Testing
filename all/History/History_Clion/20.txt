@@ -1,0 +1,32 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: statement `b.foo(0);` in main()
+Operation: Select `b.foo(0);`, invoke Extract Method, name new function func, set "Declaration place = below" in refactoring dialog
+Scope: Respect declaration placement option; put function declaration in correct position relative to target namespace XXX, ensure namespace visibility for qualified type XXX::Base
+*/
+
+/* Error Root Cause:
+Observed failure: Even with "Declaration place = below" selected, the refactoring inserts the forward declaration `void func(XXX::Base &b);` before the definition of namespace `XXX`. At that point `XXX` is not yet declared, so `XXX::Base` is unresolved.
+Expected behavior: Place the forward declaration after the `namespace XXX { }` definition, or wrap the declaration inside the proper scope so `XXX::Base` is visible.
+Underlying cause: The declaration placement logic mishandles namespace boundaries. The "below" option is applied relative to the source code selection range, not considering the lexical position of the namespace definition; the preview/insertion code does not check if the required namespace symbol exists at the target insertion point.
+*/
+
+namespace XXX{
+    class Base
+    {
+        class NBase{
+        public:
+         NBase(int) {}
+         int a;
+        };
+    public:
+        NBase foo(NBase a) {return a;}
+    };
+}
+
+int main() {
+    using namespace XXX;
+    Base b;
+    b.foo(0);
+    return 0;
+}

@@ -1,0 +1,16 @@
+```
+<?php
+#[Attribute]
+class ExampleAttribute{ }
+#[ExampleAttribute]
+class D{
+    #[ExampleAttribute]
+    public function bar(#[ExampleAttribute] int $a): int
+    {
+        return $a;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `D::bar(#[ExampleAttribute] int $a): int`; add new float parameter `float $b` after `$a`.

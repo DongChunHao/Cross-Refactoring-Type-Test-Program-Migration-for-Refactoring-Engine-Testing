@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Move Module Member
+Refactoring Target: Type `ITSPropertyKey`
+Refactoring Scope: TypeScript project with index barrel file
+Trigger Operation: Move `ITSPropertyKey` from file C into `type/base.ts`, where `index.ts` already has `export * from './type/base';`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After moving the type into `type/base.ts`, the refactoring adds an extra explicit export line in index.ts: `export { ITSPropertyKey } from './type/base';`, alongside the existing `export * from './type/base';`. This is redundant, because `export *` already re‑exports all exported members from that module.
+Expected behavior: Recognize that `index.ts` already contains a catch‑all `export * from './type/base';`; do not insert an extra named export for the moved symbol.
+Underlying cause: Move Module Member’s barrel export logic treats `export *` and named exports independently. It does not check whether the target barrel already has a wildcard re‑export covering the destination module, so it always adds an explicit named export entry for the moved symbol.
+*/
+
+// index.ts
+export * from './type/base';
+
+// type/base.ts
+export type ITSPropertyKey = string | symbol;

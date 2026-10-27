@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+use std::sync::Mutex;
+fn main() {
+let m = Mutex::new(0);
+{
+let mut mx = m.lock().unwrap();
+*mx += 1; //{extract block statements into new method use_mutex}
+}
+println!("{}", m.lock().unwrap());
+}

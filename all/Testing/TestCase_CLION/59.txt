@@ -1,0 +1,35 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <vector>
+struct ObjCPropertyImplDecl {
+enum Kind { Synthesize };
+Kind getPropertyImplementation() const;
+};
+struct ObjCIvarDecl {
+struct QualType { bool isObjCObjectPointerType() const; };
+QualType getType() const;
+};
+struct ObjCPropertyDecl { bool isReadOnly() const; };
+struct DType { std::vector<const ObjCPropertyImplDecl*> property_impls() const; };
+struct Wrapper {
+void checkImpls(const DType *D) { //{Move method containing loop and continue checks into struct Wrapper}
+for (const auto *I : D->property_impls()) {
+if (I->getPropertyImplementation() != ObjCPropertyImplDecl::Synthesize)
+continue;
+ObjCIvarDecl *ID = I->getPropertyIvarDecl();
+if (!ID)
+continue;
+auto T = ID->getType();
+if (!T.isObjCObjectPointerType())
+continue;
+const ObjCPropertyDecl *PD = I->getPropertyDecl();
+if (!PD)
+continue;
+if (PD->isReadOnly())
+continue;
+}
+}
+};
+void testFunc(const DType *D) {}

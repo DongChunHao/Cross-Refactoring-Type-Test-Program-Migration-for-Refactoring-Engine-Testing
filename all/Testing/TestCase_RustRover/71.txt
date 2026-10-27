@@ -1,0 +1,7 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+async fn foo_original() {
+async { () }.await //Rename Method: rename this enclosing async function
+}

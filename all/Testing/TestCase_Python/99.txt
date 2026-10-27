@@ -1,0 +1,7 @@
+// Target Refactoring Type: Extract Superclass
+// Expected Defect Performance: Overly‑strict content‑root validation; for in‑file superclass extraction (no new file creation), checker still runs path check and incorrectly reports "not in content folder", blocks refactoring for valid project‑resident source file
+class User: // REFACTOR_TARGET
+def **init**(self, name: str):
+self.name = name
+def get_name(self):
+return self.name

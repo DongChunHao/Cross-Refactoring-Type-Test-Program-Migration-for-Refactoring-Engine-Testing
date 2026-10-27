@@ -1,0 +1,25 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// Simple identifier case
+fn f(x: bool) {
+let _ = x; //{move function body content of f into caller scope}
+}
+fn g() {
+let y = true;
+f(y);
+}
+// Mutable parameter cases
+fn foo(mut x: usize) -> usize {
+x += 1;
+x //{move function body content of foo into caller scope}
+}
+fn bar() -> usize {
+let a = 5;
+foo(a)
+}
+fn quux() -> usize {
+let mut a = 5;
+foo(a)
+}

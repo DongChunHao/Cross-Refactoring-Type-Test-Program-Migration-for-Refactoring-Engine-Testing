@@ -1,0 +1,20 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract statement `c.foo();`
+Refactoring scope: call `c.foo()` on local object `C c;`
+Refactoring rule expectation: Detect that `foo()` mutates the object `c` (increments member `c`). Pass object by non-const reference `C&` to preserve mutation semantics.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method passes `c` by value (copy) into new function. The mutation `c++` happens on the copied temporary object, not the original local variable, so the second `c.foo()` will use unchanged value, changing program behavior.
+Expected behavior: Generated extracted method should take `C&` parameter:
+void callFoo(C& obj) { obj.foo(); }
+Underlying cause: Extract method action does not detect that `C::foo()` mutates the instance. It defaults to pass-by-value for class-type arguments, creating a copy and breaking the original state mutation logic.
+*/
+
+class C {public: int c; int foo() { return c ++; }};
+int foo() {
+    C c;
+    c.foo(); //Extract this line to a method
+    return c.foo();
+}

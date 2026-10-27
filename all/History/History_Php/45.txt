@@ -1,0 +1,24 @@
+<?php
+interface I{}
+class A implements I { }
+class C extends A {
+    function fa2()
+    {}
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method fa2() in class C, pull up to interface I; checkbox "Create methods stubs in classes that implement interface" is unchecked
+Refactoring rule: When pulling a method into an interface, all implementors of that interface must satisfy the interface contract. If the stub-generation option is disabled, the refactoring must check all implementors and warn if any implementor does not already supply the required method.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The refactoring adds `function fa2();` to interface I, but class A implements I and does not implement fa2(), and stubs are not generated. This produces invalid PHP, yet no warning is shown before applying.
+Expected behavior:
+Detect that A implements I and lacks fa2(), and that stub creation is disabled; warn the user that the refactoring will create unfulfilled interface requirements.
+Underlying cause:
+The validation logic only checks the source class C, and does not traverse all interface implementors when the stub-generation checkbox is off. It assumes the implementors already satisfy the new interface signature without verifying.
+*/
+?>

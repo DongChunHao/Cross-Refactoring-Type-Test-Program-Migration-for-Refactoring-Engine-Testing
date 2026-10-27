@@ -1,0 +1,11 @@
+```
+<?php
+class A {
+    function __construct()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature refactoring on `A::__construct`;

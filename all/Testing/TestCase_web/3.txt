@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Foo {
+constructor(name, type) {
+this.name = name;
+this.assignType(type); //Move Method target call site
+}
+assignType(type) { //Move Method target method definition
+this.type = type; //Move Method: move assignment logic into class method
+}
+}

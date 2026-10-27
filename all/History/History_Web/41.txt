@@ -1,0 +1,26 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Expression `nested() * 2` inside function `foo`
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select `nested() * 2`, run Extract Method and choose to place the extracted function at global scope.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The extracted global function `extracted` calls `nested()`, but `nested` is declared locally inside `foo` and is out of scope at the global level. This creates a reference error.
+Expected behavior: The refactoring should detect that `nested` is a local nested function captured by the selected expression. It should either:
+1. Automatically pass `nested` as an argument into `extracted`;
+2. Offer a prompt to also lift `nested` out to the global scope;
+3. Prevent extracting to global scope and warn about the unresolved local dependency.
+Underlying cause: Extract Method scope analysis fails to account for locally declared nested functions when the target extraction location is outside the containing function. It does not treat the inner function as a required closure variable that needs to be passed as a parameter or moved together.
+*/
+
+// Complete compilable test code
+function foo() {
+  function nested() {
+    return 1;
+  }
+
+  const two = nested() * 2;
+}

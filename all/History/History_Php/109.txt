@@ -1,0 +1,17 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function f with nullable parameter ?string $v and nullable return type ?string
+Scope: function signature, parameter types, return type, PHPDoc
+Refactoring operation: modify parameter or return type, add/remove parameters, change nullability
+*/
+
+/* Error Root Cause:
+Observed failure: The Change Signature refactoring does not fully support nullable types marked with the ? syntax. It may strip the ? modifier, fail to correctly display nullable types in the preview dialog, or generate invalid type annotations when modifying the signature.
+Expected behavior: Properly parse, display, edit and regenerate PHP nullable syntax ?Type for parameters and return types. When changing signature, preserve or correctly update the nullability marker, and sync related PHPDoc nullable annotations.
+Underlying cause: The signature parser/serializer used by Change Signature lacks dedicated handling for PHP’s nullable type operator. The model treats ?string as a special composite type instead of natively supporting the nullable marker, leading to loss of nullability information during refactoring.
+*/
+function f(?string $v): ?string {
+    return $v;
+}
+?>

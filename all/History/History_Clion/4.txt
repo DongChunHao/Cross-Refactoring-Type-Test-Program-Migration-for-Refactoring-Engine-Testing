@@ -1,0 +1,32 @@
+/* Refactoring Settings:
+Refactoring type: Rename (Shift+F6) C++ refactoring
+Refactoring target: templated class `X` (top-level template class)
+Operation: Invoke rename refactoring on the template class X
+Scope: Symbol disambiguation between top-level templated class X and local nested struct X defined inside function test(); distinguish separate symbols with identical identifiers
+*/
+
+/* Error Root Cause:
+Observed failure: When renaming the top-level templated class X, the refactoring incorrectly also renames the unrelated local struct X declared inside test(). These are two completely separate symbols sharing the same name X in different scopes.
+Expected behavior: Only rename the top-level template class X, leave the local function-scoped struct X untouched.
+Underlying cause: The symbol resolution logic fails to distinguish symbols by their lexical scope. It treats all identifiers named X as references to the templated class, ignoring that the local struct X is a separate symbol in a different scope.
+*/
+#include <string>
+
+template <typename T> class X {
+    T t;
+public:
+    X(T t) {}
+};
+
+void test() {
+    struct X {
+        int x;
+        std::string s;
+    public:
+        X() : X(10) {}
+        X(int x) : X(x, "hello world!") {}
+        X(int num, const char *text) : x(num), s(text) {}
+    };
+}
+
+int main() { return 0; }

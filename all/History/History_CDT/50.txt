@@ -1,0 +1,40 @@
+float GlobalVar_0 = 0;
+
+float func_0() {
+    float LocalVar_0 = 100;
+    return GlobalVar_0;
+}
+
+float Function_0() {
+    float LocalVar_0 = 1;
+    return GlobalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (function rename)
+Refactoring Target: function `func_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select function `func_0`, invoke Rename refactoring, input integer literal `0` as new function name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts numeric literal `0` as new function name and generates `float 0()`.
+According to C grammar, function name must be a valid identifier. Numeric literal cannot serve as function identifier. This produces direct compilation error.
+No warning or blocking occurs in refactoring workflow; invalid source is saved to disk.
+
+Expected behavior:
+Function rename must perform lexical validation of candidate name before modifying source:
+1. Valid C identifier must start with alphabet character or underscore.
+2. Allowed characters: letters, underscores, decimal digits only.
+3. Reject pure numeric literals and any name starting with digit.
+4. Reject reserved C keywords, whitespace and special symbols (`*`, `&`, `#` etc.).
+Abort transformation and report error message when validation fails.
+Rename should never allow literals as function names.
+
+Underlying cause:
+CDT function‑rename component lacks lexical grammar check for candidate function name. Raw user input is directly substituted as function identifier without verifying whether it conforms to C identifier syntax. Syntax‑error detection is fully delegated to compiler.
+*/

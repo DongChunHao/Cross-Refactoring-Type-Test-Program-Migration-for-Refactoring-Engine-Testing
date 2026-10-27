@@ -1,0 +1,12 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+mod mod1 {
+use foo::Foo;
+fn func(_: Foo) {} //Change Method: modify signature of function referencing sibling‑module type
+mod foo {
+pub struct Foo;
+}
+}
+mod mod2;

@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion refactoring)
+Refactoring target: expression `g() + 5` inside `f()`
+Operation: Invoke Extract Method on `g() + 5`, name new helper `getInt`
+Scope: Preserve cv-qualifiers (const / volatile) of enclosing member function `f` when generating extracted helper method; propagate const+volatile qualifiers to helper function signature
+*/
+
+/* Error Root Cause:
+Observed failure:
+Original function `f()` is a `const volatile` member function. The extracted helper is generated as `int getInt() const`, only marked const and missing volatile qualifier.
+When calling `getInt()` inside `const volatile` member function `f`, `this` pointer is `const volatile` qualified, but `getInt()` only accepts `const this`, which creates type mismatch and compilation error.
+
+Expected behavior:
+Generate helper with matching cv-qualifiers:
+`int getInt() const volatile { return g() + 5; }`
+
+Underlying cause:
+Extract Method refactoring does not fully propagate combined `const volatile` cv-qualifiers from the source member function to the extracted helper. It only copies the `const` qualifier and discards `volatile`, creating mismatched `this` pointer qualification.
+*/
+
+int g();
+struct A {
+    int f() const volatile {
+        int a = g() + 5; // Try to extract
+        return a;
+    }
+};

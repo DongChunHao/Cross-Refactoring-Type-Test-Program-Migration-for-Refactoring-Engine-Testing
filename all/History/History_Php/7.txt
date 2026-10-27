@@ -1,0 +1,20 @@
+<?php
+class MyClass{}
+function a(){} // <caret> invoke Change signature refactoring here
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function a()
+Action: add new parameter $a, trigger code completion (Ctrl+Space) inside the default value input field
+Refactoring rule: The completion popup for the parameter default value must provide valid PHP expression candidates, including available class types such as MyClass, and exclude semantically invalid suggestions that cannot be used as default values.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When adding a new parameter $a and triggering completion in the default value field, the suggestion list contains invalid entries and does not include the existing class MyClass.
+Expected behavior:
+Completion should show valid expressions and type candidates in scope, including MyClass, and filter out suggestions that are illegal for PHP parameter default values.
+
+Underlying cause:
+The completion provider for the default-value input of Change Signature dialog uses an incomplete or incorrect scope resolver. It fails to collect available class declarations visible in the current file and emits inappropriate, invalid suggestions instead.
+*/

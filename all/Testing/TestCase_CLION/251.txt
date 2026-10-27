@@ -1,0 +1,31 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+namespace me {
+class WindowManager {
+public:
+bool handle(MirEvent const& event);
+private:
+FocusController* focus_controller;
+};
+}
+namespace me {
+struct Wrapper
+{
+static bool focus_next_session(WindowManager* obj) { //{Move focus logic into static wrapper member}
+obj->focus_controller->focus_next_session();
+if (auto const surface = obj->focus_controller->focused_surface())
+obj->focus_controller->raise({surface});
+return true;
+}
+};
+}
+bool me::WindowManager::handle(MirEvent const& event)
+{
+static bool display_off = false;
+if (event.key.modifiers & mir_key_modifier_alt && event.key.scan_code == KEY_TAB)
+{
+return Wrapper::focus_next_session(this);
+}
+}

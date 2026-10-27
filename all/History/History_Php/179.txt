@@ -1,0 +1,25 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Extract Method (PHP)
+Refactoring target: selected `$a->a` on the left-hand side of assignment `$a->a = 1;`
+Operation: Trigger Extract Method on the LHS property write expression
+Scope: Extract Method precondition check for lvalue / write contexts
+*/
+
+/* Error Root Cause:
+Observed failure: The refactoring allows extracting the left-hand side lvalue `$a->a` into a method call, producing invalid syntax `g($a) = 1;`. Function calls cannot be used as assignment targets in PHP.
+Expected behavior: Detect that the selected expression is an lvalue in a write assignment context, forbid the Extract Method action, and show an error explaining that lvalues cannot be extracted into a method call.
+Underlying cause: The precondition validator for Extract Method does not check whether the selected PSI node is used as an assignment target; it attempts to replace the lvalue directly with a function call.
+*/
+class A{
+    var $a;
+}
+
+function f(){
+    $a = new A;
+    $a->a = 1;
+    echo $a->a;
+    echo $a->a;
+    echo $a->a;
+}
+?>

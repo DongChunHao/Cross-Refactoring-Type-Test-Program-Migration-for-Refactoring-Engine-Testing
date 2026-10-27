@@ -1,0 +1,33 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Introduce Variable
+Refactoring Target: Parenthesized JSX returned by React function component
+Refactoring Scope: JavaScript + Flow + JSX
+Trigger Operation: Invoke Introduce Variable (Ctrl+Alt+V) on the parenthesized return JSX element
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When the returned JSX is wrapped in parentheses `return (<tr>...</tr>);`, Introduce Variable wraps the extracted value in React fragment shorthand `<>` `</>`, producing invalid syntax: the fragment contains a single `<tr>` element but the refactoring incorrectly inserts fragment tags around it, and in some contexts this creates parse errors. The same JSX without outer parentheses works correctly.
+
+Expected behavior: Extract the JSX element as-is without adding extra `<>` fragment wrappers:
+let tr = <tr><td>{props.log.getMessage()}</td></tr>;
+return tr;
+
+Underlying cause: The refactoring logic treats the parenthesized JSX expression as an expression list and automatically wraps it with fragment shorthand when extracting, not distinguishing between a single root JSX node wrapped in parentheses vs multiple sibling nodes that actually need a fragment.
+*/
+
+// Complete compilable test code
+// @flow
+import React from "react";
+import { Log } from "../logs";
+
+function LogRow(props: { log: Log }) {
+    return (
+        <tr>
+            <td>{props.log.getMessage()}</td>
+        </tr>
+    );
+}
+
+export default LogRow;

@@ -1,0 +1,19 @@
+int main(int a, char** argv) {
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: function parameter `a` of main()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select parameter `a`, invoke Rename refactoring, input C keyword `int` as new identifier name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts the keyword `int` as new parameter name and generates `int main(int int, char** argv) { return int; }`. `int` is reserved C keyword and cannot be used as variable/parameter identifier; the resulting code cannot compile. No validation error is raised during rename operation.
+Expected behavior: Before applying rename, check proposed new name against C reserved keyword list. Detect that `int` is a keyword, immediately reject the rename and show error message to user.
+Underlying cause: Rename refactoring lacks reserved keyword validation for the proposed identifier. It only checks for symbol name collisions, but does not verify whether the input name belongs to C language reserved keywords, allowing invalid identifier to be generated.
+*/

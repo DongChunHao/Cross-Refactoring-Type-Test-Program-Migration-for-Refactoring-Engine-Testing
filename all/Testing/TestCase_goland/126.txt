@@ -1,0 +1,17 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package my_pack
+//global one line comment package my_pack
+import "fmt"
+func main() {
+fmt.Println("my_pack") // usage in string
+//local one line comment my_pack
+}
+/* global multiline comment package my_pack */
+// rename main to runMain
+func runMain() {
+fmt.Println("my_pack")
+//local one line comment my_pack
+}

@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+var { 'a a': a } = { 'a a': 5 }; //{Extract Method target destructuring pattern with whitespace‑containing non‑identifier property key}
+a;

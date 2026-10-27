@@ -1,0 +1,9 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Rename refactoring docstring parser does not recognize Sphinx RST :class: / :py:class: roles; treats content as plain‑text, these symbol references are excluded from usage graph and remain unchanged
+class AClass: // REFACTOR_TARGET
+pass
+def foo2(p):
+"""
+:type p: :class:`AClass`
+"""
+pass

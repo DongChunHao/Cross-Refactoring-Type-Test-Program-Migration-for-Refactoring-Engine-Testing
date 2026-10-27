@@ -1,0 +1,22 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function foo($a)
+Scope: call-site argument list formatting, trailing comma preservation
+Refactoring operation: insert a new parameter before $a in the function signature
+*/
+
+/* Error Root Cause:
+Observed failure: After inserting a new parameter before $a via Change Signature, the refactoring rewrites all call sites. The trailing comma `foo(1,);` is stripped, becoming `foo(1, $newArg)` or similar, losing the user’s trailing comma. PHP supports trailing commas in argument lists, and the user intended to keep this style.
+
+Expected behavior:
+When updating call-site argument lists during signature changes, preserve existing trailing commas in argument lists where present, only adjusting the argument sequence while respecting the original formatting preference.
+
+Underlying cause:
+The call-site argument list rewriter for Change Signature rebuilds the entire argument PSI list from scratch using a default template, which does not retain trailing comma metadata from the original source. It does not check whether the original call had a trailing comma before regenerating the code.
+*/
+function foo($a){
+    echo $a;
+}
+foo(1,);
+?>

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Calc struct{}
+func (c Calc) computeValue() int { // move computeValue method from Calc to standalone function
+return 0 + 1 + 2
+}
+func main() {
+calc := Calc{}
+var v = calc.computeValue()
+}

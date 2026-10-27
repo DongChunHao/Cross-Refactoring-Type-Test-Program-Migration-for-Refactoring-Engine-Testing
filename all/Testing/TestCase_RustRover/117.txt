@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+struct S {}
+trait T {
+fn bar(x: i32);
+}
+impl T for S {
+fn bar(x: i32) { //Change method signature of trait‑impl bar
+println!("hello")
+}
+}
+use proc_macro::TokenStream;
+#[proc_macro_derive(MyStrangeDerive)]
+pub fn foo(input: TokenStream) -> TokenStream {
+"struct U{x: i32}".parse().unwrap()
+}

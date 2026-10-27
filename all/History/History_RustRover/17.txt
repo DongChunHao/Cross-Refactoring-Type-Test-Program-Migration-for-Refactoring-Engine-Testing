@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function (Ctrl + Alt + M)
+Refactoring Target: Selected statements `let a = 1; let b = 2;` inside a nested block
+Refactoring Scope: Statement range selection inside nested code block
+Plugin Environment: IntelliJ Rust plugin 0.3.140.3605-203-nightly, IDEA 2020.3.1, Rust 1.48.0, Linux 5.8.0-36-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select `let a = 1; let b = 2;` inside inner block and run Extract function
+*/
+/* Error Root Cause:
+Observed failure: When selecting a subset of statements within a nested block and invoking Extract Function, the refactor captures the whole block including unselected statements (`let c = a + b;`), instead of only the highlighted lines.
+Expected behavior: Extract only the user-selected statements `let a = 1; let b = 2;` into a new function, leave `let c = a + b;` in the original scope.
+Underlying cause: The statement range selection logic for Extract Function mishandles nested blocks. Instead of respecting the precise text selection boundaries, it expands the extraction scope to the containing block’s full content.
+*/
+fn main() {
+    {
+        let a = 1;
+        let b = 2;
+
+        let c = a + b;
+    };
+}

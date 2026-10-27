@@ -1,0 +1,13 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn target_fn() {
+println!("a");
+
+println!("b"); //Change Method: modify function signature for block with intentional empty line
+
+}
+fn main() {
+target_fn();
+}

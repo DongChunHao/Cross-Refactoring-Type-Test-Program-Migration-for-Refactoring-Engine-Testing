@@ -1,0 +1,28 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method
+Refactoring target: method `f()` inside anonymous class
+Scope: anonymous class PSI support, pre-refactoring validation
+Refactoring operation: attempt to move `f()` out of anonymous class into named class A
+*/
+
+/* Error Root Cause:
+Observed failure:
+Invoking Move on `f()` which belongs to an anonymous class triggers `java.lang.AssertionError: cannot create element from text`.
+Anonymous classes are synthetic, unnamed PSI nodes without a stable class symbol/type descriptor that the refactoring pipeline expects when rewriting `$this`, self-references, and adjusting call sites. The element factory fails when trying to reconstruct method PSI detached from its anonymous containing class.
+
+Expected behavior:
+Before running the refactoring logic, detect that the source method is owned by an anonymous class. Disable the Move action or show a clean user-facing message: "Cannot move methods from anonymous classes" instead of crashing with an assertion.
+
+Underlying cause:
+The Move Instance Method logic assumes the source containing class is a named class with a resolvable qualified name. There is no guard clause for anonymous classes; it proceeds to generate PSI templates and hits an assertion when it cannot resolve the anonymous class type for rewriting references.
+*/
+class A { }
+$c = new class(){
+    public function f()
+    {
+        return 55;
+    }
+};
+$c->f();
+?>

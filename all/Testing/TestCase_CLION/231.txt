@@ -1,0 +1,19 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+class C {public: int c; int foo() { return c ++; }};
+class Base
+{
+public:
+virtual int foo() {}
+};
+class Impl : public Base //{Push down foo implementation from Base to Impl}
+{
+public:
+int foo() override {
+C c;
+c.foo();
+return c.foo();
+}
+};

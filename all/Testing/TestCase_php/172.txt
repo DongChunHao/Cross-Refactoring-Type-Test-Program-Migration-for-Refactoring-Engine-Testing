@@ -1,0 +1,9 @@
+```
+<?php
+function buildRow($id, $label = '', &...$cells) {
+    return [$id, $label, $cells];
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `buildRow`, remove `&` from `&...$cells`

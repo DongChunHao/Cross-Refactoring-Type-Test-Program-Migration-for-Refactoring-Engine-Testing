@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+var foo = {x: undefined, y: "a", z: true}, {x = 5, y, z} = foo; //{Extract Method target destructuring pattern carrying x default‑value initializer}
+var g = x;

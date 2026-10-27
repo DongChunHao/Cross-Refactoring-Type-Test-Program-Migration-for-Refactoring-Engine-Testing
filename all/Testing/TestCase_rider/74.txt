@@ -1,0 +1,18 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using System;
+
+public abstract class BaseClass
+{
+public abstract void ProcessData();
+}
+
+public class Class1 : BaseClass
+{
+public override void ProcessData() //{Push Down Method: target member for invalid‑file‑rename‑undo stale‑PSI‑document‑state bug reproduction}
+{
+Console.WriteLine("sample logic");
+}
+}

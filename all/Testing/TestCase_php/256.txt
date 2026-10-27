@@ -1,0 +1,21 @@
+```
+<?php
+class User {}
+class Container
+{
+    public function run()
+    {
+        $handler = new class {
+            public function handle(User $u)
+            {
+                echo new self() === $this;
+            }
+        };
+        $handler->handle(new User());
+    }
+}
+(new Container())->run();
+?>
+```
+
+【Refactoring Action】: Move Instance Method refactoring, move `handle(User $u)` from anonymous class.

@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+fn f() -> bool {
+true //{Rename‑Variable target: function implicit‑return tail expression}
+}
+
+fn main() {
+let _v = f();
+}

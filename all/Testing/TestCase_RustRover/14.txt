@@ -1,0 +1,9 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn main() { //{move variable and macro‑print logic into nested inner function}
+let mut result = 42;
+result = 34;
+println!("rrr={result:#06x}");
+}

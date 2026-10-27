@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+namespace PV3D {
+using PV3DNumberType = double;
+class Vector3 {
+public:
+//| Comment line here
+static Vector3 Multiply(Vector3 src, PV3DNumberType scale);
+};
+}
+struct Wrapper
+{
+PV3D::Vector3 wrapperMultiply(PV3D::Vector3 src, PV3D::PV3DNumberType scale) { //{Move Multiply call logic into struct Wrapper member function}
+return PV3D::Vector3::Multiply(src, scale);
+}
+};

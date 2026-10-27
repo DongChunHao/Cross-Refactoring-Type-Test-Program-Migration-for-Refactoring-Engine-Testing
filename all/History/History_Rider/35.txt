@@ -1,0 +1,53 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: C# duplicate expression `String.ToString("bla")` across multiple methods in the same class
+Refactoring Scope: Whether Rider surfaces a UI option to replace all matching duplicate occurrences automatically
+IDE: Rider
+*/
+
+/* Root Cause:
+Observed behavior: After selecting the duplicated expression and invoking Extract Method, Rider does **not** show a checkbox or prompt to replace other matching occurrences in the class, unlike IntelliJ/PhpStorm for Java/PHP. Only the selected instance gets replaced with a call to the new method.
+
+Status: **Missing feature, not a bug.**
+Rider’s C# Extract Method refactoring engine originally only operated on the selected PSI subtree. It lacked the duplicate semantic search pass that scans the whole type/file for structurally equivalent code and surfaces a “Replace N occurrences” option in the refactoring dialog.
+
+Consequence for users: There is no built-in way to batch-replace all duplicates during extract method. Users must manually find other duplicates, use Find Usages / Find in Files, or manual search-replace (which is error-prone for code with subtle semantic differences).
+
+Expected feature behavior:
+1. After selecting code and starting Extract Method, Rider scans the containing type for semantically equivalent code fragments.
+2. If N matches are found, the refactoring dialog adds a checkbox: “Replace N other occurrences”.
+3. When checked, Rider replaces every matching fragment with a call to the new extracted method and automatically derives parameters for differing subexpressions.
+*/
+
+// Original code
+public class Foo
+{
+    public void DoSomething()
+    {
+        return String.ToString("bla");
+    }
+
+    public void DoSomethingElse()
+    {
+        return String.ToString("bla");
+    }
+}
+
+// Desired result if "Replace 1 other occurrence" option existed
+public class Foo
+{
+    public void DoSomething()
+    {
+        return GetBlaString();
+    }
+
+    public void DoSomethingElse()
+    {
+        return GetBlaString();
+    }
+
+    private string GetBlaString()
+    {
+        return String.ToString("bla");
+    }
+}

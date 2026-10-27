@@ -1,0 +1,14 @@
+```
+<?php
+class Foo {
+    public static $bar = [1, 2];
+}
+$bar2 = [1, 2];
+function baz($arg1, $arg2) {
+}
+baz(...Foo::$bar);
+baz(...$bar2);
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on global function `baz($arg1, $arg2)`, swap order of `$arg1` and `$arg2`.

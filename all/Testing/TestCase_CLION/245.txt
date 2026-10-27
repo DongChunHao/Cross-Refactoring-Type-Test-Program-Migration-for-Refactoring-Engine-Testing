@@ -1,0 +1,12 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+#include <exception>
+void test(int y, int dummyParam) //{Change method signature add int dummyParam parameter}
+{
+if(y == 5) {
+throw std::exception();
+} else {
+}
+}

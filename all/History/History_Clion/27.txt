@@ -1,0 +1,25 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: the three lines inside template function `someFunctionThatNeedsRefactoring<T>(T a, T b)`
+Operation: Select the code block inside templated function and invoke Extract Method, name new function newSmallFunction
+Scope: Template parameter propagation when extracting method from within templated function; preserve template<typename T> for extracted function; avoid adding unexpected MPI header includes
+*/
+
+/* Error Root Cause:
+Observed failure: The extracted function `newSmallFunction` loses its template parameter declaration. Generated code declares `T newSmallFunction(T a, T b);` and defines `T newSmallFunction(T a, T b) { ... }` without `template <typename T>`, which makes T an undefined type and breaks compilation. Additionally, the refactoring engine incorrectly injects unrelated MPI headers `<mpif-mpi-io.h>` and `<mpif.h>` into the file after refactoring.
+Expected behavior: Attach the same template parameter list `template<typename T>` to the extracted newSmallFunction declaration and definition, producing `template<typename T> T newSmallFunction(T a, T b) {...}`; do not add any unexpected unrelated header includes.
+Underlying cause: The refactoring engine fails to copy the enclosing template parameter list from the source templated function to the newly extracted function. The second defect is a separate issue: the PSI/include auto-add logic mistakenly detects MPI-related dependencies and inserts MPI headers that are not required by the source code.
+*/
+
+template <typename T>
+T someFunctionThatNeedsRefactoring(T a, T b){
+    T c = a*b;
+    T d = a+b;
+    return c+b;
+}
+
+int main()
+{
+    auto res = someFunctionThatNeedsRefactoring(2,3);
+    return 0;
+}

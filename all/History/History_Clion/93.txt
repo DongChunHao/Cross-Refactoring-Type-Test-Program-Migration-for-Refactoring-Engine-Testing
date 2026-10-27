@@ -1,0 +1,17 @@
+/* Refactoring Settings:
+Refactoring type: Inline Typedef
+Refactoring target: Inline typedef `typedef enum {north, south, east, west} directions;`
+Refactoring scope: Typedef declaration and its usage `directions s = south;`
+Refactoring rule expectation: When inlining typedef for anonymous enum, do not invent an enum tag name. The inlined declaration should be `enum {north, south, east, west} s = south;`
+*/
+
+/* Error Root Cause:
+Observed failure: After Inline Typedef refactoring, produced invalid code `enum directions s = south;`. The refactoring incorrectly creates an enum tag `directions`, but the original enum was anonymous (no tag).
+Expected behavior: The inlined result should be `enum {north, south, east, west} s = south;`.
+Underlying cause: The refactoring engine assumes the typedef identifier is an enum tag name. For anonymous enums, it incorrectly injects the typedef name as an enum tag, producing invalid C syntax.
+*/
+
+typedef enum {north, south, east, west} directions;
+void test() {
+    directions s = south;
+}

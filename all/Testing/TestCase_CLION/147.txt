@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: func_f
+'''
+// foo.cpp
+#include "f.hpp"
+void f() { //{Rename free function f to func_f}
+}
+void g() {
+f();
+}

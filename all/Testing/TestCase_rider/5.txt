@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+using System;
+
+public interface IExceptionEvaluator
+{
+bool evaluateExceptionCondition(Exception ex);
+}
+
+public class RetryPolicyEvaluator : IExceptionEvaluator
+{
+public bool evaluateExceptionCondition(Exception ex) //{Move Method: trigger refactoring on double‑click selected interface implementation method identifier}
+{
+return ex is TimeoutException;
+}
+}

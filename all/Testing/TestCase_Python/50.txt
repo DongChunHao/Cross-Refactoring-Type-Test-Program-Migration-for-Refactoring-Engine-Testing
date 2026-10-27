@@ -1,0 +1,10 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Rename triggered on call‑expression node resolves target definition for modification but fails to traverse full reference graph; only rewrites function definition and skips updating multiple scattered call‑site usages
+def myfunct(name): // REFACTOR_TARGET
+print(name, 'hola')
+def second():
+myfunct('second')
+def third():
+myfunct('third')
+def placeholder_stub():
+pass

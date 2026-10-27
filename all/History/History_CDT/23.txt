@@ -1,0 +1,23 @@
+int main() {
+	static char msg[] = "Error"; // select "Error"
+	return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Constant refactoring
+Refactoring Target: string‑literal `"Error"` used as initializer for static char array msg[]
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select string literal `"Error"`, invoke Extract Constant refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT extracts string literal into `const char* extracted_constant = "Error";`, replaces initializer with `static char msg[] = extracted_constant;`. In C, static array initialization requires compile‑time constant. A `const char*` pointer variable is not a compile‑time constant, cannot initialize static array; resulting code fails compilation.
+Expected behavior: Detect context: string literal initializing static array. Two valid options:
+1. Reject Extract‑Constant for this location and warn user;
+2. Generate preprocessor macro `#define extracted_constant "Error"` (macro is compile‑time text replacement, valid for static array initializer).
+Must not generate const‑pointer variable for static array initializer context.
+Underlying cause: Extract‑Constant does not inspect the syntactic initialization context. For string literals it always emits `const char*` pointer variable, without checking whether the target requires compile‑time constant initializer. C `const` pointer variables hold runtime values and are not usable for static storage duration aggregate initialization.
+*/

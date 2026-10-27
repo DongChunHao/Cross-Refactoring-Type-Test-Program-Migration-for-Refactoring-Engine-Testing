@@ -1,0 +1,11 @@
+```
+<?php
+namespace App;
+use App\Model\User;
+function findUser(int $id)
+{
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `findUser`, add new parameter in dialog editor.

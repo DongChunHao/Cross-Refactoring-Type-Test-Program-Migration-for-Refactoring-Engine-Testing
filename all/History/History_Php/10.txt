@@ -1,0 +1,24 @@
+<?php
+class A{
+}
+class B extends A{
+    function f() // <-- Pull Up refactoring target
+    {
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method f() in class B, pulling up to parent class A
+Refactoring rule: The "Implement method in child class" checkbox should only be visible when there are additional child classes that inherit from the target parent. If the only relevant class is the original source class B, this checkbox must be hidden, as there are no extra child classes to generate stub implementations for.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When pulling method f() from B into A, the UI displays the checkbox "Implement method in child class", which is unnecessary here. There are no other subclasses of A besides B, so there are no child classes that need generated stub implementations.
+Expected behavior:
+The checkbox should not appear in this scenario. It should only be rendered when the target parent class has multiple descendant classes beyond the one the method is being pulled from.
+Underlying cause:
+The UI rendering logic for the checkbox does not check whether the parent has other child classes. It unconditionally shows the option whenever Pull Up is invoked on a class method, without filtering cases where no extra child classes exist.
+*/
+?>

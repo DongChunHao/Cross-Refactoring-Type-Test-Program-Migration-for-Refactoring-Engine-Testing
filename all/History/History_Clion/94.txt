@@ -1,0 +1,17 @@
+#include <exception>
+
+/* Refactoring Settings:
+Refactoring type: Inline macro
+Refactoring target: Inline macro invocation FOO(Test);
+Refactoring scope: Macro call FOO(Test) expanding struct definition
+Refactoring rule expectation: Preserve correct spacing and qualified base class `::std::exception` after inlining macro, avoid misplaced colon and extra separator
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining macro FOO(Test), generated code becomes `struct Test final:: : std::exception {};`. The `final` qualifier gets incorrectly fused with the scope resolution operator, producing invalid syntax `final::`.
+Expected behavior: Correct inlined output: `struct Test final : ::std::exception {};`.
+Underlying cause: The refactoring engine mishandles token spacing when expanding macro containing `final` keyword followed by inheritance colon. It misplaces the scope resolution token, corrupting the inheritance syntax.
+*/
+
+#define FOO(NAME) struct NAME final : ::std::exception {}
+FOO(Test);

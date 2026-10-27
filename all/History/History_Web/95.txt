@@ -1,0 +1,24 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Introduce Variable
+Refactoring Target: Expression `num * 2` inside arrow function passed to `map`
+Refactoring Scope: JavaScript
+Trigger Operation: Run Introduce Variable on `num * 2`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After extracting variable, the refactoring produces mismatched closing tokens: `return number )};`. The closing parenthesis and curly brace order is reversed, creating syntax error. The correct closing sequence should be `})`.
+
+Expected behavior:
+const doubles = numbers.map(num => {
+    let number = num * 2;
+    return number;
+});
+
+Underlying cause: When converting concise-body arrow function `num => expr` to block-body `num => { ... }`, the token writer incorrectly emits closing `)` before `}` instead of after, mishandling the nesting of arrow block and the outer function call parentheses.
+*/
+
+// Complete compilable test code
+const numbers = [1, 4, 9];
+const doubles = numbers.map(num => num * 2);

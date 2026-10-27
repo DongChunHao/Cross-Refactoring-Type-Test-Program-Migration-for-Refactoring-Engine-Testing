@@ -1,0 +1,8 @@
+```
+<?php
+namespace Service;
+class UserService { }
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target `Service\UserService`, keep namespace, target directory and class name unchanged, execute refactor.

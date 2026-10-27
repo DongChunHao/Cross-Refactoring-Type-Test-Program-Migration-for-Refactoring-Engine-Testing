@@ -1,0 +1,35 @@
+package main
+
+import "fmt"
+
+/* Refactoring Settings:
+Refactoring type: Extract Method / Extract Function
+Refactoring target: Extract the whole statement `i := func() int { return 1 }(); fmt.Println(i)`
+Refactoring scope: The selected two statements containing an inline anonymous function literal with a return inside its body
+Refactoring rule: Distinguish return statements belonging to nested anonymous functions from returns belonging to the outer code being extracted; do not block refactoring just because nested functions contain return.
+*/
+
+/* Error Root Cause:
+Observed failure: The extract function refactoring rejects the selection with the error "Refactoring is not supported when selected statements contain return statement". The return is located inside the nested anonymous function, not a return that exits the code being extracted.
+Expected behavior: Allow the refactoring, generate a new outer function with no return value, moving the selected statements into it. The return inside the anonymous closure is valid and should not be treated as a top-level return in the extracted scope.
+Underlying cause: The refactoring's simple return statement scanner does not track function declaration boundaries; it treats any return token inside the selected range as a return belonging to the target extraction scope.
+*/
+
+func demo() {
+	i := func() int {
+		return 1
+	}()
+	fmt.Println(i)
+}
+
+// Expected extracted result
+func extracted() {
+	i := func() int {
+		return 1
+	}()
+	fmt.Println(i)
+}
+
+func main() {
+	extracted()
+}

@@ -1,0 +1,28 @@
+int main(int a, char** argv) {
+    return 0; // Constant to be extracted
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Constant refactoring
+Refactoring Target: integer literal `0` inside return‑statement
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select literal `0`, invoke Extract Constant refactoring, input identifier `main` as constant name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts `main` as constant name and generates `static const int main = 0;`. In C language, **no function overloading exists**, and the same translation unit cannot reuse identifier `main` for both a global‑scope constant variable and the entry‑point function `main()`. This creates name collision: one identifier denotes both a variable and a function. The resulting code yields compilation error.
+Notably: this refactoring *does* perform basic lexical identifier validation, rejecting lexically invalid inputs such as `9i`, `*i`, `i j` seen in other rename‑related bugs; but it misses cross‑kind symbol collision check (variable‑vs‑function).
+
+Expected behavior:
+When user supplies candidate constant name:
+1. Already check lexical identifier rules (this part works correctly in this case).
+2. Perform symbol‑table lookup across **all symbol kinds** (functions, variables, typedefs, macros), not only constant/variable symbols.
+3. Detect that `main` is already defined as a function in translation unit. Warn user about cross‑kind name conflict and block extraction.
+Special extra warning for `main`: it is program entry‑point identifier; shadowing/reusing `main` for other symbols is highly discouraged.
+
+Underlying cause:
+Extract‑Constant’s duplicate‑symbol validation only checks against existing variable‑type symbols. It ignores other symbol categories (especially function symbols). Since `main` is lexically valid identifier, lexical check passes; cross‑category collision between variable‑symbol and function‑symbol is not detected, producing conflicting dual‑definition code.
+*/

@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: messageText
+'''
+#include <cstdio>
+class C {
+const char* m_msg; //{Rename field m_msg to messageText}
+void foo()
+{
+printf("");
+}
+};

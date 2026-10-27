@@ -1,0 +1,15 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+mod demo {
+fn logic() {
+println!("a");
+
+println!("b"); //Move Method: move this block containing intentional empty line between statements
+}
+
+}
+fn main() {
+demo::logic();
+}

@@ -1,0 +1,7 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+int main(int a, char** argv) {//extract variable for formal parameter with reserved‑keyword input scenario
+return a;
+}

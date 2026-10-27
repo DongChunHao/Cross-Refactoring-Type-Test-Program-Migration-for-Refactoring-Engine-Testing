@@ -1,0 +1,66 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using FluentAssertions;
+
+public abstract class BaseNotificationTests
+{
+public abstract void Validate(IReadOnlyList<ReportedEventEntry> signalrEvents);
+}
+public record ReportedEventEntry
+{
+public string EventPayload { get; set; } = string.Empty;
+public DateTimeOffset Timestamp { get; set; }
+}
+public record PushNotification
+{
+public string State { get; set; }
+public DateTimeOffset? EndTime { get; set; }
+}
+public class ThisExceptionIsGoingToShowABugInRiderWatchMe : Exception
+{
+public ThisExceptionIsGoingToShowABugInRiderWatchMe() : base("Debug exception for Rider refactoring test") { }
+}
+
+public class SmokeAlarmNotificationTests : BaseNotificationTests
+{
+public override void Validate(IReadOnlyList<ReportedEventEntry> signalrEvents)
+{
+var pushNotifications = new List<PushNotification>();
+pushNotifications.Should().HaveCount(expected: 1);
+foreach (var pushNotification in pushNotifications)
+{
+pushNotification.State.Should().Be(expected: "Completed");
+pushNotification.EndTime.Should().BeWithin(TimeSpan.FromMinutes(1));
+}
+signalrEvents.Should().HaveCount(expected: 1);
+foreach (var signalrEvent in signalrEvents)
+{
+signalrEvent.EventPayload.Should().NotBeNull();
+try
+{
+var payload = JsonNode.Parse(signalrEvent.EventPayload);
+payload!["NotificationId"]?.ToString().Should().Be("NotificationIdValue");
+payload!["DeviceId"]?.ToString().Should().Be("DeviceIdValue");
+}
+catch (JsonException e)
+{
+throw new ThisExceptionIsGoingToShowABugInRiderWatchMe();
+}
+signalrEvent.Timestamp.Should().BeWithin(TimeSpan.FromMinutes(1));
+}
+}
+}
+
+public class TestLocalAlarmMetadata
+{
+public string AlarmKey { get; set; } = string.Empty;
+public string LocationDescription { get; set; } = string.Empty;
+public void SampleHelper() //{Extract Method: target method inside type subject to move‑to‑new‑file pipeline}
+{
+}
+}

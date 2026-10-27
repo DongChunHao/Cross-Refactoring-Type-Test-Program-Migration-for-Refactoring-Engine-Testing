@@ -1,0 +1,17 @@
+```
+<?php
+namespace Logging\Writer {
+    use Logging\Writer as LOG_ALIAS;
+    class LogRoot
+    {
+    }
+    class RotateFileLog implements LOG_ALIAS\Contract\ILogSink{
+    }
+}
+namespace Logging\Writer\Contract {
+    interface ILogSink{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `RotateFileLog`, target namespace `Logging\Output`.

@@ -1,0 +1,15 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+// foo.cpp
+#include "f.hpp"
+struct Base {
+static void f() {}
+};
+struct Derived : Base //{Pull up f into Base as static member}
+{
+};
+void g() {
+Base::f();
+}

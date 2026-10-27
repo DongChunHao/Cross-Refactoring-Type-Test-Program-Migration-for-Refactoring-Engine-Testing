@@ -1,0 +1,19 @@
+int main() {
+	return (0); //select 0
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: integer literal `0` inside return statement `return (0);`
+Refactoring Scope: current function main()
+IDE: Eclipse CDT
+Operation steps: Select literal `0` in return expression, invoke Extract Local Variable refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: Invoking Extract Local Variable on the literal `0` triggers `java.lang.IllegalStateException: attempt to modify frozen AST node`. The frozen AST node cannot be mutated, leading to uncaught exception and refactoring crash.
+Expected behavior: Before attempting AST rewrite, check whether target AST nodes are frozen/read-only. Gracefully abort refactoring with user message instead of throwing internal exception.
+Underlying cause: CDT’s refactoring pipeline does not check the mutability status of AST nodes before modification. The selected literal node belongs to frozen AST; the code tries to modify it when constructing new variable initializer, triggering the assertion failure.
+*/

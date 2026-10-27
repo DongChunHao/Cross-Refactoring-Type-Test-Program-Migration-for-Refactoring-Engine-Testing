@@ -1,0 +1,11 @@
+<?php
+class A
+{
+    protected function a(){} //rename a to c
+}
+class B extends A{
+    private function c(){}
+    private function b(){
+        $this->a();
+    }
+}

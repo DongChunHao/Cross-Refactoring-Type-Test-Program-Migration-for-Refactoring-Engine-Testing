@@ -1,0 +1,17 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// foo.cpp
+#include "f.hpp"
+struct Wrapper
+{
+static void wrapper_f() { //{Move free function f logic into static wrapper member}
+}
+};
+void f() {
+Wrapper::wrapper_f();
+}
+void g() {
+f();
+}

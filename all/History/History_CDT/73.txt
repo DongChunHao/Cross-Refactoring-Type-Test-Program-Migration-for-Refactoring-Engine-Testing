@@ -1,0 +1,43 @@
+// Header file: TestInclude.h
+class Confusion1;
+class TestInclude{
+public:
+	TestInclude();
+	~TestInclude();
+	#include "TestIncludeMethods.h"
+};
+
+// TestIncludeMethods.h
+#ifndef TestIncludeMethods_H
+#define TestIncludeMethods_H
+Confusion1* moreConfusion();
+#endif
+
+// cpp file: TestInclude.cpp
+#include "TestInclude.h"
+Confusion1* TestInclude::moreConfusion() {
+    // implementation
+}
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (C++ member function rename)
+IDE: Eclipse CDT
+Operation steps: Rename `moreConfusion()`.
+The declaration sits inside `#include "TestIncludeMethods.h"` which is placed **inside the body of class TestInclude**.
+The definition in cpp is `TestInclude::moreConfusion()`.
+*/
+
+/*
+Observed failure:
+CDT treats `moreConfusion()` as a **global free function**, not as a member function of `TestInclude`.
+When rename runs:
+1. The declaration inside included header is parsed as being inside the class body (lexically), but CDT’s symbol binding fails to associate this declaration with the class scope.
+2. Rename refactoring searches references as if `moreConfusion` is global.
+3. It will either miss the `TestInclude::moreConfusion` definition in cpp, or fail to rename call sites that invoke the member function `obj.moreConfusion()`.
+4. The user’s insight is correct: CDT’s `CElement` / AST model only sees the preprocessed source, but the way the header is included *inside a class body* is a tricky, non-standard macro/include trick.
+The same family of problem exists for:
+```cpp
+namespace n {
+#include "MyClass.h"
+}
+

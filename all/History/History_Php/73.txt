@@ -1,0 +1,28 @@
+<?php
+namespace Test;
+
+class Foo
+{
+}
+
+class Bar
+{
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring, "Move class to a new file" enabled
+Refactoring target: class Bar, source namespace Test, target namespace remains Test (same namespace), only split out to separate file Test/Bar.php
+Refactoring rule: When target namespace is identical to source namespace but "Move class to a new file" is checked, the refactoring should still execute the file-split logic and produce the preview, instead of treating the whole operation as a no-op and silently doing nothing.
+*/
+
+/* Error Root Cause:
+Observed failure:
+File Test/Foo.php contains Test\Foo and Test\Bar. User invokes Move Class on Bar, keeps namespace as Test and enables "Move class to a new file". After clicking Refactor, no preview appears and nothing is changed.
+The workaround confirms the root: temporarily changing to a different namespace (Test1) triggers the file-move machinery; switching back to Test runs the split. The dialog’s logic conflates "same namespace" with "no work to perform", ignoring the separate requirement of splitting the class into its own file.
+
+Expected behavior:
+If "Move class to a new file" is selected, even when source and target namespace match, show the refactoring preview and split Bar into Test/Bar.php. Only skip the operation when namespace, target file path, and class location are all unchanged.
+
+Underlying cause:
+The Move Class processor uses a simple equality check on namespace to decide whether the operation is a no-op. It does not independently check the "Move class to a new file" flag; therefore it suppresses the file-split workflow when the namespace stays the same.
+*/

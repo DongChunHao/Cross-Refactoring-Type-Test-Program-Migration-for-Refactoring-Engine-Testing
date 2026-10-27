@@ -1,0 +1,9 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+enum Foo { Bar(i32) }
+fn id<T>(x: T) -> T { x }
+fn main() {
+id(Foo::Bar)(42); //Change Method: modify signature of enclosing main containing first‑class variant‑constructor usage
+}

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn main() { //{change main method, retain named format placeholder inside macro string literal}
+let hello: &str = "hello";
+format!("{hello:?}");
+}

@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: printAnnaMsg
+'''
+#include <iostream>
+void printAnnaMsg(); //{Rename method foo to printAnnaMsg}
+int main(){
+printAnnaMsg();
+}
+void printAnnaMsg() {
+std::cout<<"ANNA";
+}

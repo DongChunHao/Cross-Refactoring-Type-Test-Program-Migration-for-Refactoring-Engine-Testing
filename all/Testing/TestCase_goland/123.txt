@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack1
+// very valuable comment
+func getConstantValue() int { // extract constant usage into helper function
+return constant
+}
+const constant = 0
+/* and */
+/* three */
+// more

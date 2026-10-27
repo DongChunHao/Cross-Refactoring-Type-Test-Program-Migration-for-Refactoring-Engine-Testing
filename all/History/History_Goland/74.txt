@@ -1,0 +1,40 @@
+package main
+
+import (
+	"fmt"
+)
+
+func Print(i interface{}) {
+	switch o := i.(type) {
+	case int64:
+		fmt.Printf("%5d\n", o)
+	case float64:
+		fmt.Printf("%7.3f\n", o)
+	case string:
+		fmt.Printf("%s\n", o)
+	default: // covers structs and such
+		fmt.Printf("%+v\n", o)
+	}
+}
+
+func main() {
+	var a float64
+	a = 1.33343
+	Print(a)
+}
+
+/* Refactoring Settings:
+Refactoring type: Inline Function
+Refactoring target: function Print, call site Print(a) in main()
+Refactoring rule: When inlining a function containing a type switch `x.(type)`, verify that the substituted argument is an interface value. If the argument has a concrete static type, the type switch syntax `a.(type)` is illegal Go; the inline refactoring must detect this and either refuse to inline or generate valid equivalent code.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After inlining Print(a), the refactoring substitutes parameter `i` directly with `a`, producing `switch o := a.(type)`. This is invalid Go syntax: `.(type)` is only allowed inside type switches when the operand is an interface-typed variable. `a` is statically typed as `float64` (concrete type), not an interface, so `a.(type)` is a compile error.
+Expected behavior:
+The inline refactoring should recognize that the function body uses a type switch `i.(type)` on the interface parameter. Since the caller passes a concrete-type variable, direct substitution creates invalid syntax. The refactoring should warn the user and block the inline operation, or wrap the concrete value in an interface{} temporary variable to preserve valid type-switch semantics.
+
+Underlying cause:
+The inline substitution logic performs simple text/AST replacement of the parameter without special-casing Go type-switch semantics. It does not check whether the substituted expression has a concrete type that makes `.(type)` illegal.
+*/

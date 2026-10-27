@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+
+type MyWriter interface {
+Write(p []byte) (error, string)
+}
+type DiscardWriter struct{}
+type Logger struct{}
+
+func (l Logger) Log() {}
+func (DiscardWriter) Write([]byte) (c error, a string) { // Move method Write from DiscardWriter to Logger
+return nil, "1"
+}
+
+func main() {}

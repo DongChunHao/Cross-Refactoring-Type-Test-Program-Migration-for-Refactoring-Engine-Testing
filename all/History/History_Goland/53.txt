@@ -1,0 +1,63 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Create field quick-fix
+Refactoring target: undefined field `o.a` inside composite literal `Copy{a: o.a}`
+Refactoring rule: When inferring the type for a new struct field from an initialization context, use the type of the destination expression (`int` from `Copy.a`) instead of falling back to `interface{}`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Case 1 (composite literal `Copy{a: o.a}`): quickfix creates `a interface{}` on Original, even though the value is assigned into an `int` field.
+Case 2 (assignment `c.a = o.a`): quickfix correctly infers `a int`.
+
+Expected behavior in both cases: add `a int` to Original.
+Underlying cause: The type inference path differs between composite-literal value contexts and assignment statement contexts. In the composite literal branch, the quickfix does not propagate the expected type from the target field `Copy.a` and defaults to empty interface; the assignment branch correctly uses the left-hand-side expected type.
+*/
+
+type Original struct{}
+type Copy struct {
+	a int
+}
+
+func main() {
+	var o Original
+	c := Copy{
+		a: o.a,
+	}
+	println(o, c)
+}
+
+// Bad actual result
+/*
+type Original struct {
+	a interface{}
+}
+type Copy struct {
+	a int
+}
+func main() {
+	var o Original
+	c := Copy{
+		a: o.a,
+	}
+	println(o, c)
+}
+*/
+
+// Expected correct result
+/*
+type Original struct {
+	a int
+}
+type Copy struct {
+	a int
+}
+func main() {
+	var o Original
+	c := Copy{
+		a: o.a,
+	}
+	println(o, c)
+}
+*/

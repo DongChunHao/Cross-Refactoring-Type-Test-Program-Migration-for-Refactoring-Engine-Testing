@@ -1,0 +1,16 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+declare function mapConnection(results: any, opts: { nodeToCursor: (node: any) => string }): any;
+declare const context: { getFromApi: (args: any) => Promise<{ results: any[] }> };
+const rootResolvers = {
+Query: {
+fromApi: (root, args, context, info) => {
+return context.getFromApi(args).then((json) => {
+const nodeToCursor = (node) => node.databaseId.toString(); //{Rename Method target constant holding arrow‑function used in object shorthand}
+return mapConnection(json.results, {nodeToCursor});
+});
+},
+},
+};

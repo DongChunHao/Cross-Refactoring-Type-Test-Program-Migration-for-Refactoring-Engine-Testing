@@ -1,0 +1,21 @@
+/* Refactoring Settings:
+Refactoring type: Move implementation to source file
+Refactoring target: Move static member function foo::DoSomething definition out of class foo to the source file
+Refactoring scope: static bar DoSomething() inside class foo
+Refactoring rule expectation: 1. Remove static keyword from out-of-line definition in cpp file; static only exists on in-class declaration. 2. Fully qualify nested return type bar as foo::bar in the source file definition.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving implementation to source file, generated signature is `bar static foo::DoSomething() {...}`. It incorrectly retains static qualifier on the out-of-line definition and fails to qualify the nested return type `bar`.
+Expected behavior: Source file definition signature should be `foo::bar foo::DoSomething() {...}`.
+Underlying cause: The refactoring engine mishandles nested type return types and static member function qualifiers when moving definitions out of the class. It does not fully qualify the inner struct type for the return type and incorrectly copies the static keyword onto the external definition, which is invalid C++.
+*/
+
+class foo {
+    struct bar {
+        int baz;
+    };
+    static bar DoSomething() {
+        return bar{};
+    }
+};

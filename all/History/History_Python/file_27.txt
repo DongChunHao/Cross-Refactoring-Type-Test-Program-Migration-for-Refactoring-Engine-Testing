@@ -1,0 +1,17 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function)
+Refactoring target: function test() from source.py to destination.py
+Refactoring scope: function definition, runtime imports, type hint comment imports
+Refactoring rule expectation: After moving function test to destination.py, all symbols used in inline # type: comment annotations (Text, Optional) shall have corresponding import statements added to destination.py alongside runtime imports like OrderedDict.
+'''
+''' Error Root Cause:
+Observed failure: After move refactor, destination.py imports OrderedDict which is used in runtime code, but does NOT add imports for Text and Optional referenced inside the # type: comment type hint. The type hint symbols become unresolved in destination.py.
+Expected behavior: Move refactor should collect symbols from both executable code and type hint comments, and add required imports for all referenced symbols in destination module.
+Underlying cause: The move refactor import collector only parses runtime AST nodes and ignores symbols inside legacy # type: comment-based type annotations; it treats these comment type hints as plain text instead of parsing them for referenced type symbols.
+'''
+from collections import OrderedDict
+from typing import Optional, Text
+
+def test(foo, bar, baz=None):
+    # type: (Text, Text, Optional[Text]) -> dict
+    return OrderedDict()

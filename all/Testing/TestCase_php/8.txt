@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+
+innerLogic(); // extract body logic to innerLogic
+    }
+    private function innerLogic() // extract method body
+    {
+    }
+}
+?>
+'''

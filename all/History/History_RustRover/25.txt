@@ -1,0 +1,37 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Variable
+Refactoring Target: Tail expression `true` which is the implicit return of function `f`
+Refactoring Scope: Extract variable on block/function tail expression
+Plugin Environment: IntelliJ Rust plugin 0.4.160.4235-212-nightly, CLion 2021.2.2, Rust 1.56.0, Linux 5.4.0-89-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Variable on the final tail expression `true` of `f()`
+*/
+/* Error Root Cause:
+Observed failure: When extracting the last expression of a block/function (implicit return), the refactor inserts `let x = true;` and does not keep the variable as the tail expression. The block becomes statement-only with no return value, breaking the function return.
+Actual generated invalid code:
+fn f() -> bool {
+    let x = true;
+}
+Expected behavior: Recognize that this is a tail expression. After introducing the binding, retain the variable as the block’s final expression:
+fn f() -> bool {
+    let x = true;
+    x
+}
+Underlying cause: Extract variable logic treats the selected expression as a regular statement and only emits the `let` binding, without preserving the implicit return semantics of tail expressions.
+*/
+// Before
+fn f() -> bool {
+    true
+}
+
+// Actual broken output
+fn f() -> bool {
+    let x = true;
+}
+
+// Expected output
+fn f() -> bool {
+    let x = true;
+    x
+}

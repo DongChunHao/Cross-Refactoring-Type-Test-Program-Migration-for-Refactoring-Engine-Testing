@@ -1,0 +1,51 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function
+Refactoring Target: Statement sequence `x += 1; x` in `foo`
+Refactoring Scope: Automatically capture used local variables as parameters of the extracted function
+Plugin Environment: IntelliJ Rust plugin
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select `x += 1; x` and invoke Extract Function
+*/
+/* Feature request description:
+Current behavior: The extract function refactor should automatically collect all variables referenced inside the selected code range and turn them into parameters of the newly created function.
+Example:
+Before:
+fn foo(x: u32) -> u32 {
+    x *= 2;
+    x += 1;
+    x
+}
+
+Desired output:
+fn foo(x: u32) -> u32 {
+    x *= 2;
+    new_fn(x)
+}
+
+fn new_fn(x: u32) -> u32 {
+    x += 1;
+    x
+}
+
+Notes:
+This also needs to handle mutability correctly. In this example, `x` is mutable in the original function; passing it to `new_fn` requires deciding whether to pass by value, mutable reference, or immutable reference.
+Underlying requirement: The refactor’s usage analysis must traverse the selected AST, collect all free local variables, infer their types and mutability, add them to the new function signature, and inject corresponding arguments at the call site.
+*/
+// Before
+fn foo(x: u32) -> u32 {
+    x *= 2;
+    x += 1;
+    x
+}
+
+// Desired after extraction
+fn foo(x: u32) -> u32 {
+    x *= 2;
+    new_fn(x)
+}
+
+fn new_fn(x: u32) -> u32 {
+    x += 1;
+    x
+}

@@ -1,0 +1,35 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class C
+Scope: class code body, whitespace and formatting
+Refactoring operation: move class C to a different namespace
+*/
+
+/* Error Root Cause:
+Observed failure: Running Move Class refactor will reformat the whole class body code automatically, even though only the namespace/use declarations should be modified. The user’s original whitespace and line layout inside the class get altered unexpectedly.
+Expected behavior: Only modify namespace declaration, add/update use statements required for the new namespace. Preserve all existing whitespace, line breaks and formatting inside the class body, without applying code formatting.
+Underlying cause: The Move Class PSI rewrite process triggers the code formatter as part of the file write/PSI rebuild step; the refactoring does not run in a "format-free" mode and normalizes the entire file’s layout.
+*/
+class C
+{
+    public function f()
+    {
+        $this->setVars([
+            'foo' => 'bar',
+            'baz' => 42,
+        ]);
+
+        $form->field('name')
+            ->typeText()
+            ->label('Name')
+            ->value('My Name')
+            ->required();
+
+        $this->link = LinkQuery::create()
+            ->filterAccessibleBy($this->userSession->getUser())
+            ->filterByID($this->request->request->getInt('link'))
+            ->findOne();
+    }
+}
+?>

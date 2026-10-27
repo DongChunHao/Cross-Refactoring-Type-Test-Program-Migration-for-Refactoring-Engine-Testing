@@ -1,0 +1,15 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pack1
+const pack2 = 0
+type I1 interface {
+Foo()
+}
+type S struct{}
+func (s S) Foo() {}
+func caller() {
+var s S
+s.Foo() // move Foo method from S to a standalone function
+}

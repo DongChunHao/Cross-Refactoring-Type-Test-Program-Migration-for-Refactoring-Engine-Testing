@@ -1,0 +1,22 @@
+```
+<?php
+class Logger{}
+class BaseService{}
+class UserService extends BaseService{
+    /**
+     * @param Logger $log
+     * @return self
+     */
+    public function build(Logger $log): self
+    {
+        $p = new parent();
+        return new self;
+    }
+    public function run(){}
+}
+$l = new Logger();
+(new UserService)->build($l)->run();
+?>
+```
+
+【Refactoring Action】: Move Instance Method refactoring, move `build()` from `UserService` to `Logger`.

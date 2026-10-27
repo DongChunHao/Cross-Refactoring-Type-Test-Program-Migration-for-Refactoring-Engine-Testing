@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+document.body.style.display = "block"; //{Extract Method target string‑literal inner‑text selection scenario, validator misidentifies string‑fragment as standalone expression}
+var elvisLives = (Math.PI > 4) ? "Да" : "Нет";

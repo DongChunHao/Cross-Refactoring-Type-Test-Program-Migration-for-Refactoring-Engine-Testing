@@ -1,0 +1,25 @@
+<?php
+interface I2{}
+interface I3 extends I2{
+    const a = 2;
+}
+class A implements I3{}
+class Test implements I2{
+    const a = 1; // <-- Pull Up refactoring target
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: constant `a` in class Test
+Target destination: interface I2
+Refactoring rule: When pulling a constant up into an interface, the refactoring must traverse the full interface inheritance hierarchy and detect if any descendant interface that extends the target interface already declares a constant with the same name. If such a collision exists, emit a warning to the user before applying the refactoring.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling Test::a up into I2 does not show any warning. After the refactoring, I2::a = 1 and I3 (which extends I2) already defines I3::a = 2, creating a constant name collision in the inheritance hierarchy.
+Expected behavior:
+The refactoring should detect that descendant interface I3 already has constant `a`, warn the user about the name collision that will occur after moving the constant into I2.
+Underlying cause:
+Collision checking only inspects the immediate target interface (I2) for existing constants. It does not recursively check interfaces that extend I2 (like I3) for conflicting constant names, so the inheritance-level collision is missed.
+*/

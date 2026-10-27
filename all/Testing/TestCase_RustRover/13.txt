@@ -1,0 +1,9 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+fn main() {
+let mut result = 42;
+result = 34;
+println!("rrr={result:#06x}"); //{extract statement containing format‑string macro into separate helper method}
+}

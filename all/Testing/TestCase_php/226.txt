@@ -1,0 +1,15 @@
+```
+<?php
+interface UserContract {
+    public function getAge(): int;
+}
+class User implements UserContract {
+    public function getAge(): int
+    {
+        return 20;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `User::getAge()`, change return type `int` → `string`, do not propagate to interface.

@@ -1,0 +1,21 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Interface
+Refactoring Target: Object literal nested inside the `complex` property of interface Example
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Execute Extract Interface on the nested object literal inside `complex` property, the refactoring produces malformed declaration.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Running Extract Interface on an object literal inside an existing interface yields invalid output `interface Example Created` instead of a valid interface declaration.
+Expected behavior: The refactoring should generate a properly named, syntactically valid interface for the selected object literal and replace the original literal with that interface type reference.
+Underlying cause: The Extract Interface logic does not properly handle object literals nested within existing interface members. The AST writer produces broken declaration text instead of constructing a valid interface node.
+*/
+
+// Complete compilable test code
+interface Example {
+    type: "rx.testing";
+    num: number;
+    complex: { a: boolean; b: boolean; c: { arr: [1, 2, 3] } }
+}

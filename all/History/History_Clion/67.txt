@@ -1,0 +1,45 @@
+/* Refactoring Settings:
+Refactoring type: Move refactoring (CLion C++ Move type definition to new header file)
+Refactoring target: struct `foo` declared inside namespace `ns`
+Operation: Invoke Refactor → Move on struct foo, set target file name foo.hpp, specify target namespace `ns`, allow creation of new header file.
+Scope: Keep struct foo inside namespace `ns` in the new header file. Update references in original code so type name `foo` is correctly resolved to `ns::foo`, avoid ambiguity with member variable named `foo`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+1. The new header foo.hpp puts `struct foo` in global namespace instead of the requested `ns` namespace.
+2. In original source after refactoring, inside `bar::f()`, `ns::foo x;` becomes `foo x;`.
+Since bar has a member variable named `foo`, unqualified `foo` refers to the member, not the type, causing compilation ambiguity / ill-formed code.
+
+Expected behavior:
+foo.hpp:
+#pragma once
+namespace ns {
+    struct foo { };
+}
+Original file:
+#include "foo.hpp"
+namespace ns {
+    struct bar {
+        ns::foo foo;
+        void f() {
+            ns::foo x;
+        }
+    };
+}
+
+Underlying cause:
+Move refactoring fails to wrap the moved struct into the specified target namespace in the new header. It also incorrectly simplifies `ns::foo` to unqualified `foo` in the original code, ignoring name lookup ambiguity between type name and member variable with identical identifier.
+*/
+
+namespace ns {
+   struct foo { };
+
+   struct bar {
+       foo foo;
+
+       void f() {
+           ns::foo x;
+       }
+   };
+}

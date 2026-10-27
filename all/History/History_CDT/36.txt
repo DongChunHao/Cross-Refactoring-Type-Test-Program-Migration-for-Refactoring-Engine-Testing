@@ -1,0 +1,37 @@
+#define A // Macro to be renamed
+int main(int argc, char** argv) {
+#ifdef A
+    int a = 1;
+#else
+    int b = 1;
+#endif
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename)
+Refactoring Target: preprocessor macro `A`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro definition `A`, invoke Rename refactoring, input string `not A` (contains whitespace) as new macro name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts input `not A` which contains whitespace. Macro definition becomes `#define not A`. According to preprocessor syntax, macro name terminates at first whitespace; tool creates macro `not` with replacement text `A`. Original macro identifier `A` is not updated inside `#ifdef A`, leaving old reference intact.
+Two problems are introduced:
+1. Macro name becomes `not` instead of intended `not A`; whitespace breaks macro declarator syntax.
+2. All usages inside preprocessor conditional directives (`#ifdef A`) remain unchanged.
+Compilation behaviour is altered, code may produce compile‑time or runtime error. No validation or warning is emitted during refactoring.
+
+Expected behavior:
+Macro identifiers follow exactly the same C identifier lexical grammar as variable/function names:
+1. Macro name can only contain letters, underscores, digits.
+2. Must start with letter or underscore; whitespace is forbidden.
+3. Reject candidate name `not A` immediately due to embedded whitespace, show error message and abort transformation.
+Additionally, for valid macro‑rename inputs, tool must also rewrite macro occurrences within `#ifdef` / `#ifndef` / `defined()` preprocessor directives.
+
+Underlying cause:
+Macro rename does not apply identifier lexical validation on user‑supplied new name. Raw input string is directly written into `#define` line; preprocessor itself splits token at whitespace, causing unintended macro name and body. Moreover rename pass still ignores macro references inside preprocessor conditional directives, leaving stale identifiers.
+*/

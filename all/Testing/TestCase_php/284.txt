@@ -1,0 +1,11 @@
+```
+<?php
+class C{
+    public function f() : double
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Open Change Signature dialog for method `C::f()` and inspect preview panel.

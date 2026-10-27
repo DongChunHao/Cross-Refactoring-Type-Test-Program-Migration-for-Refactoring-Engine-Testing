@@ -1,0 +1,60 @@
+/* Refactoring Settings:
+Refactoring Type: F6 Move To Another File (top-level class/interface)
+IDE: Rider
+Symptom:
+Intermittent crash/hang (~50% reproduction rate).
+Workflow: caret on type name → F6 → Move to another file dialog opens, keep default filename → Next → Rider freezes completely, force quit required.
+After recovery, inconsistent state:
+- Sometimes type exists in new file AND remains in original file (duplicate declaration compile error)
+- Sometimes only the new file is created
+*/
+
+/* Error Root Cause
+This is a deadlock / PSI transaction + project model race condition, typical for this class of intermittent Rider crash:
+1. When you click Next, Rider starts two concurrent jobs:
+   a) PSI write transaction: remove type node from original file, create type node in new file
+   b) MSBuild/project model job: create file on disk, add `<Compile>` item to the project
+2. A lock contention occurs between the PSI read-write lock and the project/solution model background loader.
+3. The UI dispatcher thread blocks indefinitely → Rider becomes unresponsive (hang).
+4. The two operations are not atomic: filesystem/file creation may complete before the PSI deletion of the original type.
+   If the hang happens mid-transaction, the rollback logic fails to clean up, leaving the type present in both files, creating duplicate type definitions.
+
+Common triggers that increase chance of hitting the race:
+- Large solution / many projects, background solution loading still in flight
+- Multi-targeted csproj
+- External file watchers (dotnet watch, IDE file sync) touching files
+- Slow disk / network drive for project files
+- Large source file with multiple top-level types
+
+This is different from a simple exception: it is a thread deadlock, which explains why it is intermittent rather than 100% reproducible.
+*/
+
+/* Reproduction Steps
+1. Put cursor on top-level class/interface
+2. Press F6, select Move to another file
+3. Keep the auto-generated filename, click Next
+4. Rider hangs, UI frozen, must force-quit
+5. After restart, inconsistent state: type may exist in both original file and new file
+*/
+
+/* Expected Behavior
+The refactoring must run as an atomic transaction:
+1. If everything succeeds: remove from original file, create new file, add to project, refresh model.
+2. If any step fails/hangs: roll back all changes, no orphaned new files, no duplicate types, show error message instead of freezing UI.
+*/
+
+/* Workarounds
+1. Prefer the quick-fix "Move type to new file" (when available) as it uses a different execution path, sometimes avoids the F6 dialog deadlock.
+2. Before running F6, wait for Rider’s solution loading progress bar to finish; avoid running refactor while solution is still loading.
+3. Avoid running refactors while `dotnet watch` or other file watchers are active on the project.
+4. If you hit the hang: after force-quit, check both files for duplicate type definitions and manually delete the copy from the original file.
+5. Invalidate Caches (File → Invalidate Caches…) and restart Rider to clear stale project model state.
+6. Update Rider: many project-model deadlocks in F6 move were patched in later releases.
+*/
+
+// Example resulting broken state after hang
+// OriginalFile.cs
+public class MyClass {}
+// MyClass.cs (new file created by refactoring)
+public class MyClass {}
+// CS0101: The namespace already contains a definition for MyClass

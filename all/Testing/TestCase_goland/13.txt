@@ -1,0 +1,16 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+package main
+import "errors"
+
+type BaseErr struct{}
+type ErrFoo struct{ BaseErr }
+func (errFoo *ErrFoo) Is(err error) bool { // Pull up method Is from ErrFoo to BaseErr
+return errFoo == err
+}
+func main() {
+var e error = &ErrFoo{}
+_ = errors.Is(e, &ErrFoo{})
+}

@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn bar() { //{move method bar into main as nested function}
+print!("Bar");
+()
+}
+fn main() {
+bar();
+print!("Foo");
+}

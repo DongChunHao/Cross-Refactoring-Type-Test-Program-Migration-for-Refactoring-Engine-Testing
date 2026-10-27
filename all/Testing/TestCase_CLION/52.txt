@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+struct MyClass {
+MyClass(int);
+int field;
+};
+void qqq() {
+int init_val = 239; //{Extract variable for literal 239 initializer}
+MyClass x = init_val;
+x.field;
+}

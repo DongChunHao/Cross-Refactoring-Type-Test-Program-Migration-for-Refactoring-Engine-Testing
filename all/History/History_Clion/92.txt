@@ -1,0 +1,21 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+/* Refactoring Settings:
+Refactoring type: Inline Typedef
+Refactoring target: Inline typedef alias `pii` (typedef pair<int, int> pii;)
+Refactoring scope: Usage `pii a[n];` inside main()
+Refactoring rule expectation: Substitute `pii` with `pair<int, int>`, preserve original array declaration `pair<int, int> a[n];`
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining typedef pii, the code incorrectly becomes `pair<int, int> a[-1];`. The array size `n` is wrongly replaced with `-1`.
+Expected behavior: Result should be `pair<int, int> a[n];`.
+Underlying cause: The refactoring engine’s parser mishandles variable-length array syntax when substituting typedef type. It incorrectly discards the array size variable `n` and hardcodes `-1` as the array dimension, producing invalid negative-size array declaration.
+*/
+
+typedef pair<int, int> pii;
+int main() {
+  int n = 10;
+  pii a[n];
+}

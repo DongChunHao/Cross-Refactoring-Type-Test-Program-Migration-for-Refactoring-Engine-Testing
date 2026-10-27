@@ -1,0 +1,19 @@
+```
+<?php
+class Unit { }
+class Soldier extends Unit {
+    function getBaseStats(): array
+    {
+        return ['hp' => 100];
+    }
+}
+class Archer extends Soldier {
+    function getStats(){
+        $base = parent::getBaseStats();
+        $base['atk'] = 20;
+        return $base;
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `getStats()` from class `Archer` to parent class `Soldier`

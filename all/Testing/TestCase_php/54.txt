@@ -1,0 +1,17 @@
+```
+<?php
+namespace App\Utils {
+    use App\Utils as ALIAS;
+    class Helper
+    {
+    }
+    class Parser implements ALIAS\NS\IValidator{
+    }
+}
+namespace App\Utils\NS {
+    interface IValidator{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `Parser`, move to global namespace into new separate file

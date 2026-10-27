@@ -1,0 +1,26 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <map>
+class BaseRunner
+{
+public:
+virtual void iterateMap() = 0;
+};
+class Runner : public BaseRunner //{Pull up iterateMap declaration into BaseRunner}
+{
+public:
+void iterateMap() override {
+std::mapstd::string,int testmap = {{"a", 1}, {"b", 2}};
+for (std::mapstd::string,int::iterator it = testmap.begin(); it != testmap.end(); ++it) {
+std::cout << it->first << " -> " << it->second << "\n";
+}
+}
+};
+int main() {
+Runner r;
+r.iterateMap();
+return 0;
+}

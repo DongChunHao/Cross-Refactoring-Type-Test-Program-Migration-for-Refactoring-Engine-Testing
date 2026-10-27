@@ -1,0 +1,21 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Move Declaration (Move function / Go Move refactoring)
+Refactoring target: Move a Go function located in a source root that is outside the IDE project base directory (the directory containing .idea)
+Refactoring scope: Bazel project with additional source roots not nested under the project base root
+Refactoring rule: Validate target directory against registered Go source roots instead of only checking if it is an ancestor of the IDE project base path.
+*/
+
+/* Error Root Cause:
+Observed failure: When trying to move a Go declaration to a target directory that is a valid registered Bazel/Go source root but not under the .idea project base directory, the dialog validation rejects it with message "The target directory should be located inside the project."
+Expected behavior: Allow selection of any directory that is a configured Go source root, even if it sits outside the IDE project base path.
+Underlying cause: The validation logic in GoMoveDeclarationDialog#validate uses a strict ancestor check against the project base path (`VfsUtilCore.isEqualOrAncestor`). It does not consult the list of registered Go/Bazel source roots, so valid out-of-project-root source directories are incorrectly blocked.
+*/
+
+func DemoFunction() {
+}
+
+func main() {
+	DemoFunction()
+}

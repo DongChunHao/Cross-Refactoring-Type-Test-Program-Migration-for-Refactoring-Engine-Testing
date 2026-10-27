@@ -1,0 +1,21 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Constant
+Refactoring Target: String literal `'variable'` before an IIFE
+Refactoring Scope: JavaScript, ASI (Automatic Semicolon Insertion) edge case
+Trigger Operation: Run Extract Constant (Ctrl+Alt+C) on `'variable'`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The original code relies on an explicit semicolon to separate the string literal from the immediately following IIFE `(() => {})()`. After extraction, the refactoring drops the semicolon, producing `const variable = 'variable' (() => {})()` — JavaScript interprets this as an attempt to call the result of `'variable'`, which throws an error.
+
+Expected behavior: Preserve the terminating semicolon, emit:
+const variable = 'variable';
+(() => {})()
+
+Underlying cause: The extract refactoring does not take ASI and statement boundary context into account. It only rewrites the expression and discards the existing leading/trailing punctuation needed to prevent unintended function invocation.
+*/
+
+// Complete compilable test code
+'variable'  ;(() => {})()

@@ -1,0 +1,16 @@
+```
+<?php
+class TargetBin { }
+class BaseRepo{
+    protected static function loadRaw(){}
+}
+class UserRepo extends BaseRepo {
+    static function fetch()
+    {
+        BaseRepo::loadRaw();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `fetch()` from class `UserRepo` to class `TargetBin`.

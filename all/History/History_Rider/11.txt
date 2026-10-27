@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using FluentAssertions;
+
+/* Refactoring Settings:
+Refactoring Type: Rider built-in "Move type to new file" refactoring (the primary red-highlighted quick-fix variant)
+Refactoring Target: A newly created C# class type inside an existing source file
+Refactoring Scope: Move selected class declaration out of current file into a brand-new dedicated .cs file
+Refactoring Rule Expectation: After refactoring completes, original class is removed from the source file, a new corresponding .cs file containing the class is created on disk, the project is updated to include the new file, and the type remains resolvable.
+Distinction: This bug only occurs for the "Move type to new file" variant; the alternative "Move to another file" refactoring works correctly.
+IDE Environment: Rider 2025.1.6 (RD-251.27812.115), macOS aarch64 15.6.1, .NET 8.0.11
+*/
+
+/* Error Root Cause:
+Observed failure: When invoking the "Move type to new file" refactoring, the target class disappears from the original source file. No new file is created on the filesystem, the new file is not present in git change lists or unversioned files, Rider immediately marks the class as missing. Closing the editor tab removes the ability to undo, permanently losing the class code.
+Expected behavior: The refactoring should create a new .cs file containing the class, add the file to the project, remove the class from the original file, and maintain type resolution.
+Underlying cause: The "Move type to new file" implementation path has a defect unique to this specific refactoring action (separate implementation from "Move to another file"). The IDE successfully rewrites the original source file AST to delete the class declaration, but fails to execute the file creation / project-add logic. No error message or warning is surfaced to the user, leaving the code deleted with no persisted output file. The issue reproduces consistently for the reporter across all projects on their macOS ARM64 environment, while other macOS developers do not hit the same bug, indicating an environmental trigger interacting with this specific refactoring pipeline.
+*/
+
+// Base test class and supporting types for compilation
+public abstract class BaseNotificationTests
+{
+}
+
+public record ReportedEventEntry;
+public record PushNotification
+{
+    public string State { get; set; }
+    public DateTimeOffset? EndTime { get; set; }
+}
+
+public class ThisExceptionIsGoingToShowABugInRiderWatchMe : Exception
+{
+    public ThisExceptionIsGoingToShowABugInRiderWatchMe() : base("Debug exception for Rider refactoring test") { }
+}
+
+// Test file: SmokeAlarmNotificationTests.cs
+public class SmokeAlarmNotificationTests : BaseNotificationTests
+{
+    public override void Validate(IReadOnlyList<ReportedEventEntry> signalrEvents)
+    {
+        var pushNotifications = new List<PushNotification>();
+        pushNotifications.Should().HaveCount(expected: 1);
+        foreach (var pushNotification in pushNotifications)
+        {
+            pushNotification.State.Should().Be(expected: "Completed");
+            pushNotification.EndTime.Should().BeWithin(TimeSpan.FromMinutes(1));
+        }
+
+        signalrEvents.Should().HaveCount(expected: 1);
+        foreach (var signalrEvent in signalrEvents)
+        {
+            signalrEvent.EventPayload.Should().NotBeNull();
+
+            try
+            {
+                var payload : JsonNode? = JsonNode.Parse(signalrEvent.EventPayload);
+
+                payload!["NotificationId"]?.ToString().Should().Be("NotificationIdValue");
+                payload!["DeviceId"]?.ToString().Should().Be("DeviceIdValue");
+            }
+            catch (JsonException e)
+            {
+                throw new ThisExceptionIsGoingToShowABugInRiderWatchMe();
+            }
+
+            signalrEvent.Timestamp.Should().BeWithin(TimeSpan.FromMinutes(1));
+        }
+    }
+}
+
+// The NEW CLASS to be targeted by "Move type to new file" refactoring
+// This is the type that vanishes after running the problematic refactoring
+public class TestLocalAlarmMetadata
+{
+    public string AlarmKey { get; set; } = string.Empty;
+    public string LocationDescription { get; set; } = string.Empty;
+}

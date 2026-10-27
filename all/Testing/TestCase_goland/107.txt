@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func invokeF() { // extract function call logic into invokeF
+f := func(string) int { return 42 }
+f("a-constant")
+}
+func main() {
+invokeF()
+}

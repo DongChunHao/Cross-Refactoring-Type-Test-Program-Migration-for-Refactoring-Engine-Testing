@@ -1,0 +1,35 @@
+/* Refactoring Settings:
+Refactoring type: Rename (C++ CLion)
+Refactoring target: class member `A::value`
+Operation: Invoke Rename refactoring on `A::value` in FileA.h
+Scope: Distinguish identically-named member variables belonging to different classes; only rename usages of `A::value`, do not touch `B::value`
+*/
+
+/* Error Root Cause:
+Observed failure: Renaming `A::value` incorrectly renames `B::value` at `c.my_vec[i].value = 5;`. The two members share the same simple name `value`, but belong to completely separate classes A and B.
+Expected behavior: Only rename references to `A::value`. The expression `my_vec[i].value` refers to B::value and should remain untouched.
+Underlying cause: The rename refactoring’s symbol lookup fails to resolve the full type context of member access expression `my_vec[i].value`. It matches only the identifier token `value` instead of the fully qualified symbol `B::value`. When type inference for container/vector element types is incomplete, the refactoring confuses `A::value` and `B::value` as the same symbol.
+*/
+
+#include <vector>
+using namespace std;
+
+class A {
+    int value;
+};
+
+class B {
+public:
+    int value;
+};
+
+class C {
+public:
+    vector<B> my_vec;
+};
+
+void test()
+{
+    C c;
+    c.my_vec[i].value = 5;
+}

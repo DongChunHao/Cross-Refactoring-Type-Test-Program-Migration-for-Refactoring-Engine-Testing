@@ -1,0 +1,36 @@
+#define Id_0
+#define Id_1
+int global_0 = -1;
+void f_0() {
+    float LocalVar_0 = 4;
+    LocalVar_0 = -1;
+}
+float f_1(float LocalVar_0) {
+    return LocalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (global variable rename)
+Refactoring Target: global variable `global_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select global variable `global_0`, invoke Rename refactoring, input C reserved keyword `int` as new variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts reserved keyword `int` as candidate variable name and produces `int int = -1;`.
+In C language, reserved keywords cannot be used as variable identifiers. The declaration `int int = -1;` triggers syntax error. Refactoring completes silently without warning and writes invalid source code.
+
+Expected behavior:
+For all rename operations targeting variables, parameters, functions and macros:
+1. Verify candidate name is a well‑formed C identifier conforming to lexical rules: starts with letter/underscore; only letters, underscores, digits are permitted.
+2. Reject any candidate present in C reserved keyword list (`int`, `float`, `if`, `return`, etc.).
+3. Abort refactoring and display error message when validation fails.
+Keywords shall never be accepted for rename, even though they are lexically valid character sequences.
+
+Underlying cause:
+CDT rename pipeline only performs partial lexical syntax check. It does not compare candidate name against C keyword table. Although the character sequence "int" satisfies identifier lexical grammar, it is reserved and cannot serve as user‑defined identifier. The tool delegates this semantic constraint checking entirely to the compiler.
+*/

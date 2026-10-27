@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring (F6)
+Refactoring target: global-namespace class Foo, move into a new namespace
+Scope: the class Foo and its internal method bodies
+Refactoring operation: relocate class Foo from global namespace to a user-specified namespace
+*/
+
+/* Error Root Cause:
+Observed failure: After moving Foo into a namespace, `parent::__construct()` gets rewritten to static call `\Some\Bar::__construct()`.
+Expected behavior: `parent::__construct()` must remain as `parent::__construct()`. The `parent` keyword is relative to the class inheritance and should not be expanded into a fully qualified static method call when the class changes namespace.
+Underlying cause: The refactoring reference rewriter incorrectly resolves the `parent` keyword to the FQN of the parent class and rewrites the syntax node. `parent::` is a special language construct, not a normal class name reference, and should be excluded from namespace-based FQN expansion during class move.
+*/
+class Foo extends \Some\Bar {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+}
+?>

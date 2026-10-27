@@ -1,0 +1,16 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Import collector only scans runtime AST nodes and ignores legacy # type: comment‑based type annotations; symbols inside comment type hints are not collected, required imports are missing in destination unit
+from collections import OrderedDict
+from typing import Optional, Text
+def test(foo, bar, baz=None):
+
+# type: (Text, Text, Optional[Text]) -> dict
+
+val = OrderedDict()
+return val // REFACTOR_TARGET
+
+ How to ensure the accuracy of cross-refactoring test case migration?
+
+ What are the common challenges in cross-refactoring test case migration?
+
+ Can you provide some examples of successful cross-refactoring test case migration projects?

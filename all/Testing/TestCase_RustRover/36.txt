@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+// main.rs
+mod foo; //{change module‑associated function metadata, keep module declaration and file mapping context}
+// foo.rs
+pub fn hello() {}

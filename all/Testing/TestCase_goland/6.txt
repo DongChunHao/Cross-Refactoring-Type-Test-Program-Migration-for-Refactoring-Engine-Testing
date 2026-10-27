@@ -1,0 +1,11 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+
+type Holder struct{}
+func (h Holder) targetFunc() { // Move method targetFunc to another type
+println(myParam)
+}
+func main() {}

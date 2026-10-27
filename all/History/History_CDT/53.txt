@@ -1,0 +1,40 @@
+#define Id_1
+int global_0 = 10;
+int f_0(){
+    int LocalVar_0 = 2;
+    return global_0;
+}
+int f_1() {
+    int LocalVar_0 = 0;
+    return global_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (global variable rename)
+Refactoring Target: global variable `global_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select global variable `global_0`, invoke Rename refactoring, input integer literal `0` as new variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts numeric literal `0` as rename target name.
+Declaration becomes `int 0 = 10;` which is invalid C syntax, since variable identifier cannot be a numeric literal.
+Moreover every reference to `global_0` is substituted with literal `0`: `return 0;`.
+The refactoring completely changes program semantics: original code returns value of global variable, after transformation it returns constant zero.
+No warning is emitted during refactoring; broken source code is persisted.
+
+Expected behavior:
+All rename operations for variables, functions, parameters must perform lexical validation for candidate name:
+1. Valid C identifier must start with alphabet character or underscore.
+2. Subsequent characters can only be letters, underscores, decimal digits.
+3. Reject pure numeric literals and any candidate starting with digit.
+4. Reject reserved C keywords and inputs containing special symbols or whitespace.
+Abort transformation and report error message if validation fails. Refactoring must not delegate identifier validity checking to compiler.
+
+Underlying cause:
+CDT rename workflow lacks lexical validation on user‑provided input string. Raw input text is directly substituted in variable declaration and all usage sites. It does not check whether candidate conforms to C identifier grammar, allowing numeric literals to replace identifiers, breaking syntax and altering program runtime behaviour.
+*/

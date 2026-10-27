@@ -1,0 +1,21 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: checkStringAssignment
+'''
+#define array_length(arr) (sizeof(arr) / sizeof((arr)[0]))
+struct num {
+int member;
+} num[] = {{ 1 }};
+static int checkStringAssignment(const char** str_ptr) //{Extract method for assignment and condition check}
+{
+if ((*str_ptr = "expr") != 0)
+return 1;
+return 0;
+}
+void demo(void)
+{
+const char *str;
+for (const struct num *p = num + array_length(num); p-- != num;)
+if (checkStringAssignment(&str))
+return;
+}

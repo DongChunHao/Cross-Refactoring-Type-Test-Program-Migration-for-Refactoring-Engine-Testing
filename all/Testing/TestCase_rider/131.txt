@@ -1,0 +1,21 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace QuickfixMoveTypeLossRepro
+{
+public abstract class BaseCustomException : Exception
+{
+public abstract void Validate();
+}
+
+public class ThisExceptionIsGoingToShowABugInRiderWatchMe : BaseCustomException
+{
+public override void Validate() //{Push Down Method: target method for quick‑fix‑move‑type‑silent‑source‑loss‑bug reproduction}
+{
+}
+}
+
+}

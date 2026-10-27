@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package a
+import "fmt"
+var S fmt.Stringer
+func oldFoo() {
+_ = S.String()
+}
+func caller() {
+oldFoo() // rename method oldFoo to Foo
+}

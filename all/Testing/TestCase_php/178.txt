@@ -1,0 +1,9 @@
+```
+<?php
+function buildQuery($table, $where = [], ...$joins) {
+    return [$table, $where, $joins];
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `buildQuery`.

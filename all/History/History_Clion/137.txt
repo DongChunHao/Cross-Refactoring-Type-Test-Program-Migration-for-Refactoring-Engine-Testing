@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+/* Refactoring Settings:
+Refactoring type: Refactor Function Parameters into Struct
+Refactoring target: Function void process_data(int param1, double param2, char *param3)
+Refactoring scope: Current file, all call sites
+Refactoring parameters:
+  - New struct name: DataParams
+  - Generate C typedef struct style
+  - Pass struct by value
+Refactoring rule expectation:
+  1. Create typedef struct with members matching function parameters' types and names
+  2. Rewrite function signature to accept single struct parameter
+  3. Rewrite inside function body: param1 → params.param1, param2 → params.param2, param3 → params.param3
+  4. Rewrite all call sites to use aggregate initialization for DataParams
+*/
+
+/* Error Root Cause:
+Observed: This refactoring feature is missing in the IDE, there is no built-in action to automatically pack multiple function parameters into a struct.
+Expected behavior: Provide a dedicated refactoring action to group parameters into a struct, update signature, body and all call sites automatically.
+Underlying cause: IDE refactoring engine lacks this transformation pass; existing refactorings cannot batch convert parameter list into struct type and update all usages in one step.
+*/
+
+void process_data(int param1, double param2, char *param3) {
+    // Function implementation using param1, param2, param3
+}
+
+int main() {
+    char str[] = "test";
+    process_data(1, 3.14, str);
+    return 0;
+}

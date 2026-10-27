@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: f1_renamed
+'''
+#include <stdio.h>
+void f1(int x){
+printf("%d", x+1);
+}
+void f2(void){
+printf("%d", 2); //extracted line //rename method for C‑mode duplicate‑function‑name no‑overloading scenario
+}

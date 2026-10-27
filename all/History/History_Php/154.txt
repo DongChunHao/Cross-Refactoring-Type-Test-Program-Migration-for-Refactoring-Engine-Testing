@@ -1,0 +1,21 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: anonymous class instantiation `new class() {}`
+Scope: anonymous class PSI validation, action availability
+Refactoring operation: invoke Move Class on anonymous class
+*/
+
+/* Error Root Cause:
+Observed failure:
+Invoking Move Class on an anonymous class throws an internal exception. Anonymous classes are inline expression-level constructs, not top-level named type declarations; they have no separate source file, no stable qualified name, and cannot be relocated to another file/namespace as a standalone class. The refactoring pipeline is built for named classes and fails when trying to create target PSI and update references.
+
+Expected behavior:
+The Move Class context menu entry should be disabled/greyed out when caret is on an anonymous class. If triggered by shortcut, show a friendly error message: "Anonymous classes cannot be moved using Move Class refactoring", instead of hitting an assertion/exception.
+
+Underlying cause:
+The Move Class action’s availability predicate does not check whether the target class is anonymous. It allows the user to start the refactoring, then later assumes the type has a named declaration node, leading to PSI construction failure.
+*/
+class A { }
+$c = new class() { };
+?>

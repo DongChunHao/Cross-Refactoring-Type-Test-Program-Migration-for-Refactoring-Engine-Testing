@@ -1,0 +1,8 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Preprocessing or usage‑search phase for classmethod raises unhandled exception; blocks refactoring‑UI initialization, shows infinite loading spinner, no dialog/error preview and operation cannot finish
+class Base:
+pass
+class Child(Base):
+@classmethod
+def empty(cls): // REFACTOR_TARGET
+return cls()

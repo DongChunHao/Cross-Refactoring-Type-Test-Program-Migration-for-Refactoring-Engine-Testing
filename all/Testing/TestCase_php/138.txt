@@ -1,0 +1,15 @@
+```
+<?php
+trait LoggerTrait{
+    public static function writeLog(){
+    }
+}
+class BaseLogger{
+    use LoggerTrait;
+}
+class FileLogger extends BaseLogger{
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target static function `writeLog()` from trait `LoggerTrait` to class `FileLogger`

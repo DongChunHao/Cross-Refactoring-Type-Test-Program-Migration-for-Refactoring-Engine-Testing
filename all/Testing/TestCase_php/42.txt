@@ -1,0 +1,15 @@
+```
+<?php
+class Unit { }
+class Soldier extends Unit {
+    static private function getDefaultHP(): int { return 100; }
+    public function getStats()
+    {
+        $base = self::getDefaultHP();
+        return ['hp' => $base];
+    }
+}
+class Archer extends Soldier{}
+```
+
+【Refactoring Action】: Pull Up method `getStats()` from class `Soldier` to parent class `Unit`

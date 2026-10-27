@@ -1,0 +1,15 @@
+```
+<?php
+class TargetHolder { }
+abstract class BaseService{
+    abstract static function boot();
+}
+class UserService extends BaseService {
+    static function boot()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `boot()` from class `UserService` to class `TargetHolder`

@@ -1,0 +1,11 @@
+```
+<?php
+namespace App;
+class User {
+}
+class UserMeta {
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move class `UserMeta` from namespace `App` to namespace `AppMeta`

@@ -1,0 +1,5 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+let a = (x ? y : z) + t; //{Rename Field target parenthesized ternary sub‑expression context exposing redundant‑parentheses preservation logic}

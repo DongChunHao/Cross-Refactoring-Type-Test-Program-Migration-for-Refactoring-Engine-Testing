@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+function foo({x}) {
+const temp = x; //{Extract Variable target destructured variable x reference}
+console.log(temp);
+console.log({
+x,
+});
+}

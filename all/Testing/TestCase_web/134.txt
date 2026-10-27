@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// index.ts
+export * from './type/base';
+// type/base.ts
+export type ITSPropertyKey = string | symbol; //{Extract Method target type inside module referenced by barrel wildcard re‑export}

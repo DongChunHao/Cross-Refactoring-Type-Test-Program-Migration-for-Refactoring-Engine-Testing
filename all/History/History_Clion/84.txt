@@ -1,0 +1,28 @@
+#include <stdlib.h>
+
+/* Refactoring Settings:
+Refactoring type: Inline function
+Refactoring target: Inline the call site of function init_test(struct test* t) inside main()
+Refactoring scope: Function call init_test(v) in main
+Refactoring rule expectation: When inlining, retain the implicit pointer cast from void* to struct test* that exists at the function argument passing
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining init_test, the generated code directly uses v->x =5; where v is void*. void* cannot access member x, leading to compilation error.
+Expected behavior: Inlined code should keep the cast, producing ((struct test*)v)->x = 5;
+Underlying cause: The refactoring engine discards the implicit type conversion (void* to struct test*) which happens during function parameter binding. It only copies the function body statement without preserving the required pointer cast for the void pointer variable.
+*/
+
+struct test {
+  int x;
+};
+
+void init_test(struct test* t) {
+  t->x = 5;
+}
+
+int main() {
+  void* v = malloc(sizeof(struct test));
+  init_test(v);
+  return 0;
+}

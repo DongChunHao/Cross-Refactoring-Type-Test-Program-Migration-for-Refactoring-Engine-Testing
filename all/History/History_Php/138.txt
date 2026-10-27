@@ -1,0 +1,38 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Constant refactoring
+Refactoring target: global constant MYCONST (defined in b.php)
+Scope: stale `use const` import cleanup
+Refactoring operation: move global MYCONST into class NS1\AC1 as a class constant
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving the global `MYCONST` into `NS1\AC1` as a class constant, the existing import statement `use const MYCONST;` in NS2\AC2 remains in the source file.
+The original global constant MYCONST no longer exists, so this import becomes invalid and creates an unresolved reference, but the refactoring does not delete or update it.
+
+Expected behavior:
+1. Collect all `use const MYCONST;` import directives that refer to the original global constant.
+2. Remove those stale imports, or replace them with the correct class-constant import (`use const NS1\AC1::MYCONST;`) and adjust the expression `MYCONST;` to `AC1::MYCONST;`.
+
+Underlying cause:
+The refactoring’s reference visitor only updates expression usages of the constant itself; it does not track and clean up namespace-level `use const` import declarations that were bound to the original global constant symbol. The import PSI nodes are left untouched.
+*/
+// a.php
+namespace NS1 {
+    class AC1{}
+}
+namespace NS2 {
+    use const MYCONST;
+    class AC2
+    {
+        public function foo()
+        {
+            echo MYCONST;
+        }
+    }
+}
+
+// b.php
+define('MYCONST', 1);
+?>

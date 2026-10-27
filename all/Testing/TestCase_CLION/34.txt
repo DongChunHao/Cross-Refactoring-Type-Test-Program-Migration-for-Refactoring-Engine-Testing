@@ -1,0 +1,10 @@
+'''
+Refactoring type: Inline Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+void print(const char *string) { std::cout << string; }
+int main() {
+print("Hello world!\n"); //{Inline method print at this call site}
+return 0;
+}

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing map with concise‑arrow for closing‑token‑order defect reproduction}
+const numbers = [1, 4, 9];
+const doubles = numbers.map(num => num * 2);
+}

@@ -1,0 +1,22 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+
+oldName();
+    }
+}
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+targetMethod(); //{Move method targetMethod from class A into class B}
+    }
+}
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+a(); //{Extract method for expression $this->a()}
+    }
+}

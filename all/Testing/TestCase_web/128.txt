@@ -1,0 +1,5 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+const { x: x } = { x: 7, y: 3 }; //{Move Method target destructuring with property‑variable name identity binding}

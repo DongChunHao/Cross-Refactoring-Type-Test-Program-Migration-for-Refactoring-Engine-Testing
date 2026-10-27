@@ -1,0 +1,21 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: releasePoints
+'''
+#ifndef _*ShapeStateImpl_H*
+#define _*ShapeStateImpl_H*
+#include <stdlib.h>
+class ShapeStateImpl {
+public:
+ShapeStateImpl(double* currentPoints, size_t numberOfPoints);
+virtual ~ShapeStateImpl() {
+releasePoints();
+}
+void releasePoints() { //{Extract method releasePoints}
+free(_pointsPosition);
+}
+private:
+size_t _pointCount;
+double *_pointsPosition;
+};
+#endif //_*ShapeStateImpl_H*

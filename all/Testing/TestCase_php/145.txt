@@ -1,0 +1,13 @@
+```
+<?php
+class HelperBin{}
+class BaseApi{}
+class ProductApi extends BaseApi{
+    public static function getClassName() {
+        echo self::class;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `getClassName()` from class `ProductApi` to class `HelperBin`

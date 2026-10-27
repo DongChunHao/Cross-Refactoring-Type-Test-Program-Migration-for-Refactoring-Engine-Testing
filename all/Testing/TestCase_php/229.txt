@@ -1,0 +1,9 @@
+```
+<?php
+class C{
+    function f(){}
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target method `C::f()`, enter invalid return type `int||string` in return type input field and apply refactoring.

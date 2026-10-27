@@ -1,0 +1,27 @@
+#include <cstdio>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract the statement Foo::foo() inside Bar::bar() into a new member function Bar::baz()
+Refactoring scope: Selected static function call Foo::foo();
+Refactoring rule expectation: Preserve the original static qualified call Foo::foo() inside extracted method baz(), do not convert it to an instance call using this->
+*/
+
+/* Error Root Cause:
+Observed failure: After Extract Method refactoring, the extracted baz() function incorrectly uses `this->foo();` instead of `Foo::foo();`.
+Expected behavior: The extracted code should retain Foo::foo() static namespace call.
+Underlying cause: The refactoring engine misidentifies the static class member call Foo::foo() as an instance method call belonging to class Bar, and rewrites it as an instance access via this->, discarding the original class qualifier Foo::.
+*/
+
+class Foo {
+public:
+    static void foo() {}
+};
+
+class Bar {
+    void bar();
+};
+
+void Bar::bar() {
+    Foo::foo();
+}

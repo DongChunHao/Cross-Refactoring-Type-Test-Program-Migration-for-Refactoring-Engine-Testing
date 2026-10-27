@@ -1,0 +1,13 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding typescript inline‑object‑type with omitted‑final‑semicolon for token‑drift defect reproduction}
+const myFunction = (props: {
+prop1: string;
+prop2: string;
+prop3: string
+}) => {
+console.log(props);
+};
+}

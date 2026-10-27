@@ -1,0 +1,53 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Rename method
+Refactoring target: ClassA::someMethod()
+Scope: union return type, flow type refinement, static call-site filtering
+Refactoring operation: rename ClassA::someMethod to someMethodA
+*/
+
+/* Error Root Cause:
+Observed failure:
+`process()` has PHPDoc `@return ClassA|ClassB`. Rider’s rename logic treats every call to `someMethod()` on values coming from `process()` as ambiguous and conservatively renames **all** `someMethod()` calls, even when local type flow proves the receiver is definitely `ClassB` (`$this->b`).
+`$this->b` is declared `private ClassB $b;` and is assigned only the result of `process(new ClassB())`; statically this receiver can never be `ClassA`. Nonetheless the rename updates `$this->b->someMethod()` to `someMethodA()`.
+
+Expected behavior:
+Rename should respect per-call-site refined receiver types:
+1. Collect call sites and compute the narrowed type of the receiver expression.
+2. Only rename the call if the refined receiver type includes the target method’s class (ClassA).
+3. Skip renaming when flow analysis proves the receiver can only be ClassB, even if the expression originates from a union-returning helper.
+
+Underlying cause:
+The rename reference collector only looks at the declared/PHPDoc type of `process()` (the union `ClassA|ClassB`) and does not use subsequent local type refinement from assignments into typed properties `$this->a` / `$this->b`. It uses the coarse upstream union type to decide the call is a potential match, rather than checking the final narrowed receiver type at each call site. This also impacts generic-style `T` annotations where the IDE sees a broad union and over-matches.
+*/
+final class ClassA {
+    public function someMethod() { }
+}
+
+final class ClassB {
+    public function someMethod() { }
+}
+
+final class SomeOtherClass {
+    private ClassA $a;
+    private ClassB $b;
+
+    public function testSomething()
+    {
+        $this->a = $this->process(new ClassA());
+        $this->b = $this->process(new ClassB());
+
+        $this->a->someMethod();
+        $this->b->someMethod();
+    }
+
+    /**
+     * @param ClassA|ClassB $obj
+     * @return ClassA|ClassB
+     */
+    public function process($obj)
+    {
+        return $obj;
+    }
+}
+?>

@@ -1,0 +1,22 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: this.type = type;
+Refactoring Scope: Class Foo
+Trigger Operation: Select statement "this.type = type;" inside the constructor, run Extract Method refactoring, select class Foo as the target scope.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After extraction, the engine creates a standalone function declaration `function extracted(type)` inside the class body instead of a class method, and invokes it via `extracted.call(this, type);`. Function declarations are invalid syntax inside ES6 class bodies.
+Expected behavior: The refactoring engine should generate a proper class method inside class Foo and invoke it with `this.extracted(type);`.
+Underlying cause: The extract-method logic for class scope incorrectly emits a plain function declaration rather than an ES6 class method.
+*/
+
+// Complete compilable test code with ES6 class
+class Foo {
+    constructor(name, type) {
+        this.name = name;
+        this.type = type;
+    }
+}

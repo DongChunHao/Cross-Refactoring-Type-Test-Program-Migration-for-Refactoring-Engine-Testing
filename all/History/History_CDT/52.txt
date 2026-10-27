@@ -1,0 +1,39 @@
+float torename = 0;
+float GlobalVar_0 = 100;
+
+float f_0() {
+    return GlobalVar_0;
+}
+float f_1() {
+    return torename;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (global variable rename)
+Refactoring Target: global variable `torename`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select global variable `torename`, invoke Rename refactoring, input string `a v` containing whitespace as new variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts input `a v` with embedded whitespace.
+Variable declaration becomes `float a v = 0;`. Whitespace is a token separator in C. Compiler parses `a` and `v` as two separate identifiers, producing syntax error.
+All reference sites are replaced as `return a v;`, which is also illegal syntax.
+Refactoring completes without any warning and persists broken source code.
+
+Expected behavior:
+For all variable‑rename operations, perform lexical validation on candidate name before modifying source:
+1. Valid C identifier may contain only letters, underscores and decimal digits.
+2. Must start with a letter or underscore.
+3. Whitespace characters are strictly forbidden inside identifiers.
+4. Reject inputs with special symbols, keywords, literals starting with digits.
+When validation fails, abort refactoring and show error message to user.
+The rename dialogue should only accept well‑formed identifiers and must not pass raw arbitrary text for substitution.
+
+Underlying cause:
+CDT rename implementation does not validate that user input conforms to C identifier lexical grammar. Raw input string is directly substituted in declaration and every usage location. Whitespace inside input is treated as part of identifier instead of token separator, which breaks source‑code tokenization.
+*/

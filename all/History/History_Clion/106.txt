@@ -1,0 +1,20 @@
+#include <vector>
+
+/* Refactoring Settings:
+Refactoring type: Extract Function
+Refactoring target: Extract statement `x[0] = 1;`
+Refactoring scope: Assignment `x[0] = 1;` operating on std::vector
+Refactoring rule expectation: Detect that `x[0] = 1` mutates the vector, so the generated function parameter should be non-const reference `std::vector<int> &x`
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Function creates `const std::vector<int> &x` as parameter, but the body executes `x[0] = 1;`. Trying to modify a const reference is a compile error.
+Expected result:
+void fun(std::vector<int> &x) { x[0] = 1; }
+Underlying cause: The refactoring engine’s side-effect analysis fails to recognize that `operator[]` on vector performs a write mutation. It incorrectly thinks the vector is only read, and adds `const` to the reference parameter, ignoring the assignment operation.
+*/
+
+void f() {
+    std::vector<int> x { 1, 2, 3 };
+    x[0] = 1; //Extract this line to a function
+}

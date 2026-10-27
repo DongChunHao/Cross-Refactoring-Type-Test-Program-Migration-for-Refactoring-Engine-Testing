@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+int main() {
+struct X {
+~X() = default;
+};
+X instance; //{Extract variable for instance}
+return 0;
+}

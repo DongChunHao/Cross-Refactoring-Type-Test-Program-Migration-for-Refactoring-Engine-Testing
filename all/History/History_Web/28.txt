@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Destructuring declaration `const [foo, bar] = [1, 2];` inside function bug()
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select the destructuring assignment statement and run Extract Method refactoring.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Method creates a new function that does not return the destructured variables foo and bar. The caller invokes extracted() without capturing the values, leaving foo and bar undefined in bug().
+Expected behavior: Since multiple variables are defined by array destructuring and used after the selected range, the extracted function should return an object containing foo and bar. The original code should destructure the returned object: `const { foo, bar } = extracted();`.
+Underlying cause: Extract Method analysis does not detect that multiple locally declared variables from destructuring are used downstream. It does not collect these as output values and does not emit a return statement plus receiving destructuring pattern at the call site.
+*/
+
+// Complete compilable test code
+function bug() {
+    const [foo, bar] = [1, 2];
+    console.log(foo, bar);
+}

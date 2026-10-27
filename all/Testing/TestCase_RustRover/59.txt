@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+struct Foo<T> { t: T }
+trait Trait {
+fn foo(&self);
+}
+impl<T> Trait for Foo<T> {
+fn foo(&self) {
+println!("test"); //{Rename‑Method target: statement inside generic trait impl}
+}
+}
+
+fn main() {
+let instance = Foo{t: 0i32};
+instance.foo();
+}

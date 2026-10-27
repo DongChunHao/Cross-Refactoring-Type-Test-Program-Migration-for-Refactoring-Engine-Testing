@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: Unquoted text selection inside string literal
+Refactoring Scope: JavaScript
+Trigger Operation: Select the content inside quotes (without including the quotes) and run Extract Variable
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When selecting only the inner text of a string literal (not including the surrounding quote marks) and invoking Extract Variable, the refactoring deletes the parent string expression entirely and produces broken code.
+
+Expected behavior: Either reject the selection (notify user that quotes must be included for string extraction), or properly wrap the selected text in quotes to create a new string variable and replace the original string.
+
+Underlying cause: The selection validator treats the raw text inside string tokens as a standalone expression, instead of recognizing that it is just part of a string literal node; the AST replacement logic then destroys the parent string node.
+*/
+
+// Complete compilable test code
+document.body.style.display = "block";
+var elvisLives = (Math.PI > 4) ? "Да" : "Нет";

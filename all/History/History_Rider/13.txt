@@ -1,0 +1,26 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Resource (Rider RESX resource rename refactoring)
+Refactoring Target: Resource key `Program_Main_shoo` inside Resources1.resx
+Refactoring Scope: Rename the resource key and update all compile-generated usages / source references across the web application project
+Refactoring Rule Expectation: Rename should update the key inside the .resx file, refresh the auto-generated resource designer code, and update all source-code references to the resource. Conflicts should only be reported when another resource/identifier with the target name exists in the same resource scope.
+IDE: JetBrains.Rider-2018.3-EAP4D-183.3647.277
+*/
+
+/* Error Root Cause:
+Observed failure: When renaming a RESX resource key `Program_Main_shoo` to `Program_Main_shoo_New`, Rider shows an unexpected conflict dialog and does not update the resource’s usages in source code.
+Expected behavior: If there is no existing resource key named `Program_Main_shoo_New` in the same RESX file, the rename should apply cleanly, update the .resx entry, update the generated designer property, and fix all source call sites.
+Underlying cause: Rider’s RESX resource rename conflict checker incorrectly considers the auto-generated designer-class properties or cached metadata as conflicting symbols, even when no real duplicate resource key exists in the .resx XML. The conflict check blocks the refactoring pipeline, so the refactor never proceeds to rewrite source usages.
+*/
+
+// Example source usage before rename
+var value = Resources1.Program_Main_shoo;
+
+// Expected after successful rename
+var value = Resources1.Program_Main_shoo_New;
+
+// RESX snippet (Resources1.resx)
+/*
+<data name="Program_Main_shoo" xml:space="preserve">
+  <value>Original text</value>
+</data>
+*/

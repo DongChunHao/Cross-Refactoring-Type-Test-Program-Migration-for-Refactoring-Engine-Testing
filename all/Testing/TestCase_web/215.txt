@@ -1,0 +1,9 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+import { useState } from 'react';
+function MyComponent() {
+const [myState, setMyState] = useState(); //{Move Method target useState tuple‑destructuring‑pattern node, reference‑site cannot map back to special rename‑context}
+console.log(myState);
+}

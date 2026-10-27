@@ -1,0 +1,29 @@
+void main (  int aa_0){ }
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: formal function parameter `aa_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select parameter `aa_0`, invoke Rename refactoring, input string `&aa_0` as new‑name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+User inputs `&aa_0`; CDT does not filter out the ampersand `&`. Generated parameter declaration becomes `int &aa_0`.
+In pure‑C mode `&` is not a reference declarator; this is syntactically invalid C code and raises compile‑time error.
+Even for C++, `int &aa_0` changes parameter semantics from value parameter to reference parameter, which is not the intended goal of a simple rename operation. Rename should only replace identifier token and must not alter type declarators. No warning is emitted during refactoring.
+
+Expected behavior:
+Rename refactoring must strictly validate candidate name against C identifier lexical grammar before AST modification:
+1. Valid identifier characters: letters, underscores, decimal digits.
+2. First character must be letter or underscore.
+3. Reject any input containing `& * [] ()` or other operators / declarator symbols.
+Abort transformation and show error message if validation fails.
+Modifying type qualifiers or declarators belongs exclusively to Change‑Signature refactoring, not rename.
+
+Underlying cause:
+Rename dialog treats raw user input as identifier, without lexical filtering. CDT parses the whole input fragment as part of the declarator instead of extracting only the identifier token. The ampersand `&` gets injected into declaration, silently modifying parameter type and producing ill‑formed or semantically altered source code.
+*/

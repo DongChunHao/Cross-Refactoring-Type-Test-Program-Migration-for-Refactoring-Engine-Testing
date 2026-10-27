@@ -1,0 +1,17 @@
+/* Refactoring Settings:
+Refactoring Type: Rename (Refactor -> Rename)
+Refactoring Target: Variable `result`
+Refactoring Scope: Rust, named format placeholder inside `println!` macro string literal
+Plugin Environment: Rust plugin 233.21799.306, IDE RR-233.11799.306, JRE 17.0.9+7, Linux amd64, Rust 1.77.0-nightly, Macro expansion enabled
+Trigger Operation: Place caret on variable `result`, launch rename, set new name to `result2`
+*/
+/* Error Root Cause:
+Observed failure: Rename updates the variable binding and assignment `result = 34`, but leaves the named format placeholder `{result:#06x}` inside the `println!` string unchanged.
+Expected behavior: All references including named format placeholders in macro format strings should be renamed synchronously.
+Underlying cause: The plugin’s symbol reference resolution does not recognize identifiers inside curly-brace named format specifiers within macro string literals as variable usages. The format string content is processed as plain text, so rename does not traverse these placeholder identifiers.
+*/
+fn main() {
+    let mut result = 42;
+    result = 34;
+    println!("rrr={result:#06x}");
+}

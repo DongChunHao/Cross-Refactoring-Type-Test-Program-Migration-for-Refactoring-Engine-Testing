@@ -1,0 +1,6 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Usage collector cannot track symbol references resolved via wildcard‑star import; ignores consumer‑site usages, after moving class symbol consumer code becomes unresolved without modification or user warning
+class A(): // REFACTOR_TARGET
+pass
+from m1 import *
+A()

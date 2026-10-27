@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+enum Foo { Bar(i32) }
+fn id_renamed<T>(x: T) -> T { x } //Rename Method: rename higher‑order generic function receiving variant constructor
+fn main() {
+id_renamed(Foo::Bar)(42); //Rename Method: target first‑class enum variant constructor passed‑as‑value site
+}

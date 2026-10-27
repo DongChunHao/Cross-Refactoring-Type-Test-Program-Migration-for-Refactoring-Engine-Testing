@@ -1,0 +1,22 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <stdlib.h>
+struct test {
+int x;
+};
+struct Wrapper
+{
+static void wrapper_init_test(struct test* t) { //{Move init_test logic into static wrapper member}
+t->x = 5;
+}
+};
+void init_test(struct test* t) {
+Wrapper::wrapper_init_test(t);
+}
+int main() {
+void* v = malloc(sizeof(struct test));
+init_test(v);
+return 0;
+}

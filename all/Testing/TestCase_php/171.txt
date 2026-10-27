@@ -1,0 +1,18 @@
+```
+<?php
+function buildMessage() {
+    $messageText = "Alert message";
+    $level1 = function () use ($messageText) {
+        $level2 = function () use ($messageText) {
+            echo $messageText;
+        };
+        return $level2;
+    };
+    $exec = $level1();
+    $exec();
+}
+buildMessage();
+?>
+```
+
+【Refactoring Action】: Rename variable refactoring, rename outer variable `$messageText` in function `buildMessage()` to `$alertText`

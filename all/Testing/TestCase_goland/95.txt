@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type FooHolder struct{}
+func (h FooHolder) foo(a string, b ...string) { // move foo method from FooHolder to standalone function
+}
+func main() {
+holder := FooHolder{}
+holder.foo("test", "x", "y")
+}

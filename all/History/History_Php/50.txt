@@ -1,0 +1,26 @@
+<?php
+class C {
+    static function f(){
+    }
+}
+class A{
+    static function f(A $a){
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static function f() from class A to class C
+Refactoring rule: Conflict validation must run during the preview/dialog stage, before the user clicks Refactor. If the target class already contains a static method with the same name, the warning should appear in the move dialog immediately after selecting the target class, not deferred until applying the refactoring.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When selecting C as destination for A::f(), the move dialog shows no warning. The duplicate method conflict warning only pops up after clicking the Refactor button. The user cannot see the conflict while still in the dialog, before committing the change.
+
+Expected behavior:
+As soon as the user selects the target class C, the refactoring engine runs symbol lookup, detects that C already declares static f(), and displays the name-conflict warning inside the dialog (preview phase).
+
+Underlying cause:
+The static member conflict check is hooked into the final apply phase rather than the dialog target-selection change event. The preview/validation pass does not eagerly resolve existing members in the destination class when the target is chosen.
+*/

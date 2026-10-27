@@ -1,0 +1,39 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Symbol (Rider F# rename refactoring)
+Refactoring Target: F# class `BaseClass`, rename to `BaseClass_New`
+Refactoring Scope: All references to the base type, including `inherit` clauses in derived class constructors
+Refactoring Rule Expectation: Every occurrence of the base type identifier should be updated, both in the `inherit` type annotation and inside constructor `inherit BaseClass(...)` calls.
+IDE: JetBrains.Rider-2019.1-EAP1D-191.5812.55
+*/
+
+/* Error Root Cause:
+Observed failure: After renaming `BaseClass` to `BaseClass_New`, the top-level `inherit BaseClass_New` in the derived type header is correctly updated. However, the base constructor invocations inside the F# object-expression constructor syntax `inherit BaseClass(str1)` / `inherit BaseClass()` retain the old name `BaseClass` and are not renamed.
+Expected behavior: Both the type name in the `inherit` clause of the type header and the base constructor name in constructor initializers should be renamed consistently.
+Underlying cause: Rider’s F# rename PSI visitor treats the two `inherit` positions as separate syntax nodes. It correctly visits the type reference in the type declaration header, but fails to traverse and rewrite the base constructor identifier inside the constructor initialization expressions.
+*/
+
+// Before rename
+type BaseClass =
+    val string1 : string
+    new (str) = { string1 = str }
+    new () = { string1 = "" }
+
+type DerivedClass =
+    inherit BaseClass
+    val string2 : string
+    new (str1, str2) = { inherit BaseClass(str1); string2 = str2 }
+    new (str2) = { inherit BaseClass(); string2 = str2 }
+
+// Actual (broken) after rename BaseClass → BaseClass_New
+type DerivedClass =
+    inherit BaseClass_New
+    val string2 : string
+    new (str1, str2) = { inherit BaseClass(str1); string2 = str2 }
+    new (str2) = { inherit BaseClass(); string2 = str2 }
+
+// Expected after rename
+type DerivedClass =
+    inherit BaseClass_New
+    val string2 : string
+    new (str1, str2) = { inherit BaseClass_New(str1); string2 = str2 }
+    new (str2) = { inherit BaseClass_New(); string2 = str2 }

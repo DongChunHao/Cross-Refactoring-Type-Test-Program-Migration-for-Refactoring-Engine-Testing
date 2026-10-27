@@ -1,0 +1,17 @@
+```
+<?php
+class Animal { }
+class Bird extends Animal {
+    public function flapWings()
+    {
+        echo "flap";
+    }
+}
+class Sparrow extends Bird {
+    function fly(){
+        parent::flapWings();
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `fly()` from class `Sparrow` to parent class `Bird`

@@ -1,0 +1,20 @@
+```
+<?php
+namespace Queue\Consumer {
+    use Queue\Traits\Retryable;
+    class ConsumerBase
+    {
+    }
+    class MessageWorker extends ConsumerBase
+    {
+        use Retryable;
+        function consume(){}
+    }
+}
+namespace Queue\Traits {
+    trait Retryable{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `MessageWorker`, target namespace `Queue\Runtime`

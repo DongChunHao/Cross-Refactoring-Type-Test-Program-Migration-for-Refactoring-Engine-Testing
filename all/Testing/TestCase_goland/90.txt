@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type SliceBuilder struct{}
+func (b SliceBuilder) buildSlice() []string { // move buildSlice method from SliceBuilder to standalone function
+return []string{"112", "333"}
+}
+func main() {
+builder := SliceBuilder{}
+exp := 1
+items := builder.buildSlice()
+}

@@ -1,0 +1,26 @@
+```
+<?php
+class User {
+    /**
+     * @var string
+     */
+    protected $usr_name = "";
+    /**
+     * @param string $usr_name
+     */
+    public function setUsrName($usr_name)
+    {
+        $this->usr_name = $usr_name;
+    }
+    /**
+     * @return string
+     */
+    public function getUsrName()
+    {
+        return $this->usr_name;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Rename refactoring, rename property `$usr_name` to `$userName`

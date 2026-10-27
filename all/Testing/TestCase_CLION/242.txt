@@ -1,0 +1,18 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+int x;
+class BaseEnclose
+{
+public:
+virtual void f(int i) = 0; //{Pull up f declaration into BaseEnclose}
+};
+class enclose : public BaseEnclose {
+int x;
+void f(int i) override {
+i = x;
+int j = ::x;
+::x = i;
+};
+};

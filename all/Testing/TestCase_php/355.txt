@@ -1,0 +1,13 @@
+```
+<?php
+class ReportService
+{
+    public static function build()
+    {
+    }
+}
+ReportService::build();
+?>
+```
+
+【Refactoring Action】: Change Signature on static method `ReportService::build()`, add `int $page = null`.

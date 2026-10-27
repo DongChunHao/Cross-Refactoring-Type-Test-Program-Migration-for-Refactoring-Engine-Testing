@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: mainEntry
+'''
+#include <vector>
+void mainEntry() //{Rename method main to mainEntry}
+{
+std::vector<int> v;
+v.push_back(1);
+}

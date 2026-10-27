@@ -1,0 +1,25 @@
+/* Refactoring Settings:
+Refactoring Type: Rename File (Rider file rename refactoring for MSBuild/.NET projects)
+Refactoring Target: Project file item with `CopyToOutputDirectory` metadata set to `PreserveNewest` ("Copy if newer")
+Refactoring Scope: Rename the file and update the corresponding MSBuild item in the .csproj
+Refactoring Rule Expectation: When renaming a project item file, Rider should update the item's `Include` path while preserving all existing item metadata (CopyToOutputDirectory, etc.). The property panel should continue to show the "Copy to output directory" editable option after rename.
+*/
+
+/* Error Root Cause:
+Observed failure: After setting "Copy if newer" on a file and renaming it, the editable "Copy to output directory" property disappears from the file properties panel. Undoing the rename restores the setting; deleting and recreating the file also restores it. Manual project file cleanup is required to fix the state.
+Expected behavior: Rename should only modify the `Include` attribute path, retain all metadata on the same MSBuild item, and keep file properties fully functional.
+Underlying cause: Rider’s file rename logic for MSBuild items mishandles metadata preservation. Instead of in-place updating the existing `<Compile>/<Content>` item’s `Include` path, it may remove the original item (which carried the CopyToOutputDirectory metadata) and add a new item without the metadata. The solution model loses track of the metadata, so the dedicated UI control for CopyToOutputDirectory is no longer available for that item.
+*/
+
+// Before rename in csproj
+<Content Include="data.json">
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+</Content>
+
+// Expected after rename to data-v2.json
+<Content Include="data-v2.json">
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+</Content>
+
+// Actual broken state: metadata is lost
+<Content Include="data-v2.json" />

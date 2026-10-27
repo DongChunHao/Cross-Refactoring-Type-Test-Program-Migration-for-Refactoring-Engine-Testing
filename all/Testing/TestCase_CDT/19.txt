@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: renamed_main
+'''
+#include <stdio.h>
+// #include <stdarg.h> // Comment out to trigger syntax error on va_arg
+int main(void *var[], va_list ap) {//rename method for function containing syntax‑error‑affected statement
+int i=0;
+void *v;
+for (;;)
+v = va_arg(ap, void *);
+return 0;
+}

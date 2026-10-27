@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: castToB
+'''
+class B;
+class A {
+public:
+B* castToB() {return dynamic_cast<B*>(this);} //{Rename method GetB to castToB}
+void foo() {
+B*b = castToB();
+}
+};
+class B : public A { };
+int main() {
+A* a;
+B* b = a->castToB();
+return 0;
+}

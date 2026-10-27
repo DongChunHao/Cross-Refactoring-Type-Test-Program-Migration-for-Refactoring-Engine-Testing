@@ -1,0 +1,13 @@
+```
+<?php
+class BaseService{}
+class UserService extends BaseService{
+    static function handle(){}
+}
+abstract class AbstractBase{
+    static final function handle(){}
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static final method `handle()` from class `AbstractBase` to class `BaseService`

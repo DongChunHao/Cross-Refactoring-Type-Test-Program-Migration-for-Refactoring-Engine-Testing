@@ -1,0 +1,16 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+package main
+
+type MyWriter interface {
+Write(p []byte) (error, string)
+}
+type BaseWriter struct{}
+type DiscardWriter struct{ BaseWriter }
+func (BaseWriter) Write([]byte) (c error, a string) { // Push down method Write from BaseWriter to DiscardWriter
+return nil, "1"
+}
+
+func main() {}

@@ -1,0 +1,24 @@
+<?php
+namespace N2;
+class C { }
+
+namespace N;
+use N2\C as Brr;
+class A {
+    static function f(Brr $a, $b)
+    {
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static function f() from class A (namespace N) to class C (namespace N2)
+Refactoring rule: When moving a static method across namespaces, resolve type aliases from the original scope. The type `Brr` is a local alias only valid in namespace N; after moving the method into N2\C, the refactoring must substitute the underlying fully qualified type `N2\C` instead of keeping the alias name `Brr`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving f() into N2\C, the parameter type remains `Brr`. The alias `Brr` is defined in namespace N and does not exist in namespace N2, causing an undefined identifier error.
+
+Expected behavior:
+Resolve `Brr` to its underlying type `N2\C`. The moved method signature should be:

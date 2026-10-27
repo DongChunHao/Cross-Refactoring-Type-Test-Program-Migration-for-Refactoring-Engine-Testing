@@ -1,0 +1,25 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Quick Fix - Change Signature / Introduce Parameter
+Refactoring target: Undefined identifier `myParam` inside the blank function `_()`
+Refactoring scope: Identifier `myParam` in `println(myParam)`
+Refactoring rule: Offer "Introduce parameter" as one of the available quick-fix options alongside create local variable or create constant; add `myParam` to the function parameter list and leave cursor at the type position of the new parameter.
+*/
+
+/* Error Root Cause:
+Observed failure: The quick fix menu for undefined `myParam` only shows options to create local variables or constants, and does not present the "introduce parameter / change signature" option.
+Expected behavior: The quick fix should include an option to modify the function signature, adding `myParam` to the parameter list with the caret positioned at the type: `func _(myParam <caret>) { println(myParam) }`.
+Underlying cause: The undefined-identifier quick fix provider does not register the change-signature/introduce-parameter action for blank named functions, or the action is filtered out for anonymous/blank `_` function symbols.
+*/
+
+func _() {
+	println(myParam)
+}
+
+// Expected result after applying "Introduce parameter" quickfix
+func _(myParam /* caret here for type input */) {
+	println(myParam)
+}
+
+func main() {}

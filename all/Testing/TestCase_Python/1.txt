@@ -1,0 +1,10 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Refactoring’s name‑resolution / variable‑rewrite logic has a bug; when modifying function practice(), it incorrectly modifies the name of external referenced helper function n(), producing an identifier that does not exist in target scope, triggering undefined‑name / unresolved‑reference runtime error
+def n():
+return False
+def practice():
+m = 10
+if n():
+m += 56
+if  name== 'main':
+practice()

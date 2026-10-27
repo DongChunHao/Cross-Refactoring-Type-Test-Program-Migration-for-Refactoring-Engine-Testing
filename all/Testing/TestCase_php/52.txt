@@ -1,0 +1,13 @@
+```
+<?php
+class Animal { }
+class Fish extends Animal {
+    protected static function getWaterType(): string { return "fresh"; }
+    function printHabitat()
+    {
+        echo Fish::getWaterType();
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `printHabitat()` from class `Fish` to parent class `Animal`.

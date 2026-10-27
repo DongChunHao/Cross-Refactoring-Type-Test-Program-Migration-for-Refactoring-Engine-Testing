@@ -1,0 +1,58 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method into Class
+Refactoring Target: Extract a method into a new or existing class, target class already has a constructor with parameters
+IDE: Rider 2022.3.1 RD-223.8214.53
+*/
+
+/* Error Root Cause:
+Observed failure:
+When using "Extract Method into Class" refactoring and selecting an existing target class that already has a non‑parameterless constructor, Rider’s refactoring logic fails.
+Symptoms:
+1. The refactoring either errors out;
+2. Or it tries to add a new parameterless constructor automatically;
+3. Or it injects the extracted method’s captured state into the existing constructor incorrectly, causing compilation errors.
+
+Expected behavior:
+Rider needs to handle two scenarios:
+1. If the existing class has a constructor that can accept the captured dependencies: reuse it, map captured variables to constructor arguments.
+2. If the existing constructor signature conflicts / cannot accept the required captured state:
+   - Offer to add an overloaded constructor for the new dependencies;
+   - Or warn the user that the target class already has a parameterized constructor and cannot accept the extracted state.
+
+Underlying cause:
+The “Extract Method into Class” implementation assumes by default that it can add a parameterless constructor to the target class, or that it can append captured fields to a default constructor.
+It does not properly check for existing parameterized constructors, and lacks logic to choose between overloading the constructor vs reusing an existing compatible one.
+*/
+
+// Minimal reproduction example
+public class Processor
+{
+    private readonly string _config;
+
+    // Existing constructor with parameter
+    public Processor(string config)
+    {
+        _config = config;
+    }
+
+    public void DoWork()
+    {
+        var threshold = 100;
+        var result = threshold * 2;
+        Console.WriteLine(result + _config);
+        // Select this block and run Extract Method into Class, choosing Processor as target
+    }
+}
+
+// Buggy Rider behavior:
+// Tries to create a new parameterless constructor Processor(), or tries to modify the existing constructor incorrectly
+// Resulting code will conflict with the existing constructor or have missing arguments.
+
+// Expected options for Rider:
+// Option 1: Create new overloaded constructor accepting captured state
+public Processor(string config, int threshold)
+{
+    _config = config;
+    _threshold = threshold;
+}
+// Option 2: Show warning: target class has existing non-default constructor, cannot auto-inject captured state

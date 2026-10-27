@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+struct Foo<T> { t: T }
+trait Trait {
+fn foo(&self);
+}
+impl<T> Trait for Foo<T> {
+fn foo(&self) {
+println!("test"); //{Move‑Method target: statement inside generic trait impl}
+}
+}
+
+fn main() {
+let instance = Foo{t: String::new()};
+instance.foo();
+}

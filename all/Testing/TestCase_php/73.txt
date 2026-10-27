@@ -1,0 +1,17 @@
+```
+<?php
+namespace Render\Template {
+    use Render\Template as TPL_ALIAS;
+    class TemplateBase
+    {
+    }
+    class HtmlRenderer implements TPL_ALIAS\Nodes\INodeVisitor{
+    }
+}
+namespace Render\Template\Nodes {
+    interface INodeVisitor{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `HtmlRenderer`, target namespace `Render\Html`.

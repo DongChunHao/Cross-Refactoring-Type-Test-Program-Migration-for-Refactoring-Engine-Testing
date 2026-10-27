@@ -1,0 +1,22 @@
+class User:
+    def __init__(self, name: str):
+        self.name = name
+
+    def get_name(self):
+        return self.name
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Extract Superclass refactoring
+Refactoring Target: class User
+Refactoring Scope: current source file, extract selected members into new superclass inside the same file
+Project configuration: content folder configured to project directory only; also fails with multiple content roots
+Operation steps: Execute Refactor -> Extract Superclass on User class inside project directory, attempt to create new superclass in the same file.
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: Extract Superclass refactoring fails with "not in content folder" error, even when extracting the superclass into the same source file located within project directory. Failure persists both for single project content root and multiple content roots.
+Expected behavior: The refactoring should execute normally, since the source file is already located inside project content root, and target new superclass stays within the same file/project.
+Underlying cause: The content root validation checker inside refactoring engine applies an overly strict path check. Even for in‑file extraction (no new file creation), it still verifies file placement against content folder rules and incorrectly marks valid project source file as outside content root, blocking refactoring operation.
+"""

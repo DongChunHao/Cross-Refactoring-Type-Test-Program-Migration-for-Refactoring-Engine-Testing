@@ -1,0 +1,70 @@
+package main
+
+import (
+	"fmt"
+)
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Selected `NewFoo(func(i int) string { return fmt.Sprintf("%x", i) })` inside the slice literal `[]Foo{ ... }`
+Refactoring scope: Expression element within composite slice literal, containing an anonymous function literal argument
+Refactoring rule: Recognize a selected standalone expression inside a slice literal as a valid candidate for extraction; replace the selected element with a call to the new extracted helper method.
+*/
+
+/* Error Root Cause:
+Observed failure: The Extract Method refactoring fails / is disabled when selecting an expression that is an element inside a slice composite literal. The IDE does not treat the slice element as a valid top-level expression to extract.
+Expected behavior: Generate a new helper function returning Foo, then replace the selected slice element with the helper call.
+Underlying cause: The PSI scope validator for Extract Method does not properly handle expressions that are direct children of composite literals; it rejects the selection, mistakenly thinking it is not a valid extractable statement/expression context.
+*/
+
+type Foo interface {
+	Frob(int) string
+}
+
+type fooImpl struct {
+	frob func(int) string
+}
+
+func (f *fooImpl) Frob(i int) string {
+	return f.frob(i)
+}
+
+func NewFoo(frob func(int) string) Foo {
+	return &fooImpl{frob: frob}
+}
+
+func main() {
+	foos := []Foo{
+		NewFoo(func(i int) string {
+			return fmt.Sprintf("%x", i)
+		}),
+		NewFoo(func(i int) string {
+			return fmt.Sprintf("%d", i)
+		}),
+	}
+
+	for i := 0; i < 3; i++ {
+		for _, f := range foos {
+			println(f.Frob(i))
+		}
+	}
+}
+
+// Expected refactored result example
+/*
+func buildFooHex() Foo {
+	return NewFoo(func(i int) string {
+		return fmt.Sprintf("%x", i)
+	})
+}
+
+func main() {
+	foos := []Foo{
+		buildFooHex(),
+		NewFoo(func(i int) string {
+			return fmt.Sprintf("%d", i)
+		}),
+	}
+	// ... rest unchanged
+}
+*/

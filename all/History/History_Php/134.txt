@@ -1,0 +1,31 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method (F6)
+Refactoring target: B::getB()
+Scope: instance method `$this` usage, pre-move validation and user prompt
+Refactoring operation: F6 move with caret on method name declaration
+*/
+
+/* Error Root Cause:
+Observed failure:
+When caret is placed on the method name `getB` and F6 Move is invoked, Rider silently moves the instance method into class A and automatically marks it `static`. It does not prompt the user about the `$this` dependency.
+Resulting code contains invalid `return $this;` inside a static method, which is a compile error.
+When the caret is placed inside the method body instead, the refactoring correctly shows the prompt asking whether to convert the method to static first.
+
+Expected behavior:
+Consistent validation regardless of caret position (method name vs method body):
+1. Detect that the method body uses `$this` (instance dependency) before moving to a different class.
+2. Show the same prompt: offer to run "Make Static" (with `$this` resolution choices) before executing the move, or abort the refactoring.
+Do not automatically force static conversion without user confirmation.
+
+Underlying cause:
+The caret-position handler for method-name declaration uses a different pre-validation path than the method-body caret path. The declaration-site path skips the `$this` dependency check and the confirmation prompt, and blindly converts the method to static during PSI transfer.
+*/
+class A {
+}
+class B {
+    function getB(): B {
+        return $this;
+    }
+}
+?>

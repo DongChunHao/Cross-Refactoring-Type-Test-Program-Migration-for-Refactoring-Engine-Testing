@@ -1,0 +1,17 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Rename refactoring docstring parser does not recognize Sphinx RST :class: / :py:class: roles; treats content as plain‑text, these symbol references are excluded from usage graph and remain unchanged
+class AClass:
+pass
+def foo2(p): // REFACTOR_TARGET
+"""
+:type p: :class:`AClass`
+"""
+pass
+def stub_helper():
+pass
+
+ How to ensure the accuracy of cross-refactoring test case migration?
+
+ What are the common challenges in cross-refactoring test case migration?
+
+ Can you provide some examples of successful cross-refactoring test case migration projects?

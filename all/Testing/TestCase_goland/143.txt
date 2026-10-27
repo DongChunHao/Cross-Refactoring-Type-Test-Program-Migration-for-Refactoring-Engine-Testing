@@ -1,0 +1,10 @@
+package main
+
+func foo() error {
+	var e error = nil
+	//..
+	if e != nil {
+		return e
+	}// apply Extract method
+	return e
+}

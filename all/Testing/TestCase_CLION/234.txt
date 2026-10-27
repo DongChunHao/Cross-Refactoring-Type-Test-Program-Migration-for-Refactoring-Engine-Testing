@@ -1,0 +1,24 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+class B;
+class BaseA
+{
+public:
+virtual B* GetB() { return nullptr; }
+};
+class A : public BaseA //{Push down GetB implementation from BaseA to A}
+{
+public:
+B* GetB() override {return dynamic_cast<B*>(this);}
+void foo() {
+B*b = GetB();
+}
+};
+class B : public A { };
+int main() {
+A* a;
+B* b = a->GetB();
+return 0;
+}

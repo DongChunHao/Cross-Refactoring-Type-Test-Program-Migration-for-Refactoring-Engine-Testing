@@ -1,0 +1,25 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: configureFooInstance
+'''
+class Foo {
+public:
+bool IsFoo() const
+{
+return m_foo;
+}
+void SetFoo(bool foo)
+{
+m_foo = foo;
+}
+private:
+bool m_foo;
+};
+int configureFooInstance(Foo& foo) { //{Extract method configureFooInstance}
+foo.SetFoo(true);
+return foo.IsFoo()? 1:0;
+}
+int main() {
+Foo foo;
+return configureFooInstance(foo);
+}

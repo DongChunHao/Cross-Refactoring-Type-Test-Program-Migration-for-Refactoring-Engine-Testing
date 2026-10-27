@@ -1,0 +1,28 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace StaleIndexNavigationRepro
+{
+public abstract class BaseType { }
+
+public class OldName : BaseType
+{
+public void Run() //{Pull Up Method: target method for rename‑stale‑PSI‑index‑Go‑to‑Declaration‑broken bug reproduction}
+{
+Console.WriteLine("demo");
+}
+}
+
+public class Consumer
+{
+public void Demo()
+{
+var x = new OldName();
+x.Run();
+}
+}
+
+}

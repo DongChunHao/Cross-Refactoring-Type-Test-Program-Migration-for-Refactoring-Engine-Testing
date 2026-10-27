@@ -1,0 +1,23 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+class BaseFoo
+{
+public:
+virtual void test() = 0; //{Pull up test declaration into BaseFoo}
+};
+class Foo : public BaseFoo {
+int f{0};
+public:
+void test() override;
+};
+void Foo::test() override {
+int Foo::*pF = &Foo::f;
+this->*pF = 1;
+}
+int main() {
+Foo x;
+x.test();
+return 0;
+}

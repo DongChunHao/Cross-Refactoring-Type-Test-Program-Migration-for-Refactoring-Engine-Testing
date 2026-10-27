@@ -1,0 +1,24 @@
+<?php
+$a = function () {
+    echo "inside";
+};
+$b = function () use ($a) {
+    $a();
+};
+?>
+
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: closure $a, add new parameter $param, enable propagation to closure $b
+Refactoring rule: When propagating signature changes to call sites inside other closures, the refactoring must update the invocation arguments at every call site of the modified closure, not only add parameters to the wrapping outer closure.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After adding $param to $a’s signature and choosing to propagate changes to $b, the refactoring incorrectly adds $param as a parameter of $b, but leaves the call `$a()` unchanged without supplying the required argument. This results in a missing argument error.
+Expected behavior:
+Update `$a()` to `$a($param)` (or a suitable default/argument) at the call site inside $b; the outer closure $b should only get a new parameter if needed to forward the value to $a.
+Underlying cause:
+The propagation logic confuses the caller closure’s own signature with the call-site argument list. It adds parameters to the wrapping function but does not rewrite the closure invocation expression `$a()` to pass the new parameter.
+*/
+?>

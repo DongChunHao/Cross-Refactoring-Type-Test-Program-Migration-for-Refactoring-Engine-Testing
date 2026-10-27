@@ -1,0 +1,30 @@
+<?php
+abstract class B {
+    private static $a = 2;
+    private static function f(){
+    }
+}
+class C extends B{ }
+class A{
+    public static $a = 2;
+    public static function f(){
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Member refactoring
+Refactoring target: static $a and static function f from class A to class C
+Refactoring rule: When checking for duplicate member names in the destination class, distinguish members that are **physically declared directly in the destination class** from inherited private members from base classes. PHP private members are not visible and not part of the subclass’s own namespace; same-name private members in parent do not create a duplicate declaration conflict in the child class.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving $a and f from A into C, the refactoring checks the effective member set of C (including inherited private members from B) and raises the warning “Class C already contains a Field a”.
+PHP allows class C to declare its own static $a and static f(), even though B has private static $a / f(). Private members of B are not accessible to C and do not conflict with C’s own members. The warning is a false positive.
+
+Expected behavior:
+Duplicate declaration conflict check should only look at members directly declared in the target class C. Inherited private members from parent classes must be excluded from duplicate name checking for this warning.
+
+Underlying cause:
+The duplicate validator uses the full inherited symbol table (including private parent members) instead of only locally-declared PSI members of the destination class. It treats inherited private names as source-level duplicate declarations.
+*/

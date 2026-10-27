@@ -1,0 +1,23 @@
+<?php declare(strict_types=1);
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: interface method BN\BitSetInterface::and()
+Scope: method signature, refactoring dialog input and identifier validation
+Refactoring operation: attempt to add a new parameter to the method named `and`
+*/
+
+/* Error Root Cause:
+Observed failure: Invoking Change Signature on the method named `and` fails, showing the error "and is illegal identifier". `and` is a PHP soft keyword, allowed as a method name, but the refactoring validator incorrectly treats it as forbidden identifier.
+Expected behavior: Allow modifying the signature of a method named `and`. PHP permits soft keywords (and/or/xor) for method names; the validator should exclude method-name contexts from this check.
+Underlying cause: The Change Signature component reuses a generic identifier validator that does not distinguish variable/function names from method names. It applies hard-keyword rules to `and`, even though PHP grammar allows `and()` as a valid method.
+*/
+namespace BN;
+interface BitSetInterface {
+    public function get(int $index): bool;
+    public function set(int $index);
+    public function negate();
+    public function or(BitSetInterface $bs): BitSetInterface;
+    public function xor(BitSetInterface $bs): BitSetInterface;
+    public function and(BitSetInterface $bs): BitSetInterface;
+}
+?>

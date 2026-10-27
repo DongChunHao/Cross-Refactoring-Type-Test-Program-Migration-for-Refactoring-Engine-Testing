@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Field
+Refactoring new name: N/A
+'''
+#define array_length(arr) (sizeof(arr) / sizeof((arr)[0]))
+struct num {
+int member;
+const char* stored_str; //{Extract char pointer field stored_str inside struct num}
+} num[] = {{ 1, NULL }};
+void demo(void)
+{
+const char *str;
+for (const struct num *p = num + array_length(num); p-- != num;)
+if ((str = "expr") != 0)
+return;
+}

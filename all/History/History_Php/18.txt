@@ -1,0 +1,25 @@
+<?php
+interface TestInterface {
+}
+
+class Test implements TestInterface {
+    public function test()
+    {
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method test() in class Test
+Target destination: TestInterface that Test implements
+Refactoring rule: Pull Up refactoring shall support pulling a concrete class method up into an implemented interface, adding the corresponding abstract method signature to the interface. The destination candidate list should include implemented interfaces, not only parent classes.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When trying to pull method test() up into TestInterface, the refactoring rejects with the error "Cannot perform refactoring. test does not have base classes/interfaces in current project."
+Expected behavior:
+The refactoring adds the method signature `public function test();` inside TestInterface and leaves the implementation in class Test.
+Underlying cause:
+The Pull Up refactoring logic only looks for parent classes and ignores implemented interfaces as valid pull-up destinations. It treats interfaces as an unsupported target type for member promotion.
+*/

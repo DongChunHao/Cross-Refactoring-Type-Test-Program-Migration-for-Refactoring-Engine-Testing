@@ -1,0 +1,13 @@
+```
+<?php
+interface LoggerInterface {}
+$logger = new class implements LoggerInterface {
+    public function log(string $msg): void
+    {
+        echo $msg;
+    }
+};
+?>
+```
+
+【Refactoring Action】: Caret on anonymous class definition, invoke Move Class.

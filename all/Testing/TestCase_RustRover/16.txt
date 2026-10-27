@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+fn main() {
+let hello: &str = "hello";
+format!("{hello:?}"); //{extract format‑macro containing named placeholder into separate helper method}
+}

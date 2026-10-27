@@ -1,0 +1,22 @@
+```
+<?php
+namespace Lib\Network\Socket {
+    class SocketAbstract
+    {
+    }
+}
+/**
+ * Network packet namespace, holds packet data structures
+ */
+namespace Lib\Network\Packet {
+    class TcpPacket
+    {
+    }
+    class UdpPacket
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `TcpPacket`, target namespace `Lib\Network\Tcp`

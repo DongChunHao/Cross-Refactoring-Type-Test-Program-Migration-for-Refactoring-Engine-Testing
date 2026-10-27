@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring (Ctrl+F6)
+Refactoring target: interface method A::foo() and its implementing method B::foo()
+Scope: method signature return type, all overridden/implemented methods in inheritance hierarchy
+Refactoring operation: edit return type inside the refactoring dialog, propagate changes to parent and child/implementing methods
+*/
+
+/* Error Root Cause:
+Observed failure: In version 2016.2.2, the Change Signature dialog lacks an input field for editing the method return type. Modifying the return type and synchronizing it across the inheritance/implementation hierarchy is not supported.
+Expected behavior: The refactoring dialog should provide a dedicated return type editor. When applying the change, it updates the return type in the target method and also updates all corresponding parent, child, and implementing methods consistently.
+Underlying cause: The Change Signature implementation in this older IDE version only handled parameters, and the return type node was not integrated into the signature model and UI of the refactoring.
+*/
+interface A {
+    public function foo(): A;
+}
+
+class B implements A {
+    public function foo(): A {
+        return new B();
+    }
+}
+?>

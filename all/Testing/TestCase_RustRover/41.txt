@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+fn foo(num: i32) { //{rename foo function, preserve partial‑statement selection context inside match‑arm block}
+match num {
+0 => {
+let x = 3;
+bar(); bar();
+},
+_ => {}
+}
+}
+fn bar() {}

@@ -1,0 +1,19 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+class C {public: int c; int foo() { return c ++; }};
+class Base
+{
+public:
+virtual int foo() = 0; //{Pull up foo declaration into Base}
+};
+class Impl : public Base
+{
+public:
+int foo() override {
+C c;
+c.foo();
+return c.foo();
+}
+};

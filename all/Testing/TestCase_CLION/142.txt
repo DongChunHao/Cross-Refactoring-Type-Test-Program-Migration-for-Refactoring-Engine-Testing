@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: outputStr
+'''
+#include <cstdio>
+class C {
+void foo()
+{
+const char* str = ""; //{Rename variable str to outputStr}
+printf(str);
+}
+};

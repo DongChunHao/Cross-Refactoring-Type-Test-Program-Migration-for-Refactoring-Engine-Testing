@@ -1,0 +1,15 @@
+''' Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function foo, swap the order of parameters a and b. Original signature foo(a="a", b="b"), target signature foo(b="b", a="a")
+Refactoring scope: function definition and all call sites of foo
+Refactoring rule expectation: After swapping parameter order in function signature, all existing positional argument calls should be converted to keyword arguments to preserve original runtime behavior. The call foo("a") should be refactored to foo(a="a").
+'''
+''' Error Root Cause:
+Observed failure: After using Change Signature to swap a and b, the call foo("a") remains unchanged. Now the positional argument "a" binds to parameter b instead of a, changing program behavior.
+Expected behavior: Existing positional call foo("a") must be transformed into keyword argument foo(a="a") to retain original argument binding.
+Underlying cause: Change Signature refactoring does not re-bind positional arguments when reordering parameters with default values. It only modifies the function definition signature and fails to convert positional call-site arguments into keyword arguments, which breaks argument assignment semantics after parameter reordering.
+'''
+def foo(a="a", b="b"):
+    return a, b
+
+foo("a")

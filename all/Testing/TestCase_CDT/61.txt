@@ -1,0 +1,19 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: &identifier_0
+'''
+#define identifier_0
+float gvar_0 = -1;
+void f_0() {
+int var_0 = -1;
+var_0 = 100;
+}
+float f_1(float var_0) {
+return gvar_0;
+} //rename field for rename‑refactoring‑ampersand‑macro‑rename‑preprocessor‑syntax‑invalid defect scenario
+
+ 如何确保新的测试用例能够覆盖所有的功能场景？
+
+ 除了重命名字段，还有哪些常见的代码重构类型？
+
+ 如何进行代码重构测试用例的自动化迁移？

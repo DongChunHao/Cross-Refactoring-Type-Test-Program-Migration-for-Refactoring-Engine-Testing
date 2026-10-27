@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack1
+/* doc */
+func foo() {}
+func caller() {
+invokeFoo() // extract foo call into invokeFoo
+}
+func invokeFoo() {
+foo()
+}

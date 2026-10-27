@@ -1,0 +1,8 @@
+```
+<?php
+class A { }
+$c = new class() { };
+?>
+```
+
+【Refactoring Action】: Place caret on anonymous class declaration, invoke Move Class refactoring.

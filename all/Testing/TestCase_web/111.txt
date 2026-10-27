@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+import * as React from 'react';
+function render2() { //{Change Method target enclosing render function containing union‑typed React ComponentType JSX usage}
+interface P1 {
+p?: boolean;
+c?: string;
+}
+interface P2 {
+p?: boolean;
+c?: any;
+d?: any;
+}
+var C: React.ComponentType<P1> | React.ComponentType<P2> = null as any;
+const a = ;
+}

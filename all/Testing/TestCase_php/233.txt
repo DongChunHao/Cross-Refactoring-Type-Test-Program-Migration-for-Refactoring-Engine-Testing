@@ -1,0 +1,14 @@
+```
+<?php
+class C{
+    /**
+     * @return int
+     */
+    public function f() : int
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target method `C::f()`, change native return type from `int` to `string`.

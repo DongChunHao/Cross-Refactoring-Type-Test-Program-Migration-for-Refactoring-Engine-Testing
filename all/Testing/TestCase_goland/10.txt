@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "errors"
+
+type ErrFoo struct{}
+type ErrHolder struct{}
+func (errFoo *ErrFoo) Is(err error) bool { // Move method Is from ErrFoo to ErrHolder
+return errFoo == err
+}
+func main() {
+var e error = &ErrFoo{}
+_ = errors.Is(e, &ErrFoo{})
+}

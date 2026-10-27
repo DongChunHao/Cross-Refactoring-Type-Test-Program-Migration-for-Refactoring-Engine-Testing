@@ -1,0 +1,66 @@
+/* Refactoring Settings:
+Refactoring type: Introduce Constant (IC2)
+Refactoring target: Extract literal `true` into named constant inside `IntroduceConstant::Test()`
+Refactoring rule expectation: When extracting compile-time literal value, create `const` local variable by default.
+*/
+
+/* Error Root Cause:
+Observed failure: IC2 Introduce Constant creates a non-const local variable instead of `const`.
+For `return true;`, CLion generates something like `bool constantTrue = true;` instead of `const bool constantTrue = true;`.
+
+Expected result:
+const bool constantTrue = true;
+return constantTrue;
+
+Underlying cause:
+The refactoring does not default to const for literals. It only looks at type and value, not that the value is a compile-time constant and will never be modified.
+C++ best practice: constant literals extracted by "Introduce Constant" should default to `const`.
+*/
+
+class IntroduceConstant {
+public:
+    bool Test(int a, int b) const;
+};
+
+bool IntroduceConstant::Test(int a, int b) const {
+    if (a < b)
+    {
+        // #TEST#: IC1 Replace all occurrences of 3 with named constant
+        if (a < 3)
+        {
+            // #TEST#: IC2 Replace all occurrences of true with named constant
+            return true;
+        }
+        // #TEST#: IC3 Replace all occurrences of 4 with named constant
+        if (b > 4)
+        {
+            return true;
+        }
+        // #TEST#: IC4 Replace all occurrences of false with named constant
+        return false;
+    }
+    else if (!(a < b))
+    {
+        if (a >= 3)
+        {
+            return false;
+        }
+        if (b <= 4)
+        {
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        if (a >= 4)
+        {
+            return true;
+        }
+        if (b <= 3)
+        {
+            return true;
+        }
+        return false;
+    }
+}

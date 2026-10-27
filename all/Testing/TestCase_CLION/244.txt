@@ -1,0 +1,18 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+int x;
+class BaseEnclose
+{
+public:
+virtual void f(int i) {}
+};
+class enclose : public BaseEnclose //{Push down f implementation from BaseEnclose to enclose}
+{
+int x;
+void f(int i) override {
+i = x;
+int j = ::x;
+::x = i;
+};

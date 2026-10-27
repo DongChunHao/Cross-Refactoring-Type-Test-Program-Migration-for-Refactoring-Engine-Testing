@@ -1,0 +1,12 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+class Third {
+m() { //{Change Method target method m referencing private static symbol across scope boundary}
+return Third.n();
+}
+private static n() {
+return 2;
+}
+}

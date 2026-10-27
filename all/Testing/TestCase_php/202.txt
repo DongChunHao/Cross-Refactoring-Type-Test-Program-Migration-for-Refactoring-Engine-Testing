@@ -1,0 +1,15 @@
+```
+<?php
+interface StorageInterface {
+    /**
+     * @param string $path
+     * @param string $content
+     *
+     * @throws \RuntimeException
+     */
+    public function write(string $path, string $content);
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `StorageInterface::write()`, add parameter `int $flags = 0`.

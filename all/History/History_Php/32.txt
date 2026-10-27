@@ -1,0 +1,37 @@
+<?php
+interface I { }
+interface I0 {
+    const a = 3;
+}
+class I1 implements I {
+    const a = 1; // <-- Pull Up refactoring target, target destination interface I
+}
+interface I2 extends I, I0 { }
+?>
+
+<?php
+interface I { }
+interface I0 {
+    const a = 3;
+}
+class I1 implements I {
+    const a = 3; // <-- Pull Up refactoring target, target destination interface I
+}
+class I2 implements I, I0 { }
+?>
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: constant `a` from class I1, pulled into interface I
+Refactoring rule: When pulling a constant into an interface, the collision checker must traverse all types that inherit/implement the target interface, including interfaces that extend multiple interfaces and classes that implement multiple interfaces, and check for constant name conflicts across the combined inherited constant set.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When pulling const `a` into interface I, the refactoring does not detect that I2 (either an interface extending I+I0, or a class implementing I+I0) will inherit two constants named `a` (one from newly modified I, one from I0). After refactoring PHP will raise the error "Cannot inherit previously-inherited or override constant a from interface I0", but no warning is shown during Pull Up.
+Expected behavior:
+The refactoring should traverse all descendants of I, inspect their other inherited interfaces, compute the merged constant set, detect this collision and warn the user before applying the change.
+Underlying cause:
+The collision check only looks for constants directly present in the immediate target interface I. It does not perform multi-inheritance/implementation closure analysis to collect all constants that will be merged in types combining I and other interfaces like I0.
+*/
+?>

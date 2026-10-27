@@ -1,0 +1,29 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (CLion C++ refactoring)
+Refactoring target: loop variable `index` in the for loop `for (size_t index{5}; index < data.size(); ++index)`
+Operation: Invoke Rename refactoring, rename `index` to `k`
+Scope: Rename all three occurrences of the loop variable inside the for statement: declaration, condition expression, increment expression. Preserve uniform initialization syntax `{5}`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After rename, generated for loop:
+`for (size_t k{5}; index < data.size(); ++k) { }`
+The condition part `index < data.size()` still references old variable name `index`, only declaration and increment were renamed. This is invalid code, `index` is undefined.
+
+Expected behavior:
+All three usages should be renamed:
+`for (size_t k{5}; k < data.size(); ++k) { }`
+
+Underlying cause:
+Rename visitor fails to traverse all three parts of C++ for-loop initializer/condition/increment when variable uses uniform brace initialization syntax. It only rewrites the variable declaration and increment expression, but skips the condition expression reference of the loop variable.
+*/
+
+#include <cstddef>
+#include <vector>
+
+void test() {
+	std::vector<int> data(10, 1);
+	for (size_t index{5}; index < data.size(); ++index) {
+	}
+}

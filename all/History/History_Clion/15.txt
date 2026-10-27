@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring type: Extract Function (C++ CLion)
+Refactoring target: full body inside function `ns::f()`
+Operation: Select all code inside `ns::f()` and trigger Extract Function refactoring
+Scope: Return type resolution for templated type `std::vector<foo<int>>` inside namespace ns; parsing of template angle brackets during refactoring preview and validation
+*/
+
+/* Error Root Cause:
+Observed failure: CLion reports "return type is invalid" even though `std::vector<foo<int>>` is valid compilable C++. The preview rendering indicates the parser misinterprets the template opening `<` as a less-than comparison operator. The bug only reproduces when both the template struct foo and function f are wrapped inside a namespace.
+Expected behavior: Correctly parse `std::vector<foo<int>>` as a template specialization type, validate the return type as valid, complete the extraction without false positive error.
+Underlying cause: The refactoring engine’s PSI parser has a context-sensitive parsing defect for template type names inside namespaces. It misclassifies the `<` of template argument list as binary less-than operator, which triggers false validation failure for the return type. Without namespace wrapping, the parsing path does not hit this misparse condition.
+*/
+#include <iostream>
+#include <vector>
+
+namespace ns {
+  template<typename>
+  struct foo {
+  };
+
+  std::vector<foo<int>>
+  f() {
+    std::vector<foo<int>> v;
+    v.push_back({});
+    return v;
+  }
+}
+
+int main() {
+}

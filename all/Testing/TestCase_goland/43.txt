@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package a
+import "fmt"
+var S fmt.Stringer
+func Foo() {
+callStringMethod() // extract S.String() call into callStringMethod
+}
+func callStringMethod() {
+_ = S.String()
+}

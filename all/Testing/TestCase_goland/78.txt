@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Executor struct{}
+func (e Executor) logic() {
+x := 999
+for i := 0; i < 999; i++ {
+println(x)
+}
+}
+func main() {
+e := Executor{}
+e.logic() // move logic method from Executor to standalone function
+}

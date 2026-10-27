@@ -1,0 +1,20 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <exception>
+class Base
+{
+public:
+virtual void test(int y) {}
+};
+class Impl : public Base //{Push down test implementation from Base to Impl}
+{
+public:
+void test(int y) override {
+if(y == 5) {
+throw std::exception();
+} else {
+}
+}
+};

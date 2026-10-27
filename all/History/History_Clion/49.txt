@@ -1,0 +1,43 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: the three lines from `std::random_device rd;` to `std::shuffle(v.begin(), v.end(), g);` inside main()
+Operation: Invoke Extract Method and name new function `shuffle`
+Scope: Preserve original namespace qualifiers written in source code; retain `std::` instead of substituting with implementation-specific internal namespace `std::__1::`; preserve original whitespace/line formatting.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, refactoring replaces `std::random_device` / `std::mt19937` with `std::__1::random_device` / `std::__1::mt19937`.
+`std::__1` is libc++ internal implementation namespace and should not appear in user source code.
+
+Expected behavior:
+Keep original `std::` namespace prefix:
+void shuffle(std::vector<int> &v) {
+    //begin extract
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(v.begin(), v.end(), g);
+    //end extract
+}
+
+Underlying cause:
+The refactoring engine uses the fully resolved internal implementation namespace symbol from the type resolver instead of the original source token text `std::`. The symbol resolver unwraps libc++'s `std::__1` implementation namespace and writes it into source code, instead of preserving the user-written `std::` qualifier. There is also a secondary cosmetic issue: refactoring incorrectly alters whitespace and line breaks of the extracted code.
+*/
+
+#include <vector>
+#include <random>
+#include <memory>
+
+void foo(std::unique_ptr<int> &i);
+
+int main() {
+    std::vector<int> v {1,2,3,4,5,6};
+
+    //begin extract
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(v.begin(), v.end(), g);
+    //end extract
+
+    return v[0];
+}

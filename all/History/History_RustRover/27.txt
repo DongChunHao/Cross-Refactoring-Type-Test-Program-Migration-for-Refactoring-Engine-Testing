@@ -1,0 +1,21 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function
+Refactoring Target: Expression `s;` with variable `s: S<u32, i32>`
+Refactoring Scope: Generic type with default type parameters
+Plugin Environment: IntelliJ Rust plugin 0.3.142.SNAPSHOT-203-dev, IDEA 2020.3.2, Rust 1.49.0, macOS 10.15.7
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select `s;` and run Extract Function
+*/
+/* Error Root Cause:
+Observed failure: When extracting a function from code using a generic struct with default type parameters `struct S<R=u32, T=u32>(R, T)`, the inferred function signature incorrectly swaps type arguments. The actual generated signature becomes `fn(s: S<i32, u32>)` instead of the correct `fn(s: S<u32, i32>)`.
+Expected behavior: Preserve the instantiated type arguments order when building the extracted function’s parameter type: `fn f(s: S<u32, i32>)`.
+Underlying cause: The type inference logic for extract function mishandles generic parameters that have defaults, misordering the substituted type arguments.
+*/
+// Before
+struct S<R=u32, T=u32>(R, T);
+
+fn main() {
+    let s = S(1u32, 2i32);
+    s;
+}

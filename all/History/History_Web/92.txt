@@ -1,0 +1,23 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Introduce Field
+Refactoring Target: Variable `x` inside generator method `*m()`
+Refactoring Scope: JavaScript, semicolon-less code style
+Trigger Operation: Run Introduce Field on `let x = 5;` inside generator function
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: With code style set to omit semicolons, Introduce Field produces invalid syntax before generator `*` token. The refactoring emits the field declaration without proper ASI handling, causing the `*` to be parsed incorrectly.
+
+Expected behavior: Emit the class field while respecting semicolon-less formatting rules, preserving the generator method syntax `*m() {}`.
+
+Underlying cause: The formatter/ast printer does not account for Automatic Semicolon Insertion boundaries when a class field is inserted immediately before a generator method. It does not ensure there is a statement break before the `*` token, leading to parse error.
+*/
+
+// Complete compilable test code
+class Pqr {
+    *m() {
+        let x = 5; // introduce from here
+    }
+}

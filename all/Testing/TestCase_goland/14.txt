@@ -1,0 +1,16 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+package main
+import "errors"
+
+type BaseErr struct{}
+type ErrFoo struct{ BaseErr }
+func (base *BaseErr) Is(err error) bool { // Push down method Is from BaseErr to ErrFoo
+return base == err
+}
+func main() {
+var e error = &ErrFoo{}
+_ = errors.Is(e, &ErrFoo{})
+}

@@ -1,0 +1,13 @@
+```
+<?php
+class UserRepository {
+}
+class User {
+    public function getUser(): User {
+        return $this;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Caret placed on method name `getUser` inside method declaration; invoke F6 Move Instance Method to move `getUser` from `User` to `UserRepository`.

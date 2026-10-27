@@ -1,0 +1,13 @@
+```
+<?php
+class RuleSet {
+    const ENABLED = true;
+}
+class FilterRule extends RuleSet {
+    public function check(): bool {
+        return static::ENABLED;
+    }
+}
+```
+
+【Refactoring Action】: Push Down class constant `ENABLED` from parent class `RuleSet` to child class `FilterRule`.

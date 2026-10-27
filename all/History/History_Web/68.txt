@@ -1,0 +1,17 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Replace destructuring with property and index access
+Refactoring Target: Destructuring pattern `{ x: x }`
+Refactoring Scope: JavaScript file
+Trigger Operation: Run "Replace destructuring with property and index access"
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When destructuring uses the syntax `{ x: x }` (property name same as target variable name), the intention incorrectly triggers the rename dialog for global variables, instead of simply expanding to `const x = obj.x;`.
+Expected behavior: Expand to `const x = { x: 7, y: 3 }.x;` without popping up rename prompt.
+Underlying cause: The logic treats the binding identifier `x` as a candidate for renaming when the pattern is `propertyName: variableName`, even when the names match and no actual rename is needed. It does not recognize this as a trivial identity binding.
+*/
+
+// Complete compilable test code
+const { x: x } = { x: 7, y: 3 };

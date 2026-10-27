@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: int_renamed
+'''
+int main(int a, char** argv) {
+int b = 0; // constant to be extracted to a variable //rename variable for extract‑local‑variable reserved‑keyword‑name scenario
+return 0;
+}

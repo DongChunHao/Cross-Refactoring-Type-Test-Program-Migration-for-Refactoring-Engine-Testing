@@ -1,0 +1,26 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Superclass
+Refactoring Target: Class Car, already extracted once to CarS1, run a second time
+Refactoring Scope: JavaScript
+Trigger Operation: Execute Extract Superclass a second time on subclass Car, select method present
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: On the second Extract Superclass run, the refactoring inserts a second `super();` inside the constructor, resulting in duplicate `super()` calls. In JavaScript class constructors, you may call `super()` only once before using `this`; duplicate `super()` throws runtime error.
+
+Expected behavior: Detect that the constructor already contains a `super()` call inherited from prior extraction, and do not add another one.
+
+Underlying cause: The Extract Superclass logic unconditionally appends `super();` into the subclass constructor when creating a new supertype, without scanning the existing constructor body to check whether `super()` is already present.
+*/
+
+// Complete compilable test code
+class Car {
+    constructor(brand) {
+        this.carname = brand;
+    }
+    present(x) {
+        return x + ", I have a " + this.carname;
+    }
+}

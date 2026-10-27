@@ -1,0 +1,14 @@
+```
+<?php
+/**
+ * Class Product
+ */
+/**
+ * Class \Product
+ */
+class Product{
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target global-namespace class `Product`, move into namespace `Shop`.

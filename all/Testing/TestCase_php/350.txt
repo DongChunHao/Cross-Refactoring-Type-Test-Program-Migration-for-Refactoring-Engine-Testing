@@ -1,0 +1,9 @@
+```
+<?php
+const A = new Exception();
+class C{
+}
+?>
+```
+
+【Refactoring Action】: Invoke Move Constant refactoring on global constant `A`, move into class `C` as class constant.

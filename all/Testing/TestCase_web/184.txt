@@ -1,0 +1,20 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// contains‑function‑to‑inline.ts
+export const tmp = () => {
+return 'stand‑in'
+}
+export const promote = (value: string)=> {
+return `promote(${value})`;
+}
+export const toInline = () => {
+return promote(tmp())
+}
+// function‑usage.ts
+import { toInline } from './contains‑function‑to‑inline';
+export const someFunction = () => {
+const tmp = ()=> 'bogus' //{Move Method target local shadowing binding colliding with identifier inside inlined‑function body}
+const result = toInline();
+}

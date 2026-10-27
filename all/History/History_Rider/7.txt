@@ -1,0 +1,63 @@
+using System;
+
+/* Refactoring Settings:
+Refactoring Type: Inline Method (C# refactoring)
+Refactoring Target: Private method F2()
+Refactoring Scope: Inline the call site of F2() inside the ternary expression of F1()
+Refactoring Rule Expectation: Preserve ternary conditional short-circuit semantics. The body of F2() should execute ONLY when the false branch of `_done ? "Always get this" : F2()` is taken.
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining F2(), the statements `_done = true; DoSomeStuff();` are lifted out of the ternary false branch and run unconditionally before the ternary check. This changes program behaviour: DoSomeStuff() and the assignment to _done now execute even when _done is true.
+Expected behavior: F2's body should stay inside the right-hand operand of the ternary operator, so it is only evaluated when `_done` is false.
+Underlying cause: The inline rewriter mishandles inlining into the operand of a ternary conditional operator. It treats the call `F2()` as an independent expression whose side effects can be hoisted before the ternary, ignoring that ternary operands are lazily evaluated and only execute when their branch is selected. The bug is specific to ternary `?:`; using an ordinary if-else conditional works correctly.
+*/
+
+class InlineBug
+{
+    private bool _done = false;
+
+    public string F1()
+    {
+        return _done ? "Always get this" : F2();
+    }
+
+    private string F2()
+    {
+        _done = true;
+        DoSomeStuff();
+        return "Never get this";
+    }
+
+    private void DoSomeStuff()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+// Broken result produced by "Inline Method" on F2()
+/*
+class InlineBug
+{
+    private bool _done = false;
+
+    public string F1()
+    {
+        _done = true;
+        DoSomeStuff();
+        return _done ? "Always get this" : "Never get this";
+    }
+
+    private string F2()
+    {
+        _done = true;
+        DoSomeStuff();
+        return "Never get this";
+    }
+
+    private void DoSomeStuff()
+    {
+        throw new NotImplementedException();
+    }
+}
+*/

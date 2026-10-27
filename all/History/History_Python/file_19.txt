@@ -1,0 +1,20 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function)
+Refactoring target: function f from module b.py to module a.py
+Refactoring scope: import statements in a.py, all usages of f inside a.py
+Refactoring rule expectation: After moving f from b to a.py: remove the redundant `from b import f` import in a.py; keep `f()` call inside func() valid, no unresolved references.
+'''
+''' Error Root Cause:
+Observed failure: When moving f into a.py, refactor fails to properly handle the existing import `from b import f` and the non-top-level usage inside func(). It may leave stale import or break reference to f inside func().
+Expected behavior: Delete `from b import f` in a.py, keep `def func(): f()` as-is, since f is now defined locally in a.py.
+Underlying cause: Move refactor’s usage scanner does not correctly reconcile existing import aliases when target symbol is moved into the same file where it is already imported and used inside nested scope (inside function func). The logic cannot eliminate the stale import and rebind references to the newly local definition.
+'''
+# ---- a.py ----
+from b import f
+
+def func():
+    f()
+
+# ---- b.py ----
+def f():
+    pass

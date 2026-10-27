@@ -1,0 +1,16 @@
+```
+<?php
+class Notifier {
+    static function sendAlert()
+    {
+        echo "alert";
+    }
+}
+class MailNotifier extends Notifier {
+}
+$notifyObj = new Notifier();
+call_user_func(array($notifyObj, 'sendAlert'));
+?>
+```
+
+【Refactoring Action】: Push Members Down refactoring, target static method `sendAlert()` in class `Notifier`, push down to subclass `MailNotifier`

@@ -1,0 +1,22 @@
+<?php
+class A {
+    const CONSTANT = 3;
+}
+class B extends A{
+}
+
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring
+Refactoring target: class constant CONSTANT in class A
+Refactoring rule: When pushing down PHP class constants, the refactoring must preserve valid PHP constant syntax. PHP constants do not use visibility modifiers in the same way as properties; the PSI element factory must generate valid `const CONSTANT = value;` nodes instead of trying to produce invalid `public CONSTANT = 3;` syntax.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Running Push Down on the constant throws an AssertionError. The error log shows the engine tries to create an element from invalid text `class A{public CONSTANT = 3;}`. PHP class constants cannot be generated with this syntax; `public` is not written that way for const declarations in this form.
+Expected behavior:
+The refactoring correctly generates valid `const CONSTANT = 3;` syntax, copies the constant to the child class B, and updates usages without constructing invalid PSI nodes. No assertion crash should occur.
+
+Underlying cause:
+The PSI factory for PHP constants incorrectly applies property-style visibility modifiers to constant generation. It treats the constant like a class property and emits `public CONSTANT = 3;`, which is invalid PHP syntax, causing the element creation assertion failure.
+*/

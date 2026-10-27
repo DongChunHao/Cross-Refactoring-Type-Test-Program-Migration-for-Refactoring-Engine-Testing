@@ -1,0 +1,34 @@
+```
+<?php
+class PHPParameter {
+    public bool $is_passed_by_reference;
+    public string $name;
+}
+class StubsTest {
+    #[Pure]
+    public static function getParameterRepresentation(PHPFunction $function): string {
+        $result = '';
+        foreach ($function->parameters as $parameter) {
+            if (!empty($parameter->types)) {
+                $result .= implode('|', $parameter->types);
+            }
+            if ($parameter->is_passed_by_ref) {
+                $result .= '&';
+            }
+            $result .= '$' . $parameter->name . ', ';
+        }
+        return rtrim($result, ', ');
+    }
+}
+class PHPFunction {
+    /**
+     * @var PHPParameter[]
+     */
+    public array $parameters = [];
+}
+class BaseStubsTest {
+}
+?>
+```
+
+【Refactoring Action】: Invoke Move Static Method on `StubsTest::getParameterRepresentation()`, move to `BaseStubsTest`.

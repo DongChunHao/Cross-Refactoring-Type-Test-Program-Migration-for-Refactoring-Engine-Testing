@@ -1,0 +1,26 @@
+/* Refactoring Settings:
+Refactoring type: Inline Variable (CLion C++ refactoring)
+Refactoring target: local variable `x` with `auto x = 2;`
+Operation: Invoke Inline Variable refactoring on `x`
+Scope: Preserve type deduction semantics for auto variables. When inlining auto variable, correctly handle the initializer; do not produce `auto x;` which is invalid without initializer.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After inline variable refactoring:
+`auto x; int y = 2; x = 3;`
+`auto x;` is invalid C++. auto requires an initializer for type deduction. The refactoring incorrectly removes the initializer from the declaration of `x`, while partially moving the literal value into `y`.
+
+Expected behavior:
+Option: fully inline all usages of x, remove `auto x =2;` and replace `int y =x;` with `int y=2;`.
+The variable `x =3;` remains, so `x` cannot be fully removed. In this case, refactoring should either reject partial inlining or keep `auto x =2;` intact.
+
+Underlying cause:
+Inline variable refactoring mishandles partial inlining for auto-declared variables. It extracts the initializer value for one usage but incorrectly leaves behind an auto variable declaration stripped of its required initializer, producing ill-formed code.
+*/
+
+void f() {
+    auto x = 2;
+    int y = /*caret*/x;
+    x = 3;
+}

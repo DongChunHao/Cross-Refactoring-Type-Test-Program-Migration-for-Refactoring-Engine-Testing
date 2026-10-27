@@ -1,0 +1,17 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: Expression 2 - 1
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select "2 - 1" inside `let x = 10 - 2 - 1;`, execute Refactor -> Extract -> Variable.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: WebStorm allows extracting "2 - 1" from the left-associative subtraction chain `10 - 2 - 1`, producing `let number = 2 - 1; let x = 10 - number;`. This changes the semantics: original value is 7, after extraction it becomes 9.
+Expected behavior: The refactoring engine should reject this extraction and report an error, since extracting the selected fragment alters operator precedence and the program's runtime result.
+Underlying cause: The precondition check for Extract Variable does not evaluate operator associativity and precedence; it does not detect that pulling out a subexpression from a left-associative binary chain changes the evaluation order and program semantics.
+*/
+
+// Complete compilable test code
+let x = 10 - 2 - 1;

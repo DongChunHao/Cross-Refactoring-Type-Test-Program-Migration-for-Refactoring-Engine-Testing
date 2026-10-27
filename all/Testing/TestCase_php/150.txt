@@ -1,0 +1,16 @@
+```
+<?php
+namespace StoreLib;
+class ProductEntity { }
+
+namespace Web;
+use StoreLib\ProductEntity as Product;
+class Checkout {
+    static function validate(Product $product, int $qty)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `validate()` from class `Checkout` (namespace `Web`) to class `ProductEntity` (namespace `StoreLib`)

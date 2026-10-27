@@ -1,0 +1,10 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+class Foo {
+foo: any;  // example comment
+init() { //{Change Method target method init which references unresolved this.bar}
+this.bar = 1;
+}
+}

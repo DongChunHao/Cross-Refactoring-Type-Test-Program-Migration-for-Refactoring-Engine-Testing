@@ -1,0 +1,9 @@
+```
+<?php
+function f($a) {
+    echo $a;
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, delete parameter `$a` from function `f`.

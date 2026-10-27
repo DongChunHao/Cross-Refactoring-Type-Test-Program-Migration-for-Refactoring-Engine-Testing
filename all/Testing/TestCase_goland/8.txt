@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+
+func _() { // Rename method _ to computeValue
+println(myParam)
+}
+func main() {}

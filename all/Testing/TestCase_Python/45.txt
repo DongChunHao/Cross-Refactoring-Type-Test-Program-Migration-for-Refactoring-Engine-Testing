@@ -1,0 +1,9 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Rename refactoring handles @param doc‑directive but does not build linkage to paired @type entry; cannot find and rewrite parameter identifier inside @type annotation, leading to inconsistent docstring metadata
+def defparam(person): // REFACTOR_TARGET
+"""
+@param person: Who should think.
+@type person: L{Person} or L{Animal}
+@return:
+"""
+person.some_method()

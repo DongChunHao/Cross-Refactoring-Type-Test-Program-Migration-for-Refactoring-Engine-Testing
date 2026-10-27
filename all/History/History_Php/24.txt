@@ -1,0 +1,26 @@
+<?php
+class A { }
+class B extends A{
+    static function fs(){}
+    function fa2()
+    {
+        B::fs();
+    }
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method fa2() in class B, pull up to parent class A
+Refactoring rule: Accessibility analysis for static calls with explicit class name (ClassName::method()) must evaluate visibility rules correctly. Public static methods called by explicit class identifier remain accessible after pull-up; protected static methods called by explicit class identifier are also accessible from the parent in PHP and should not block the refactoring with a false accessibility warning.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling fa2() up to A emits a warning claiming B::fs() will be inaccessible. This is incorrect: the call uses an explicit class reference B::fs(), not $this-> or static:: / self:: resolution relative to the containing class. Public static fs() is always reachable via B::fs(); protected static fs() can also be called from parent A via B::fs() in PHP.
+Expected behavior:
+No accessibility warning for B::fs() when fs() is public or protected.
+Underlying cause:
+The refactoring’s accessibility checker treats any static method call originating from the child class as a member that will become unavailable in the parent scope. It does not distinguish explicit class-name static invocation from late-static-binding or instance-bound access, and over-applies accessibility restrictions.
+*/
+?>

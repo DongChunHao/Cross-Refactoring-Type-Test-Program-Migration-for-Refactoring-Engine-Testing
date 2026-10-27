@@ -1,0 +1,7 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+var vvv = function (val) { //{Rename Method target function‑expression assigned to variable vvv}
+return val + 1;
+};

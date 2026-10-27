@@ -1,0 +1,16 @@
+```
+<?php
+trait JsonSerializer{
+    public static function serialize(){
+    }
+}
+trait SerialContract{
+    abstract static function serialize();
+}
+class ApiResponse{
+    use SerialContract, JsonSerializer;
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target abstract static function `serialize()` from trait `SerialContract` to class `ApiResponse`

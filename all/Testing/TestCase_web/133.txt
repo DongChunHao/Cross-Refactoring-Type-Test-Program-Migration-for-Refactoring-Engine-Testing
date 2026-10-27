@@ -1,0 +1,39 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+/**
+
+- Comment for TypeA
+*/
+export type TypeA = 1; //{Extract Method target top‑level type with preceding JSDoc comment for multi‑member move scenario}
+/**
+- Comment for TypeB
+*/
+export type TypeB = 2;
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+/**
+- Comment for TypeA
+*/
+export type TypeA = 1;
+/**
+- Comment for TypeB
+*/
+export type TypeB = 2; //{Move Method target multi top‑level declarations with individual preceding JSDoc comments}
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper scope holding multiple declarations each with preceding independent JSDoc comment}
+/**
+  - Comment for TypeA
+  */
+  type TypeA = 1;
+  /**
+  - Comment for TypeB
+  */
+  type TypeB = 2;
+  }

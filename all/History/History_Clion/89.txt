@@ -1,0 +1,38 @@
+```
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (CLion C++ refactoring)
+Refactoring target: template function `print<rows, cols>(int a[][cols])`
+Operation: Invoke Refactor -> Rename, rename function name `print` to `printArray`
+Scope: Only rename the function identifier. Preserve the original function parameter type `int a[][cols]`. Never convert pointer-to-array type `int a[][cols]` to `int** a`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After rename, refactoring changes parameter from `int a[][cols]` to `int** a`.
+`int a[][cols]` decays to `int (*)[cols]` (pointer to array of `cols` ints), which is not the same type as `int**`. `int**` is pointer-to-pointer, incompatible and causes compilation failure.
+
+Expected behavior:
+```cpp
+template<int rows,int cols>
+void printArray(int a[][cols]) {
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) cout << a[r][c] << " ";
+        cout << endl;
+    }
+}
+```
+
+Underlying cause:
+Rename refactoring's type normalization logic misclassifies template function's incomplete 2D array parameter `int a[][cols]`. It incorrectly unwraps pointer-to-array type and emits `int**` instead of retaining the original `int a[][cols]` syntax, producing invalid C++ code.
+*/
+
+#include <iostream>
+using namespace std;
+
+template<int rows,int cols>
+void print(int a[][cols]) { // Refactor-Rename bug in CLion changes to int **a
+for (int r = 0; r < rows; r++) {
+for (int c = 0; c < cols; c++) cout << a[r][c] << " ";
+cout << endl;
+}
+}

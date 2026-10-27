@@ -1,0 +1,17 @@
+```
+<?php
+class T{
+}
+class_alias("T",'C');
+class A extends C{
+    const C =1;
+    public function f()
+    {
+        echo self::f();
+    }
+}
+?>
+```
+
+【Actual Buggy Source After Refactoring】:
+Refactoring sees `A extends C` and treats `C` as unknown unrelated class

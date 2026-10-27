@@ -1,0 +1,15 @@
+/* Refactoring Settings:
+Refactoring type: Rename / Move File (C++ CLion)
+Refactoring target: rename library header file `library_header.h` to `local_header.h`
+Operation: Rename the library header to match existing local header filename
+Scope: Distinguish quoted-include `"file.h"` vs angle-bracket include `<file.h>`; handle header shadowing when local file name collides with library header name
+*/
+
+/* Error Root Cause:
+Observed failure: After renaming library_header.h → local_header.h, refactoring changes `#include "library_header.h"` into `#include "local_header.h"`. Now both lines are `#include "local_header.h"`. The quoted include path resolves first to the project-local `local_header.h`, shadowing the library version, which creates duplicate inclusion / wrong header pulled in.
+Expected behavior: Preserve the distinction: change the library header include to angle bracket syntax `#include <local_header.h>`, or emit warning that name collision will shadow local header.
+Underlying cause: The rename refactoring only updates the string literal text inside the include directive, it does not track whether that header was originally resolved via system/library include paths vs local project path. It does not automatically switch between `""` and `<>` include styles, and does not detect the name shadowing collision.
+*/
+
+#include "local_header.h"
+#include "library_header.h"

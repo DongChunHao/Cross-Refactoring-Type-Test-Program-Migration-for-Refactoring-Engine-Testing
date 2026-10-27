@@ -1,0 +1,12 @@
+```
+<?php
+$anonClass = new class {
+    public function f()
+    {
+        echo "a";
+    }
+};
+?>
+```
+
+【Refactoring Action】: Pull Up Members refactoring, target method `f()` defined inside anonymous class instance; attempt pull-up operation.

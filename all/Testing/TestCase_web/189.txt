@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+const fn1 = () => {
+throw new Error(); //{Move Method target function‑body containing throw statement‑only construct for inline‑function shorthand‑arrow‑escape defect}
+};
+const fn2 = () => {
+(() => fn1())();
+};
+const assertFileExists = (path: string, message: string): void => {
+if (!existsSync(path)) {
+throw new Error(message);
+}
+};
+['a', 'b', 'c'].forEach(p => assertFileExists(p, `${p} does not exist`)); //{Move Method target concise‑expression‑arrow call‑site for inlining throwing‑function}

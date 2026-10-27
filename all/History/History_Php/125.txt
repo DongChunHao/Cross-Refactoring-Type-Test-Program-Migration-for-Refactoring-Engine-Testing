@@ -1,0 +1,29 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method AC::s()
+Scope: visibility access check for method calls inside the same class
+Refactoring operation: change visibility of s() from public to protected
+*/
+
+/* Error Root Cause:
+Observed failure:
+Refactoring shows a false positive warning claiming `s()` will not be accessible inside `AC::a()`.
+In PHP, `protected` members are accessible within the declaring class itself, so `$this->s()` inside `AC::a()` remains valid after changing `s()` to protected. The warning is incorrect.
+
+Expected behavior:
+Access validation should recognize that calls to `$this->s()` originating inside the same declaring class `AC` are allowed for protected visibility; suppress this warning.
+
+Underlying cause:
+The refactoring’s access checker incorrectly treats protected visibility like private, or fails to check whether the call site is located inside the same class that defines the method. It only considers protected access rules for child classes, not for the declaring class itself.
+*/
+class AC {
+    public function s(){
+        echo "S";
+    }
+    public function a(){
+        $this->s();
+    }
+}
+(new AC())->a();
+?>

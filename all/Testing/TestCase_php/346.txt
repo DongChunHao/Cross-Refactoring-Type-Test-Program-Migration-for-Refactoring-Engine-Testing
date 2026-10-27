@@ -1,0 +1,14 @@
+```
+<?php
+define('AB_PERSON', 1);
+class SomeClass
+{
+    public static function getLists($user_id, $contact_type = AB_PERSON,$return_array = false, $limit = 100, $calculate_meta=false, $list_by_name=false)
+    {
+        // function body omitted for reproduction
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `SomeClass::getLists()`, insert new parameter `$list_filter='open'`

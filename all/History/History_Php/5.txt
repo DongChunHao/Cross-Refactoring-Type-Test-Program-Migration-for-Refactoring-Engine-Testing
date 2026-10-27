@@ -1,0 +1,23 @@
+<?php
+class B {
+    public function B(){
+    }
+}
+(new B())->b(); // <caret> invoke Change signature refactoring here
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: method b, call site (new B())->b()
+Action: add new parameter $a with default value 42
+Refactoring rule: In PHP, old-style constructors (method with same name as class) must be distinguished from regular methods. When refactoring a regular method call, the constructor invocation `new B()` must not be modified. Only the target method call `->b()` should be updated.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After adding parameter $a with value 42, the refactoring incorrectly adds the argument to the constructor call `new B(42)` in addition to the intended `b(42)`.
+Expected behavior:
+Only the call `(new B())->b()` becomes `(new B())->b(42)`. The constructor `new B()` remains unchanged.
+
+Underlying cause:
+The reference resolution logic confuses the old-style constructor method `B()` with the class name identifier. When searching for all call sites to modify, it incorrectly matches the constructor invocation `new B()` along with the target method `b()`.
+*/

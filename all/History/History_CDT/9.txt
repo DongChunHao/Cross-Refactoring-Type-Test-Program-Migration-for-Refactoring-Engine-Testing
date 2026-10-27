@@ -1,0 +1,23 @@
+void demo()
+{
+    int a = 1, b = 2, c = 3, d = 4, p = 5, q = 6, r = 7, s = 8;
+    int asd = (a+b) * (c+d) *p;
+    int qwe = (a+b) * (c+d) *q;
+    int zxc = (a+b) * (c+d) *r;
+    int rty = (a+b) * (c+d) *s;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: repeated subexpression (a+b)*(c+d)
+Refactoring Scope: current function demo()
+Operation steps: Select expression (a+b)*(c+d), invoke Extract Local Variable refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: Extract Local Variable only replaces the first occurrence of (a+b)*(c+d) and stops; remaining identical expressions in qwe, zxc, rty assignments are unchanged.
+Expected behavior: The refactoring engine should find all identical occurrences of the target expression and replace every matching occurrence with the newly created local variable.
+Underlying cause: The expression matching logic for extract local variable stops after the first matched substitution instead of scanning the whole function body for all equivalent expression instances. The comment notes that for member function calls with side effects, partial substitution would be acceptable, but this expression has no side effects and all duplicates should be replaced.
+*/

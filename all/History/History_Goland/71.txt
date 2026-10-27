@@ -1,0 +1,75 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Extract Method / Create Method quick-fix
+Refactoring target: calls passing variadic slice arguments `nums` / `nums...`
+Refactoring rule:
+1. When extracting a call `f1(i, nums)` (nums is `...int`, passed as slice to `[]int` param), the extracted helper’s last parameter should be `[]int`, not `...int`.
+2. When extracting a call `f2(i, nums...)` (spread syntax), the extracted helper’s last parameter should be variadic `...int`, and the call site should keep the spread `nums...`.
+3. For Create Method: when the call site uses spread `nums...`, the generated function must have variadic `...int` parameter, not `[]int`.
+*/
+
+/* Error Root Cause:
+Observed failure for Extract Method:
+- Original: `f1(i, nums)` where `nums ...int` is passed as `[]int`; refactor creates `f1Ext(i int, nums ...int)` and call `f1Ext(i, nums)`.
+  Inside `f1Ext`, `f1(i, nums)` is valid, but the call site `f1Ext(i, nums)` is misleading: `nums` is a slice, and passing slice to variadic parameter without spread is a compile error.
+- Original: `f2(i, nums...)`; refactor creates `f2Ext(i int, nums ...int)` but call site becomes `f2Ext(i, nums)` (lost `...` spread marker).
+
+Observed failure for Create Method:
+- `m2(i, nums...)` triggers Create Method, but generated signature is `m2(i int, ints []int)`.
+  The original call `m2(i, nums...)` is invalid: you cannot spread a slice into a non-variadic `[]int` parameter.
+
+Expected behavior:
+Extract Method:
+- `f1(i, nums)` → helper `f1Ext(i int, nums []int)`, call site `f1Ext(i, nums)`
+- `f2(i, nums...)` → helper `f2Ext(i int, nums ...int)`, call site `f2Ext(i, nums...)`
+
+Create Method:
+- `m1(i, nums)` → `m1(i int, ints []int)`
+- `m2(i, nums...)` → `m2(i int, ints ...int)`
+
+Underlying cause:
+The refactoring logic does not distinguish between a slice value argument and a spread argument (`...`) at the call site. It does not carry the spread marker into parameter type inference, always defaulting to one parameter type form.
+*/
+
+func f1(i int, ints []int) {}
+func f2(i int, ints ...int) {}
+
+func _(i int, nums ...int) {
+	f1(i, nums)   // extract this
+	f2(i, nums...)// and this
+}
+
+// Bad actual Extract Method result
+/*
+func _(i int, nums ...int) {
+	f1Ext(i, nums) // compile error: cannot use nums (type []int) as type int in argument to variadic parameter
+	f2Ext(i, nums) // compile error: missing ...
+}
+func f1Ext(i int, nums ...int) {
+	f1(i, nums)
+}
+func f2Ext(i int, nums ...int) {
+	f2(i, nums...)
+}
+*/
+
+// Bad actual Create Method result
+/*
+func _(i int, nums ...int) {
+	m1(i, nums)
+	m2(i, nums...) // compile error: can't spread slice into []int parameter
+}
+func m1(i int, ints []int) {}
+func m2(i int, ints []int) {}
+*/
+
+// Expected correct Create Method output
+/*
+func _(i int, nums ...int) {
+	m1(i, nums)
+	m2(i, nums...)
+}
+func m1(i int, ints []int) {}
+func m2(i int, ints ...int) {}
+*/

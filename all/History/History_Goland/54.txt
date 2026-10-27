@@ -1,0 +1,54 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Extract Function (Extract Method)
+Refactoring target: Selected statements `print("1")`, `print("2")`, `print("3")` with blank lines separating them
+Refactoring rule: Preserve original blank lines / vertical whitespace inside the extracted function body during PSI text serialization.
+*/
+
+/* Error Root Cause:
+Observed failure: After extraction, the blank lines between the print statements are discarded; all statements are condensed without empty lines. The user notes the shortcut confusion: Ctrl+Alt+M is “Extract Method”, Ctrl+Alt+F is “Extract Function” in GoLand.
+Expected behavior: The new extracted function retains the original blank lines:
+func funcName() {
+	print("1")
+
+	print("2")
+
+	print("3")
+}
+Underlying cause: The extract refactoring’s PSI rewriter discards trivial whitespace/blank line tokens between sibling statement nodes when generating the new function body, treating blank lines as non-significant formatting rather than user code layout to preserve.
+*/
+
+func example() {
+	print("1")
+
+	print("2")
+
+	print("3")
+}
+
+// Bad actual refactored result
+/*
+func example() {
+	funcName()
+}
+func funcName() {
+	print("1")
+	print("2")
+	print("3")
+}
+*/
+
+// Expected correct refactored result
+/*
+func example() {
+	funcName()
+}
+func funcName() {
+	print("1")
+
+	print("2")
+
+	print("3")
+}
+*/

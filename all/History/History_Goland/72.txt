@@ -1,0 +1,47 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function `hello(s string)` inside a scratch file
+Refactoring rule: When modifying a function signature in a scratch file, all call sites within the same scratch must be updated consistently to match the new signature.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After removing the `s string` parameter via Change Signature:
+- Definition becomes `func hello() {}`
+- The call site `hello("")` remains unchanged, producing a compile error because arguments are still present.
+
+Expected behavior:
+The refactoring should also update the invocation to `hello()`.
+
+Underlying cause:
+The refactoring engine excludes scratch files from full reference search scope, or treats scratch files as disposable/non-project documents and skips updating their usages. It updates only the function declaration, leaving call sites stale.
+*/
+
+func main() {
+    hello("")
+}
+
+func hello(s string) {
+}
+
+// Bad actual result
+/*
+func main() {
+    hello("")
+}
+
+func hello() {
+}
+*/
+
+// Expected correct result
+/*
+func main() {
+    hello()
+}
+
+func hello() {
+}
+*/

@@ -1,0 +1,15 @@
+```
+<?php
+interface ProductContract {
+    function __construct();
+}
+class Product implements ProductContract {
+    function __construct()
+    {
+    }
+}
+new Product(99);
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `__construct` in interface `ProductContract`, rename to `createProduct`

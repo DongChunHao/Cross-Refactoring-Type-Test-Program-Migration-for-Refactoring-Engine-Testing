@@ -1,0 +1,19 @@
+/* Refactoring Settings:
+Refactoring type: Inline Variable (CLion C++ refactoring)
+Refactoring target: variable `i` in `int i; if (i = 4) { int j = i; }`
+Operation: Invoke Inline Variable refactoring for variable i
+Scope: Preserve compound assignment expression inside if condition; correctly handle `if(i=4)` assignment-within-condition syntax
+*/
+
+/* Error Root Cause:
+Observed failure: Inline Variable corrupts `if (i = 4)` into `if (i)` and moves literal `4` into `int j =4;`. The original assignment `i=4` inside the if condition is destroyed.
+Expected behavior: Preserve `if(i = 4)` and inline usages properly, for example: `if (int temp = 4) { int j = temp; }` or retain `if(i=4)` while substituting references correctly.
+Underlying cause: The PSI expression visitor misinterprets assignment operator `=` inside the if condition as a separate variable read + literal value. The refactoring engine splits the assignment expression, moving the literal to downstream usage and leaving only the variable name inside the if predicate, breaking the original assignment logic.
+*/
+
+void f() {
+    int i;
+    if (i = 4) {
+        int j = i;
+    }
+}

@@ -1,0 +1,37 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Push Down / Pull Up / Move typed property refactoring
+Refactoring target: global-namespace typed property `MyA::$i` with type `MyClass`
+Scope: auto-import policy for symbols originating from global namespace
+Refactoring operation: move `public static MyClass $i` from global-namespace class MyA into namespace N2 class B
+*/
+
+/* Error Root Cause:
+Observed failure:
+IDE settings have "Prefer FQN" enabled for classes coming from the global namespace.
+After moving the typed property into namespace N2, the refactoring inserts `use MyClass;` and uses short name `MyClass $i;`, ignoring the auto-import rule.
+The expected output should use fully qualified name: `public static \MyClass $i;` and skip adding the `use MyClass;` import.
+
+Expected behavior:
+When serializing the property type into the target namespace:
+1. Check the global-namespace symbol auto-import preference ("Prefer FQN").
+2. If enabled: emit `\MyClass` instead of adding a `use` statement and short name.
+3. If disabled: add `use MyClass;` and use short `MyClass`.
+
+Underlying cause:
+The Push/Pull/Move field type serialization path does not respect the "Treat symbols from the global namespace / Prefer FQN" auto import setting. It unconditionally schedules an import for the global class and renders the short name, bypassing the setting check.
+*/
+namespace{
+    class MyClass{}
+    class MyA
+    {
+        public static MyClass $i;
+    }
+}
+
+namespace N2{
+    class B extends \MyA
+    {
+    }
+}
+?>

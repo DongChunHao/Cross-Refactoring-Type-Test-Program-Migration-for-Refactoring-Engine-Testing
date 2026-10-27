@@ -1,0 +1,12 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+interface User {
+userName: string;
+age: number;
+}
+const obj: any = { name: 'Johnny', age: 25 };
+function wrapper() { //{Change Method target enclosing wrapper function containing annotated destructuring declaration}
+const { userName, age }: User = obj;
+}

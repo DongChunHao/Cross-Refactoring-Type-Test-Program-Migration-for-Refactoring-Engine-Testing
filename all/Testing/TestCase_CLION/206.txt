@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: invokeFunctionPointer
+'''
+void foo(int(*)());
+void invokeFunctionPointer() { //{Rename method bar to invokeFunctionPointer}
+int(*fp1)();
+foo(fp1);
+}

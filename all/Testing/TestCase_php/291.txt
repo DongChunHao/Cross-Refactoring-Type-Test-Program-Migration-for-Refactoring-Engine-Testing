@@ -1,0 +1,11 @@
+```
+<?php
+class User extends BaseUser {
+    protected string $name, $email;
+}
+class BaseUser {
+}
+?>
+```
+
+【Refactoring Action】: Caret placed after `$email` identifier inside grouped property declaration

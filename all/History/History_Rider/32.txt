@@ -1,0 +1,48 @@
+/* Refactoring Settings:
+Refactoring Type: CA1861 (Avoid constant arrays) quickfix: Extract to static readonly field
+Refactoring Target: Array literal `new[] { "en-US", "it-IT", "de-DE" }` inside `Configure` lambda passed to `builder.Services.Configure`
+IDE: Rider / Roslyn .NET Analyzers
+Rule: CA1861
+*/
+
+/* Error Root Cause:
+Observed failure: Invoking the Roslyn quickfix “Extract to static readonly field” throws `InvalidOperationException: The item specified is not the element of a list`.
+Stack trace originates in `SyntaxReplacer.NodeListEditor` during `InsertNodesBefore`.
+
+Expected behavior:
+The fixer should insert a new static readonly array field in the containing class, then replace the inline array literal with a reference to that field.
+
+Underlying cause:
+The array literal is located **inside a lambda expression**, which is itself an argument in an invocation expression.
+`AvoidConstArraysFixer` assumes it can insert the new field declaration before some parent declaration node using `InsertNodesBefore`.
+When the array is nested deep inside a lambda/argument tree, the node selected as the anchor for insertion is **not part of a syntax list that supports insertion**, violating the precondition of `SyntaxReplacer.InsertNodeInList`.
+Roslyn fixer’s anchor-selection logic fails for array literals within lambda arguments, leading to the list-element check failure.
+This is a bug in the .NET SDK’s `Microsoft.NetCore.Analyzers` CA1861 code fix, not Rider-specific.
+*/
+
+// Original code
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supported = new[] { "en-US", "it-IT", "de-DE" }; // CA1861 trigger
+    options.SetDefaultCulture("it-IT")
+        .AddSupportedCultures(supported)
+        .AddSupportedUICultures(supported);
+});
+
+// Expected transformed result
+internal static class Program
+{
+    private static readonly string[] SupportedCultures = { "en-US", "it-IT", "de-DE" };
+
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+        builder.Services.Configure<RequestLocalizationOptions>(options =>
+        {
+            var supported = SupportedCultures;
+            options.SetDefaultCulture("it-IT")
+                .AddSupportedCultures(supported)
+                .AddSupportedUICultures(supported);
+        });
+    }
+}

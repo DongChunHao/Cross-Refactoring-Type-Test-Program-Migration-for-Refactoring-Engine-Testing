@@ -1,0 +1,5 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+void main (  int aa_0){ } //extract variable for rename‑refactoring whitespace‑in‑identifier input scenario

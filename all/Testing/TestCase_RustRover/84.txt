@@ -1,0 +1,15 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+use std::sync::Mutex;
+fn foo(x: u32, y: u32) -> u32 { x + y }
+fn use_mutex(m: &Mutex<u32>) -> u32 {
+let mut mx = m.lock().unwrap();
+*mx + 1
+}
+fn main() {
+let m = Mutex::new(0);
+let bar = foo(use_mutex(&m), use_mutex(&m)); //Change Method: modify signature of enclosing main containing drop‑sensitive multi‑argument call
+println!("{}", bar);
+}

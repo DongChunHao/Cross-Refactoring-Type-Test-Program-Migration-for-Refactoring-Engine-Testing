@@ -1,0 +1,9 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: fprintf
+'''
+#include <stdio.h>
+int main() {
+fprintf(stdout, "\n");//extract method for call to system header library symbol
+return 0;
+}

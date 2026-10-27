@@ -1,0 +1,23 @@
+```
+<?php
+// src/constants.php
+define('STATUS_ACTIVE', 1);
+
+// src/Service.php
+namespace App\Model {
+    class User{}
+}
+namespace App\Service {
+    use const STATUS_ACTIVE;
+    class UserService
+    {
+        public function check()
+        {
+            return STATUS_ACTIVE;
+        }
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move global constant `STATUS_ACTIVE` into `App\Model\User` as `App\Model\User::STATUS_ACTIVE`.

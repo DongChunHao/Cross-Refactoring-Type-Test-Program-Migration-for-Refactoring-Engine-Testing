@@ -1,0 +1,37 @@
+#define identifier_0
+float gvar_0 = -1;
+void f_0() {
+    int var_0 = -1;
+    var_0 = 100;
+}
+int f_1(int var_0) {
+    return var_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename)
+Refactoring Target: preprocessor macro `identifier_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro `identifier_0`, invoke Rename refactoring, input integer literal `0` as new macro name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts numeric literal `0` as candidate macro name and generates `#define 0`.
+According to C preprocessor grammar, macro name must be a valid identifier; numeric literal cannot serve as macro name. This line itself is illegal preprocessor syntax and directly triggers compilation error.
+No warning or blocking is performed during refactoring, the invalid transformation is persisted into source file.
+
+Expected behavior:
+Macro rename must perform lexical validation for candidate new name before any modification:
+1. The macro name must comply with C identifier lexical specification: start with alphabetic character or underscore, subsequent characters may be letters, underscores, digits.
+2. Reject pure numeric literals such as `0`, `123`; reject input starting with digit.
+3. Reject reserved C keywords.
+4. Reject inputs containing whitespace, operators and punctuation symbols.
+If validation fails, abort refactoring and show error message to user.
+
+Underlying cause:
+Macro rename refactoring lacks lexical syntax check for user‑supplied macro name. It directly writes raw user input into the `#define` directive. Even though preprocessor grammar forbids literals as macro names, CDT refactoring does not enforce this grammar constraint and delegates all error checking to the C compiler.
+*/

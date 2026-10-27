@@ -1,0 +1,23 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move global variable)
+Refactoring target: global variable FOO from source file a.py, move destination file b.py
+Refactoring scope: source file a.py, destination file b.py, all cross‑file references to FOO and existing import statements
+Refactoring rule expectation: After moving FOO into b.py: 1) In b.py, remove the leftover unused `import a` import statement if no remaining symbols from a are consumed in that file; 2) Update all FOO references to b.FOO; 3) Preserve references for symbols still imported from a (something_else).
+'''
+''' Error Root Cause:
+Observed failure: After moving FOO from a.py to b.py. In destination file b.py: references of FOO are correctly rewritten to b.FOO, variable FOO = 1 is correctly placed at bottom of b.py. But the old import `import a` is not removed from b.py even though FOO is no longer in a.py. Although something_else is still used from a, import a should remain. Note the reported quirk: print(b.FOO) inside b.py is technically self‑referencing but syntactically valid.
+Expected behavior: Keep `import a` because some_other_fn still uses a.something_else; no incorrect removal of used imports, clean‑up only truly unused imports in destination file.
+Underlying cause: The move‑refactor import cleanup logic fails to properly analyse which imported names from source module are still being consumed in destination file; it does not correctly distinguish partially‑used module imports when only one among multiple variables is moved away.
+'''
+# ---- file a.py content ----
+FOO = 1   # we'll move this
+something_else = 2
+
+# ---- file b.py content ----
+import a
+
+def bar():
+    print(a.FOO)
+
+def some_other_fn():
+    print(a.something_else)

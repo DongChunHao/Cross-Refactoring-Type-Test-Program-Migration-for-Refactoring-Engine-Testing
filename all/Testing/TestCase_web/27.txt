@@ -1,0 +1,5 @@
+''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+alert(`processing some weird error`); //{Rename Variable on partial template literal substring selection context}

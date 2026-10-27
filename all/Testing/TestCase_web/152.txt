@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+if (b) {console1.log('lala');}
+var year = 1998; //{Extract Method target literal for Extract‑Constant misusing var instead of const defect}

@@ -1,0 +1,42 @@
+// Original source file: pack1/main.go
+package pack1
+
+type Type struct{}
+
+func (pack1 Type) Foo() {
+	pack1.Foo()
+	Bar()
+}
+
+func Bar() {}
+
+/* Refactoring Settings:
+Refactoring type: Move (Move to another package)
+Refactoring target: method Foo with receiver (pack1 Type)
+Target destination package: pack2
+Refactoring rule: When moving a method to another package, rename receiver identifier if it conflicts with imported package aliases/names, and do not qualify unqualified local function calls (Bar) with the receiver name.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving Foo to package pack2, the refactoring incorrectly rewrites `Bar()` to `pack1.Bar()`. In the new package, `pack1` refers to the imported package, but `Bar` is a function originally defined in pack1 and is not exported, so `pack1.Bar()` is invalid Go code.
+The receiver variable name `pack1` clashes with the imported package name `pack1`. The refactoring engine confuses the receiver identifier with the package identifier and incorrectly adds the receiver name as a qualifier to the call to Bar.
+
+Expected behavior:
+The refactoring should detect the name clash between receiver name `pack1` and imported package name, either rename the receiver variable, or avoid qualifying `Bar()` with `pack1`. Since Bar is unexported and belongs to the original package, it cannot be referenced from pack2, and the refactoring should handle this correctly instead of generating `pack1.Bar()`.
+
+Underlying cause:
+The reference resolver treats the receiver identifier `pack1` and the imported package name `pack1` as the same entity during reference rewriting, causing it to incorrectly add the `pack1.` qualifier to the unqualified call of Bar.
+*/
+
+// Bad generated target file: pack2/main.go
+package pack2
+
+import "github.com/artspb/go-test/pack1"
+
+type Type struct{}
+
+func (pack1 Type) Foo() {
+	pack1.Foo()
+	pack1.Bar() // Invalid: Bar is unexported in pack1, cannot be accessed as pack1.Bar
+}

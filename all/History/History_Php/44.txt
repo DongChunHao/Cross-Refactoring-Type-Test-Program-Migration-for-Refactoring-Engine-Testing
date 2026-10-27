@@ -1,0 +1,32 @@
+<?php
+/**
+ * @method f
+ * @param $b
+ * @param $c
+ */
+class C{
+    function __invoke(C $a, $b){}
+    function __call($name, $arguments){}
+    function __get($a){}
+    function __set($a, $b){}
+    function __toString(){return "a";}
+}
+class F extends C{ }
+$a = new C; $a(); echo $a->b; $a->c = 1; $b = clone $a; echo $a; $a->f(); $a();
+?>
+
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring
+Refactoring target: magic methods (__invoke, __call, __get, __set, __toString) from class C to subclass F
+Refactoring rule: When pushing down magic methods and associated PHPDoc magic annotations, the refactoring must analyze all usages of the base class C. If code instantiates or operates on C directly, moving the magic method to F will remove that magic behavior from C; the refactoring must warn about this semantic breakage. For @method / magic-property PHPDoc annotations tied to these magic methods, the annotations should be moved together with the magic method to the target subclass.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Push Down of magic methods produces no warning. After moving a magic method to F, instances of C no longer have that magic behavior (e.g. $a() will fail if __invoke is moved to F). Additionally, @method PHPDoc annotation for __call is left on C instead of being moved alongside __call to F.
+Expected behavior:
+Detect usages on the base class C, warn the user that moving the magic method will remove the magic functionality from C. When moving __call/__get/__set, also move the corresponding @method / property PHPDoc annotations to the target subclass F.
+Underlying cause:
+The refactoring’s usage analysis treats magic methods like ordinary instance methods. It does not recognize that magic methods are dispatched per the actual runtime class of the instance, and usages on the base class C will stop working once the magic method is pushed down to a subclass. The PHPDoc annotation binder also does not associate @method tags with the __call implementation.
+*/
+?>

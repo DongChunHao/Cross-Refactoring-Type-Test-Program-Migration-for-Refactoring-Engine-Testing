@@ -1,0 +1,7 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Module‑move refactoring incorrectly strips package prefix from qualified references; fails to emit correct updated import, retains bare module name without corresponding import declaration and causes unresolved‑reference error
+import pack.mod
+def f(): // REFACTOR_TARGET
+pack.mod.f()
+value = pack.mod.const_val
+return value

@@ -1,0 +1,17 @@
+/* Refactoring Settings:
+Refactoring Type: Rename module (Refactor -> Rename)
+Refactoring Target: Module declaration `mod foo;` inside main.rs
+Refactoring Scope: Rust module file mapping, source file renaming
+Plugin Environment: IntelliJ Rust plugin 0.1.0.2061, IntelliJ IDEA 2017.1.5
+Trigger Operation: Rename `mod foo;` to `mod bar;`
+*/
+/* Error Root Cause:
+Observed failure: When renaming a module declaration `mod foo;` to `mod bar;`, the plugin renames the corresponding source file `foo.rs` to `bar` and drops the `.rs` file extension. This results in an invalid Rust module file that Cargo cannot recognize.
+Expected behavior: The refactor should rename the file to `bar.rs`, preserving the `.rs` extension required by Rust’s module file convention.
+Underlying cause: The rename logic for Rust modules does not preserve the `.rs` suffix when renaming the corresponding disk file. It directly uses the new module name as the full filename instead of appending the source extension.
+*/
+// main.rs
+mod foo;
+
+// foo.rs
+pub fn hello() {}

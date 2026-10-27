@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+int x(int a) { // function to be renamed //rename method for rename‑refactoring‑declarator‑fragment‑injection‑function‑type‑mutation defect scenario
+return a;
+}
+int main(int a, char** argv) {
+return x(a);
+}

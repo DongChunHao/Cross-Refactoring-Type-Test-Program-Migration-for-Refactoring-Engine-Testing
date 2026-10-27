@@ -1,0 +1,17 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function f($c, $a,)
+Operation: Remove all parameters from the function
+Scope: Trailing comma cleanup for function parameter lists and function call argument lists
+*/
+
+/* Error Root Cause:
+Observed failure: When deleting all parameters via Change Signature, the refactoring leaves behind stray commas, producing `function f(,) { }` and `f(,);`.
+Expected behavior: When the parameter/argument list becomes empty after deletion, strip any leftover trailing commas, resulting in empty parentheses `()` for both the function definition and all call sites.
+Underlying cause: The list rewriting logic only removes parameter/argument nodes but does not clean up orphaned comma PSI tokens. It does not check whether the list becomes empty and delete remaining punctuation.
+*/
+function f($c, $a,) {
+}
+f(1, 1,);
+?>

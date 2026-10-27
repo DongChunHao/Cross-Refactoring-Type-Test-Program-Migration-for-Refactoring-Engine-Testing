@@ -1,0 +1,32 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: checkPrintParam
+'''
+#include <string>
+// Forward declarations
+constexpr int CMDARG_NONE = 0;
+struct CmdFileContext {
+std::string variable;
+bool checkPrintParam(); //{Rename method is_print_parameter to checkPrintParam}
+};
+bool CmdFileContext::checkPrintParam()
+{
+return (variable == "printer")
+|| (variable == "printfile")
+|| (variable == "rleps")
+|| (variable == "colorps")
+|| (variable == "epsf")
+|| (variable == "title")
+|| (variable == "translate")
+|| (variable == "plotstyle")
+|| (variable == "halftone")
+|| (variable == "linefeed")
+|| (variable == "comport");
+}
+void CmdFileContext::someFunction()
+{
+if (checkPrintParam())
+{
+return CMDARG_NONE;
+}
+}

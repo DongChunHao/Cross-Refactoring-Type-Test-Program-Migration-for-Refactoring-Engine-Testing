@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: mutateViaMemberPtr
+'''
+class Foo {
+int f{0};
+public:
+void mutateViaMemberPtr(); //{Rename method test to mutateViaMemberPtr}
+};
+void Foo::mutateViaMemberPtr () {
+int Foo::*pF = &Foo::f;
+this->*pF = 1;
+}
+int main() {
+Foo x;
+x.mutateViaMemberPtr();
+return 0;
+}

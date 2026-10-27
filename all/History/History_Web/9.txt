@@ -1,0 +1,22 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Variable
+Refactoring Target: variable _self
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select variable _self, execute Refactor -> Inline Variable. Two cases are compared:
+1. Closure created via traditional function expression
+2. Closure created via arrow function
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When inlining variable _self assigned to `this` and used inside an arrow function, the refactoring engine still emits the warning "variable value is changed when accessed from closure".
+Expected behavior: The warning should be suppressed for arrow functions. Arrow functions capture the surrounding lexical `this` and do not bind their own `this`, so replacing _self with the original `this` is safe and does not introduce value change risks.
+Underlying cause: The closure check logic for inline variable refactoring does not distinguish between normal function expressions and arrow functions; it applies the same closure modification warning indiscriminately to both kinds of functions.
+*/
+
+// Complete compilable test code
+function demo() {
+    const _self = this
+    const closure = () => _self
+}

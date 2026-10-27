@@ -1,0 +1,8 @@
+```
+<?php declare(strict_types=1);
+use App\Model\User;
+class UserRepo extends User {}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move global `UserRepo` into namespace `App\Repository`.

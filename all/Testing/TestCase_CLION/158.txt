@@ -1,0 +1,27 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <vector>
+#include <string>
+struct BaseFactory {
+virtual void createX() = 0;
+};
+struct Factory : BaseFactory //{Pull up createX declaration into BaseFactory}
+{
+void createX() override {
+std::vectorstd::string strings{"foo"};
+X x(strings[0]);
+std::string str = "bar";
+X x2(str);
+}
+};
+class X{};
+template  struct vec {
+typedef T value_type;
+value_type& bar();
+};
+void test_vec() {
+vecstd::string v;
+X x(v.bar());
+}

@@ -1,0 +1,35 @@
+/* Refactoring Settings: */
+/* Refactoring Type: Rename (Shift+F6) */
+/* Refactoring Target: Destructured `name` from `const {name = "name", age = 25} = Astro.props` in an .astro file, triggered on the template `{name}` */
+/* Refactoring Scope: Astro single-file component, frontmatter script + template interpolation */
+/* Trigger Operation: Place caret inside the template interpolation `<p>{name}</p>`, run Rename, select the initializer property in the popup */
+
+/* Error Root Cause: */
+/*
+Observed failure:
+The rename only updates TypeScript code within the frontmatter script block (the interface and destructuring assignment). The `{name}` template interpolation is not renamed, and an internal IDE exception is thrown.
+
+An `.astro` file is parsed internally into two separate contexts:
+1. The TypeScript frontmatter script between the `---` fences.
+2. The HTML template with `{ }` interpolation expressions.
+
+JetBrains’ built‑in rename processor does not connect symbol references across these two contexts. When rename is started from the template interpolation and “initializer property” is selected, the resolver only finds and updates references inside the frontmatter TypeScript AST. It does not traverse back to update AST nodes in the template interpolation. References are not resolved across the frontmatter/template boundary, which causes a lookup failure and an exception.
+
+Expected behavior:
+Renaming `name` should update all three locations:
+1. The `name: string` property inside interface Props.
+2. The destructuring statement `const {name = "name", age = 25} = Astro.props`.
+3. The template interpolation `<p>{name}</p>`.
+
+Underlying cause:
+There is a broken reference mapping between the IDE’s native JS/TS rename logic and the Astro language service. Frontmatter and template interpolation are treated as two independent ASTs. A rename initiated from the template cannot locate interpolation references in the template, and only modifies the script section. Cross‑context resolution fails and throws an exception. This scenario requires cross‑region symbol references provided by `@astrojs/language-server`, which the built‑in processor cannot handle on its own.
+*/
+
+// Complete .astro file
+---
+interface Props {
+    name: string,
+    age: number
+}
+const {name = "name", age = 25} = Astro.props
+

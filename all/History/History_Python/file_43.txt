@@ -1,0 +1,51 @@
+class Order:
+    def __init__(self, order_id: int):
+        self.order_id = order_id
+
+    def get_identifier(self) -> int:
+        return self.order_id
+
+    def calculate_total(self) -> float:
+        return 0.0
+
+class RefundOrder:
+    def __init__(self, order_id: int):
+        self.order_id = order_id
+
+    def get_identifier(self) -> int:
+        return self.order_id
+
+    def calculate_refund_amount(self) -> float:
+        return 0.0
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Extract Superclass refactoring
+Refactoring Target: extract shared members from Order and RefundOrder into new superclass
+Refactoring Scope: current module
+Documentation context: topicId780, conditional=8
+Selected members for extraction: __init__(order_id), get_identifier()
+New superclass name: BaseOrder
+Operation steps: invoke Refactor → Extract Superclass, select Order and RefundOrder, pick shared fields and methods, name new superclass BaseOrder, run refactoring.
+Expected refactored output:
+class BaseOrder:
+    def __init__(self, order_id: int):
+        self.order_id = order_id
+    def get_identifier(self) -> int:
+        return self.order_id
+
+class Order(BaseOrder):
+    def calculate_total(self) -> float:
+        return 0.0
+
+class RefundOrder(BaseOrder):
+    def calculate_refund_amount(self) -> float:
+        return 0.0
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: Not a runtime defect. Documentation section topicId780 under conditional=8 lacks concrete Python code example demonstrating Extract Superclass workflow.
+Expected behavior: Insert this before‑and‑after code sample into documentation topicId780 conditional=8, to illustrate extracting common fields and methods out of two existing classes into a newly‑created base superclass.
+Underlying cause: Documentation content gap; topic explains Extract Superclass concept but has no runnable Python example for product users.
+"""

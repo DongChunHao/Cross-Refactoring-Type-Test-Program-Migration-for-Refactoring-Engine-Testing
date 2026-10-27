@@ -1,0 +1,24 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Member
+Refactoring Target: Class method getSomething()
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Execute Inline refactoring at the external call site `new SomeClass().getSomething()`.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The inline class member refactoring did not validate member accessibility before inlining. Inlining `getSomething()` externally would expose the private `_x` and protected `_y` identifiers outside the class, which violates TypeScript access rules.
+Expected behavior: The refactoring should detect that inlining would introduce references to private/protected members in an external scope, disallow the inline operation and report an accessibility violation.
+Underlying cause: The inline member precondition check was missing accessibility validation for private and protected fields used inside the method being inlined.
+*/
+
+// Complete compilable test code
+class SomeClass {
+    private _x = 1;
+    protected _y = 2;
+    public getSomething() {
+        return this._x + this._y
+    }
+}
+console.log(new SomeClass().getSomething())

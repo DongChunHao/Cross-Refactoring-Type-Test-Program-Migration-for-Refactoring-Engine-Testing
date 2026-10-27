@@ -1,0 +1,28 @@
+package pack1
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function `foo()` with signature `func foo() string`
+Refactoring scope: Remove existing `string` return parameter, add unnamed `int` return parameter
+Refactoring rule: Fully replace the old single result parameter list with the new result parameter list, and update return statements to match new type requirements.
+*/
+
+/* Error Root Cause:
+Observed failure: When removing the original string result and adding an unnamed int result via Change Signature, the refactoring fails to produce `func foo() int`; it may leave the old signature, merge signatures incorrectly, or fail to adjust the return expression.
+Expected behavior: Replace the result list entirely, resulting in `func foo() int`; adjust `return ""` to a valid int return like `return 0`.
+Underlying cause: The signature editor logic does not properly perform a full replacement of the single-result return list; it attempts incremental modification of the old return parameter instead of clearing and substituting the whole result clause.
+*/
+
+func foo() string {
+	return ""
+}
+
+// Bad actual output from refactoring (example possible broken variant)
+// func foo() {
+// 	return ""
+// }
+
+// Expected correct refactored output
+func foo() int {
+	return 0
+}

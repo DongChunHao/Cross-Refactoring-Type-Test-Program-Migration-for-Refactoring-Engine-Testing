@@ -1,0 +1,29 @@
+'''
+Refactoring type: Move Field
+Refactoring new name: N/A
+'''
+function getNameOfDog(
+person: { age: number, nameOfDog?: string },
+): void | string {
+return person.nameOfDog;
+}
+function nameOfPet(
+pet: {|catName: string|} | {|dogName: string|}
+): string | void {
+if (pet.catName) { return pet.catName; }
+if (pet.dogName) { return pet.dogName; }
+if (pet.zebraName) { return pet.zebraName; } //{Move Field target unresolved pet.zebraName property}
+}
+function nameOfPetTS(
+pet: { catName: string, dogName: string }
+) {
+if (pet.catName) {
+return pet.catName;
+}
+if (pet.dogName) {
+return pet.dogName;
+}
+if (pet.zebraName) {
+return pet.zebraName;
+}
+}

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pack1
+type Wrapper struct{}
+func (w Wrapper) bar(s string) (s1 string) {
+return ""
+}
+func foo() {
+w := Wrapper{}
+var s1, s string = w.bar("test") // move bar method from Wrapper to standalone function
+}

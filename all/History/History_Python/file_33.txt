@@ -1,0 +1,18 @@
+def example():
+    temp = "aaaaaa"  # some clever comment
+    value = temp + "bbbbb"
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Inline Variable refactoring
+Refactoring Target: local variable temp inside example() function
+Refactoring Scope: current function example(), inline all usages of temp
+IDE Environment: PyCharm 3.1.1
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: Performing inline‑variable refactoring deletes the trailing comment attached to the original variable assignment statement. The comment `# some clever comment` is lost after inline execution.
+Expected behavior: Preserve the trailing comment from `temp = "aaaaaa"` and move it as a leading comment above the new inline statement, producing `# some clever comment\nvalue = "aaaaaa" + "bbbbb"`.
+Underlying cause: The inline refactoring implementation only copies the variable’s value expression, and does not track or migrate trailing line comments attached to the variable definition AST node; comments are discarded when removing the temporary assignment statement.
+"""

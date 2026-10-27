@@ -1,0 +1,26 @@
+def middle_index(list_):
+    """
+    for list with size 1 or bigger, should return midpoint of the list
+    >>> middle_index([1]) 0
+    >>> middle_index([1,2]) 1
+    >>> middle_index([1,2,3]) 1
+    >>> middle_index([1,2,3,4]) 2
+    >>> middle_index([1,2,3,4,5]) 2
+    """
+    return len(list_) / 2
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (rename method/function)
+Refactoring Target: function middle_index
+Refactoring Scope: entire current file
+Refactoring Options enabled: Search in comments and strings, Search for text occurrences
+Operation steps: Trigger Rename refactoring, rename middle_index to new name e.g. midle_index_, enable both search options and execute refactor.
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: After rename refactoring with "Search in comments and strings" and "Search for text occurences" enabled, the function name `middle_index` inside the doctest docstring is not updated.
+Expected behavior: With those two options enabled, occurrences inside docstring doctest examples should be renamed consistently alongside runtime code references.
+Underlying cause: Although the "search in comments/strings" options are toggled on, the refactoring engine does not parse doctest blocks inside docstrings as semantic code references. The doctest content is treated as plain text and excluded from the symbol usage graph, so these occurrences are skipped during rename even when the text-search checkboxes are turned on.
+"""

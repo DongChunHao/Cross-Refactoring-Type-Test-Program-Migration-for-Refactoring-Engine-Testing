@@ -1,0 +1,5 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+'variable'  ;(() => {})() //{Move Method target statement with semicolon separating string literal and IIFE call}

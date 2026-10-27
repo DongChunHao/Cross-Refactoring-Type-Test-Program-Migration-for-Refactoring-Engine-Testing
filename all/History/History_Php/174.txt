@@ -1,0 +1,19 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: selected echo statement `echo substr($arr["field"], 13);` inside show_field
+Operation: Ctrl+Alt+M extract selected code into new method
+Scope: Type inference and subexpression preservation for array index access in untyped parameters
+*/
+
+/* Error Root Cause:
+Observed failure: When `$arr` has no declared type, Extract Method incorrectly discards the `["field"]` array access, generating `substr($arr,13)` instead of `substr($arr["field"],13)`. Once `array $arr` type hint is added, extraction works correctly; with `int $arr` invalid type hint it still silently produces broken code instead of showing a pre-refactoring validation error.
+Expected behavior: Preserve the full selected subexpression `$arr["field"]` regardless of parameter type. If the inferred type makes `$arr["field"]` invalid, warn the user before performing extraction instead of silently mangling the expression.
+Underlying cause: The Extract Method backend’s expression binding logic relies on static type inference; without an explicit type it incorrectly prunes the array-index node during capture. It lacks a fallback to strictly respect the user’s text selection and lacks pre-refactoring validation for type-incompatible subexpressions.
+*/
+declare(strict_types=1);
+
+function show_field($arr) {
+	echo substr($arr["field"], 13);
+}
+?>

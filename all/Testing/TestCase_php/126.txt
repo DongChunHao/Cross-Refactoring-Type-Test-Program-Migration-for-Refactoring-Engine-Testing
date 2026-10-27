@@ -1,0 +1,12 @@
+```
+<?php
+interface IMailSender{}
+class AbstractMail implements IMailSender { }
+class SmtpMail extends AbstractMail {
+    public function sendMail()
+    {}
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target method `sendMail()` from class `SmtpMail`, pull up to interface `IMailSender`

@@ -1,0 +1,22 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// foo.h (saved on disk)
+void foo() { }//extract method for function in header referenced by dirty unsaved file
+// main.cpp (saved on disk)
+#include "foo.h"
+void main() {
+foo();
+}
+// other.cpp (open in editor, dirty / unsaved, newly added call to foo())
+#include "foo.h"
+void other() {
+foo();
+}
+
+ How to ensure the correctness of migrated test cases?
+
+ Can cross-refactoring test case migration be automated?
+
+ What are the common challenges in cross-refactoring test case migration?

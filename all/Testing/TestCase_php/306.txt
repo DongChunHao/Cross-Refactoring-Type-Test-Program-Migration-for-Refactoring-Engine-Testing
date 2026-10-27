@@ -1,0 +1,16 @@
+```
+<?php
+/**
+ * Class C
+ * @method f()
+ */
+class C{
+    public function g()
+    {
+        $this->f(1);
+    }
+}
+?>
+```
+
+【Refactoring Action】: Place caret on call-site `f` inside `$this->f(1)`; invoke Change Signature refactoring.

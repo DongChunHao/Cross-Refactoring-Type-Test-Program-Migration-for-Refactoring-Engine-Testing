@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+using System;
+using System.IO;
+
+namespace MsBuildMetadataLossRepro
+{
+public class DataLoader
+{
+public void LoadConfig() //{Move Method: target method for MSBuild‑item‑metadata‑loss during file‑rename bug reproduction}
+{
+var content = File.ReadAllText("data.json");
+Console.WriteLine(content);
+}
+}
+}

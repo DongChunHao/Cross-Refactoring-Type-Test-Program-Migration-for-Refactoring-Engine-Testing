@@ -1,0 +1,19 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+bool g_virtual_screens;
+const int CMDARG_FRACTAL_PARAM = 1;
+int bad_parameter() { return -1; }
+int yesnoval[1];
+struct parameter_processor{
+int param_virtual() { //{Move method param_virtual into struct parameter_processor}
+bool &dest = g_virtual_screens;
+if (yesnoval[0] < 0)
+{
+return bad_parameter();
+}
+dest = yesnoval[0] != 0;
+return CMDARG_FRACTAL_PARAM;
+}
+};

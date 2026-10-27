@@ -1,0 +1,20 @@
+''' Refactoring Settings:
+Refactoring type: Rename instance variable refactoring
+Refactoring target: instance variable someVar, caret position at self.someVar
+Refactoring new name: some_var
+Refactoring scope: class SomeClass, code‑level usages and docstring ivar / type documentation directives
+Refactoring rule expectation: When renaming self.someVar to self.some_var, all matching @ivar and @type doc‑directive identifiers inside class docstring shall also be updated synchronously.
+'''
+''' Error Root Cause:
+Observed failure: After renaming self.someVar to self.some_var at caret position, code‑level instance variable reference is correctly updated, but the @ivar someVar entry in class docstring remains unchanged. Only the @type directive’s identifier gets renamed. Although the docstring @ivar entry is highlighted during "find usages", rename operation skips updating it.
+Expected behavior: Both @ivar and @type doc‑directive variable names inside class docstring should be renamed consistently together with the actual instance variable self.someVar.
+Underlying cause: The refactoring usage‑collector correctly discovers @ivar as a usage occurrence (shows in find‑usages highlight), but the rename rewrite logic does not include @ivar doc‑directive entries for text replacement; only @type directive is handled for renaming.
+'''
+class SomeClass(object):
+    """ Awesome class
+    @ivar someVar: great stuff
+    @type someVar: string
+    """
+
+    def __init__(self):
+        self.someVar = None

@@ -1,0 +1,6 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+const numbers = [1, 4, 9];
+const doubles = numbers.map(num => num * 2); //{Move Method target shorthand‑arrow callback nested inside function‑call parentheses, exposes closing‑token‑nesting bug}

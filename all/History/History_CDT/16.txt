@@ -1,0 +1,26 @@
+int main(int a, char** argv) {
+    int b = 0; // Constant to be extracted to a variable
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: integer literal `0` inside main()
+Refactoring Scope: function‑local scope of main
+IDE: Eclipse CDT
+Operation steps: Select literal `0`, invoke Extract Local Variable, input existing parameter name `a` as new local‑variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT allows creating new local variable `int a = 0;`. The identifier `a` already exists as formal function parameter within the same scope. This creates multiple‑declaration conflict in one scope, producing compilation error about re‑declaration of `a`. No warning is emitted during refactoring execution.
+
+Expected behavior: Before applying extraction, perform complete scope‑chain lookup:
+1. Check immediate local block scope for duplicate identifiers (block‑level re‑declaration).
+2. Check enclosing scope (function formal parameters).
+3. Also check outer / global scope for potential variable shadowing and notify user.
+If the proposed name already exists in the **same scope**, reject refactoring and report name collision. If name exists only in outer scope, show explicit shadowing warning and give user choice to continue or abort.
+
+Underlying cause: Extract Local Variable only performs limited duplicate‑symbol checking. It fails to include function formal‑parameter list as part of the local scope when validating new variable name. It does not walk full scope chain, missing collisions against parameters and outer‑scope symbols, generating semantically invalid source code.
+*/

@@ -1,0 +1,26 @@
+```
+<?php
+class Product {
+    /**
+     * @var int
+     */
+    protected $prd_id = 1;
+    /**
+     * @param int $prd_id
+     */
+    public function setPrdId($prd_id)
+    {
+        $this->prd_id = $prd_id;
+    }
+    /**
+     * @return int
+     */
+    public function getPrdId()
+    {
+        return $this->prd_id;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Rename refactoring, rename property `$prd_id` to `$productId`.

@@ -1,0 +1,44 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Function
+Refactoring Target: function setupMock()
+Refactoring Scope: Current TypeScript test file
+Trigger Operation: Execute Inline Function on setupMock() inside the describe test block
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When inlining setupMock, the return statement inside the nested jest.fn() anonymous callback is removed, leaving an empty if block.
+Expected behavior: The nested callback body including `return of('something');` should be preserved after inlining setupMock.
+Underlying cause: The Inline Function logic incorrectly treats the nested anonymous function’s return as the return of the outer setupMock function, and discards it during AST expansion, failing to recognize that the return belongs to the inner jest callback, not the outer setupMock.
+*/
+
+// Complete compilable test code
+import { of } from 'rxjs';
+declare class Service {}
+
+describe('x', () => {
+    let service: Service;
+
+    beforeEach(async(() => {
+        setupMock();
+
+        TestBed.configureTestingModule({
+            // ...
+        }).compileComponents();
+    }));
+
+    it('should do something', () => {
+        // ...
+    });
+
+    function setupMock() {
+        // @ts-ignore
+        service = jest.fn();
+        service.getX = jest.fn((y) => {
+            if (y === 'something') {
+                return of('something');
+            }
+        });
+    }
+});

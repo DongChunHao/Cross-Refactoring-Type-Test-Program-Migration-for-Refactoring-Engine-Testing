@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package my_pack
+//global one line comment package my_pack
+import "fmt"
+func printMsg() { // extract print statement into printMsg
+fmt.Println("my_pack") // usage in string
+}
+func main() {
+printMsg()
+//local one line comment my_pack
+}
+/* global multiline comment package my_pack */

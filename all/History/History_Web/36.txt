@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Function
+Refactoring Target: Variable-assigned function expression `add`
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Execute Inline refactoring on the call site `add(1, 2)` where `add` holds an anonymous function expression.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Inline function refactoring does not substitute the call arguments into the function body for function expressions assigned to variables, failing to expand `add(1,2)` into `1 + 2`.
+Expected behavior: When inlining a variable that holds a simple anonymous function expression, substitute the call arguments for the function parameters and replace the call site with the function body, producing `console.log(1 + 2)`.
+Underlying cause: The inline function logic does not handle function expressions bound to variables; it only supports function declarations and does not perform parameter-to-argument substitution for this form.
+*/
+
+// Complete compilable test code
+var add = function (x, y) {
+    return x + y;
+};
+console.log(add(1, 2));

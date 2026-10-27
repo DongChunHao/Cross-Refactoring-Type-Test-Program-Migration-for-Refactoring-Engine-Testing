@@ -1,0 +1,17 @@
+```
+<?php
+namespace Shop\Cart {
+    use Shop\Cart as CART_ALIAS;
+    class CartItem
+    {
+    }
+    class Checkout implements CART_ALIAS\Types\ICartEvent{
+    }
+}
+namespace Shop\Cart\Types {
+    interface ICartEvent{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `Checkout`, move to global namespace into new separate file.

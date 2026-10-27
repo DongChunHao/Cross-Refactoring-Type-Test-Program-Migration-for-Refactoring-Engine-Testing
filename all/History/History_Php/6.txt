@@ -1,0 +1,34 @@
+<?php
+trait A{
+    function a(){
+        print $a;
+    }
+}
+
+interface C{
+    function a();
+}
+
+class B implements C{
+    use A;
+    public function b(){
+        $this->a(); // <caret> invoke Change signature refactoring here
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: method a, call site $this->a() inside B::b()
+Action: add new parameter $a with default value 2
+Refactoring rule: When changing the signature of a trait method that is used by a class implementing an interface, the refactoring must check the corresponding interface method signature. Any changes must maintain signature compatibility with the interface contract; if the change breaks compatibility, the refactoring should warn the user and refuse to apply the change, or update the interface method signature together.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The refactoring modifies trait A::a() to `a($a)` and updates the call site to `$this->a(2)`, but leaves interface C::a() as `function a();` with no parameters. Since class B uses trait A to satisfy interface C, the resulting code violates PHP signature compatibility rules: B::a() (from trait) now has a required parameter, while C::a() expects no parameters.
+Expected behavior:
+The refactoring should detect that method a is part of interface C's contract. It should either also update the interface method signature together with the trait method, or alert the user that the proposed change breaks interface compatibility and block the refactoring.
+
+Underlying cause:
+The signature dependency analysis for Change Signature does not traverse the "class uses trait + class implements interface" relationship. It only tracks the trait method and call sites, and ignores the interface method that the trait method is implementing.
+*/

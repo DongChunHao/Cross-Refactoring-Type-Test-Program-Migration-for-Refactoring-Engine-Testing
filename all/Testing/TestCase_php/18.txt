@@ -1,0 +1,13 @@
+<?php
+namespace N1;
+use N2\I2;
+class TestChild implements I2 {
+}
+
+namespace N2;
+class A{}
+interface I2 {
+}
+class Test implements I2 {
+    public function f(A $a) {} // <-- Pull Up refactoring target
+}

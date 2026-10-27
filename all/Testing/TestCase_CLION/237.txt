@@ -1,0 +1,22 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: setFooFlag
+'''
+class Foo {
+public:
+bool IsFoo() const
+{
+return m_foo;
+}
+void setFooFlag(bool foo) //{Rename method SetFoo to setFooFlag}
+{
+m_foo = foo;
+}
+private:
+bool m_foo;
+};
+int main() {
+Foo foo;
+foo.setFooFlag(true);
+return foo.IsFoo()? 1:0;
+}

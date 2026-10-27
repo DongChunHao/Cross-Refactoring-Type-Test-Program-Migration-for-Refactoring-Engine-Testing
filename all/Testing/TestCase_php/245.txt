@@ -1,0 +1,18 @@
+```
+<?php
+class A{
+    public function f()
+    {
+    }
+}
+class B extends A{}
+/**
+ * Class C
+ * @see A::f()
+ */
+class C{
+}
+?>
+```
+
+【Refactoring Action】: Push Members Down refactoring, move method `f()` from parent class `A` down to subclass `B`.

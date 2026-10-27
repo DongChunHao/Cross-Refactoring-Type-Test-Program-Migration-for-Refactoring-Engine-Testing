@@ -1,0 +1,27 @@
+<?php
+class A {
+    public static $a;
+    public static function b(){
+    }
+}
+class B extends A{
+    public function c() {
+        A::b();
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring
+Refactoring target: static method b in class A
+Refactoring rule: When calculating usage warnings for static members during Push Down / Pull Up refactoring, correctly resolve where the member is actually referenced. Do not emit a false warning claiming the original declaring class uses the static member if there are no usages inside that class.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Push Down shows warning "Class A uses Method b, which is pushed down". This warning is wrong: there are no usages of b inside class A. The only usage is A::b() inside B::c(). The refactoring can proceed and should rewrite the call from A::b() to B::b() after moving static method b into class B.
+Expected behavior:
+Skip this incorrect warning. Only report warnings when the declaring class actually contains references to the member being pushed down.
+
+Underlying cause:
+The usage analysis for static members incorrectly treats the declaring class as a consumer of its own static methods regardless of whether there are internal references. It does not distinguish "declares the static member" from "uses the static member".
+*/

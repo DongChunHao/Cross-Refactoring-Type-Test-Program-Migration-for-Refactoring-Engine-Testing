@@ -1,0 +1,15 @@
+```
+<?php declare(strict_types=1);
+namespace BN;
+interface BitSetInterface {
+    public function get(int $index): bool;
+    public function set(int $index);
+    public function negate();
+    public function or(BitSetInterface $bs): BitSetInterface;
+    public function xor(BitSetInterface $bs): BitSetInterface;
+    public function and(BitSetInterface $bs): BitSetInterface;
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target interface method `BN\BitSetInterface::and()`, add a new parameter named `$mask`.

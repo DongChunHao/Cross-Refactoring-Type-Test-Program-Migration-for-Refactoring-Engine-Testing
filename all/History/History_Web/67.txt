@@ -1,0 +1,17 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Introduce Variable / Extract Variable
+Refactoring Target: Selection `3, 4, 5] + [1` inside `var arrr = [1, 2, 3, 4, 5] + [1];`
+Refactoring Scope: JavaScript file
+Trigger Operation: Invoke Introduce Variable on a syntactically invalid, partial expression selection that crosses array literal and binary operator
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The IDE enables Introduce Variable even for a non-valid subexpression selection. Performing the extraction produces broken code because the refactoring does not account for operator precedence and array literal boundaries.
+Expected behavior: Disable the refactoring action when the selected text is not a complete, valid standalone expression, instead of attempting extraction and mangling the syntax tree.
+Underlying cause: The availability check for Introduce Variable is too permissive; it does not fully validate whether the selected range corresponds to a complete expression node before enabling the refactoring.
+*/
+
+// Complete compilable test code
+var arrr = [1, 2, 3, 4, 5] + [1];

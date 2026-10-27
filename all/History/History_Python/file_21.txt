@@ -1,0 +1,15 @@
+''' Refactoring Settings:
+Refactoring type: Rename variable refactoring
+Refactoring target: function parameter `a`, rename to `b`
+Refactoring scope: all usages of variable `a` inside function test, including f-string interpolations, after local reassignment `a = f'{a}'`
+Refactoring rule expectation: After renaming parameter `a` to `b`, every reference to the variable `a` in the entire function body (including the final return f-string) should be renamed to `b`.
+'''
+''' Error Root Cause:
+Observed failure: When local reassignment `a = f'{a}'` exists, rename refactor correctly updates parameter, first f-string and `len(a)`; but the final `return f'{a}'` is not renamed, remains `a`. Without reassignment, rename works correctly for all f-string occurrences.
+Expected behavior: All references to the same local variable `a` should be renamed uniformly regardless of whether there is prior reassignment.
+Underlying cause: The scope/symbol usage collector for rename refactoring confuses variable binding after reassignment. The static analysis treats post-reassignment `a` as a new symbol or loses the connection between the parameter symbol and later usages inside f-string `{a}`; AST analysis fails to trace the single variable across its reassignments, skipping the final f-string expression as a usage occurrence.
+'''
+def test(a):
+    a = f'{a}'
+    y = len(a)
+    return f'{a}'

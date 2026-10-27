@@ -1,0 +1,5 @@
+fn consume(x:i32){}
+
+fn main() {
+    consume( 10 + 20/*caret*/ );//extract:10 + 20, name:e
+}

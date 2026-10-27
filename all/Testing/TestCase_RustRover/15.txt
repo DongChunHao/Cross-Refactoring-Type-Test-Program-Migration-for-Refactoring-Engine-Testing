@@ -1,0 +1,9 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn main() { //{change main method, retain variable usage inside format string placeholder}
+let mut result = 42;
+result = 34;
+println!("rrr={result:#06x}");
+}

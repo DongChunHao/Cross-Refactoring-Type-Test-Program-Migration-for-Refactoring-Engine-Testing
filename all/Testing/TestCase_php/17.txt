@@ -1,0 +1,11 @@
+''
+Refactoring type: Rename Method
+Refactoring new name: faTwo
+'''
+
+fa();
+        };
+        $this->fa();
+    }
+}
+?>

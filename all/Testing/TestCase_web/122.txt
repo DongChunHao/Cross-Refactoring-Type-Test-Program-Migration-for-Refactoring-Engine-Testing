@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper function enclosing destructuring with non‑identifier whitespace property key}
+var { 'a a': a } = { 'a a': 5 };
+a;
+}

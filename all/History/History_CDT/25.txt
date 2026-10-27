@@ -1,0 +1,26 @@
+int main(){
+	char c;
+	switch( c )
+	 {
+	    case 'A': //select 'A'
+	    break;
+	  }
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Constant refactoring
+Refactoring Target: character literal `'A'` inside case label `case 'A':`
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select `'A'` in case label, invoke Extract Constant refactoring.
+*/
+
+/*
+/*
+/* Error Root Cause: */
+Observed failure: CDT extracts `'A'` into `static const char extracted_constant = 'A';` and replaces case label with `case extracted_constant:`. In C language, `case` labels **require integer constant expressions**. A `const char` variable is not a compile-time integer constant, which makes the code invalid.
+Expected behavior: Detect that the selected literal is inside a `case` label. Either: (1) reject Extract Constant for this selection with warning, or (2) create a preprocessor `#define` macro instead of a `const` variable, since macro expands to compile-time constant suitable for case labels.
+Underlying cause: Extract Constant refactoring does not check the syntactic context of the selected expression. It unconditionally generates a `const` typed variable. It ignores the rule that C `case` labels only accept integer constant expressions; const-qualified local/static variables are not treated as compile-time constants in C.
+*/

@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type DemoHolder struct{}
+func (h DemoHolder) demo() { // move demo method from DemoHolder to standalone function
+}
+func main() {
+holder := DemoHolder{}
+holder.demo()
+}

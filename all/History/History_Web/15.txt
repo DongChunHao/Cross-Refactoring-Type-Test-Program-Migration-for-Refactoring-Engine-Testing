@@ -1,0 +1,26 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Superclass
+Refactoring Target: Static method `moved()` from class Computer
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Execute Extract Superclass and select static method `moved` to be pulled into the new superclass SuperComputer.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After extracting static `moved()` into the superclass, the generated code keeps `this.notMoved()` inside the static method. Inside the superclass static context, `this` points to SuperComputer instead of Computer, causing a runtime error because `notMoved` remains defined only on the subclass Computer.
+Expected behavior: When moving a static method that uses `this` to access another static member of the original subclass, the refactoring should replace `this` with the concrete subclass name `Computer.notMoved()` to preserve the original runtime behavior.
+Underlying cause: Extract Superclass does not rewrite static `this` references when moving static members to a new parent class; it leaves `this` unchanged, altering what constructor function `this` binds to at runtime.
+*/
+
+// Complete compilable test code
+class Computer {
+  static notMoved() {
+    return 'ping';
+  }
+
+  static moved() {
+    //referenced via 'this'
+    return this.notMoved() + ' pong';
+  }
+}

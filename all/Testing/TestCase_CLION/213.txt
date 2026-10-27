@@ -1,0 +1,23 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <vector>
+#include <iostream>
+class BaseC
+{
+public:
+virtual void f() = 0; //{Pull up f declaration into BaseC}
+};
+class C : public BaseC {
+public:
+void f() override;
+protected:
+std::vector<int> v = {1, 2};
+};
+void C::f() override {
+for (auto i : v) {
+std::cout << i << "\n";
+}
+v.clear();
+}

@@ -1,0 +1,65 @@
+package main
+
+import "fmt"
+
+/* Refactoring Settings:
+Refactoring type: Inline Constant
+Refactoring target: constant declaration `const k1 = "k1"`
+Refactoring scope: all usages of `k1`, including map key positions inside composite map literals and ordinary expression positions
+Refactoring rule: Collect and replace every reference to the constant, including occurrences used as keys in map literals.
+*/
+
+/* Error Root Cause:
+Observed failure: After invoking Inline on `k1`, only the `fmt.Printf("k1 = %v\n", k1)` site gets replaced with `"k1"`. The map key `k1: 1,` is untouched, leaving a stale reference to the deleted constant declaration, which causes a compile error.
+Expected behavior: Both usages are substituted: map literal `k1:1` → `"k1":1`, and printf argument `k1` → `"k1"`.
+Underlying cause: The constant reference resolver for the inline refactoring excludes identifier nodes that appear in the map-key position within composite literals; it does not treat them as regular usages of the constant.
+*/
+
+const k1 = "k1"
+const k2 = "k2"
+
+var myMap = map[string]int{
+	k1: 1,
+	k2: 2,
+}
+
+func main() {
+	fmt.Printf("k1 = %v\n", k1)
+	fmt.Printf("k2 = %v\n", k2)
+
+	for k, v := range myMap {
+		fmt.Printf("%v => %v\n", k, v)
+	}
+}
+
+// Bad actual refactored result
+/*
+const k2 = "k2"
+
+var myMap = map[string]int{
+	k1: 1,
+	k2: 2,
+}
+
+func main() {
+	fmt.Printf("k1 = %v\n", "k1")
+	fmt.Printf("k2 = %v\n", k2)
+	// ...
+}
+*/
+
+// Expected correct refactored result
+/*
+const k2 = "k2"
+
+var myMap = map[string]int{
+	"k1": 1,
+	k2: 2,
+}
+
+func main() {
+	fmt.Printf("k1 = %v\n", "k1")
+	fmt.Printf("k2 = %v\n", k2)
+	// ...
+}
+*/

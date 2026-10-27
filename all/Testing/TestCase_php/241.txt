@@ -1,0 +1,14 @@
+```
+<?php
+abstract class A{
+    abstract function f();
+}
+class B extends A{
+    public function f()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target child method `B::f()`, add new parameter `$b`, do NOT propagate changes to abstract parent `A::f()`.

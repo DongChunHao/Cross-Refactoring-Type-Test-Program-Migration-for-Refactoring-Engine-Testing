@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+use std::sync::Mutex;
+fn foo_renamed(x: u32, y: u32) -> u32 { x + y } //Rename Method: rename function receiving two drop‑sensitive argument expressions
+fn use_mutex(m: &Mutex<u32>) -> u32 {
+let mut mx = m.lock().unwrap();
+*mx + 1
+}
+fn main() {
+let m = Mutex::new(0);
+let bar = foo_renamed(use_mutex(&m), use_mutex(&m)); //Rename Method: target dual argument call sites holding drop‑sensitive temporaries
+println!("{}", bar);
+}

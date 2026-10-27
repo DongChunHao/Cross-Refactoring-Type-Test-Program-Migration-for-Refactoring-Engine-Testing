@@ -1,0 +1,30 @@
+// foo.h (saved on disk)
+void foo() { }
+
+// main.cpp (saved on disk)
+#include "foo.h"
+void main() {
+    foo();
+}
+
+// other.cpp (open in editor, dirty / unsaved, newly added call to foo())
+#include "foo.h"
+void other() {
+    foo();
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename function refactoring
+Refactoring Target: function foo() declared in foo.h
+Refactoring Scope: whole project, cross‑file references
+IDE Build Identifier: I20110613‑1736
+Operation steps: Open main.cpp, trigger rename refactoring on foo function reference. other.cpp is modified but not saved to disk (dirty editor state).
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: Rename correctly updates foo in foo.h and main.cpp. The call foo() inside unsaved dirty file other.cpp is completely skipped. Unsaved edits have not been flushed to project index, so the reference is absent from index data and ignored by rename refactoring.
+Expected behavior: Refactoring should take unsaved in‑memory editor content into account and also rename references inside dirty modified files, or warn user about dirty editors before executing rename.
+Underlying cause: The refactoring engine relies solely on the persisted project index, which is only updated upon saving files. Dirty in‑memory editor changes are not reflected in index, newly added references in unsaved files cannot be found, so they are omitted during rename processing.
+*/

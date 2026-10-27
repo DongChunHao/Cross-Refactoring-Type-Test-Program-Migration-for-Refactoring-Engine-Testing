@@ -1,0 +1,23 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: handleEvent
+'''
+namespace me {
+class WindowManager {
+public:
+bool handleEvent(MirEvent const& event); //{Rename method handle to handleEvent}
+private:
+FocusController* focus_controller;
+};
+}
+bool me::WindowManager::handleEvent(MirEvent const& event)
+{
+static bool display_off = false;
+if (event.key.modifiers & mir_key_modifier_alt && event.key.scan_code == KEY_TAB)
+{
+focus_controller->focus_next_session();
+if (auto const surface = focus_controller->focused_surface())
+focus_controller->raise({surface});
+return true;
+}
+}

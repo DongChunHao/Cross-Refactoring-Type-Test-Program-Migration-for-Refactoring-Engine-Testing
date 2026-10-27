@@ -1,0 +1,11 @@
+```
+<?php
+function calculate(int $base, float $rate) {}
+calculate(
+    /* base value */ 100,
+    /* tax rate */ 0.07
+);
+?>
+```
+
+【Refactoring Action】: Change Signature on `calculate(int $base, float $rate)`; add `bool $round = false` as trailing optional parameter.

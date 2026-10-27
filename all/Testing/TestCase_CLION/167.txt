@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+#include <string>
+class A {
+std::string text;
+void foo() {
+std::string defaultVal = "empty"; //{Extract variable defaultVal}
+text = defaultVal;
+}
+};

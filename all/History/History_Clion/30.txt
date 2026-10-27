@@ -1,0 +1,48 @@
+/* Refactoring Settings:
+Refactoring type: Inline Variable (CLion C++ C++ refactoring)
+Refactoring target: local variables `b`, `bptr`, `x`, `c`, `flag` inside test()
+Operation: Invoke Inline Variable refactoring for each variable and pass into function `f`
+Scope: Preserve overload resolution semantics after variable inlining; keep the same overload selected before/after inlining for reference, pointer, arithmetic, user-defined conversion types
+*/
+
+/* Error Root Cause:
+Observed failure: After Inline Variable, the compiler picks a different overload of `f`. The variable’s static type and implicit conversion information is lost during substitution.
+Expected behavior: After substituting the variable’s initializer expression into the function call, overload resolution must match the original selection.
+Underlying cause: The PSI reference visitor substitutes only the raw initializer expression, without carrying the variable’s declared static type. The raw initializer expression may have a different type than the variable, which changes overload resolution and selects a different overload of f.
+*/
+
+class Base {};
+class Derived : public Base {};
+
+void f(Base     const &);
+void f(Derived  const &);
+void f(Base     const *);
+void f(Derived  const *);
+void f(int);
+void f(double);
+
+class C {
+public:
+    C(int);
+    operator bool () const;
+};
+
+void f(C);
+void f(bool);
+
+void test() {
+    Base const & b = Derived();
+    f(b); //<caret>
+
+    Base const * bptr = new Derived();
+    f(bptr); //<caret>
+
+    double x = 10;
+    f(x); //<caret>
+
+    C c = 239;
+    f(c); //<caret>
+
+    bool flag = c;
+    f(flag); //<caret>
+}

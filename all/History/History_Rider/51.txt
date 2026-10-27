@@ -1,0 +1,34 @@
+/* Refactoring Settings:
+Refactoring Type: C++ context action "Move definition to source file" (header → .cpp)
+IDE: Rider C++
+Symptom:
+When Rider’s C++ formatter backend is set to use clang-format:
+1. Invoking "Move definition to source file" corrupts header file.
+2. Expected: Rider leaves only function declaration in header, moves body into .cpp source file.
+3. Actual: Rider fails to fully move the definition; it deletes the closing `}` brace of the function, leaving the function body inside the header file, resulting in broken C++ syntax.
+If clang-format is disabled (using Rider built-in formatter), the same context action works correctly.
+*/
+
+/* Root Cause Analysis
+This is a conflict between the context-action PSI rewrite logic and the clang-format incremental formatting pipeline in Rider’s C++ engine:
+1. The "Move definition to source file" action makes two atomic edits in a single PSI transaction:
+   - Header: replace full function definition with a function declaration (remove body and closing brace).
+   - Source (.cpp): insert the function definition body.
+2. When clang-format is enabled, Rider applies incremental clang-format reformat **during the same PSI transaction**.
+3. The incremental formatter operates on a partially-modified intermediate syntax tree. The formatter’s token/brace range calculation gets misaligned:
+   - The formatter deletes the closing `}` as part of its formatting pass, before the refactoring finishes removing the function body.
+   - The refactoring then aborts the full move (or the edit ranges conflict), leaving the function body in the header, minus its closing brace.
+4. The brace deletion is not part of the refactoring itself — it comes from clang-format incremental reformat interleaved with the refactoring edit.
+This bug is specific to clang-format integration; Rider’s native C++ formatter does not run this overlapping incremental token rewrite and preserves the edit ranges correctly.
+
+Key failure point: Rider does not isolate the refactoring edit transaction from the live clang-format reformat pass. Formatting runs mid-refactoring and corrupts the PSI edit ranges.
+*/
+
+/* Reproduction Steps
+1. Create a C++ header file with a function defined inline:
+```cpp
+// test.h
+void foo()
+{
+    int x = 1;
+}

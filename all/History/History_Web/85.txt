@@ -1,0 +1,38 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Field
+Refactoring Target: Getter `nameTrim` in class First, accessed as `this.first.nameTrim` inside Second.readName()
+Refactoring Scope: TypeScript
+Trigger Operation: Run Inline Field on getter `nameTrim`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+The getter `nameTrim` belongs to `First` and evaluates `this.name.trim()` inside its own class context.
+When inlining `this.first.nameTrim`, the refactoring incorrectly substitutes just `this.name.trim()` into `Second.readName()`, losing the receiver `this.first`.
+The resulting code tries to read `name` from the `Second` instance instead of from `this.first` (the First instance), producing an unresolved property error.
+
+Expected behavior:
+Preserve the receiver object of the getter access. Inline to:
+let trimmedName = this.first.name.trim();
+Additionally, if `First#name` is not public, the refactoring should emit a warning and offer related fixes (like making the property accessible), matching other inline refactoring workflows.
+
+Underlying cause:
+The inliner treats getter bodies as if they are context-free expressions and discards the original receiver (`this.first`) when substituting the getter implementation. It does not rebind the getter’s internal `this` to the original receiver object from the access site.
+*/
+
+// Complete compilable test code
+class First {
+    public name: string = 'test';
+    get nameTrim() {
+        return this.name.trim();
+    }
+}
+
+class Second {
+    first: First = new First();
+    readName() {
+        let trimmedName = this.first.nameTrim;
+    }
+}

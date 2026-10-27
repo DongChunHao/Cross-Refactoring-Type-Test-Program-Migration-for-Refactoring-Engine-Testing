@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+use uuid::Uuid;
+use itertools::Itertools;
+
+fn compute_result(data: &[u8]) -> Vec<Uuid> {
+data.array_chunks()
+.map(|data| Uuid::from_bytes(*data))
+.collect_vec() //{Change‑Method target: chain expression statement with trailing semicolon}
+}
+
+fn main() {
+let buf = [0u8;16];
+let out = compute_result(&buf);
+println!("{:?}", out);
+}

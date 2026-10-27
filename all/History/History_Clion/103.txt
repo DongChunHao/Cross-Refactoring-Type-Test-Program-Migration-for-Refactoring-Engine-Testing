@@ -1,0 +1,26 @@
+#include "clang-tidy/readability/RedundantVoidArgCheck.h"
+// Other existing includes
+
+namespace {
+std::string getText(const clang::Stmt *stmt) {
+    return "";
+}
+} // anonymous namespace
+
+/* Refactoring Settings:
+Refactoring type: Inline Function
+Refactoring target: Inline call to local anonymous-namespace function getText() at line 149 in RedundantVoidArgCheck.cpp
+Refactoring scope: Call site of getText inside RedundantVoidArgCheck.cpp
+Refactoring rule expectation: Inline function body without adding any unrelated #include directives to the source file
+*/
+
+/* Error Root Cause:
+Observed failure: After performing Inline Function on local anonymous-namespace getText(), the refactoring engine inserts an unrelated include file into RedundantVoidArgCheck.cpp.
+Expected behavior: No new #include should be added, since getText is defined locally within the same translation unit and does not require extra headers.
+Underlying cause: The refactoring engine's dependency/include analysis is over-eager; during function inlining it incorrectly collects and inserts unrelated header dependencies that are not required by the inlined function body.
+*/
+
+void RedundantVoidArgCheck::someFunc() {
+    const clang::Stmt *stmt = nullptr;
+    std::string text = getText(stmt);
+}

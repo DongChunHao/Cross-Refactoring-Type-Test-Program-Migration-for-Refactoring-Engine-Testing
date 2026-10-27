@@ -1,0 +1,42 @@
+int gvar_0 = 100;
+float f_0(float var_0) {
+    return var_0;
+}
+int f_1() {
+    float var_0 = 100;
+    return gvar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (global variable rename)
+Refactoring Target: global variable `gvar_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select global variable `gvar_0`, invoke Rename refactoring, input string `*gvar_0` as new name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts the input containing asterisk `*`.
+Declaration is transformed into `int *gvar_0 = 100;`, turning original integer variable into an integer pointer variable.
+Every reference site is substituted to `*gvar_0`.
+Two severe consequences appear:
+1. Declaration `int *gvar_0 = 100;` assigns integer value 100 to pointer variable, producing implicit conversion warning/error.
+2. `return *gvar_0;` attempts to dereference pointer which points to invalid memory address, leading to runtime crash (segmentation fault).
+Program behaviour is completely altered; refactoring completes silently without any warning.
+This is not merely a compile‑error case: it can generate code that compiles but exhibits wrong runtime behaviour.
+
+Expected behavior:
+All rename operations shall validate candidate name strictly against C identifier lexical rules before any source modification:
+1. Valid identifier starts with letter or underscore.
+2. Only letters, underscores, digits are allowed.
+3. Reject inputs containing special symbols including `*`, `&`, `#`, whitespace.
+4. Reject reserved keywords and digit‑leading literals.
+Abort refactoring and output error message if validation fails.
+Rename refactoring is designed for identifier replacement only. Type‑modifying declarator symbols such as pointer asterisk `*` belong to Change‑Signature refactoring and must never be accepted inside rename input box.
+
+Underlying cause:
+CDT rename does not isolate pure identifier token from user input. Raw input fragment is directly substituted into declaration and expression locations. The asterisk `*` is parsed as pointer declarator in variable declaration and as dereference operator in usage sites. Consequently, simple rename operation accidentally changes variable type and program runtime semantics.
+*/

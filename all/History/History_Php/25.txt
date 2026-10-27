@@ -1,0 +1,29 @@
+<?php
+class A { }
+class B extends A {
+    function fa2()
+    {
+    }
+}
+class C extends B {
+    function fa1(){
+        parent::fa2();
+    }
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method fa1() in class C, pull up to parent class B
+Refactoring rule: When analyzing `parent::` inside a method being pulled up, recognize that `parent` is lexically bound to the original containing class. After moving fa1() into B, `parent` will resolve to A instead of B, changing the semantics of `parent::fa2()`. The refactoring must detect this semantic change, warn the user and avoid unhandled internal exceptions.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling fa1() from C up to B triggers an internal exception without prior warning. After moving, fa1() resides in B, so `parent::` refers to A. A does not have fa2(), while originally in C `parent::` referred to B which contains fa2().
+Expected behavior:
+Detect `parent::` reference and warn the user that the meaning of parent will change after pull-up, instead of crashing with an exception.
+Underlying cause:
+The PSI rewrite logic does not pre-validate `parent` keyword lexical binding shift. The code generator assumes `parent` target remains unchanged and hits an invalid type lookup, resulting in an uncaught exception.
+*/
+?>

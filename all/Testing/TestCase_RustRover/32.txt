@@ -1,0 +1,24 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+mod mod1 {
+pub fn foo() {} //{extract body of public function foo into separate helper function inside mod1}
+}
+mod mod2 {
+mod inner1 {
+fn test() { crate::mod1::foo(); }
+}
+mod inner2 {
+fn test() {
+use crate::mod1;
+mod1::foo();
+}
+}
+mod inner3 {
+fn test() {
+use crate::mod1::*;
+foo();
+}
+}
+}

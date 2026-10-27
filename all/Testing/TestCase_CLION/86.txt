@@ -1,0 +1,15 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+class BaseTest
+{
+public:
+virtual int test(int testval) = 0;
+};
+class TestClass : public BaseTest { //{Pull up virtual method test from TestClass to BaseTest}
+public:
+int test(int testval) override {
+return 0;
+}
+};

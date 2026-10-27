@@ -1,0 +1,12 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: File‑related refactoring change listener only processes source‑code‑level references inside code files; it ignores external IDE metadata artifacts such as test run‑configuration entries, leaving configuration paths pointing to old file location
+
+# test_sample.py
+
+import unittest
+class DemoTest(unittest.TestCase):
+def helper(self): // REFACTOR_TARGET
+pass
+def test_case(self):
+self.assertTrue(True)
+self.helper()

@@ -1,0 +1,9 @@
+```
+<?php
+function sendAlert(string $message)
+{
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `sendAlert`, add new second parameter in dialog editor.

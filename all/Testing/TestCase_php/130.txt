@@ -1,0 +1,15 @@
+```
+<?php
+class Root { }
+class User extends Root {
+    function loadUser() {
+        User::validate();
+    }
+    function validate() {
+        return true;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target method `loadUser()` in class `User`, pull up to parent class `Root`

@@ -1,0 +1,30 @@
+<?php
+class C { }
+class A0{
+    static function g(){
+    }
+}
+class A extends A0 {
+    static function f()
+    {
+        self::g();
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static method g() from A0 to class C
+Refactoring rule: When moving a static method that is referenced via `self::` at call sites, the refactoring must resolve that `self` is bound to the lexical class of the caller. If the target method is moved out of that class hierarchy, the refactoring must either update the call site to the new class name (C::g()) or emit a warning that `self::g()` will become undefined.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving static g() from A0 to C, call sites `self::g()` inside class A remain unchanged. `self` refers to A, which no longer contains or inherits g(), leading to undefined method fatal error. No warning is presented during the refactoring.
+The second example has the same problem: `self::g()` inside A::init() continues to reference the local class A after g() is moved to C.
+
+Expected behavior:
+Detect `self::` static calls targeting the method being moved. Offer to rewrite `self::g()` → `C::g()`, or warn the user that these usages will break.
+
+Underlying cause:
+The refactoring’s usage visitor treats `self::g()` as a soft reference that only tracks the symbol g(), but it does not account for the lexical binding of `self`. It does not rewrite the `self` keyword to the new class name after the method is relocated outside the original class hierarchy.
+*/

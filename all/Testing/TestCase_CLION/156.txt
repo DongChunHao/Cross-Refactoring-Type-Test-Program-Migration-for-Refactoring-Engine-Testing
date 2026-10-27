@@ -1,0 +1,21 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: buildXInstance
+'''
+#include <vector>
+#include <string>
+class X{};
+void buildXInstance() { //{Rename function f to buildXInstance}
+std::vectorstd::string strings{"foo"};
+X x(strings[0]);
+std::string str = "bar";
+X x2(str);
+}
+template  struct vec {
+typedef T value_type;
+value_type& bar();
+};
+void test_vec() {
+vecstd::string v;
+X x(v.bar());
+}

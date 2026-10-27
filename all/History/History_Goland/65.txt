@@ -1,0 +1,35 @@
+package pack1
+
+// very valuable comment
+const constant = 0
+/* and */
+/* three */
+// more
+
+/* Refactoring Settings:
+Refactoring type: Move (Move to another file)
+Refactoring target: constant `constant`
+Refactoring rule: When moving a top-level Go declaration, attach all associated leading documentation comments and adjacent comment lines that semantically belong to the symbol, moving them together with the declaration to the target file.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After running Move refactoring on `constant`, the leading doc comment `// very valuable comment` remains in the original file; only the `const constant = 0` line is moved.
+
+Expected behavior:
+The doc comment immediately preceding the constant should be moved along with the declaration.
+The standalone trailing comments (`/* and */`, `/* three */`, `// more`) after the constant are not attached to the symbol and should stay in the original file.
+
+Underlying cause:
+The PSI visitor for the Move refactoring only selects the `const` declaration node itself, and does not traverse to collect its associated leading documentation comment nodes as part of the element to transfer.
+The comment attachment logic for Go top-level declarations is not applied during move, unlike copy/paste.
+*/
+
+// Bad actual result after move:
+// Original file retains `// very valuable comment`
+// Target file: `const constant = 0`
+
+// Expected result after move:
+// Target file:
+// // very valuable comment
+// const constant = 0

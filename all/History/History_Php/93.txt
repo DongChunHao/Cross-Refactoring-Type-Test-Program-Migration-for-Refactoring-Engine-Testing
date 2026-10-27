@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Rename identifier refactoring
+Refactoring target: variable/parameter used inside embedded SQL string literals
+Scope: PHP file containing inline SQL query strings
+Refactoring operation: Rename a PHP variable that appears within an embedded SQL query string
+*/
+
+/* Error Root Cause:
+Observed failure: During refactoring, words inside embedded SQL string literals are being converted to uppercase. For example, "table" becomes "TABLE", "name" becomes "NAME".
+Expected behavior: Refactoring should only modify the target PHP identifier; plain text content inside SQL string literals must remain unchanged, preserving original casing.
+Underlying cause: The SQL language injection/inspection engine auto-capitalizes recognized SQL reserved keywords when the refactoring edits the string node. This auto-formatting for SQL keywords was not triggered in older versions, and it incorrectly rewrites non-keyword placeholder identifiers when the containing string is touched by refactoring.
+*/
+function runQuery() {
+    $table = 'users';
+    $name = 'test';
+    $sql = "INSERT INTO ?t:table SET name = ?:name";
+    return $sql;
+}
+?>

@@ -1,0 +1,13 @@
+```
+<?php
+class UserService {
+    static function validate() {}
+    static function run() {
+        self::validate();
+    }
+}
+class Helper {}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `UserService`, target namespace `Service`, enable "Move class to a new file".

@@ -1,0 +1,21 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper simulating cross‑module inline‑function scenario with name‑shadowing risk}
+const tmpImported = () => {
+return 'stand‑in'
+}
+const promote = (value: string)=> {
+return `promote(${value})`;
+}
+const toInline = () => {
+return promote(tmpImported())
+}
+
+const someFunction = () => {
+const tmpImported = ()=> 'bogus'
+const result = toInline();
+}
+
+}

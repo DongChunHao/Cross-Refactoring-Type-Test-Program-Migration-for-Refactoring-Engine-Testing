@@ -1,0 +1,20 @@
+```
+<?php
+namespace Auth\Login {
+    use Auth\Traits\PasswordHash;
+    class AuthBase
+    {
+    }
+    class LoginManager extends AuthBase
+    {
+        use PasswordHash;
+        function verifyPassword(){}
+    }
+}
+namespace Auth\Traits {
+    trait PasswordHash{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `LoginManager`, target namespace `Auth\Session`

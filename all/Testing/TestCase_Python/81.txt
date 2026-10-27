@@ -1,0 +1,14 @@
+// Target Refactoring Type: Inline Method
+// Expected Defect Performance: Usage‑search counter suffers integer underflow / uninitialized state; preview UI displays‑1 occurrence count instead of valid positive integer, counting logic returns error sentinel instead of proper reference tally
+def foo(arg_1=1, arg_2=2, arg_3=3, arg_4=4): // REFACTOR_TARGET
+res = arg_1 + arg_2 + arg_3 + arg_4
+print(res)
+def bar():
+res_1 = 1
+res_2 = 2
+res_3 = 3
+res_4 = 4
+foo(res_1, res_2, res_3, res_4)
+bar()
+def baz(par_1=1, par_2=2, par_3=3, par_4=4):
+foo(par_1, par_2, par_3, par_4)

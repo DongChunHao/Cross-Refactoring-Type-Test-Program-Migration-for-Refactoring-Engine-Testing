@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: code block starting from the if-statement inside `parameter_processor::param_virtual()`
+Operation: Select the marked code segment, invoke Extract Method and name new method `bool_param`
+Scope: Dataflow analysis for reference variables; detect locally declared reference variable and pass it as reference parameter to extracted method, instead of re-declaring empty reference inside new method
+*/
+
+/* Error Root Cause:
+Observed failure: The refactoring engine creates `bool &dest;` inside extracted method `bool_param()`. This is invalid C++ syntax, references require initialization. The engine fails to perform proper dataflow analysis: `dest` is a local reference variable defined before the selected block and consumed inside the extracted code.
+Expected behavior: Add `bool &dest` as an input reference parameter to `bool_param`, call it as `bool_param(dest)` in original method, and remove the invalid local reference declaration inside extracted function.
+Underlying cause: The reference variable dataflow analysis is incomplete. The extract method logic does not recognize that `dest` is a reference variable coming from the outer scope, and incorrectly tries to redeclare the reference inside the new extracted method without an initializer instead of promoting it to a function parameter.
+*/
+
+int parameter_processor::param_virtual() {
+    bool &dest = g_virtual_screens;
+    if (yesnoval[0] < 0)
+    {
+        return bad_parameter();
+    }
+    dest = yesnoval[0] != 0;
+    return CMDARG_FRACTAL_PARAM;
+}

@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring type: Move member method to super/subclass
+Refactoring target: Move template member function `template<typename... Args> void log(const Args&... args);` into a superclass or subclass
+Refactoring scope: Template member function with template type/variadic pack parameters
+Refactoring rule expectation: Recognize that `T` / `Args...` are local template parameters of the function itself, not outer class template parameters; suppress the false "inaccessible type parameter" warning
+*/
+
+/* Error Root Cause:
+Observed failure: CLion shows false warning: "Type parameter 'Args' will be inaccessible in the moved code". The warning incorrectly treats the **function-local template parameter pack Args** as an outer class-level template parameter that will go out of scope after moving.
+Expected behavior: No warning, since Args is a template parameter of the `log` function itself, not of the surrounding class; moving the method to base/derived class preserves its own template parameters.
+Underlying cause: The refactoring engine confuses **function template parameters** with **class template parameters**. It incorrectly assumes `Args` belongs to the enclosing class scope, and thinks the type parameter will be lost after moving the method to a different class, producing a misleading warning.
+*/
+
+class Logger {
+public:
+    template<typename... Args>
+    void log(const Args&... args);
+};

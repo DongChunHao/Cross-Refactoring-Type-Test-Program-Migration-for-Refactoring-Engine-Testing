@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class MyClass {
+#myFunction() {
+return 123;
+}
+caller() {
+return this.#myFunction(); //{Move Method target call‑site this.#myFunction() which loses # during static conversion rewrite}
+}
+}

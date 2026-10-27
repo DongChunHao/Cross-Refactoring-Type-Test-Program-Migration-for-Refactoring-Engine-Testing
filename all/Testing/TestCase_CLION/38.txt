@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+#include <gtest/gtest.h>
+void  f(char const*) { }
+TEST(repro_suite, repro_case) {
+const char* lit = "extract this literal into constant"; //{Rename variable lit to messageLiteral}
+f(lit);
+}

@@ -1,0 +1,38 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Constant refactoring
+Refactoring target: `N\C`
+Scope: import conflict detection, existing class name collisions in local namespace
+Refactoring operation: move constant `N\C` into `K\F\Foo` as `K\F\Foo::C`
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving `N\C` into `K\F\Foo`, the refactoring automatically inserts `use K\F\Foo;` in namespace `F`.
+Namespace `F` already defines a local class `Foo`. The new import `use K\F\Foo;` creates a name collision: the name `Foo` now refers to the imported `K\F\Foo`, shadowing the local `F\Foo`.
+`echo Foo::C;` compiles, but `Foo` resolves to the imported class instead of the original local class `F\Foo`, silently changing semantics.
+The refactoring does not detect this namespace name collision before adding the import.
+
+Expected behavior:
+When adding a `use` for the target class:
+1. Check if the target short name (`Foo`) is already defined in the destination namespace (local class, existing import, function/constant).
+2. If a conflict exists: either skip the short-name import and use fully qualified names (`\K\F\Foo::C`), prompt the user for an alias (`use K\F\Foo as KFFoo;`), or warn about the name shadowing.
+
+Underlying cause:
+The import insertion logic only considers whether the symbol is needed, it does not scan the destination namespace for existing short-name conflicts. It unconditionally adds `use TargetClass;` without checking for local class collisions.
+*/
+namespace N{
+    const C = 1;
+    class Foo{}
+    echo C;
+}
+namespace K\F {
+    class Foo{
+    }
+}
+namespace F{
+    use const N\C;
+    class Foo{}
+    echo C;
+}
+?>

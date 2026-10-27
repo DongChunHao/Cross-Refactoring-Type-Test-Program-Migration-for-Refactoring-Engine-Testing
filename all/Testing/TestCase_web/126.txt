@@ -1,0 +1,5 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+var arrr = [1, 2, 3, 4, 5] + [1]; //{Rename Variable target statement supporting partial cross‑node invalid sub‑expression selection}

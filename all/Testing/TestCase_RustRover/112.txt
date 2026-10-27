@@ -1,0 +1,19 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+trait MyTrait2 {
+fn fn_bar() {}
+}
+trait Trait {
+fn fn_bar() {}
+}
+enum Result<T, E> {
+Ok(T),
+Err(E),
+}
+impl<T, E> Trait for Result<T, E> where (T,E): MyTrait2 {
+fn fn_bar() {
+println!("hello"); //{move method bar out of trait impl into inherent impl block}
+}
+}

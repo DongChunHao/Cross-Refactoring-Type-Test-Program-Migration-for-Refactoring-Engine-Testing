@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// main.rs
+mod foo;
+// foo.rs
+pub fn hello() {} //{move function hello out of foo module into outer scope}

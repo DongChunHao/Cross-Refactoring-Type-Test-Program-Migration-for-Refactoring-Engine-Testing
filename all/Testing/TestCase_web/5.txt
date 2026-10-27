@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+var test = {
+testProp: wrapperFunc() //{Move Method for wrapperFunc}
+};
+function wrapperFunc() {
+return console.log();
+}

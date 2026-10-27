@@ -1,0 +1,13 @@
+```
+<?php
+class BaseProduct{
+    private $sku;
+}
+class Product extends BaseProduct{
+    public function __construct(){
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target constructor of class `Product`, add parameter `$sku` and auto-generate assignment `$this->sku = $sku`

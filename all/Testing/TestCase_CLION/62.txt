@@ -1,0 +1,22 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: programMain
+'''
+namespace XXX{
+class Base
+{
+class NBase{
+public:
+NBase(int) {}
+int a;
+};
+public:
+NBase foo(NBase a) {return a;}
+};
+}
+int main() { //{Rename method main to programMain}
+using namespace XXX;
+Base b;
+b.foo(0);
+return 0;
+}

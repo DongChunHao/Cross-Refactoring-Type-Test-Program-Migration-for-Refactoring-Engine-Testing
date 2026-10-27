@@ -1,0 +1,27 @@
+#define C =3;
+int main(int a, char** argv) {
+    int b C // Macro to be extracted
+    printf ("%d\n",b);
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: macro token `C` inside malformed statement `int b C`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro identifier `C`, invoke Extract Local Variable refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: The source code itself already contains ill‑formed macro `#define C =3;` (macro body starts with `=`). Refactoring extracts `C` into `int i = C;`. After preprocessor expansion this becomes `int i = =3;`, which is syntax error. The refactoring does not detect macro expansion side‑effects and proceeds silently to apply transformation.
+
+Expected behavior: Macros execute textual replacement before AST parsing; refactoring working on unexpanded AST cannot fully know final expanded syntax. Two feasible mitigation strategies:
+1. Detect selected expression is a preprocessor macro invocation. Pop‑up explicit warning to user: “Selected element is a macro; refactoring operates on unexpanded source, macro expansion may produce invalid syntax. Proceed?”
+2. Where possible, try lightweight pre‑expansion of the macro in‑memory to preview generated code fragment; if expanded fragment yields ill‑formed C token sequence, block or warn the transformation.
+Fully static verification for arbitrary macros is undecidable, so hard rejection is not always practical; user warning is the safe fallback.
+
+Underlying cause: CDT refactoring operates on unexpanded parse‑tree (original source AST), not on pre‑expanded code. It treats macro name `C` as an ordinary expression node, without evaluating or inspecting macro replacement text. It cannot foresee that macro expansion will inject extra operators and break newly‑generated assignment statement.
+*/

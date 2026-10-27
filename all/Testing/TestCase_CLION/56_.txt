@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+void f() {
+int literal_val = 4; //{Extract variable for literal 4}
+int i;
+if (i = literal_val) {
+int j = i;
+}
+}

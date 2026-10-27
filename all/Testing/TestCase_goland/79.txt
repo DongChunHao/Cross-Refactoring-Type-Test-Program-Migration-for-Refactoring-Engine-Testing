@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func main() {
+x := 999
+runLoop(x) // extract for loop selection into runLoop
+}
+func runLoop(x int) {
+for i := 0; i < 999; i++ {
+println(x)
+}
+}

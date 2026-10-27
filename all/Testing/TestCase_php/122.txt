@@ -1,0 +1,10 @@
+```
+<?php
+$msg = "hello";
+$printFn = function () use($msg) {
+    echo $msg;
+};
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target anonymous function `$printFn`, add new parameter `$msg`.

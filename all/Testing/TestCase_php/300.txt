@@ -1,0 +1,16 @@
+```
+<?php
+class AA {
+    /**
+     * @var bool
+     */
+    private bool $a;
+    public function __construct(bool $a)
+    {
+         $this->a = $a;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature refactoring on `AA::__construct`, modify parameter `$a` type from `bool` to `int`.

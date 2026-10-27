@@ -1,0 +1,23 @@
+class Base:
+    pass
+
+class Child(Base):
+    def my_method(self):
+        return 42
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Pull Members Up refactoring
+Refactoring Target: my_method() method inside Child class
+Refactoring Scope: current class hierarchy
+Operation steps: Place cursor on my_method, invoke Refactor -> Pull Members Up.
+User expectation: The default pre-selected target class should be the direct parent (Base).
+Observed behaviour: Pre-selected target is unstable, randomly selected between object or direct ancestor Base.
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: The default pre-selected superclass target in Pull Members Up dialog is unstable and appears random; sometimes selects object, sometimes selects direct ancestor Base.
+Expected behavior: Always pre-select the immediate / direct ancestor (N=1 parent class) as default target for Pull Members Up. This default is intuitive and easy to document, avoiding ambiguous selection rules for deeper ancestors.
+Underlying cause: The refactoring engine’s default target selection logic lacks a deterministic rule; it does not prioritize the immediate parent class and may pick object or other ancestors arbitrarily when populating the dialog’s default selection.
+"""

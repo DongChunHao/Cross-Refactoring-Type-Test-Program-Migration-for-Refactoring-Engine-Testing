@@ -1,0 +1,25 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using NExpect;
+using static NExpect.Expectations;
+using NUnit.Framework;
+
+public class ExistingTestFixture
+{
+[Test]
+public void ExistingTest()
+{
+Expect(1).To.Equal(1);
+}
+}
+
+public class RelatedSubjectTests
+{
+[Test]
+public void RelatedTest() //{Push Down Method: trigger refactoring on method inside type dependent on using‑static symbol}
+{
+Expect(2).To.Equal(2);
+}
+}

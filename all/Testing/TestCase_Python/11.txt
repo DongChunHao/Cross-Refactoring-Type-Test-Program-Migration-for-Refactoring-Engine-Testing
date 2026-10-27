@@ -1,0 +1,6 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: The refactoring import‑rewrite logic has a bug when adjusting leftover imports; it mistakenly emits **all** as imported‑symbol name instead of the original function name resource_filename, corrupting the import statement syntax
+from pkg_resources import resource_filename
+def example():  // REFACTOR_TARGET
+path = resource_filename("my_package", "data/config.json")
+return path

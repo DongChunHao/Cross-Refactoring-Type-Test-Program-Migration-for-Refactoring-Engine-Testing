@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: dims
+'''
+#include <cstddef>
+void dummy() {
+size_t sizes[] = {1, 2, 3}; //{Rename variable sizes to dims}
+for (auto x : sizes) {}
+}
+
+'''

@@ -1,0 +1,25 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package awesomePackage13
+import "fmt"
+type (
+Item struct {
+ID    string
+Price int
+}
+InMemoryItemStorage struct {
+items map[string]Item
+}
+)
+func (imis *InMemoryItemStorage) Load(id string) (*Item, error) {
+panic("implement me")
+}
+func (imis *InMemoryItemStorage) Save(Item Item) error {
+panic("implement me")
+}
+func caller() {
+storage := &InMemoryItemStorage{}
+storage.Load("1") // move Load method from InMemoryItemStorage to standalone function
+}

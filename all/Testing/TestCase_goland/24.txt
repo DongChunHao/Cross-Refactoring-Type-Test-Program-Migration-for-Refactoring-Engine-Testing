@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+package main
+func example(clusterBits, clusterBitsNew []byte) bool {
+newLen := len(clusterBitsNew) // rename variable newLen to len
+if len(clusterBits) != newLen {
+return false
+}
+return true
+}
+func main() {}

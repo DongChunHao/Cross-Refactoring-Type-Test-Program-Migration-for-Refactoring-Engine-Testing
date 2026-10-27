@@ -1,0 +1,13 @@
+```
+<?php
+class UserService
+{
+    public function load($id)
+    {
+        return "user:".$id;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, delete method parameter `$id`.

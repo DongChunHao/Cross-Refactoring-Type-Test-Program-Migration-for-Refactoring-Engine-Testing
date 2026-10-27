@@ -1,0 +1,41 @@
+<?php
+namespace N {
+    class A
+    {
+    }
+}
+
+namespace N1 {
+    class A
+    {
+        public function a(A $b)
+        {
+        }
+    }
+}
+
+namespace N2 {
+    use N\A;
+    class B extends \N1\A
+    {
+        public function b(A $a)
+        {
+        }
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring
+Refactoring target: method a() in \N1\A, push down to child class \N2\B
+Refactoring rule: When moving a member to a different namespace context, the refactoring must preserve the original type resolution semantics. If the target scope has a conflicting use alias that shadows the original class name, the type should be fully qualified or adjusted so it resolves to the same class as before.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After pushing down method a() into N2\B, the signature becomes `public function a(A $b)`. In namespace N2, `use N\A;` makes `A` refer to `N\A`, but the original `A` in N1\A::a() was `N1\A`. The refactoring only copies the short name `A` and does not qualify it, changing the type binding.
+Expected behavior:
+The generated method signature should use the fully qualified name `\N1\A $b` to retain the original type meaning in N2's scope.
+Underlying cause:
+The refactoring copies the simple identifier text of the type instead of computing its fully qualified name. It does not re-evaluate name resolution in the destination namespace and ignores existing use statements that shadow the class name.
+*/
+?>

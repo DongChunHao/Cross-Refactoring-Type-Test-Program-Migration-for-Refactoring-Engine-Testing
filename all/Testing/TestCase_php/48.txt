@@ -1,0 +1,14 @@
+```
+<?php
+class LogTarget { }
+class FileLog extends LogTarget {
+    protected static function getLogPrefix(): string { return "[FILE]"; }
+    function writeHeader()
+    {
+        $prefix = FileLog::getLogPrefix();
+        return $prefix . " Log start";
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `writeHeader()` from class `FileLog` to parent class `LogTarget`

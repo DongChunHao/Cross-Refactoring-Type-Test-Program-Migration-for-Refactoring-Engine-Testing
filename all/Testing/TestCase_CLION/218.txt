@@ -1,0 +1,24 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+class BaseFoo
+{
+public:
+virtual void test() {}
+};
+class Foo : public BaseFoo //{Push down test implementation from BaseFoo to Foo}
+{
+int f{0};
+public:
+void test() override;
+};
+void Foo::test() override {
+int Foo::*pF = &Foo::f;
+this->*pF = 1;
+}
+int main() {
+Foo x;
+x.test();
+return 0;
+}

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+fn f(x: bool) -> bool { !x }
+fn g() { //{rename function g, preserve multiple‑call site context which triggers parameter‑name shadowing risk}
+f(true) && f(false);
+}

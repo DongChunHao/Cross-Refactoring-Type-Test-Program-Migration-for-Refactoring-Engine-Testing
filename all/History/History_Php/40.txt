@@ -1,0 +1,27 @@
+<?php
+class C1{
+    private $f;
+}
+class A extends C1{
+    public function __construct(){
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: constructor of class A, add new parameter $f and assign $this->f = $f
+Refactoring rule: When adding an assignment $this->f = $f in a subclass, check whether the field $f is accessible in the subclass. If the base class declares $f as private, the subclass cannot access $this->f. The refactoring should automatically declare a new field in subclass A or warn that the assignment is invalid.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After adding parameter $f and generating $this->f = $f in A’s constructor. C1 has private $f, which is not visible to subclass A. The generated $this->f = $f is invalid PHP; the refactoring does not create a new $f property inside A, nor emit a warning about the private visibility barrier.
+
+Expected behavior:
+Detect that C1::$f is private and inaccessible in A. Either:
+1. Create a new property `protected $f;` inside class A, or
+2. Warn the user that $this->f cannot refer to C1's private field and the generated assignment will fail.
+
+Underlying cause:
+The refactoring’s field lookup does not respect private member visibility during assignment generation. It finds the base class field by name and assumes it can be assigned from the subclass, ignoring private access rules.
+*/

@@ -1,0 +1,18 @@
+```
+<?php
+function calculateTax() {
+    $baseAmount = 1000;
+    $step1 = function () use ($baseAmount) {
+        $step2 = function () use ($baseAmount) {
+            return $baseAmount * 0.07;
+        };
+        return $step2;
+    };
+    $calc = $step1();
+    echo $calc();
+}
+calculateTax();
+?>
+```
+
+【Refactoring Action】: Rename variable refactoring, rename outer variable `$baseAmount` in `calculateTax()` to `$taxBase`

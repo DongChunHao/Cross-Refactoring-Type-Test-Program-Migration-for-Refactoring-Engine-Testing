@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+struct S;
+impl S {
+async fn foo() {
+async { () }.await //Move Method: move this await‑containing expression block logic into another impl method
+}
+}

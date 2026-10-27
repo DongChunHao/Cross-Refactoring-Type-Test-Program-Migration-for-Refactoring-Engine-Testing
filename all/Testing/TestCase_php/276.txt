@@ -1,0 +1,25 @@
+```
+<?php
+class C
+{
+    public function f()
+    {
+        $this->setVars([
+            'foo' => 'bar',
+            'baz' => 42,
+        ]);
+        $form->field('name')
+            ->typeText()
+            ->label('Name')
+            ->value('My Name')
+            ->required();
+        $this->link = LinkQuery::create()
+            ->filterAccessibleBy($this->userSession->getUser())
+            ->filterByID($this->request->request->getInt('link'))
+            ->findOne();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move class `C` into namespace `App\Domain`.

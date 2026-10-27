@@ -1,0 +1,19 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <map>
+struct Wrapper
+{
+static void wrapperMain() { //{Move main loop logic into static wrapper member function}
+std::mapstd::string,int testmap = {{"a", 1}, {"b", 2}};
+for (std::mapstd::string,int::iterator it = testmap.begin(); it != testmap.end(); ++it) {
+std::cout << it->first << " -> " << it->second << "\n";
+}
+}
+};
+int main() {
+Wrapper::wrapperMain();
+return 0;
+}

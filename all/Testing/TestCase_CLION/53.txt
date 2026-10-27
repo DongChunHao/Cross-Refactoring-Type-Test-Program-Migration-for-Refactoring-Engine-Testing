@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Field
+Refactoring new name: N/A
+'''
+struct MyClass {
+MyClass(int);
+int field;
+};
+struct Holder {
+MyClass x; //{Extract field from local variable x inside qqq}
+};
+void qqq() {
+MyClass x = 239;
+x.field;
+}

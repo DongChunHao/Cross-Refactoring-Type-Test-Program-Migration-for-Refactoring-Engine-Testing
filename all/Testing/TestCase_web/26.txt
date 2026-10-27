@@ -1,0 +1,26 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Dog {}
+class LittleDog extends Dog {
+private method(): string; //{Move Method for private method}
+/* before */
+field; // inline //{Move Method for field with attached comments}
+}
+interface ITeaThings {
+drink(): void;
+}
+class Bowl implements ITeaThings {
+public drink() {};
+}
+class Cup extends Bowl implements ITeaThings {
+constructor(name: string) {
+super();
+}
+public drink() {
+console.log("glang‑glang");
+}
+}
+class CoffeeCup extends Cup { //{Move Method for inherited drink member candidate}
+}

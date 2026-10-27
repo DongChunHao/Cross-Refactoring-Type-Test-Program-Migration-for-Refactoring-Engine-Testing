@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (C++ CLion refactoring)
+Refactoring target: the second `float afl` declared after the inner block
+Operation: Invoke Rename refactoring on the second `afl` (the one at line `float afl = 5.0f;`)
+Scope: Respect C++ lexical scope and variable shadowing rules; only rename usages belonging to the target second `afl`. Must not touch the identically-named `afl` variable inside the nested block and its for-loop usages.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming the outer `afl` (declared after the curly brace block), the refactoring incorrectly renames the inner block's `afl` and its usage `afl += 0.1f;` inside the for loop. The two variables have identical simple name but are separate local variables in different lexical scopes.
+
+Expected behavior:
+Only rename the outer `afl` definition and its call site `std::cout << afl << std::endl;`. The inner block's `afl` and for-loop code should remain untouched.
+
+Underlying cause:
+Rename refactoring’s symbol resolution fails to fully resolve lexical scope boundaries. It only matches the identifier token `afl` instead of resolving the exact symbol in its scope, conflating two separate identically-named variables from different scopes.
+*/
+
+#include <iostream>
+void testrename() {
+    {
+        float afl = 0.0f;
+        for (int i = 0; i < 100; i++) {
+            afl += 0.1f;
+        }
+    }
+
+    float afl = 5.0f; //<- renaming here
+    std::cout << afl << std::endl;
+}

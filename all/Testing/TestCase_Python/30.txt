@@ -1,0 +1,7 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Refactoring applies import‑style rules for symbols inside moved unit but ignores consumer‑side source file; old import gets removed without generating replacement import matching IDE configuration, leaving short‑name references unresolved
+from pack import mod
+def helper(): // REFACTOR_TARGET
+return mod
+def use_imported_from():
+print(helper())

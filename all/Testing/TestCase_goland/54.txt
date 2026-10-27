@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"[github.com/labstack/echo/v4](https://github.com/labstack/echo/v4)"
+)
+type Helper struct{}
+func (h Helper) makeFunc(ctx echo.Context) {
+}
+func main() {
+var ctx echo.Context
+helper := Helper{}
+helper.makeFunc(ctx) // move makeFunc method from Helper to standalone function
+}

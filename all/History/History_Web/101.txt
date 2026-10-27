@@ -1,0 +1,37 @@
+/* Refactoring Settings: */
+/* Refactoring Type: Rename File */
+/* Refactoring Target: Renaming a `.jsx` file to `.tsx` via Refactor > Rename */
+/* Refactoring Scope: Mixed JS/TS codebase, TypeScript path aliases defined in tsconfig.json */
+/* Trigger Operation: Use built-in rename refactor on a JSX file, changing its extension to TSX in a gradual migration project */
+
+/* Error Root Cause: */
+/*
+Observed failure:
+After renaming a `.jsx` file to `.tsx`, the refactor updates consumer import paths incorrectly.
+The project uses a `tsconfig.json` path alias `@lite-components/*` mapping to JS/JSX sources.
+The rename logic adjusts import specifiers in a way that breaks alias resolution, producing invalid import strings that no longer resolve with the existing tsconfig alias rules.
+
+The IDE’s rename handler for JSX→TSX treats the file extension change as a raw text path rewrite, without re-resolving the path through the TypeScript language service and the configured tsconfig aliases. It does not respect that the alias maps to the source directory containing the original JSX files; it blindly modifies the import suffix or path segments after the alias prefix.
+
+Expected behavior:
+When renaming `.jsx` → `.tsx` with Refactor > Rename:
+1. Keep existing alias-based import specifiers unchanged if the alias resolver can load the new `.tsx` file;
+2. If updates are required, compute the new import path using the TypeScript language service and the active tsconfig path aliases, instead of simple string substitution;
+3. Update references only when the resolved module identity changes, preserving valid alias imports.
+
+Underlying cause:
+The file rename refactor uses simple file-path string manipulation for import updates rather than delegating module resolution to the TypeScript language server. It does not account for tsconfig path aliases that cover the original `.jsx` sources, so it corrupts alias imports when the file extension changes during JS→TS migration.
+*/
+
+// tsconfig.json alias snippet
+{
+  "compilerOptions": {
+    "paths": {
+      "@lite-components/*": [
+        "packages/lite/src/js/components/*",
+        "packages/lite/src/js/components/*.js",
+        "packages/lite/src/js/components/*.jsx"
+      ]
+    }
+  }
+}

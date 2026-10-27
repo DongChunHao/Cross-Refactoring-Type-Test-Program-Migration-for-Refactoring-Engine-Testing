@@ -1,0 +1,20 @@
+def demo():
+    print('Hello, {}!'.format('World'))
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Introduce Variable refactoring
+Refactoring Target: substring "Hello" inside new‑style format string literal 'Hello, {}!'
+Refactoring Scope: current function demo()
+Operation steps: Select substring "Hello" within the format string and trigger Introduce Variable refactoring
+Expected refactored output:
+s = 'Hello'
+print('{}, {}!'.format(s, 'World'))
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: Introduce Variable refactoring cannot correctly handle selected substrings inside Python str.format() new‑style format strings. It either extracts the whole string literal or fails to rewrite the format placeholder and format arguments properly.
+Expected behavior: Extract selected substring "Hello" into new variable `s`, modify original string literal to use `{}` placeholder for extracted part, inject new variable `s` into the .format() argument list.
+Underlying cause: The refactoring engine treats the entire format string as a single AST string node. It lacks special logic to split the string literal, insert format placeholders, and adjust format arguments when extracting a substring from within format‑style string literals.
+"""

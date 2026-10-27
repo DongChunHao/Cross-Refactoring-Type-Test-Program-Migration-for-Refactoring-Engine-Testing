@@ -1,0 +1,14 @@
+```
+<?php
+class Root { }
+class Middle extends Root {
+    static private function helper(){}
+    function compute()
+    {
+        self::helper();
+    }
+}
+class Leaf extends Middle{}
+```
+
+【Refactoring Action】: Pull Up method `compute()` from class `Middle` to parent class `Root`.

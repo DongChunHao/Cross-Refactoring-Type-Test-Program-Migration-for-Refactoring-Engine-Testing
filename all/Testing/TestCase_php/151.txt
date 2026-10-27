@@ -1,0 +1,24 @@
+```
+<?php
+namespace  {
+    class ApiResponse
+    {
+        public function merge(ApiResponse $resp)
+        {
+        }
+    }
+}
+namespace App\Http {
+    use ApiResponse;
+    class JsonResponse extends \ApiResponse
+    {
+        public function merge(ApiResponse $resp)
+        {
+            parent::merge($resp);
+        }
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `ApiResponse` from global namespace to namespace `App\Http`

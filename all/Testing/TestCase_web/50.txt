@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+var add = function (x, y) { //{Move Method target variable‑assigned function expression add}
+return x + y;
+};
+console.log(add(1, 2));

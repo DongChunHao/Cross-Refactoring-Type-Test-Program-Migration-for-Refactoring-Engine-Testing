@@ -1,0 +1,14 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding class with #‑prefixed private instance‑method and this‑based call site}
+class MyClass {
+#myFunction() {
+return 123;
+}
+caller() {
+return this.#myFunction();
+}
+}
+}

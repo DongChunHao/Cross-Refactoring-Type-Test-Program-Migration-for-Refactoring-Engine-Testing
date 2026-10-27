@@ -1,0 +1,18 @@
+```
+<?php
+class UserRunner {
+    private $userId;
+    public function run()
+    {
+        new class($this->userId) extends AbstractUserBase {};
+    }
+}
+class AbstractUserBase {
+    public function __construct(int $id)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature on `AbstractUserBase::__construct(int $id)`; add new parameter `bool $isActive`.

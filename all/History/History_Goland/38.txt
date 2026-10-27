@@ -1,0 +1,28 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Inline Variable
+Refactoring target: Local variable `sum` initialized as `b + c`, used in expression `a - sum`
+Refactoring rule: When inlining a variable into a parent expression with lower precedence operator, preserve the original evaluation semantics by wrapping the inlined expression in parentheses.
+*/
+
+/* Error Root Cause:
+Observed failure: Inlining `sum := b + c` into `a - sum` produces `a - b + c`. Due to Go operator precedence, `-` and `+` have equal precedence and evaluate left-to-right, changing the original meaning (`a - (b + c)` becomes `(a - b) + c`). The same bug applies to other left-associative binary operators like multiplication and division.
+Expected behavior: Generate `a - (b + c)` to retain the original semantics.
+Underlying cause: The inliner does not track operator precedence and associativity of the parent expression; it directly substitutes the variable’s initializer without adding parentheses when required.
+*/
+
+func before(a, b, c int) int {
+	sum := b + c
+	return a - sum
+}
+
+// Bad actual output after inline variable
+func after(a, b, c int) int {
+	return a - b + c
+}
+
+// Expected correct output after inline variable
+func expected(a, b, c int) int {
+	return a - (b + c)
+}

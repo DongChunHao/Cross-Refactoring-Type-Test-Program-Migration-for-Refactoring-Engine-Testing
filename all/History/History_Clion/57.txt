@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring type: Move function definition to source file (CLion C++)
+Refactoring target: constructor `TestClass(int a = 0)` defined inline inside class TestClass in header
+Operation: Invoke refactoring "Move function definition to source file"
+Scope: C++ grammar rule: default argument values must only be declared in the declaration (header), cannot be repeated in out-of-line definition in cpp source file
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving constructor definition from header to cpp file, refactoring copies the default argument `=0` into the cpp definition:
+`TestClass::TestClass(int a = 0) { }`
+This is invalid C++ code; GCC compilation fails because default argument cannot be redefined in out-of-line definition.
+
+Expected behavior:
+Header retains `TestClass(int a = 0);`
+Cpp definition should omit the default value: `TestClass::TestClass(int a) { }`
+
+Underlying cause:
+The refactoring engine naively copies the full parameter text including default argument into the source file definition. It lacks semantic knowledge that C++ forbids redeclaration of default arguments in out-of-line member definitions.
+*/
+
+#pragma once
+class TestClass {
+public:
+    TestClass(int a = 0) {
+    }
+};

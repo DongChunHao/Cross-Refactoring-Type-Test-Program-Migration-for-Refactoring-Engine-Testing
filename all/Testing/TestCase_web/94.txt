@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+interface User {
+userName: string;
+age: number;
+}
+const obj: any = { name: 'Johnny', age: 25 };
+const { userName, age }: User = obj; //{Rename Field target destructured variables with attached pattern‑level type annotation}

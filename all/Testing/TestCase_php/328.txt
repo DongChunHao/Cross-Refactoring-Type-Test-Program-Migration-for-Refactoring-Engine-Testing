@@ -1,0 +1,22 @@
+```
+<?php
+namespace My\Attributes {
+    use Attribute;
+    #[Attribute]
+    class SingleArgument
+    {
+        public $argumentValue;
+        public function __construct($argumentValue)
+        {
+            $this->argumentValue = $argumentValue;
+        }
+    }
+    #[SingleArgument("Hello World")]
+    class Foo
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `My\Attributes\SingleArgument::__construct`, add optional parameter `$extra = null` at end of constructor signature.

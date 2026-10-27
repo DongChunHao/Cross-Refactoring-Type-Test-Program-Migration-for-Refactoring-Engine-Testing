@@ -1,0 +1,43 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Enum Variant
+Refactoring Target: Enum variant `V1 { x: i32 }` inside enum `E`
+Refactoring Scope: Replace usages in struct-literal variant construction and pattern matching
+Plugin Environment: IntelliJ Rust plugin 0.2.119.3026-201-nightly, CLion 2020.1 Beta, Rust 1.43.0-nightly, macOS 10.15.4
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Extract Enum Variant intention on `V1` variant
+*/
+/* Error Root Cause:
+Observed failure: After extracting the struct-like variant `V1` into a standalone struct, the refactor fails to update variant construction (`E::V1 { x: 42 }`) and pattern match (`if let E::V1 { x } = v`) sites. The original syntax remains, which becomes invalid because `E::V1` now wraps the new extracted struct.
+Expected behavior:
+1. Generate the extracted struct `V1 { x: i32 }`
+2. Rewrite construction: `E::V1(V1 { x: 42 })`
+3. Rewrite pattern: `if let E::V1(V1 { x }) = v`
+Underlying cause: The usage visitor for Extract Enum Variant does not account for struct-style variant literals and struct patterns, only tuple-variant call expressions.
+*/
+// Before
+enum E {
+    V1 { x: i32 },
+    V2
+}
+
+fn main() {
+    let v = E::V1 { x: 42 };
+    if let E::V1 { x } = v {
+        println!("{}", x)
+    };
+}
+
+// Expected after refactor
+struct V1 { x: i32 }
+enum E {
+    V1(V1),
+    V2
+}
+
+fn main() {
+    let v = E::V1(V1 { x: 42 });
+    if let E::V1(V1 { x }) = v {
+        println!("{}", x)
+    };
+}

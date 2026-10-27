@@ -1,0 +1,23 @@
+```
+<?php
+namespace My\N1 {
+    class C2
+    {
+        const A = 2;
+    }
+}
+namespace N2 {
+    class C
+    {
+        /**
+         * @see \My\N1\C2::A
+         */
+        function f()
+        {
+        }
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move class `My\N1\C2` from namespace `My\N1` into global namespace, refactor PHPDoc references.

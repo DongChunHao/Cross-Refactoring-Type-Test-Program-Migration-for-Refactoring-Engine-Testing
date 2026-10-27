@@ -1,0 +1,16 @@
+```
+<?php
+class UserRepository
+{
+    /**
+     * @return array
+     */
+    public function findAll(): array
+    {
+        return [];
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `UserRepository::findAll()`, change native return type `array` to `User[]`.

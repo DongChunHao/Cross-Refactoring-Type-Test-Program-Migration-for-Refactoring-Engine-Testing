@@ -1,0 +1,25 @@
+int main(int a, char** argv) { // Function "main" to be renamed to "main a"
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: entry‑point function `main`
+Refactoring Scope: entire translation unit
+IDE: Eclipse CDT
+Operation steps: Select function name `main`, invoke Rename refactoring, input string `main a` (contains whitespace) as new function name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts input `main a` containing whitespace character, generates function header `int main a(int a, char** argv)`. Whitespace cannot be part of C identifier; lexical analysis fails, code cannot compile. No early validation or warning is raised during refactoring.
+
+Expected behavior: Perform well‑formed C identifier grammar validation before applying rename transformation:
+1. Identifier may only contain letters, underscores, decimal digits.
+2. First character must be letter or underscore (cannot start with digit).
+3. Reject input containing whitespace, operators, punctuation, special symbols.
+If candidate name violates lexical rules, immediately abort refactoring and show error message to user.
+
+Underlying cause: The rename dialog treats arbitrary user text as potential identifier name, without lexical grammar check. It directly injects raw input string into function declarator, producing lexically invalid source code.
+*/

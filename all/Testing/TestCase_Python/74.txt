@@ -1,0 +1,9 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Dependency collector lacks built‑in‑symbol whitelist; treats built‑in KeyError as user‑defined symbol and generates invalid Python‑2‑style `from exceptions import KeyError` import in destination module
+def a():
+try:
+do_smth()
+except KeyError: // REFACTOR_TARGET
+do_smth()
+def stub_helper():
+pass

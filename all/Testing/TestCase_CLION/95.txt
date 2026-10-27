@@ -1,0 +1,28 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+typedef typeof(sizeof 0) size_t;
+void free(void *);
+typedef struct memory_pool {
+struct memory_pool_item {
+void *p;
+} *items;
+size_t	len;
+} memory_pool;
+struct BasePoolOps
+{
+static void mpool_free(memory_pool *pool)
+{
+for (; pool->len > 0; pool->len--)
+{
+struct memory_pool_item *item = pool->items + pool->len - 1;
+struct memory_pool_item *item2 = item;
+void *p = item2->p;
+free(p);
+}
+}
+};
+struct PoolOps : BasePoolOps //{Push down mpool_free function from BasePoolOps to PoolOps}
+{
+};

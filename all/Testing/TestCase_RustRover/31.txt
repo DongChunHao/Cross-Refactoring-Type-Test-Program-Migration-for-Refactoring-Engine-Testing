@@ -1,0 +1,24 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+mod mod1 {
+pub fn foo() {}
+}
+mod mod2 {
+mod inner1 {
+fn test() { crate::mod1::foo(); }
+}
+mod inner2 {
+fn test() {
+use crate::mod1;
+mod1::foo();
+}
+}
+mod inner3 {
+fn test() {
+use crate::mod1::*;
+foo(); //{rename public function foo inside mod1, retain glob‑import reference context}
+}
+}
+}

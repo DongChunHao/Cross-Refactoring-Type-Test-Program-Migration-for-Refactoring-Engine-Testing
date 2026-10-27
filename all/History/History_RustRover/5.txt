@@ -1,0 +1,19 @@
+/* Refactoring Settings:
+Refactoring Type: Rename (Shift+F6 / Refactor -> Rename)
+Refactoring Target: Function parameter `bar`
+Refactoring Scope: Rust function parameter used inside nested macro invocation
+Plugin Environment: Intellij-Rust plugin v0.2.0.2114-183, IntelliJ 2018.3.3, Windows 10
+Trigger Operation: Place caret on parameter `bar`, run rename and change name to `baz`
+*/
+/* Error Root Cause:
+Observed failure: Rename updates the parameter declaration `bar: u32` to `baz: u32`, but the variable usage `bar` inside the nested `console!` and `format!` macro call is not renamed, which causes a compile error.
+Expected behavior: All variable references including those inside macro argument lists should be renamed consistently.
+Underlying cause: The rename reference collector does not traverse macro call arguments to resolve variable usages inside macro invocations. Identifiers inside macro arguments are not registered as references to the original symbol and are skipped during rename.
+*/
+macro_rules! console {
+    ($level:expr, $msg:expr) => { println!($msg) };
+}
+
+fn foo(bar: u32) {
+    console!(log, format!("something {}", bar));
+}

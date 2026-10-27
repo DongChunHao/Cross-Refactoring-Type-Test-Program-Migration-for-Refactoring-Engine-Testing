@@ -1,0 +1,29 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class C {
+public:
+void caller();
+int callee();
+};
+class D {
+public:
+void bar(C* obj);
+};
+void D::bar(C* obj) {
+int x = 2 + 2;
+obj->callee();
+if (x == 4) {
+obj->callee();
+}
+}
+void C::caller() {
+int x = 2 + 2;
+// refactor beginning vvv
+this->callee(); //{Move this method block to class D::bar}
+if (x == 4) {
+this->callee();
+}
+// refactor ending ^^^
+}

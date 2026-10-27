@@ -1,0 +1,11 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing generator‑method with local variable to‑be‑promoted to class‑field}
+class Pqr {
+*m() {
+let x = 5;
+}
+}
+}

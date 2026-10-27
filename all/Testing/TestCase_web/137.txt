@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+function transformErrorForSerialization(error: any): any {
+if (error instanceof Error) {
+var { name, message } = error; //{Extract Method target destructuring pattern whose identifiers appear later as object‑shorthand properties}
+return {
+$isError: true,
+name,
+message
+};
+}
+}

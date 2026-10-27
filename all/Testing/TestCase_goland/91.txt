@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func main() {
+exp := 1
+items := buildSlice() // extract slice literal into buildSlice
+}
+func buildSlice() []string {
+return []string{"112", "333"}
+}

@@ -1,0 +1,25 @@
+#include <stdio.h>
+// #include <stdarg.h> // Comment out to trigger syntax error on va_arg
+int main(void *var[], va_list ap) {
+    int i=0;
+    void *v;
+    for (;;)
+        v = va_arg(ap, void *); //extract statement
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: statement `v = va_arg(ap, void *);` inside main()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Remove #include <stdarg.h> to create syntax error for va_arg. Select the va_arg assignment statement and invoke Extract Function refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: When source code has syntax error (missing stdarg.h, va_arg unrecognized), invoking Extract Function triggers an uncaught ProblemRuntimeException in ASTWriter. The refactoring crashes instead of graceful handling. If stdarg.h is present and AST is valid, refactoring works normally.
+Expected behavior: Before starting refactoring transformation, detect that the selected AST contains problem/error nodes. Show a user-friendly warning dialog stating that syntax errors prevent refactoring, and abort refactoring cleanly, without throwing runtime exceptions.
+Underlying cause: The refactoring pipeline does not validate for AST problem nodes before entering AST rewrite and code generation phase. The ASTWriter assumes all AST nodes are valid and hits runtime exception when encountering CASTProblemStatement (syntax error node).
+*/

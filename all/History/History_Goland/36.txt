@@ -1,0 +1,37 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: Function `foo(b string, a string, c ...string)`
+Refactoring scope: Swap the positions of the first two non-variadic parameters `b` and `a`
+Refactoring rule: When rewriting call sites after reordering parameters, preserve the `...` spread operator for slice arguments passed to the variadic parameter.
+*/
+
+/* Error Root Cause:
+Observed failure: After swapping `b` and `a` in `foo`’s signature, the call site `foo("two", "one", cs...)` becomes `foo("one", "two", cs)`. The `...` suffix is lost, turning a slice spread into passing the slice directly, which is a type error.
+Expected behavior: Rewrite positional arguments only, keep `cs...` intact: `foo("one", "two", cs...)`.
+Underlying cause: The call-site argument rewriter does not track whether an argument is a variadic spread expression; it substitutes the expression node but discards the `...` modifier.
+*/
+
+func main() {
+	cs := []string{"c", "d", "e"}
+	foo("two", "one", cs...)
+}
+
+func foo(b string, a string, c ...string) {}
+
+// Bad actual output after refactor
+/*
+func main() {
+	cs := []string{"c", "d", "e"}
+	foo("one", "two", cs)
+}
+*/
+
+// Expected correct output after refactor
+/*
+func main() {
+	cs := []string{"c", "d", "e"}
+	foo("one", "two", cs...)
+}
+*/

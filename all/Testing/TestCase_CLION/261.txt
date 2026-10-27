@@ -1,0 +1,17 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+// MoveMethod.h
+class BaseAbstract
+{
+public:
+virtual ~BaseAbstract() {}
+};
+class MoveMethodAbstractInline : public BaseAbstract //{Push down destructor implementation from BaseAbstract to MoveMethodAbstractInline}
+{
+public:
+virtual ~MoveMethodAbstractInline() override
+{
+}
+};

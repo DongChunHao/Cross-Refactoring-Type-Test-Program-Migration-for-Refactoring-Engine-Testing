@@ -1,0 +1,26 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+template 
+class testT{
+public:
+testT() {}
+virtual ~testT(){}
+void print(T t) {
+std::cout << t << std::endl;
+}
+};
+struct Wrapper
+{
+template
+void wrapperPrint(testT<T>& obj, T val) { //{Move print call logic into struct Wrapper member function}
+obj.print(val);
+}
+};
+int main() {
+testT<int> tt;
+Wrapper w;
+w.wrapperPrint(tt,1);
+}

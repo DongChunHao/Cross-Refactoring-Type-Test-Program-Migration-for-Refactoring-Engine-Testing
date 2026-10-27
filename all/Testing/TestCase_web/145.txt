@@ -1,0 +1,14 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding class for multi‑run Extract‑Superclass duplicate‑super() reproduction scenario}
+class Car {
+constructor(brand) {
+this.carname = brand;
+}
+present(x) {
+return x + ", I have a " + this.carname;
+}
+}
+}

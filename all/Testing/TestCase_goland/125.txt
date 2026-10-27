@@ -1,0 +1,20 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// main.go
+package main
+type MyFirstType struct {
+field *MySecondType
+}
+func (m *MyFirstType) Name() {
+invokeSet(m.field) // extract Set call into invokeSet
+}
+func invokeSet(s *MySecondType) {
+s.Set()
+}
+func main() {}
+
+// another.go
+package main
+type MySecondType struct{}

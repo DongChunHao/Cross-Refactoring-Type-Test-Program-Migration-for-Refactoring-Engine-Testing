@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pack1
+type Holder struct{}
+/* doc */
+func (h Holder) foo() {}
+func caller() {
+holder := Holder{}
+holder.foo() // move foo method from Holder to standalone function
+}

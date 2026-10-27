@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+use std::fs::read_to_string;
+fn main() {
+let args: Vec<String> = std::env::args().collect();
+let s: &String = &args[1];
+let file: &String = &args[2]; //{move consecutive let statements block into nested inner function}
+let content: String = read_to_string(file).expect("Some error");
+println!("{:#?}", content);
+}

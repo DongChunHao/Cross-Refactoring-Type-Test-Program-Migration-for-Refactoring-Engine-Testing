@@ -1,0 +1,15 @@
+```
+<?php
+interface MailBuilderInterface {
+    function __construct();
+}
+class MailMessage implements MailBuilderInterface {
+    function __construct()
+    {
+    }
+}
+new MailMessage("hello");
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `__construct` in interface `MailBuilderInterface`, rename to `buildMail`

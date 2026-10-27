@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+function transformErrorForSerialization(error: any): any {
+if (error instanceof Error) {
+var { name, message } = error;
+return {
+$isError: true,
+name, //{Move Method target shorthand‑property usage of identifiers from preceding destructuring}
+message
+};
+}
+}

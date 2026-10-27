@@ -1,0 +1,11 @@
+```
+<?php
+function f($b) {
+    $a = 1;
+    echo $a;
+    echo $b;
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `f`, rename parameter `$b` to `$a`.

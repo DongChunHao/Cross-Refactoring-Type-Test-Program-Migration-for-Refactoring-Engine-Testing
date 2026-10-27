@@ -1,0 +1,13 @@
+```
+<?php
+class BaseUser{
+    private $email;
+}
+class User extends BaseUser{
+    public function __construct(){
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target constructor of class `User`, add new parameter `$email` and auto-generate assignment `$this->email = $email`

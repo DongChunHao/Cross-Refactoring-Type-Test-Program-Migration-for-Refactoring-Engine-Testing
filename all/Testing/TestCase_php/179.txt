@@ -1,0 +1,9 @@
+```
+<?php
+function sendMail($to, $subject = null, ...$attachments) {
+    var_dump($to, $subject, $attachments);
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target function `sendMail`

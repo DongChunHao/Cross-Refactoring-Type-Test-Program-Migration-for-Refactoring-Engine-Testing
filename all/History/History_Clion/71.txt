@@ -1,0 +1,38 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: expression `int x = mytype::val;` inside function baz()
+Operation: Select the line `int x = mytype::val;`, invoke Extract Method refactoring, name new helper `access_mytype`
+Scope: Preserve user-written type alias `mytype` in generated code; do NOT expand the alias to its fully qualified underlying type unless user explicitly requests alias expansion.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extraction, refactoring expands `mytype::val` into `foo::bar::quux::klass::val`.
+The user used the alias `mytype` and expected the extracted code to retain `mytype::val`.
+
+Expected behavior:
+Generated helper function:
+int access_mytype() {
+    int x = mytype::val;
+    return x;
+}
+
+Underlying cause:
+The refactoring engine resolves the type alias to its underlying fully-qualified type during AST processing and writes the expanded type into the new function source, instead of preserving the original user-written alias identifier.
+*/
+
+namespace foo {
+    namespace bar {
+        namespace quux {
+            struct klass {
+                static constexpr int val = 1;
+            };
+        }
+    }
+}
+
+using mytype = foo::bar::quux::klass;
+
+void baz() {
+    int x = mytype::val; // perform "Extract method" here
+}

@@ -1,0 +1,25 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: function f($a, $b)
+Scope: named argument call-site rewriting
+Refactoring operation: reorder parameters or insert new parameter
+*/
+
+/* Error Root Cause:
+Observed failure:
+When using Change Signature to reorder parameters or add a new parameter to `f($a, $b)`, existing call sites using PHP named arguments like `f(b: 2, a: 1)` are rewritten incorrectly; the named parameter labels get dropped, turning into positional arguments and breaking the call.
+PHP named arguments are bound by parameter name, not position, so reordering formal parameters should NOT alter named call sites.
+
+Expected behavior:
+1. Preserve named argument syntax `paramName: value` at call sites.
+2. Only adjust positional arguments when parameter order changes; named arguments stay mapped by their parameter name.
+3. When inserting a new optional parameter, only inject the new argument into positional calls; named calls remain untouched unless the new parameter is required.
+
+Underlying cause:
+The call-site argument rewriter assumes all arguments are positional and uses index-based mapping. It does not separate named arguments from positional ones and does not retain the `name:` label, so it recomputes positions naively and discards the named binding information.
+*/
+function f($a, $b){
+}
+f(b: 2, a: 1);
+?>

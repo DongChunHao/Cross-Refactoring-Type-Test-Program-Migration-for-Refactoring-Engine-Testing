@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Test {
+method(): TestChild { //{Move Method target method subject to Change‑Signature, body contains new TestChild(this)}
+return new TestChild(this);
+}
+}
+class TestChild {
+constructor() {}
+}

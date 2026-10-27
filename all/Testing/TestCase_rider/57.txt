@@ -1,0 +1,27 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace Trackable.Repositories
+{
+public abstract class EntityBase<TKey> where TKey : IEquatable<TKey> { }
+public abstract class ModelBase<TKey> where TKey : IEquatable<TKey> { }
+public abstract class DbRepositoryBase<TKey, TData, TModel>
+where TData : EntityBase<TKey>
+where TModel : ModelBase<TKey>
+where TKey : IEquatable<TKey>
+{
+public abstract void SampleOperation(); //{Extract Method: target interface implementation member for rename‑undo analysis‑state‑loss bug reproduction}
+}
+
+public interface IDbQueryRepository<TKey, TData, TModel>
+where TData : EntityBase<TKey>
+where TModel : ModelBase<TKey>
+where TKey : IEquatable<TKey>
+{
+DbRepositoryBase<TKey, TData, TModel> DbBaseRepository { get; }
+}
+
+}

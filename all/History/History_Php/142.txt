@@ -1,0 +1,25 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: D::bar(#[ExampleAttribute] int $a): int
+Operation: Add a new float parameter $b after $a
+Scope: Parameter-level PHP attribute preservation on method parameters
+*/
+
+/* Error Root Cause:
+Observed failure: After adding new parameter $b via Change Signature, the parameter attribute #[ExampleAttribute] on $a is lost.
+Expected behavior: Parameter attributes attached to existing parameters should be preserved; the result should be #[ExampleAttribute] public function bar(#[ExampleAttribute] int $a, float $b): int.
+Underlying cause: The Change Signature parameter serialization logic does not persist parameter-attached attribute PSI nodes when rebuilding the method signature, only retaining type, name and modifiers.
+*/
+#[Attribute]
+class ExampleAttribute{ }
+
+#[ExampleAttribute]
+class D{
+    #[ExampleAttribute]
+    public function bar(#[ExampleAttribute] int $a): int
+    {
+        return $a;
+    }
+}
+?>

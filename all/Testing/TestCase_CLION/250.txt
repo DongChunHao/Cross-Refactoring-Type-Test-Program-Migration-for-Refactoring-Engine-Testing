@@ -1,0 +1,28 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+namespace me {
+class BaseWindowManager
+{
+public:
+virtual bool handle(MirEvent const& event) = 0; //{Pull up handle declaration into BaseWindowManager}
+};
+class WindowManager : public BaseWindowManager {
+public:
+bool handle(MirEvent const& event) override;
+private:
+FocusController* focus_controller;
+};
+}
+bool me::WindowManager::handle(MirEvent const& event)
+{
+static bool display_off = false;
+if (event.key.modifiers & mir_key_modifier_alt && event.key.scan_code == KEY_TAB)
+{
+focus_controller->focus_next_session();
+if (auto const surface = focus_controller->focused_surface())
+focus_controller->raise({surface});
+return true;
+}
+}

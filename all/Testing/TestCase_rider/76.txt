@@ -1,0 +1,33 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+Imports System.Linq
+
+Module VbNetReproModule
+Sub Main()
+Dim source As IEnumerable(Of ModuleItem) = Enumerable.Empty(Of ModuleItem)()
+Dim flows As IEnumerable(Of FlowItem) = Enumerable.Empty(Of FlowItem)()
+
+Dim result = source _
+.Join(flows,
+Function(xModule) xModule.flowId,
+Function(flow) flow.id,
+Function(ei, fi) New With {ei, fi.pollId, .pollName = fi.Poll.name}) ' {Move Method: target VB LINQ‑join projection lambda for stale‑inplace‑editor‑PSI‑corruption bug reproduction}
+End Sub
+
+End Module
+
+Public Class ModuleItem
+Public Property flowId As Integer
+End Class
+
+Public Class FlowItem
+Public Property id As Integer
+Public Property pollId As Integer
+Public Property Poll As PollItem
+End Class
+
+Public Class PollItem
+Public Property name As String
+End Class

@@ -1,0 +1,13 @@
+```
+<?php
+interface RootContract{}
+interface JsonContract extends RootContract{
+    const FORMAT = "json"; // Pull Up target
+}
+class ApiResponder implements RootContract{
+    const FORMAT = "json";
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target constant `FORMAT` in interface `JsonContract`, target destination: `RootContract`

@@ -1,0 +1,17 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: Partial selection inside template literal `${x}` expression / surrounding template text
+Refactoring Scope: JavaScript file
+Trigger Operation: Select part of template literal content including the embedded expression and run Extract Variable
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Variable on a partial range inside template literal that crosses the embedded expression `${x}` produces broken syntax. The refactoring does not properly split the template string parts and the interpolation expression.
+Expected behavior: Either reject invalid partial selections inside template literals, or correctly split template literal into multiple template segments with the extracted variable.
+Underlying cause: The refactoring treats the selected template text as a plain string expression and does not preserve template literal interpolation AST structure when the selection spans `${...}` boundaries.
+*/
+
+// Complete compilable test code
+console.log(`string text line 1 ${x} string text line 2`);

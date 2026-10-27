@@ -1,0 +1,11 @@
+```
+<?php
+class FormBase {
+    public bool $valid;
+}
+class LoginForm extends FormBase {
+}
+?>
+```
+
+【Refactoring Action】: Push down native typed property `public bool $valid` from parent `FormBase` to subclass `LoginForm`.

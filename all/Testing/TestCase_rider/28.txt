@@ -1,0 +1,31 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System;
+using System.Collections.Generic;
+
+public class BinaryHeap
+{
+protected List<int> HeapData = new();
+protected int LChild(int i) => 2 * i + 1;
+protected int RChild(int i) => 2 * i + 2;
+protected bool LChildValid(int i) => LChild(i) < HeapData.Count;
+protected bool RChildValid(int i) => RChild(i) < HeapData.Count;
+protected bool Ordered(int a, int b) => HeapData[a] <= HeapData[b];
+protected int Smaller(int i, int j) => Ordered(i, j) ? i : j; //{Change Method: refactor target invoked nested inside ternary branches}
+protected int ProperParent(int i) =>
+RChildValid(i)
+? Smaller(Smaller(i, LChild(i)), RChild(i))
+: (LChildValid(i) ? Smaller(i, LChild(i)) : i);
+}
+
+public static class HeapTests
+{
+public static void TestProperParentThrowsAfterInlining()
+{
+var heap = new BinaryHeap();
+heap.HeapData.AddRange(new[] { 10, 20 });
+_ = heap.ProperParent(0);
+}
+}

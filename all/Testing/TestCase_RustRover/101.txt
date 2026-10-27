@@ -1,0 +1,14 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+use std::sync::Mutex;
+fn use_mutex(m: &Mutex<u32>) { //{change use_mutex method signature, add dummy parameter}
+let mut mx = m.lock().unwrap();
+*mx += 1;
+}
+fn main() {
+let m = Mutex::new(0);
+use_mutex(&m);
+println!("{}", m.lock().unwrap());
+}

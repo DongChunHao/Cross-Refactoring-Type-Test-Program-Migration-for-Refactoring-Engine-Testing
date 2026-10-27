@@ -1,0 +1,29 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: the if/else block inside while(1) loop in A()
+Operation: Select code block and invoke Extract Method, name new method B
+Scope: Dataflow analysis to detect variable mutation; pass variable by reference when extracted code modifies outer scope local variable; avoid long UI freezes / high CPU during refactoring preview computation for large code blocks
+*/
+
+/* Error Root Cause:
+Observed failures:
+1. Performance issue: Large code block triggers heavy dataflow analysis, causing JVM 100% CPU and multi-minute UI freeze. Even with abundant RAM, the control-flow/dataflow algorithm has high computational complexity.
+2. Semantic bug: The local variable `b` is modified inside extracted block (`b=0`). Extract Method passes `int b` by value (copy), so changes inside B() only modify the local copy and never affect the outer `b` in A(), breaking program logic.
+Expected behavior: Detect that `b` is mutated in extracted code and promote parameter to reference `int &b`, call `B(b)` in outer function.
+Underlying cause: The extract method dataflow analysis either times out / is incomplete for larger code blocks, fails to detect writes to the outer local variable. It treats variable as read-only value instead of mutable reference and chooses pass-by-value.
+*/
+
+void C(int);
+bool x;
+
+void A()
+{
+    int b = 0;
+    while(1)
+    {
+        if (x)
+            b= 0;
+        else
+            C(b);
+    }
+}

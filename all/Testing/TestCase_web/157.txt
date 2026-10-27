@@ -1,0 +1,7 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+let student;
+let {name = 'Jane', age} = student;
+console.log(name); //{Move Method target reference site of destructured variable carrying fallback default value}

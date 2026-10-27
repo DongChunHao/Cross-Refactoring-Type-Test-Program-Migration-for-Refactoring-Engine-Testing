@@ -1,0 +1,7 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+function demo() {
+let temp = 1 + 2; //{Rename Variable on temp}
+}

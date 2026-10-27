@@ -1,0 +1,29 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Extract Method refactoring
+Refactoring target: selected block `$var = new stdClass(); $var->val1 = true;` inside Test::testA()
+Scope: selected code block, surrounding usage of $var, generated new method testB() and its call site
+Refactoring operation: extract selected statements into a new private static method testB()
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method assumes the variable $var produced in the extracted block is consumed at the call site, generates a return value and assigns the result to $var. However, the subsequent code immediately overwrites $var, making the returned value unused, creating dead assignment. The refactoring does not detect that the resulting variable is overwritten and unused after extraction.
+Expected behavior: Detect that the extracted block’s resulting $var is overwritten and never read afterwards. Generate testB() as void returning, emit a bare call `self::testB();` without `$var =` assignment, and omit the return statement inside testB().
+Underlying cause: The extract method dataflow analysis only sees that $var is defined inside the selection, but does not trace forward to discover that this definition is killed (overwritten) before any read occurs. It always treats the last defined variable of the selection as a needed return value candidate.
+*/
+/**
+ * Class Test
+ */
+class Test {
+    private static function testA()
+    {
+        // Select this:
+        $var       = new stdClass();
+        $var->val1 = true;
+
+        // Keep this:
+        $var       = new stdClass();
+        $var->val1 = false;
+    }
+}
+?>

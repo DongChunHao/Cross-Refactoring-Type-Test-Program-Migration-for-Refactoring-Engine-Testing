@@ -1,0 +1,18 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <vector>
+class Base
+{
+public:
+virtual void main() = 0; //{Pull up main declaration into Base}
+};
+class Impl : public Base
+{
+public:
+void main() override {
+std::vector<int> v;
+v.push_back(1);
+}
+};

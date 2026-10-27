@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: interface method I::foo()
+Scope: PHPDoc comment and method signature
+Refactoring operation: add new parameter $c to the method
+*/
+
+/* Error Root Cause:
+Observed failure: After adding parameter $c via Change Signature, three defects occur: the existing @throws \Exception tag is deleted; an unwanted blank line is inserted between PHPDoc parameter sections; an empty @return tag is automatically appended.
+Expected behavior: Preserve all unrelated PHPDoc tags including @throws; insert the new @param $c tag without introducing extra blank lines; do not inject an empty @return tag if the original PHPDoc did not contain a return tag.
+Underlying cause: The PHPDoc rebuild logic for Change Signature only retains @param tags and discards other annotation types such as @throws. The comment formatter has hardcoded paragraph/line splitting rules that add blank separators. It also unconditionally adds a @return placeholder during doc regeneration regardless of whether a return tag was present originally.
+*/
+interface I {
+    /**
+     * @param int $a
+     * @param int $b
+     *
+     * @throws \Exception
+     */
+    function foo($a, $b);
+}
+?>

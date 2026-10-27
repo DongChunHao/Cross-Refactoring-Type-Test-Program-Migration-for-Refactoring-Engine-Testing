@@ -1,0 +1,12 @@
+```
+<?php
+$logger = new class {
+    public function writeLog(string $msg): void
+    {
+        echo "[LOG] ".$msg;
+    }
+};
+?>
+```
+
+【Refactoring Action】: Pull Up Members refactoring, target `writeLog()` inside anonymous class.

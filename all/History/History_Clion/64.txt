@@ -1,0 +1,33 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (CLion C++ refactoring), test case arArg
+Refactoring target: static method `A::create`
+Operation: Invoke Rename refactoring to rename `create` to `createCreate`
+Scope: Rename only the method identifier in all call sites. Preserve all function arguments inside the method call. Must keep original parameters `(1,2,3,4,5)` in the call expression.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming static method `A::create` to `createCreate`, the refactoring deletes all arguments from the call site.
+Original call: `A::create(1,2,3,4,5);`
+After rename: `A::createCreate();`
+All arguments are lost.
+
+Expected behavior:
+The call after rename should retain all arguments:
+`A::createCreate(1,2,3,4,5);`
+
+Underlying cause:
+Rename refactoring for variadic functions (using `...`) incorrectly drops the argument list during AST rewriting. The symbol visitor only renames the function identifier but discards the call’s parameter list, producing invalid code.
+*/
+
+struct A {
+    static A &create(...) {
+        static A a;
+        return a;
+    }
+};
+
+int main() {
+    A::create(1,2,3,4,5); //!rename method to createCreate!
+    return 0;
+}

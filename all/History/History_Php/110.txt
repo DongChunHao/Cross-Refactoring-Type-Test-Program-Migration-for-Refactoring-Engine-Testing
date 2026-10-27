@@ -1,0 +1,21 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: root-namespace class Foo
+Scope: file-level statements, namespace declaration, declare(strict_types=1)
+Refactoring operation: move Foo into namespace Bar
+*/
+
+/* Error Root Cause:
+Observed failure: After moving the class to namespace Bar, the refactoring inserts `namespace Bar;` before `declare(strict_types=1);`. This is invalid PHP, since `declare(strict_types=1)` must be the very first statement in the file.
+Expected behavior: Keep `declare(strict_types=1);` as the first line, then output the namespace declaration afterwards. Correct result:
+<?php declare(strict_types=1);
+namespace Bar;
+use BaseActiveRecord;
+class Foo extends BaseActiveRecord {}
+Underlying cause: The file rewriter for Move Class prepends the namespace statement unconditionally to the top of the file, without checking for an existing leading declare strict_types directive.
+*/
+<?php declare(strict_types=1);
+use BaseActiveRecord;
+class Foo extends BaseActiveRecord {}
+?>

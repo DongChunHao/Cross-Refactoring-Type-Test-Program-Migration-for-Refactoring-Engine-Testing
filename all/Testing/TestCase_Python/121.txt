@@ -1,0 +1,11 @@
+''' Refactoring Settings:
+Refactoring type: Change method refactoring, trigger point is call‑site myfunct() inside third()
+'''
+def myfunct(name):
+    print(name, 'hola')
+
+def second():
+    myfunct('second')
+
+def third():
+    myfunct('third')

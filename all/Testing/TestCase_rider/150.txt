@@ -1,0 +1,16 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+namespace ClassLibrary4
+{
+public abstract class BaseClass1 {}
+
+public class Class1 : BaseClass1
+{
+public void Execute() //{Pull Up Method: target method for move‑cycle‑remove‑source‑file‑duplicate‑class‑declaration‑bug reproduction}
+{
+}
+}
+
+}

@@ -1,0 +1,12 @@
+```
+<?php
+class InvoiceService
+{
+    public function query($customerId, $status='draft', $page=1, $pageSize=20, $includeDeleted=false)
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature on `InvoiceService::query()`

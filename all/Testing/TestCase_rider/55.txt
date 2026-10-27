@@ -1,0 +1,21 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+using UnityEditor;
+using UnityEngine;
+
+namespace DefaultNamespace
+{
+public abstract class BaseLog { }
+
+public static class MyLog : BaseLog
+{
+[MenuItem("Test/Log")]
+public static void LogSomething() //{Pull Up Method: target log‑emitting method for Unity stale‑path navigation bug reproduction}
+{
+Debug.Log("Test");
+}
+}
+
+}

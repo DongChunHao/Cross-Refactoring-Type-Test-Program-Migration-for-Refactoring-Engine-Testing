@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring type: Extract Variable (CLion C/C++ refactoring)
+Refactoring target: string literal `"Illiteral"` inside function f()
+Operation: Invoke Extract Variable refactoring on the string literal
+Scope: Use correct type for string literals; string literals have type const char[N], refactoring should generate const char* or const char[N] appropriately, avoid plain char array without const qualifier
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extract variable, generated code:
+`char string[10] = "Illiteral";`
+This creates a mutable char array, which changes semantics. The original `"Illiteral"` is a string literal with type `const char[10]`.
+
+Expected behavior:
+Option1: `const char string[10] = "Illiteral";`
+Option2: `const char* string = "Illiteral";`
+
+Underlying cause:
+Regression bug in type inference for string literals during Extract Variable. The refactoring engine drops the `const` qualifier and creates a mutable local char array instead of preserving the const nature of string literal.
+*/
+
+void f() {
+    "Illiteral";
+}

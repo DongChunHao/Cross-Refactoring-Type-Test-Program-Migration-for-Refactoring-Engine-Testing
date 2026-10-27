@@ -1,0 +1,41 @@
+```
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: all code lines inside main() function
+Operation: Select all code inside main(), invoke Extract Method refactoring, name new function dd
+Scope: Preserve original namespace qualifier `std::` for template function `std::get<N>`. Must retain `std::get<0>(p2)` instead of stripping `std::`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extracting method, refactoring removes `std::` from `std::get<0>`, generating `get<0>(p2)`. This is invalid code. The bug reproduces on macOS with Clang, cannot reproduce with GCC8. The issue is marked as side-effect of CPP-8312.
+
+Expected behavior:
+Extracted helper function dd() should keep std:: prefix:
+```cpp
+void dd() {
+    std::tuple<int, std::string, float> p1, p2;
+    p1 = std::make_tuple(10, "test", 3.14);
+    p2.swap(p1);
+    std::cout << "(" << std::get<0>(p2)
+              << ", " << std::get<1>(p2)
+              << ", " << std::get<2>(p2) << ")\n";
+}
+```
+
+Underlying cause:
+Side effect of ticket CPP-8312. The refactoring engine’s namespace qualification logic incorrectly strips `std::` from template function `std::get<Index>` during extraction. This is a compiler-specific bug, only triggered under Clang/macOS environment, not observable with GCC8.
+*/
+
+#include <iostream>
+#include <tuple>
+#include <string>
+
+int main() {
+std::tuple<int, std::string, float> p1, p2;
+p1 = std::make_tuple(10, "test", 3.14);
+p2.swap(p1);
+std::cout << "(" << std::get<0>(p2) //loose std::
+<< ", " << std::get<1>(p2)
+<< ", " << std::get<2>(p2) << ")\n";
+}

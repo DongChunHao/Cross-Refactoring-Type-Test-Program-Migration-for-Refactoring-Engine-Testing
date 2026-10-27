@@ -1,0 +1,44 @@
+#define A // Macro to be renamed
+int main(int argc, char** argv) {
+    int a;
+#ifdef A
+    a = 1;
+#endif
+#ifdef B
+    a = 2;
+#endif
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename)
+Refactoring Target: preprocessor macro `A`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro definition `A`, invoke Rename refactoring, set new macro name `B`. Macro `B` already exists in preprocessor namespace.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+Two critical defects jointly produce behaviour‑changing transformation：
+1. **Missing preprocessor‑directive reference update**:
+The definition `#define A` is correctly rewritten to `#define B`. But the usage `#ifdef A` inside source is not updated; CDT does not traverse tokens within `#ifdef` nodes. The old reference `#ifdef A` still tests the now‑gone macro A (undefined).
+2. **Missing preprocessor‑namespace collision check**:
+There is already an existing macro `B` in preprocessor symbol table. Refactoring does not check macro namespace for name conflict. After rename, original `#ifdef B` refers to the newly‑renamed macro.
+
+Semantic change:
+‑ Original logic: macro A is defined → executes `a=1`; macro B is undefined → skip `a=2`. Return value is 1.
+‑ After refactoring: A is undefined, B is defined → skips `a=1`, executes `a=2`. Return value becomes 2.
+No compile‑time error or warning; program silently changes logic.
+
+Expected behavior:
+1. Before performing macro rename, lookup candidate name inside **preprocessor macro symbol table**. If `B` is already defined as a macro, reject rename and report name collision.
+2. When candidate name is valid and collision‑free: collect every occurrence of the macro identifier, including inside `#ifdef`, `#ifndef`, `#if defined()`, `#elif defined()`. All references must be synchronously updated.
+3. If some usages are inside complex macro expansion making static rewrite unsafe, present user warning listing unreachable usages.
+
+Underlying cause:
+1. Refactoring’s symbol‑conflict detection only queries C/C++ AST symbol table (variables, functions, typedefs), **ignores preprocessor macro namespace**. Existing macro `B` is not detected as conflict.
+2. Preprocessor conditional directives (`#ifdef`/`#ifndef`) are treated as out‑of‑band nodes outside main AST traversal. Rename usage‑collection pass never visits these tokens; references in preprocessor conditionals are left stale.
+*/

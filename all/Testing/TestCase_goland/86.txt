@@ -1,0 +1,22 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Person struct {
+name string
+age int
+}
+type PersonAccessor struct{}
+func (a PersonAccessor) Age(p Person) int { // move Age method from PersonAccessor to Person receiver method
+return p.age
+}
+func (a PersonAccessor) SetAge(p *Person, age int) { // move SetAge method from PersonAccessor to Person pointer receiver method
+p.age = age
+}
+func main() {
+var p Person
+acc := PersonAccessor{}
+acc.SetAge(&p, 18)
+_ = acc.Age(p)
+}

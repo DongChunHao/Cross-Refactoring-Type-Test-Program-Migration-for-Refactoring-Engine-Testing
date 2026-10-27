@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: compute_len_literal
+'''
+unsigned operator""_len(char const* , unsigned long l) {
+return l;
+}
+int foo() { //{Rename method foo to compute_len_literal}
+auto s = "bar"_len;
+return s;
+}

@@ -1,0 +1,38 @@
+#define A // Id to be renamed
+int main(int argc, char** argv) {
+    int a;
+#ifdef A
+    a = 1;
+#endif
+#ifndef A
+    a = 2;
+#endif
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename)
+Refactoring Target: preprocessor macro `A`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro `A`, invoke Rename refactoring, input `not A` (contains whitespace) as new macro name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+Two distinct bugs manifest together：
+1. Lexical validation missing: input `not A` includes whitespace. The generated `#define not A` creates macro `not` whose replacement text is `A`, rather than renaming macro `A` to `not A`. Macro names cannot contain whitespace; the input itself is an invalid macro identifier.
+2. Incomplete reference updating: even ignoring the invalid‑name problem, all preprocessor conditional references `#ifdef A` / `#ifndef A` retain old identifier `A`. They are not rewritten to the new macro name.
+Final program semantics are completely changed. Original logic toggles two assignment branches based on macro A; after refactoring old macro A still remains undefined, so only `#ifndef A` branch executes. No compile error is triggered; program silently changes behaviour.
+
+Expected behavior:
+1. Strict lexical check for macro identifier before applying transformation: macro identifiers follow C identifier rules, whitespace is forbidden. Detect whitespace inside candidate name `not A`, reject rename and show error message.
+2. When candidate name is lexically valid: collect **all occurrences** of the macro identifier, including inside `#ifdef`, `#ifndef`, `#if defined()`, `#elif defined()` preprocessor directives; every reference must be renamed synchronously.
+3. If any macro reference is located inside complex macro expansion where static analysis cannot safely rewrite, issue explicit warning to user.
+
+Underlying cause:
+1. Macro‑rename refactoring does not reuse C identifier lexical validator for user‑input string; raw text is directly output into `#define` line. Preprocessor splits tokens at whitespace, corrupting macro definition.
+2. CDT’s main‑AST traversal does **not visit tokens inside preprocessor conditional directives**. Those preprocessing‑node tokens are treated outside normal symbol‑usage collection, so references in `#ifdef/#ifndef` are missed during rename rewrite pass.
+*/

@@ -1,0 +1,9 @@
+<?php
+// UserHelper.php
+class UserHelper {
+    public static function renderName(): string {
+        return "user";
+    }
+}
+?>
+【Refactoring Action】: Move Class refactoring, move `UserHelper` into namespace `App\Helpers`.

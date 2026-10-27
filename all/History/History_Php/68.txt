@@ -1,0 +1,38 @@
+<?php
+function main() {
+    $refactorMe = 'Hello World!' . PHP_EOL;
+
+    $a = function () use ($refactorMe) {
+        $fail = function () use ($refactorMe) {
+            echo $refactorMe;
+        };
+        return $fail;
+    };
+
+    $functionToRun = $a();
+    $functionToRun();
+}
+main();
+?>
+/* Refactoring Settings:
+Refactoring type: Rename variable refactoring
+Refactoring target: $refactorMe in outer function main(), rename to $refactored_name
+Refactoring rule: Rename refactoring must traverse nested closure use-clauses and all variable usages inside nested closures, not only the immediate parent closure. All occurrences bound to the same outer variable must be updated consistently.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming $refactorMe, only the use($refactorMe) in the first closure $a is renamed. The nested $fail closure’s use($refactorMe) and echo $refactorMe are left unchanged.
+The nested closure captures the same outer variable from main(), but the rename visitor does not descend into nested closure scopes to collect all usages.
+
+Expected behavior:
+All references to this variable:
+- Original definition $refactorMe = ...
+- use($refactorMe) in $a
+- use($refactorMe) in $fail
+- echo $refactorMe inside $fail
+should all be renamed to $refactored_name.
+
+Underlying cause:
+The variable usage collector stops at the first closure boundary. It treats the inner closure’s use variable as a separate local binding instead of following the capture chain back to the original variable in main().
+*/

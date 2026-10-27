@@ -1,0 +1,27 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include<stdio.h>
+#include<stdlib.h>
+struct BaseMatrixOp {
+virtual void matrixOp(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m) = 0; //{Pull up matrixOp declaration into BaseMatrixOp}
+};
+struct MatrixOp : BaseMatrixOp {
+void matrixOp(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m) override {
+int i,j;
+for(i=0;i<*n;i++)
+for(j=0;j<*m;j++)
+N[i][j]=M[i][j]-A[i][j];
+}
+};
+int main(){
+int A[5][4];
+int M[5][4];
+int N[5][4];
+int W[1][4];
+int n=5,m=4;
+MatrixOp op;
+op.matrixOp(A,N,M,W,&n,&m);
+return 0;
+}

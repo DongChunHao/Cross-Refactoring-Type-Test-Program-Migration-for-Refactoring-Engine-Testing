@@ -1,0 +1,20 @@
+package main
+
+import "fmt"
+
+/* Refactoring Settings:
+Refactoring type: Quick Fix / Introduce Variable / Create Parameter
+Refactoring target: Quick fix on undefined identifier `a` inside `main()`
+Refactoring scope: Identifier `a` in `fmt.Println(a)`
+Refactoring rule: Do not offer "create parameter" quick fix for the special `main` function in package main.
+*/
+
+/* Error Root Cause:
+Observed failure: The IDE quick fix menu suggests creating a new parameter `a` for `func main()`. Go language disallows parameters on `func main()` in package main; this fix would produce invalid code.
+Expected behavior: The quick fix filter should exclude the create-parameter option for `main` in package main, and only show applicable alternatives such as create local variable, create global variable.
+Underlying cause: The quick fix provider does not add a special case check for package main and the main function, so it offers the parameter creation fix unconditionally.
+*/
+
+func main() {
+	fmt.Println(a)
+}

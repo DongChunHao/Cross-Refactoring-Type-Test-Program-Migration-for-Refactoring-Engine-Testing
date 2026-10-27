@@ -1,0 +1,21 @@
+''' Refactoring Settings:
+Refactoring type: Move class refactoring
+Refactoring target: class A
+Refactoring destination: another module named mod
+Refactoring scope: source file containing function foo2, docstring rtype annotations
+Refactoring rule expectation: After moving class A to module mod, all references including docstring :rtype: directives shall update to use new qualified name mod.A.
+'''
+''' Error Root Cause:
+Observed failure: When moving class A into another module mod, the :rtype: A entry inside foo2 docstring is not updated, remains ":rtype: A".
+Expected behavior: The return‑type reference in docstring :rtype: should be rewritten to ":rtype: mod.A" reflecting new module location of class A.
+Underlying cause: Move refactoring logic updates code‑level import and identifier references, but skips parsing and updating reStructuredText‑style :rtype: docstring type annotations; docstring content is treated as plain text and not processed for symbol reference rewriting.
+'''
+class A:
+    pass
+
+
+def foo2(p):
+    """
+    :rtype: A
+    """
+    pass

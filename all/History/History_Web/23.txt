@@ -1,0 +1,22 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Rename Variable (inline rename)
+Refactoring Target: variable titleLabel
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Trigger inline rename on identifier titleLabel.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The inline rename function replaces titleLabel with the new name "e" too eagerly, performing naive text substitution instead of AST-based identifier binding renaming.
+Expected behavior: Rename should only modify AST nodes that are actual variable references of titleLabel, ignoring text matches in unrelated contexts, and respect lexical scope.
+Underlying cause: The inline rename implementation uses simple textual search-and-replace rather than precise scope-aware reference resolution, causing unintended replacements.
+*/
+
+// Complete compilable test code
+function BiTimer() {}
+BiTimer.callOnce(function BiSelectionModel_i_ontick__selectAll_PATCH(e) {
+    for (var i = start; i < end; i++) {
+        titleLabel.setText(i);
+    }
+});

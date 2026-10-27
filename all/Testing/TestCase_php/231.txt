@@ -1,0 +1,9 @@
+```
+<?php
+class C{
+    function g(){}
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target method `C::g()`, set return type to `int[]`.

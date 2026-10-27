@@ -1,0 +1,26 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+type MyAnotherType struct{}
+func (m *MyAnotherType) GetSome() int {
+return 42
+}
+type MyType struct {
+field MyAnotherType
+}
+func (m *MyType) GetAnother() int {
+return 0
+}
+func (m *MyType) Method1() {
+var result int
+result = m.field.GetSome()
+result += m.GetAnother() // move GetAnother to MyAnotherType receiver
+fmt.Println(result)
+}
+func main() {
+t := MyType{field: MyAnotherType{}}
+t.Method1()
+}

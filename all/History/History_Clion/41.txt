@@ -1,0 +1,28 @@
+/* Refactoring Settings:
+Refactoring type: Move Member (C++ CLion)
+Refactoring target: data member `smth` from derived class Human to base class Mammal
+Operation: Invoke Move Member refactoring, move `smth` from Human to Mammal; refactoring automatically changes visibility from private to protected
+Scope: Handle member initializer list when moving field from derived class to base class; correctly update constructor initialization syntax
+*/
+
+/* Error Root Cause:
+Observed failure: After moving `smth` to base Mammal, the derived constructor initializer list still writes `smth(smth)`. In the lexical scope of Human’s constructor, `smth` now refers to the inherited Mammal::smth, but member initializer syntax `smth(smth)` is only valid for members declared directly inside the Human class. The compiler interprets this as trying to initialize a member of Human named smth, which no longer exists, producing compilation error.
+Expected behavior: Two valid options:
+1. Automatically create a constructor in Mammal accepting smth, call base constructor from Human initializer list: `Human(...) : Mammal(smth), weight(weight), height(height) {}`
+OR
+2. Prevent this invalid code generation and warn user that refactoring needs to rewrite constructor initialization logic.
+Underlying cause: Move Member refactoring does not update the member initializer list when moving a field from derived to base class. It only relocates the field declaration and adjusts visibility, leaving the stale initializer entry `smth(smth)` untouched.
+*/
+
+class Mammal { public:
+    virtual void makeSound() = 0;
+};
+
+class Human : public Mammal {
+ private:
+    int weight;
+    int height;
+    int smth;
+ public:
+    Human(int weight, int height, int smth) : weight(weight), height(height), smth(smth) { }
+};

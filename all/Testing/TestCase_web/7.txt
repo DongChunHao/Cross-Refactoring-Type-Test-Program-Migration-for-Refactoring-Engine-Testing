@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+async function somePromise() {
+return Promise.resolve(0);
+}
+function transformBla(value) {
+return value;
+}
+async function Foo() {
+const bla = await somePromise(); //{Rename Variable on bla}
+const foo = transformBla(bla);
+}

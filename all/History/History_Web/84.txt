@@ -1,0 +1,22 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Type Alias
+Refactoring Target: Type alias `Mx<T> = T[]`, used inside interface `Tx<T extends string>`
+Refactoring Scope: TypeScript
+Trigger Operation: Inline the type alias `Mx<T>` at `mx: Mx<T>`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When inlining `Mx<T> = T[]` at `mx: Mx<T>`, the array operator `[]` is lost, resulting in `mx: T;`. The output is syntactically valid TypeScript but semantically wrong (it removes array wrapping). This is especially dangerous because the compiler accepts it without immediate parse error, silently changing data shape.
+
+Expected behavior: Preserve the array construct, expand to `mx: T[];`.
+
+Underlying cause: The inliner incorrectly handles type substitution for generic aliases that wrap their type parameter in array notation. It substitutes `T` directly and discards the `[]` suffix, instead of substituting the full right-hand side `T[]`.
+*/
+
+// Complete compilable test code
+type Mx<T> = T[];
+interface Tx<T extends string> {
+  mx: Mx<T>;
+}

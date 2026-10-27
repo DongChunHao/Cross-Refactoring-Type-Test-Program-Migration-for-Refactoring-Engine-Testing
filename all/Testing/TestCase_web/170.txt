@@ -1,0 +1,10 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding generic type‑alias and interface member for inline‑type‑alias semantic‑corruption reproduction}
+type Mx<T> = T[];
+interface Tx {
+mx: Mx<T>;
+}
+}

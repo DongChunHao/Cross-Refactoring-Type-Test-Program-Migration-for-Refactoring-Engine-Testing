@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: makeAliasVar
+'''
+namespace foo {
+}
+using Alias_t = bool;
+Alias_t makeAliasVar() { //{Extract method makeAliasVar}
+return true;
+}

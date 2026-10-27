@@ -1,0 +1,8 @@
+fn f(y: i32) -> i32 { y + 5 }//inline method
+fn g(flag: bool) {
+    if flag {
+        f(1);
+    } else {
+        f(2);
+    }
+}

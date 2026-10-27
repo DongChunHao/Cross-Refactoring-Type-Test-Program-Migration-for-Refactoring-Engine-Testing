@@ -1,0 +1,48 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using System.IO;
+
+namespace ExtractMethodDuplicateBlockRepro
+{
+public abstract class RenderBase
+{
+protected abstract void method1();
+}
+
+public class ReceiptRenderer : RenderBase
+{
+private bool RenderReceipt;
+
+protected override void method1()
+{
+if (RenderReceipt) //{Push Down Method: target duplicated conditional block for Extract‑Method duplicate‑block‑detection‑missing‑feature reproduction}
+{
+var fileInfo = new FileInfo("filename");
+transform(fileInfo);
+}
+}
+
+public void method2()
+{
+if (RenderReceipt)
+{
+var fileInfo = new FileInfo("filename2");
+transform(fileInfo);
+}
+}
+
+public void method3()
+{
+if (RenderReceipt)
+{
+var fileInfo = new FileInfo("filename3");
+transform(fileInfo);
+}
+}
+
+private void transform(FileInfo info) { }
+}
+
+}

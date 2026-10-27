@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Car { //{Move Method target subclass for repeated Extract‑Superclass leading to duplicate super() call}
+constructor(brand) {
+this.carname = brand;
+}
+present(x) {
+return x + ", I have a " + this.carname;
+}
+}

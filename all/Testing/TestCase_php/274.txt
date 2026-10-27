@@ -1,0 +1,10 @@
+```
+<?php
+class A {
+    public const B = 'C';
+}
+class Target{}
+?>
+```
+
+【Refactoring Action】: Move Member refactoring, move constant `B` from class `A` to target class `Target`.

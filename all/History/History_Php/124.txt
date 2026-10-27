@@ -1,0 +1,19 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method C::f()
+Scope: refactoring preview panel, method return type rendering
+Refactoring operation: open Change Signature dialog and inspect the preview signature
+*/
+
+/* Error Root Cause:
+Observed failure: The signature preview inside the Change Signature dialog fails to display the return type `: double`. Only the method name and parameter list are rendered.
+Expected behavior: The preview panel should fully render the method signature including the return type, matching the final code that will be generated.
+Underlying cause: The preview renderer for Change Signature does not include the return type component in the signature preview model; it only loads and serializes the method name and parameter list.
+*/
+class C{
+    public function f() : double
+    {
+    }
+}
+?>

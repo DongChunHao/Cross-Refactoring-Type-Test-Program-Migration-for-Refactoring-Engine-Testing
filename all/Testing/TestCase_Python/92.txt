@@ -1,0 +1,7 @@
+// Target Refactoring Type: Extract Variable
+// Expected Defect Performance: Documentation content gap; topic describes Introduce‑Constant concept but lacks concrete runnable before‑after Python sample for numeric‑literal extraction to module‑level constant
+def calculate_tax(income): // REFACTOR_TARGET
+tax_rate = income * 0.21
+return tax_rate
+def stub_helper():
+pass

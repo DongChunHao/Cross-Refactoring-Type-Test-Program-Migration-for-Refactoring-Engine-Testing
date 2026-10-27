@@ -1,0 +1,23 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <string>
+struct Wrapper
+{
+static void wrapper_original_func(const std::string& key, int count) { //{Move original_func logic into static wrapper member}
+std::cout << count << "|" << key << "\n";
+}
+};
+void original_func(const std::string& key, int count)
+{
+Wrapper::wrapper_original_func(key, count);
+}
+int main()
+{
+std::string key = "test_key";
+int count = 10;
+original_func(key, count);
+return 0;
+}

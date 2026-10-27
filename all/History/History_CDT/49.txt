@@ -1,0 +1,40 @@
+int GlobalVar_0 = 0;
+
+int func_0() {
+   return GlobalVar_0;
+}
+
+int Function_0() {
+    return GlobalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (function rename)
+Refactoring Target: function `func_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select function `func_0`, invoke Rename refactoring, input string `*func_0` as new function name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts input containing asterisk `*`. The function header becomes `int *func_0()`.
+The `*` is not treated as part of function name, instead it is parsed as pointer declarator modifying the return type.
+Original function returns an integer value; after refactoring it becomes a function returning an integer pointer.
+The statement `return GlobalVar_0;` returns an integer, but the function now expects a pointer return value, triggering compile‑time type mismatch error.
+No warning is raised during refactoring; invalid source code is persisted.
+
+Expected behavior:
+Function rename must strictly validate candidate name conforming to C identifier lexical rules before source modification:
+1. Valid identifier starts with a letter or underscore.
+2. Permitted characters are only letters, underscores and decimal digits.
+3. Reject inputs containing special symbols such as `*`, `&`, `#`, `+`, `-`, whitespace.
+4. Reject reserved C keywords and literals starting with digits.
+Abort refactoring and report error message if validation fails.
+Rename refactoring is supposed to change only the function identifier. Modifying return‑type declarators belongs to Change‑Signature refactoring and must not be allowed in rename workflow.
+
+Underlying cause:
+CDT function‑rename does not isolate the identifier token from user input. Raw input text is directly substituted into function declarator position. The asterisk `*` is interpreted by C parser as pointer modifier for return type, silently changing function signature and producing type‑error code.
+*/

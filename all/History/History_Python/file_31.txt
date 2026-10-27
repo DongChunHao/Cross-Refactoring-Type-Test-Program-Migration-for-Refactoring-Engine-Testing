@@ -1,0 +1,22 @@
+class Base:
+    pass
+
+class Child(Base):
+    @classmethod
+    def empty(cls):
+        return cls()
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Pull Up refactoring
+Refactoring Target: classmethod empty() defined in Child class, pull this method up to parent Base class
+Refactoring Scope: Current class hierarchy (Base and Child)
+Operation steps: Place cursor on empty method, invoke Refactor -> Pull Up
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: Triggering Pull Up refactoring only shows loading indicator indefinitely; the refactoring dialog never appears and user cannot complete the pull-up operation.
+Expected behavior: The Pull Up refactoring UI dialog should load normally, allowing user to confirm moving the empty() classmethod from Child to Base class.
+Underlying cause: The refactoring engine encounters an unhandled exception during preprocessing/usage search for the classmethod, which blocks UI initialization. The UI only renders loading spinner without displaying error message or refactoring preview, leaving the operation stuck and non-completable.
+"""

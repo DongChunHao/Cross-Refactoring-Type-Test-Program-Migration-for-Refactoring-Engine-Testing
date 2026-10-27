@@ -1,0 +1,10 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing destructuring over ternary conditional for precedence‑error defect reproduction}
+const { text } = 'subtype' in callbackEventEvent
+? callbackEventEvent.message
+: callbackEventEvent;
+const links = extractPullRequestLinks(text);
+}

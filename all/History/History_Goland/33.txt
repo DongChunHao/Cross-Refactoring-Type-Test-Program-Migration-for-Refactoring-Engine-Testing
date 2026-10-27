@@ -1,0 +1,33 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Inline Variable
+Refactoring target: local variable `s` initialized as struct literal `Foo{}`
+Refactoring rule: When inlining a struct literal into an expression context where the grammar requires a parenthesized operand, wrap the struct literal in `()` to avoid Go syntax errors.
+*/
+
+/* Error Root Cause:
+Observed failure: Inlining `s := Foo{}` into `if x == s` yields `if x == Foo{} { ... }`. In Go, a composite literal cannot appear directly as the right-hand side of a binary comparison operator without parentheses — this is a syntax error.
+Expected behavior: Produce `if x == (Foo{}) { ... }`.
+Underlying cause: The inliner does not check the syntactic context of the insertion point. It substitutes the raw composite literal without adding parentheses when the surrounding expression grammar demands them.
+*/
+
+type Foo struct{}
+
+func main() {
+	// Original code
+	s := Foo{}
+	if x == s {
+		// do something
+	}
+
+	// Bad actual output after inline
+	// if x == Foo{} {
+	// 	// do something
+	// }
+
+	// Expected correct output after inline
+	// if x == (Foo{}) {
+	// 	// do something
+	// }
+}

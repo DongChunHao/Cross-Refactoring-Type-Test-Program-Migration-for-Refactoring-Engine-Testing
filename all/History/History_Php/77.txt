@@ -1,0 +1,24 @@
+<?php
+/**
+ * Class A
+ */
+class A {
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class A in global namespace, target remains global namespace (no actual relocation)
+Refactoring rule: If the destination namespace is identical to the source namespace, the refactoring must not modify PHPDoc class references. It should skip rewriting doc comment FQN entries entirely for this no-op case.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Invoke Move Class on global-namespace class A, keep target namespace as global and confirm. Running this operation repeatedly mutates the PHPDoc: `Class A` → `Class \A` → `Class \\A` and keeps adding extra backslashes on each run.
+The refactoring performs FQN normalization on doc comment references even though the class stays in the same global namespace, causing cumulative escaping corruption.
+
+Expected behavior:
+Detect that source and destination namespace are equal. Suppress PHPDoc class-name rewriting when there is no namespace change. Do not introduce or add extra backslash escapes to doc text.
+
+Underlying cause:
+The PHPDoc FQN rewrite logic runs unconditionally during Move Class, without checking whether the class namespace actually changed. Each no-op move pass re-escapes the backslash character in comment text.
+*/

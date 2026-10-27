@@ -1,0 +1,8 @@
+```
+<?php declare(strict_types = 1);
+function bar(bool $enabled = true, string $name = "") {}
+bar(true, "demo");
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, edit default values for `bool` and `string` typed parameters inside the refactoring dialog.

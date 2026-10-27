@@ -1,0 +1,18 @@
+def demo():
+    # Cursor placed here with empty text selection, trigger Extract Method
+    greeting = ""
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Extract Method refactoring
+Refactoring Target: empty selection or cursor on empty string literal
+Refactoring Scope: current function demo()
+Operation steps: Select nothing (empty selection) or place cursor on empty string "", invoke Refactor -> Extract Method
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: Invoking Extract Method with empty statement selection triggers an internal AssertionError (AE) at PyExtractMethodUtil.a. The error message: Empty statements list was selected! The assertion crashes the refactoring workflow.
+Expected behavior: Detect empty selection before entering extraction logic, show user-friendly warning dialog and disable the refactoring action, instead of hitting assertion failure.
+Underlying cause: The refactoring code does not validate whether the selected statement list is empty before proceeding to extraction. The assertion statement assumes non-empty input and crashes when the selection contains zero statements.
+"""

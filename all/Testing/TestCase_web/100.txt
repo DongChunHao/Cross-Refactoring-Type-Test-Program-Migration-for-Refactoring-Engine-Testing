@@ -1,0 +1,20 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+declare class Response {}
+declare function fetch(url: string): Promise<Response>;
+function f () { //{Rename Method target function f containing nested promise then‑chain with outer‑scope variable assignments}
+var var1: Response, var2;
+return fetch('[https://typescriptlang.org](https://typescriptlang.org)').then( _ =>
+Promise.resolve().then( res => {
+var2 = "test";
+return fetch("[https://microsoft.com](https://microsoft.com)");
+}).then(res =>
+var1 === res
+)
+).then(res);
+}
+function res(response){
+console.log(response);
+}

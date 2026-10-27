@@ -1,0 +1,14 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: The usage scanner fails to reconcile existing import aliases when symbol is moved into the consumer file with nested‑scope usages; it cannot remove stale import nor rebind references to the new local definition
+
+# ---- a.py ----
+
+from b import f
+def func(): // REFACTOR_TARGET
+f()
+local_var = 42
+
+# ---- b.py ----
+
+def f():
+pass

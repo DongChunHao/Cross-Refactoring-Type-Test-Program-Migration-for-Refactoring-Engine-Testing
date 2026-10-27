@@ -1,0 +1,16 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function), IDE preferred import style set to `import <module>.<name>`
+Refactoring target: function use_imported_from() from original module to destination module
+Refactoring scope: destination module import generation, variable reference imported_variable
+Refactoring rule expectation: After moving function use_imported_from() to destination module, generate valid import matching the preferred import style, and keep `print(imported_variable)` resolvable. Valid options: `from pack.mod import imported_variable` or `import pack.mod; print(pack.mod.imported_variable)`.
+'''
+''' Error Root Cause:
+Observed failure: Refactor generates invalid import `import pack.mod.imported_variable`. This syntax is illegal, since `import` statement can only import modules/submodules, cannot directly import a variable attribute using this syntax. The reference `print(imported_variable)` remains in function body but the generated import is invalid, leading to unresolved reference.
+Expected behavior: When preferred style is fully qualified name import, generate `import pack.mod` and change call to `print(pack.mod.imported_variable)`; or fall back to `from pack.mod import imported_variable` for non-module symbols.
+Underlying cause: The auto-import logic naively applies the "import <module>.<name>" rule without distinguishing between modules and module-level variables. It tries to import a variable as if it were a submodule, producing invalid Python import syntax, and does not adjust the expression to use qualified access.
+'''
+# Original source code
+from pack.mod import imported_variable
+
+def use_imported_from():
+    print(imported_variable)

@@ -1,0 +1,20 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class MyClass {
+public:
+MyClass(int);
+};
+struct Wrapper
+{
+void qqq_wrapper() { //{Move qqq logic into struct Wrapper member function}
+MyClass x = 2;
+MyClass y = x;
+x = MyClass(28);
+}
+};
+void qqq() {
+Wrapper w;
+w.qqq_wrapper();
+}

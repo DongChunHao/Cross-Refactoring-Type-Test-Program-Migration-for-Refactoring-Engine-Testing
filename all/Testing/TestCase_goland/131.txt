@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+var s = 3
+var b = ""
+func getBValue() string { // extract variable access logic into getBValue
+return b
+}

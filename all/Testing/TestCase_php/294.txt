@@ -1,0 +1,14 @@
+```
+<?php
+// Api/PaymentContract.php
+namespace My\Project\Api;
+interface PaymentContract { }
+
+// Model/Invoice.php
+namespace My\Project\Model;
+use My\Project\Api\PaymentContract;
+class Invoice implements PaymentContract { }
+?>
+```
+
+【Refactoring Action】: Invoke Rename refactoring on interface `My\Project\Api\PaymentContract`, rename it to `InvoicePaymentContract`.

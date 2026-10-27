@@ -1,0 +1,28 @@
+#include <cstdio>
+
+void func(long long int num) {
+	num++; //extract
+	printf("%llu",num);
+}
+
+int main(){
+	long long int num=8223372036854775807;
+	func(num);
+	return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: statement `num++;` inside func()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select line `num++;`, invoke Extract Function refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: The generated extracted_function lacks explicit return‑type, defaults to implicit int in old‑C rules. Actual expected return‑type should be `long long int`. Implicit int causes value truncation; program outputs wrong value 1486618624 instead of correct 8223372036854775808.
+Expected behavior: Infer the return‑type as `long long int` matching the type of returned variable num, generate full prototype `long long int extracted_function(long long int num)`.
+Underlying cause: Extract‑Function type‑inference logic fails to capture the 64‑bit integer type for return value. It omits return‑type annotation, relying on obsolete C implicit‑int rule, which produces type mismatch and numeric truncation at runtime.
+*/

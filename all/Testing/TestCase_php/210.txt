@@ -1,0 +1,18 @@
+```
+<?php
+namespace App\OldNS {
+    class User
+    {
+        public int $id = 0;
+    }
+}
+namespace {
+    use App\OldNS\{
+        User
+    };
+    $u = new User();
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring(F6), target `App\OldNS\User`, move to `App\NewNS`; update imports.

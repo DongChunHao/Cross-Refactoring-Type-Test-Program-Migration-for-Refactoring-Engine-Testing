@@ -1,0 +1,17 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pack
+type I interface {
+foo() string
+}
+type Wrapper struct{}
+func (w Wrapper) foo() (s string) {
+return s
+}
+type S struct{}
+func (S) foo() string {
+w := Wrapper{}
+return w.foo() // move foo method from Wrapper to standalone function
+}

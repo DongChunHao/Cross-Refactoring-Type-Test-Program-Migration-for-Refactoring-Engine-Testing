@@ -1,0 +1,14 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn main() { //{change main method, keep nested function and all preceding attached comments}
+//fn foo(x: i32) -> i32 { x + 1 }
+//fn foo(x: i32) -> i32 { x + 1 }
+let a = 7;
+//comment 1
+//comment 2
+///comment 3
+//comment 4
+fn foo(x: i32) -> i32 { x + 1 }
+}

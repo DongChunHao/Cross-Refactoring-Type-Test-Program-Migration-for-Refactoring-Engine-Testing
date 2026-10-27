@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Wrapper struct{}
+func (w Wrapper) foo(b string, a string, c ...string) {}
+func main() {
+cs := []string{"c", "d", "e"}
+w := Wrapper{}
+w.foo("two", "one", cs...) // move foo method from Wrapper to standalone function
+}

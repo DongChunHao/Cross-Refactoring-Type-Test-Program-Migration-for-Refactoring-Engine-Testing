@@ -1,0 +1,17 @@
+```
+<?php
+namespace Render\Template {
+    use Render\Template as TPL;
+    class TemplateBase
+    {
+    }
+    class TwigRenderer implements TPL\Schema\IRenderable{
+    }
+}
+namespace Render\Template\Schema {
+    interface IRenderable{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `TwigRenderer`, move to global namespace into new separate file.

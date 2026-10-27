@@ -1,0 +1,24 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <stdlib.h>
+struct BaseTest
+{
+virtual void init(struct test* t) = 0;
+};
+struct TestImpl : BaseTest //{Pull up init declaration into BaseTest}
+{
+void init(struct test* t) override {
+t->x = 5;
+}
+};
+struct test {
+int x;
+};
+int main() {
+void* v = malloc(sizeof(struct test));
+TestImpl impl;
+impl.init((struct test*)v);
+return 0;
+}

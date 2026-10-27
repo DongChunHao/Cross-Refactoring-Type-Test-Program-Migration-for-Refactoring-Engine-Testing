@@ -1,0 +1,22 @@
+```
+<?php
+namespace App\Base {
+    class BaseModel
+    {
+    }
+}
+/*
+ * Comments that describes App\Entity namespace
+ */
+namespace App\Entity {
+    class User
+    {
+    }
+    class Profile
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `User`, target namespace `App\UserDomain`

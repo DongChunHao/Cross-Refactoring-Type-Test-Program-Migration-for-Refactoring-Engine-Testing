@@ -1,0 +1,20 @@
+```
+<?php
+namespace N2;
+use N1\D;
+function f ():void {
+    echo f2();
+}
+function f2(D $a):D {
+    return 1;
+}
+function f3() {}
+f();
+f2(f2(f2()));
+f3();
+namespace N1;
+class D{}
+?>
+```
+
+【Refactoring Action】: Invoke Move Function to Class, select N2\f, N2\f2, N2\f3, move all three into N1\D as static methods.

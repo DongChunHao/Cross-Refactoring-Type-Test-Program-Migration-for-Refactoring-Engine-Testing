@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: console.log()
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select the expression "console.log()" inside object literal property value, execute Refactor -> Extract -> Method.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The refactoring engine throws an error when attempting to extract a method from the value of an object literal property.
+Expected behavior: The engine should either support extracting the expression into a method and adjust the object property correctly, or provide a proper user prompt that this location is not supported for Extract Method.
+Underlying cause: The extract method refactoring logic does not handle the AST context of object literal property values and cannot safely create and reference the extracted method.
+*/
+
+// Complete compilable test code
+var test = {
+    testProp: console.log()
+};

@@ -1,0 +1,30 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Constant
+Refactoring Target: `const nodeToCursor = (node) => node.databaseId.toString();`
+Refactoring Scope: JavaScript file
+Trigger Operation: Invoke Inline Constant on nodeToCursor, which is used inside an object literal shorthand property `{nodeToCursor}`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Inlining the constant inside shorthand property `{nodeToCursor}` produces `{(node) => node.databaseId.toString()}`. The property key `nodeToCursor` is lost, resulting in invalid object literal syntax.
+Expected behavior: Preserve the property key, expanding shorthand `{nodeToCursor}` to `{nodeToCursor: (node) => node.databaseId.toString()}`.
+Underlying cause: The inline constant logic treats the shorthand property `nodeToCursor` as just an expression instead of a key-value pair. It replaces the whole shorthand node with the arrow function value, discarding the property name.
+*/
+
+// Complete compilable test code
+declare function mapConnection(results: any, opts: { nodeToCursor: (node: any) => string }): any;
+declare const context: { getFromApi: (args: any) => Promise<{ results: any[] }> };
+
+const rootResolvers = {
+  Query: {
+    fromApi: (root, args, context, info) => {
+      return context.getFromApi(args).then((json) => {
+        const nodeToCursor = (node) => node.databaseId.toString();
+
+        return mapConnection(json.results, {nodeToCursor});
+      });
+    },
+  },
+};

@@ -1,0 +1,9 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding destructuring with conditional default value for inline‑variable defect reproduction}
+let student;
+let {name = 'Jane', age} = student;
+console.log(name);
+}

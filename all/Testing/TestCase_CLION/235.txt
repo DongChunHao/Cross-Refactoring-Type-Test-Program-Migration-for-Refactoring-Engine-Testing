@@ -1,0 +1,23 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+class B;
+class BaseA
+{
+public:
+virtual B* GetB() = 0; //{Pull up GetB declaration into BaseA}
+};
+class A : public BaseA {
+public:
+B* GetB() override {return dynamic_cast<B*>(this);}
+void foo() {
+B*b = GetB();
+}
+};
+class B : public A { };
+int main() {
+A* a;
+B* b = a->GetB();
+return 0;
+}

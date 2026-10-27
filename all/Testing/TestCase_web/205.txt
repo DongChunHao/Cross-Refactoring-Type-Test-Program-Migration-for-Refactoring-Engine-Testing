@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+const myFunction = (props: {
+prop1: string;
+prop2: string;
+prop3: string
+}) => {
+console.log(props); //{Rename Field target function‑parameter typed‑by object‑literal without final semicolon, exposes token‑stream offset‑calculation bug}
+};

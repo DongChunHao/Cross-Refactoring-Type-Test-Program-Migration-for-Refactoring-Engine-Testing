@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: extracted_constant_renamed
+'''
+int main() {
+static char msg[] = "Error"; // select "Error" //rename field for string‑literal static array initializer scenario
+return 0;
+}

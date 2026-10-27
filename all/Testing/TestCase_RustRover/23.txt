@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#[derive(Debug, Clone)]
+struct JsonError { //{move struct definition into nested module scope}
+pub message: String,
+pub line: usize,
+pub column: usize,
+}

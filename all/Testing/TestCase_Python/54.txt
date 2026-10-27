@@ -1,0 +1,7 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Change‑Signature refactoring only modifies function signature definition; it does not convert existing positional call‑site arguments to keyword form after parameter reordering, leading to wrong argument binding and altered runtime semantics
+def foo(a="a", b="b"): // REFACTOR_TARGET
+return a, b
+foo("a")
+def stub_helper():
+pass

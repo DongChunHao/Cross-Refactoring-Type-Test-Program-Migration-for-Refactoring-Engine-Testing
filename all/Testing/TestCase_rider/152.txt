@@ -1,0 +1,21 @@
+using System;
+
+namespace ConsumerCode
+{
+    public  class Program
+    {
+        public int Test(bool flag)
+        {
+            // 选中整行 return，执行Extract Method
+            return flag ? Min(100, MayThrow(-1)) : 999;
+        }
+        private int MayThrow(int x)
+        {
+            if(x < 0) throw new ArgumentOutOfRangeException();
+            return x;
+        }
+
+        private int Min(int a, int b) => a < b ? a : b;
+
+    }
+}

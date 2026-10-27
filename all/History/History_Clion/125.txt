@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring type: Inline macro
+Refactoring target: Inline macro `FOO` defined as `#define FOO 20\
+20`
+Refactoring rule expectation: Preserve the backslash line continuation: `\` joins the next line, resulting in token sequence `2020`, not `20 20`.
+*/
+
+/* Error Root Cause:
+Observed failure: Inline macro refactoring replaces line-continuation backslash `\` with whitespace, expanding `FOO` → `20 20`. C preprocessor rule: `\` at end of line deletes the backslash and the newline, concatenating lines with **no whitespace inserted**.
+Expected expansion: `2020`
+Underlying cause: CLion’s macro inlining logic treats the `\` line continuation as a whitespace separator, instead of removing backslash+newline with zero whitespace.
+*/
+
+#define FOO 20\
+20
+int main() {
+    int x = FOO;
+}

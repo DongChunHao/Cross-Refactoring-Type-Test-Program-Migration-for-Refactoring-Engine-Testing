@@ -1,0 +1,27 @@
+class Basic(object):
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def func1(self):
+        return ""
+
+    def func2(self):
+        return self.func1()
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Extract Superclass refactoring
+Refactoring Target: class Basic
+Refactoring Scope: current file, extract selected members into new superclass
+Selected members for extraction: __init__ method, instance field a, instance field b, method func1
+New superclass name: Ancestor
+Operation steps: Invoke Refactor -> Superclass, select listed members, input new class name Ancestor and execute refactor
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: After extracting members into new class Ancestor, the original Basic class is not updated to inherit from Ancestor, remaining as `class Basic(object):`. Calling self.func1() inside Basic.func2() triggers AttributeError. Additionally, the refactoring UI dialog stays open and does not notify user of successful completion.
+Expected behavior: The refactoring should add inheritance from Ancestor to Basic: `class Basic(Ancestor):`. The UI dialog should close and show success notification after refactoring finishes.
+Underlying cause: The extract superclass logic correctly copies selected members into new Ancestor class, but omits modifying the base list of the original subclass to add the newly created superclass. Separate UI state bug prevents the dialog from closing and showing completion feedback after refactoring completes.
+"""

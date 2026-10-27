@@ -1,0 +1,17 @@
+```
+<?php
+/**
+ * @method validateInput()
+ */
+class BaseValidator {
+    public function runCheck()
+    {
+        $this->validateInput();
+    }
+}
+class EmailValidator extends BaseValidator {
+}
+?>
+```
+
+【Refactoring Action】: Push Down refactoring, multi-selection: push down magic `@method validateInput()` and concrete method `runCheck()` from `BaseValidator` to `EmailValidator`

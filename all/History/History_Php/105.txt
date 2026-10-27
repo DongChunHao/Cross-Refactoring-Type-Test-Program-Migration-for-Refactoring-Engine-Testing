@@ -1,0 +1,28 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Push Members Down refactoring
+Refactoring target: method f() from class A pushed down to subclass B
+Scope: class A, class B, and PHPDoc @see annotation in class C
+Refactoring operation: move method f() from A to B, update all symbol references including PHPDoc @see
+*/
+
+/* Error Root Cause:
+Observed failure: After pushing method f() down from A to B, the @see A::f() in class C's docblock remains unchanged. The annotation still points to A::f(), even though the method no longer exists in A.
+Expected behavior: Update the @see tag to @see B::f() to point to the new location of the pushed-down method.
+Underlying cause: Push Members Down refactoring only updates runtime code references, it does not traverse and resolve symbol references inside PHPDoc @see tags. The doc comment is treated as plain text and skipped during reference rewriting.
+*/
+class A{
+    public function f()
+    {
+    }
+}
+
+class B extends A{}
+
+/**
+ * Class C
+ * @see A::f()
+ */
+class C{
+}
+?>

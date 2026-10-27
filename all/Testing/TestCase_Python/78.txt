@@ -1,0 +1,7 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Auto‑import logic applies module‑import rule to module‑level variables without distinction; generates illegal `import pack.mod.imported_variable` syntax and fails to adjust expression to qualified access, producing unresolved reference
+from pack.mod import imported_variable
+def use_imported_from():
+print(imported_variable) // REFACTOR_TARGET
+def stub_helper():
+pass

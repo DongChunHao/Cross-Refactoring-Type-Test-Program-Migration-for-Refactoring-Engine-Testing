@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack1
+type Type struct{}
+func (Type) foo() (i int) {
+runReturn() // extract return statement into runReturn method
+}
+func runReturn() {
+return
+}

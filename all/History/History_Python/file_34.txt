@@ -1,0 +1,22 @@
+def do_stuff(a, b):
+    pass
+
+def something():
+    do_stuff(1, 2)
+    do_stuff(3, 4)
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Change Signature refactoring
+Refactoring Target: function do_stuff, insert keyword‑only separator '*' between parameter a and b
+Refactoring Scope: current file, all call‑sites of do_stuff within something()
+Operation steps: open Change Signature dialog, add '*' parameter, place it between a and b, execute refactor.
+Environment: IntelliJ IDEA Build #IU‑183.4886.37, Python plugin v2018.3.183.4886.37, Python 3.7.2 Pipenv interpreter.
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: After inserting keyword‑only separator '*', call‑sites generate incomplete keyword arguments `do_stuff(1, b=)` with empty value after equals sign, producing invalid Python syntax.
+Expected behavior: After signature becomes `def do_stuff(a, *, b): pass`, original positional arguments should be converted to complete keyword arguments: `do_stuff(1, b=2)` and `do_stuff(3, b=4)`.
+Underlying cause: Change‑signature logic recognizes that b becomes keyword‑only and must use keyword syntax at call‑sites, but fails to copy original positional argument values into newly generated keyword argument slots, leaving empty keyword‑argument syntax.
+"""

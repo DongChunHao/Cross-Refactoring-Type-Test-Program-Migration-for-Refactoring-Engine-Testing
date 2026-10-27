@@ -1,0 +1,17 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: Substring "processing some" inside template literal `processing some weird error`
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select substring "processing some" within the template string and run Extract Variable.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Variable on a substring inside a template literal incorrectly parses only the first word "processing" as an identifier, discards the rest of the selected text, and generates invalid code: const message = processing; alert(message + ` weird error`);
+Expected behavior: The engine should extract the selected text as a string value and rebuild the template literal: const message='processing some'; alert(`${message} weird error`);
+Underlying cause: The refactoring logic does not handle partial text ranges inside template literal nodes correctly. It treats the selected substring as JavaScript expression AST instead of static template text, resulting in truncated content and broken syntax.
+*/
+
+// Complete compilable test code
+alert(`processing some weird error`);

@@ -1,0 +1,33 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class
+Refactoring target: class B inside namespace NS1\NS2
+Operation: Move class B out of the namespace into the global namespace
+Scope: Import resolution for namespace-scoped functions and constants after moving class to global namespace
+*/
+
+/* Error Root Cause:
+Observed failure: After moving class B to the global namespace, references to the namespace constant B and function d() inside method f() are not properly qualified. The code keeps `echo B;` and `echo d();` which resolve to the global class B instead of the original namespace constant and function. The type reference A2 gets fully qualified to \NS1\NS2\A2, but function and constant references do not receive the correct namespace qualifiers.
+Expected behavior: Qualify the constant and function calls as `echo \NS1\NS2\B;` and `echo \NS1\NS2\d();` so they still resolve to the original namespace-scoped constant and function.
+Underlying cause: The Move Class logic handles class type references but omits rewriting namespace function and constant usages when moving a type into the global namespace.
+*/
+namespace NS1\NS2 {
+    class A2
+    {
+    }
+
+    function d(){
+        return 'a';
+    }
+
+    const B = 3;
+
+    class B
+    {
+        function f(A2 $a2){
+            echo B;
+            echo d();
+        }
+    }
+}
+?>

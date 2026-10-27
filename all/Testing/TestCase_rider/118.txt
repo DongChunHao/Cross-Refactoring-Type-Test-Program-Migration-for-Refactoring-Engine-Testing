@@ -1,0 +1,13 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+namespace MyLib
+{
+public class MyService
+{
+public void Execute() //{Change Method: target method for cross‑project‑move‑missing‑Compile‑item‑bug reproduction}
+{
+}
+}
+}

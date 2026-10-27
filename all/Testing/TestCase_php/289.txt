@@ -1,0 +1,18 @@
+```
+<?php
+namespace{
+    class UserRecord{}
+    class UserSource
+    {
+        protected static UserRecord $activeUser;
+    }
+}
+namespace App\Domain{
+    class UserTarget extends \UserSource
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move typed static property `UserSource::$activeUser` from global namespace `UserSource` into `App\Domain\UserTarget`

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func main() {
+cs := []string{"c", "d", "e"}
+invokeFoo(cs) // extract foo call into invokeFoo
+}
+func invokeFoo(cs []string) {
+foo("two", "one", cs...)
+}
+func foo(b string, a string, c ...string) {}

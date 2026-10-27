@@ -1,0 +1,54 @@
+/* Refactoring Settings:
+Refactoring Type: Inline Function
+Refactoring Target: Call `bar()` in `main`
+Refactoring Scope: Preserve statement evaluation order when inlining function returning `()`
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4293-213-nightly, CLion 2021.3, Rust 1.57.0, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Inline function on `bar()`
+*/
+/* Error Root Cause:
+Observed failure: The inliner incorrectly reorders statements. Original order: run `bar()` (print Bar), then print Foo. After inlining, it puts print Foo before print Bar, changing observable side effects.
+The root of the issue is how the inliner handles function bodies whose tail is a `()` expression without a semicolon. It mishandles the position of the inlined statements relative to the statements that follow the call site.
+
+Original execution order:
+1. `bar()` body: print!("Bar");
+2. print!("Foo");
+Output: BarFoo
+
+Actual broken inlined code order:
+1. print!("Foo");
+2. print!("Bar");
+Output: FooBar
+
+Expected behavior: Insert all statements from the inlined function body at the exact location of the original function call, preserving relative ordering with surrounding code.
+
+Underlying cause: The inliner’s AST rewrite logic for unit-returning functions with expression-style tail does not anchor the inlined body correctly at the call site, accidentally swapping it with subsequent statements.
+*/
+// Before
+fn bar() {
+    print!("Bar");
+    ()
+}
+
+fn main() {
+    bar();
+    print!("Foo");
+}
+// Output: BarFoo
+
+// Actual broken output
+fn main() {
+    print!("Foo");
+    print!("Bar");
+    ()
+}
+// Output: FooBar
+
+// Expected output
+fn main() {
+    print!("Bar");
+    ();
+    print!("Foo");
+}
+// Output: BarFoo

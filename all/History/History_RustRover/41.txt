@@ -1,0 +1,102 @@
+/* Refactoring Settings:
+Refactoring Type: Inline Function
+Refactoring Target: Function call in argument position `consume(new(3))`
+Refactoring Scope: Inlining function whose body contains statements into an expression context
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4293-213-nightly, CLion 2021.3, Rust 1.57.0, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Inline function, select “Inline all and remove the method”
+*/
+/* Error Root Cause:
+Observed failure: When the function call is a function argument (expression position), the inliner inserts statement sequences (`let` bindings) directly inside the argument list. Rust does not allow bare statement sequences inside function arguments; only expressions are permitted.
+
+Example1 actual broken code inserts `let x = 3; return x;` as the argument to `consume`, which is invalid syntax.
+Example2 actual broken code inserts `let x = 3; x != 0` as the argument, which is also invalid.
+
+Expected behavior:
+If the function body needs local `let` bindings when inlined into an expression context, wrap the whole body in a block expression `{ ... }`. Block expressions are allowed in expression positions and preserve the lexical scope of temporaries.
+
+Example 1 expected:
+consume({
+    let x = 3;
+    x
+})
+
+Example 2 expected:
+consume({
+    let x = 3;
+    x != 0
+})
+
+Underlying cause: The inliner does not detect that the call site is an expression context and does not wrap statement-bearing inlined code in a block expression.
+*/
+// Example 1 Before
+struct Foo(usize);
+
+fn new(x: usize) -> usize {
+    x
+}
+
+fn consume<T>(_: T) {}
+
+fn main() {
+    consume(new(3))
+}
+
+// Example1 Actual broken output
+struct Foo(usize);
+
+fn consume<T>(_: T) {}
+
+fn main() {
+    consume(let x = 3;
+            return x;
+            new(3))
+}
+
+// Example1 Expected
+struct Foo(usize);
+
+fn consume<T>(_: T) {}
+
+fn main() {
+    consume({
+        let x = 3;
+        x
+    })
+}
+
+// Example 2 Before
+struct Foo(usize);
+
+fn new(x: usize) -> bool {
+    x != 0
+}
+
+fn consume<T>(_: T) {}
+
+fn main() {
+    consume(new(3))
+}
+
+// Example2 Actual broken output
+struct Foo(usize);
+
+fn consume<T>(_: T) {}
+
+fn main() {
+    consume(let x = 3;
+            x != 0)
+}
+
+// Example2 Expected
+struct Foo(usize);
+
+fn consume<T>(_: T) {}
+
+fn main() {
+    consume({
+        let x = 3;
+        x != 0
+    })
+}

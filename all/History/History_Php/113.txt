@@ -1,0 +1,30 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Pull Up Members refactoring
+Refactoring target: method B::f()
+Scope: return type `self`, `new static()` late static binding
+Refactoring operation: pull method f from subclass B up to parent class A
+*/
+
+/* Error Root Cause:
+Observed failure:
+When pulling up `public function f(): self { return new static(); }` from B to A, the refactoring incorrectly changes the return type to `B`.
+- Original `self` inside B refers to B.
+- After moving to A, the hardcoded `: B` return type conflicts with `new static()`: `static` resolves to the called class (A when invoked on A), which violates the `B` return type constraint and triggers a fatal TypeError.
+
+Expected behavior:
+1. Recognize that `self` in the source method is bound to B, and `new static()` uses late static binding.
+2. Do not naively substitute `self` with the source class name `B` when pulling up into the parent.
+3. Either keep `static` return type (`: static`) or warn the user that the signature will become incompatible, since pulling this method changes the type contract.
+
+Underlying cause:
+Pull Up refactoring treats `self` as a fixed class name token (B) instead of understanding that `self` is class-scoped and `static` is late-bound. It blindly rewrites the return type annotation without evaluating late-static-binding semantics.
+*/
+class A{ }
+class B extends A{
+    public function f(): self
+    {
+        return new static();
+    }
+}
+?>

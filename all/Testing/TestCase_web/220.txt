@@ -1,0 +1,7 @@
+class Foo {
+    constructor (name,type){
+        this.name= name;
+        this.type = type;//extract method，name: name
+    }
+
+}

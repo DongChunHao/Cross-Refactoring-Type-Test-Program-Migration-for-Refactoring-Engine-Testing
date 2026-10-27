@@ -1,0 +1,27 @@
+package main
+
+import "errors"
+
+/* Refactoring Settings:
+Refactoring type / Inspection rule: Go static analysis inspection for direct error comparison
+Inspection target: `Is(error) bool` method implementations satisfying errors.Is contract
+Scope: Method body of `(errFoo *ErrFoo) Is(err error) bool`
+Rule setting: Suppress the "direct error comparison" warning inside custom Is(error) bool methods, because the Is method is explicitly designed to implement custom error matching logic.
+*/
+
+/* Error Root Cause:
+Observed failure: The linter emits a false positive warning for `return errFoo == err` inside the custom Is method. The inspection treats direct `==` comparison of errors as problematic here.
+Expected behavior: Do not report a warning when direct error comparison occurs within an Is(error) bool method. The Is method’s purpose is to implement custom matching logic, which may intentionally use shallow == comparison; errors.Is will invoke this method and control unwrapping externally.
+Underlying cause: The inspection rule lacks a scope exclusion for methods named Is with signature `(T) Is(error) bool`. It applies the "avoid direct error == comparison" check unconditionally without recognizing this special method contract defined by the errors package.
+*/
+
+type ErrFoo struct{}
+
+func (errFoo *ErrFoo) Is(err error) bool {
+	return errFoo == err
+}
+
+func main() {
+	var e error = &ErrFoo{}
+	_ = errors.Is(e, &ErrFoo{})
+}

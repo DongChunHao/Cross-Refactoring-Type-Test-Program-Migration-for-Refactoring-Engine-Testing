@@ -1,0 +1,5 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+const { x: x } = { x: 7, y: 3 }; //{Extract Method target identity‑binding destructuring pattern with identical property and variable name}

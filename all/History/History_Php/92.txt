@@ -1,0 +1,28 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Rename refactoring (Shift+F6) for dynamic property
+Refactoring target: dynamic property $name inside newly created class Bar
+Scope: mid-sized project with ~200 classes
+Refactoring options: Rename accessors checked, Search for text unchecked, Search in comments unchecked
+*/
+
+/* Error Root Cause:
+Observed failure: After copying Foo.php to Bar.php and renaming the class from Foo to Bar manually, renaming Bar::$name takes a long time even though Bar has no usages in the project.
+Expected behavior: Refactoring should complete instantly since the new class and its property are unused.
+Underlying cause: The rename reference collector still traverses the full project symbol/index storage instead of pruning search scope to only the new class’s file. The index may retain stale symbol links from the original copied Foo class, or the refactoring engine does not early-exit when the symbol has zero project usages, performing full project-wide symbol scanning regardless of the symbol’s reachability.
+*/
+class Bar
+{
+    public string $name;
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+}
+?>

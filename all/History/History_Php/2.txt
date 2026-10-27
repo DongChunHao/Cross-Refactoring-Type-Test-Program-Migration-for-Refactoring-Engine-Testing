@@ -1,0 +1,22 @@
+<?php
+class A{
+    function a($b){} // <-- cursor here
+}
+class B extends A{
+}
+
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring
+Refactoring target: method a of class A, cursor positioned on method a
+Refactoring rule: When invoking Push Down or Pull Up refactoring with the cursor placed directly on a method or field, that element should be pre-selected in the refactoring dialog’s member selection list by default.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Opening the Push Down dialog with cursor on method a shows no pre-selected members.
+Expected behavior:
+Method a is already checked/selected in the member list when the dialog opens, matching standard IDE platform UX patterns.
+
+Underlying cause:
+The refactoring dialog initialization logic does not capture the cursor’s underlying PSI element and apply it as the default checked item for the member selection table.
+*/

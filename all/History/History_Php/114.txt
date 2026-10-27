@@ -1,0 +1,32 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method refactoring
+Refactoring target: method A::f()
+Scope: $this keyword, parameter type, return value
+Refactoring operation: move instance method f from class A to class D
+*/
+
+/* Error Root Cause:
+Observed failure: After moving `f()` from A to D, the refactoring incorrectly rewrites the parameter to receive the old host `A`, but does **not** replace the original `$this` references inside the method body.
+Original logic: `return $this` returns an instance of A.
+After move: `$this` now refers to D, changing runtime semantics.
+The code now dumps and returns the D instance instead of the original A instance, silently altering behavior.
+
+Expected behavior:
+When moving an instance method from source class A to target class D:
+1. Recognize `$this` in the body represents the original source instance (A).
+2. Replace occurrences of `$this` with the incoming parameter (the A instance passed into the moved method).
+3. Adjust return type and PHPDoc accordingly.
+
+Underlying cause:
+The Move Instance Method analysis does not track `$this` as a reference to the original host instance. It only adds the source-type parameter but leaves literal `$this` tokens untouched, which rebind to the new containing class after the move.
+*/
+class A {
+    public function f(D $a) {
+        var_dump($a);
+        return $this;
+    }
+}
+class D{
+}
+?>

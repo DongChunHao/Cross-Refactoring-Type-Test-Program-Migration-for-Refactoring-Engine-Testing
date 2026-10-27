@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: renamed_func
+'''
+#include <cstdio>
+void func(long long int num) {//rename method for function containing 64‑bit integer increment statement
+num++;
+printf("%llu",num);
+}
+int main(){
+long long int num=8223372036854775807;
+func(num);
+return 0;
+}

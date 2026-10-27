@@ -1,0 +1,16 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+struct IncorrectReturnType {};
+struct CorrectReturnType {
+CorrectReturnType() {}
+};
+struct Base {};
+struct Derived : Base {
+IncorrectReturnType mainFunction() { //{Pull up method mainFunction from Derived to Base}
+ {
+return CorrectReturnType();
+};
+}
+};

@@ -1,0 +1,34 @@
+```
+<?php
+class ASTVisitor
+{
+  public $stubs;
+  public function combineParentInterfaces(PHPInterface $interface): array
+  {
+    $parents = [];
+    if (empty($interface->parentInterfaces)) {
+      return $parents;
+    }
+    /**@var string $parentInterface */
+    foreach ($interface->parentInterfaces as $parentInterface) {
+      $parents[] = $parentInterface;
+      if ($this->stubs->getInterface($parentInterface,
+          $interface->stubBelongsToCore ? null : $interface->sourceFilePath) !== null) {
+        foreach ($this->combineParentInterfaces($this->stubs->getInterface($parentInterface,
+          $interface->stubBelongsToCore ? null : $interface->sourceFilePath)) as $value) {
+          $parents[] = $value;
+        }
+      }
+    }
+    return $parents;
+  }
+}
+class PHPInterface {
+  public $stubBelongsToCore;
+  public $sourceFilePath;
+  public $parentInterfaces;
+}
+?>
+```
+
+【Refactoring Action】: Trigger Move Instance Method quick-fix from Feature Envy inspection; move `ASTVisitor::combineParentInterfaces()` into `PHPInterface`.

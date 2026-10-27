@@ -1,0 +1,15 @@
+```
+<?php
+interface UserFactory {
+    function __construct();
+}
+class User implements UserFactory {
+    function __construct()
+    {
+    }
+}
+new User(123);
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `__construct` method declared in interface `UserFactory`, attempt to rename method to `initUser`

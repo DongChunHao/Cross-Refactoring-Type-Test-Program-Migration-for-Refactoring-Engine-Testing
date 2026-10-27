@@ -1,0 +1,28 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: $this.children(":first")
+Refactoring Scope: Current JavaScript file
+Refactoring Rule Expectation: Treat single quotes and double quotes as semantically equivalent for string literals when finding duplicate occurrences to extract.
+Trigger Operation: Select expression $this.children(":first"), execute Refactor -> Extract -> Variable via menu or hotkey.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The refactoring engine only finds 3 exact literal matches of $this.children(":first").
+Expected behavior: The engine should locate all 5 semantically equivalent occurrences, including 3 instances using double quotes ":first" and 2 instances using single quotes ':first'.
+Underlying cause: The matcher performs strict string literal comparison instead of semantic comparison; quote type difference (single vs double) is treated as a difference and prevents matching equivalent jQuery selector expressions.
+*/
+
+// Complete compilable test code supplemented with jQuery environment wrapper
+(function ($) {
+    function testFunction($this) {
+        if ($this.children(":first").hasClass('placeholder')) {
+            $this.children(":first").removeClass('placeholder');
+            $this.children(":first").text('');
+        }
+        $this.addClass('edit-mode');
+        $this.children(':first').attr('contentEditable', true);
+        $this.children(':first').focus();
+    }
+})(jQuery);

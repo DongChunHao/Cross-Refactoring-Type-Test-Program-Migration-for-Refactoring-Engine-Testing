@@ -1,0 +1,22 @@
+int main(int a, char** argv) {
+    int b = 0; // Variable to be renamed
+    return b;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: local variable `b` inside main()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select local variable `b`, invoke Rename refactoring, input `*b` as new‑name string.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT treats user input `*b` as new identifier, parses it as declarator. Original `int b = 0;` becomes `int *b = 0;`. All usages of variable `b` inside function body are rewritten to dereference form `*b`. Return statement becomes `return *b;`. Variable now is integer pointer initialized to null pointer; dereferencing null pointer at runtime causes segmentation fault. Compile produces type‑mismatch warning, refactoring itself gives zero warning.
+
+Expected behavior: Rename refactoring is designed **only to change identifier name**, must strictly validate input following C identifier grammar: only letters, underscores, digits (cannot start with digit). Reject any input containing `* & [] ()` and other declarator / operator tokens. Inform user that type modifiers cannot be applied via rename; type change must use Change‑Signature refactoring.
+
+Underlying cause: Rename refactoring does not isolate pure identifier from declarator syntax. Instead of replacing only the identifier token `b`, it parses the whole input string as declarator fragment, mutates variable type and automatically inserts dereference at every usage site. Call‑sites remain context‑unaware and produce semantically wrong code, triggering runtime crash.
+*/

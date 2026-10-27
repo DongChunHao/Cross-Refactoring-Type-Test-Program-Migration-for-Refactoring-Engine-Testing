@@ -1,0 +1,18 @@
+```
+<?php
+class UserRepo
+{
+    public function buildQuery()
+    {
+        return "SELECT * FROM user";
+    }
+    public function find()
+    {
+        $sql = $this->buildQuery();
+        return $sql;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, change `buildQuery()` from public to protected.

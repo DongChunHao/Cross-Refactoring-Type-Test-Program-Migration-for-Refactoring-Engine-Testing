@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package one
+type S struct{}
+func (s S) oldHello() string {
+return "hello"
+}
+func Call() {
+s := S{}
+_ = s.oldHello() // rename method oldHello to Hello
+}
+'''

@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: B1 namespace function f(A $a)
+Operation: Remove parameter $a from function f
+Scope: Post-refactoring unused import cleanup
+*/
+
+/* Error Root Cause:
+Observed failure: After deleting parameter $a of type A by Change Signature, the statement `use A;` becomes unused, but the refactoring does not remove this unused import automatically.
+Expected behavior: After modifying the signature, trigger optimize imports and delete the now-unused `use A;`.
+Underlying cause: Change Signature does not run import optimization as a post-processing step; it only updates the signature and call sites, leaving stale use statements in the file.
+*/
+namespace A1 {
+    class A {}
+}
+
+namespace B1 {
+    use A;
+    function f(A $a) {
+    }
+}
+?>

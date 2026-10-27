@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+function foo() {
+var baz;
+var bar = baz['bar']; //{Rename Variable on bar}
+}
+function foo2() {
+var bar = 1; //{Rename Variable on bar}
+var zoo = {bar: 'bar'};
+}

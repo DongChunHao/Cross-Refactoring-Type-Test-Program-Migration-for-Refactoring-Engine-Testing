@@ -1,0 +1,8 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Cross‑file move refactoring fails to synchronously update consumer‑side import statements and qualified references; leaves stale import paths or outdated call‑site identifiers leading to unresolved‑reference errors
+class MyClass:
+def hello(self):
+pass
+def my_func(): // REFACTOR_TARGET
+obj = MyClass()
+return obj

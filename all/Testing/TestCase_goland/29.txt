@@ -1,0 +1,26 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+type MyAnotherType struct{}
+func (m *MyAnotherType) GetSome() int {
+return 42
+}
+func (m *MyAnotherType) GetOld() int {
+return 0
+}
+type MyType struct {
+field MyAnotherType
+}
+func (m *MyType) Method1() {
+var result int
+result = m.field.GetSome()
+result += m.field.GetOld() // rename method GetOld to GetAnother
+fmt.Println(result)
+}
+func main() {
+t := MyType{field: MyAnotherType{}}
+t.Method1()
+}

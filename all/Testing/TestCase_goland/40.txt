@@ -1,0 +1,17 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+type T struct{}
+func (t T) demo() {
+i := func() int {
+return 1
+}()
+fmt.Println(i)
+}
+func main() {
+t := T{}
+t.demo() // move demo method from T to standalone function
+}

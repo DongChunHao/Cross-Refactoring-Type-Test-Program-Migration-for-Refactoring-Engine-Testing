@@ -1,0 +1,37 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Push Down / Pull Up / Move Field refactoring
+Refactoring target: static typed property `N1\A::$i`
+Scope: type reference import strategy for property native type
+Refactoring operation: push property `$i` down from A to subclass B in namespace N2
+*/
+
+/* Error Root Cause:
+Observed failure:
+After pushing the typed property `public static MyClass $i;` into class B (namespace N2), the refactoring outputs the fully qualified name `\N\MyClass` inline, instead of adding `use N\MyClass;` to the namespace and using the short name `MyClass`.
+Result: `public static \N\MyClass $i;`
+Desired: add import `use N\MyClass;` and write `public static MyClass $i;`.
+
+Expected behavior:
+When serializing the property type into the target namespace:
+1. Resolve the target namespace’s existing use statements.
+2. Insert a `use` import for `N\MyClass` if missing.
+3. Use the short class name in the property type declaration, consistent with how other refactorings handle type references.
+
+Underlying cause:
+The field member cloning/serialization path for Push/Pull/Move field is hardcoded to emit fully qualified names for native property types. It does not reuse the refactoring’s normal import-adding logic that would insert a `use` clause and use short names. It skips the import collection step for property type nodes.
+*/
+namespace N;
+class MyClass{}
+
+namespace N1;
+use N\MyClass;
+class A {
+    public static MyClass $i;
+}
+
+namespace N2;
+use N1\A;
+class B extends A {
+}
+?>

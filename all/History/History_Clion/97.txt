@@ -1,0 +1,16 @@
+/* Refactoring Settings:
+Refactoring type: Move (namespace refactoring F6)
+Refactoring target: Move nested namespace `first::second` into a newly specified target namespace
+Refactoring scope: Entire nested namespace first::second
+Refactoring rule expectation: Correctly update all namespace qualifiers, usings and references to entities inside `first::second` after moving the namespace to new parent namespace, maintain valid C++ namespace syntax
+*/
+
+/* Error Root Cause:
+Observed failure: Executing Move refactoring on nested namespace `first::second` and assigning it to a new parent namespace produces broken/invalid namespace code. References to symbols inside the moved namespace are not properly updated, or namespace nesting syntax is malformed.
+Expected behavior: Rewrite namespace declaration to new parent (e.g. `namespace newparent::second {}`) and update all usages of `first::second::xxx` to `newparent::second::xxx`.
+Underlying cause: The refactoring engine’s namespace move logic does not fully handle nested namespace symbol resolution; it fails to rewrite dependent qualified names for entities inside the moved nested namespace after changing its parent namespace.
+*/
+
+namespace first::second {
+
+}

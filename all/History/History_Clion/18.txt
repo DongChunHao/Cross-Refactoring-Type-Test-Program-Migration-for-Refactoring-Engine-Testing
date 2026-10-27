@@ -1,0 +1,37 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: the five consecutive if-continue checks inside the range-based for loop
+Operation: Select the 5 if blocks with continue statements, invoke Extract Method and name new static helper method
+Scope: Handle multiple `continue` early exit points inside extracted code from loop body; transform continue into return boolean flag for helper; preserve original control flow semantics
+*/
+
+/* Error Root Cause:
+Observed limitation: Extract Method cannot directly extract code containing multiple `continue` statements inside a loop. `continue` is a loop-local control flow token; it cannot simply be moved into an extracted helper function, because `continue` only affects the enclosing loop.
+Expected behavior: Extract Method should automatically rewrite the logic: convert each `continue` into `return false;` inside the new helper function, then use `if (!helper()) continue;` in the original loop, preserving the original control flow.
+Underlying cause: The control-flow analysis of Extract Method does not implement automatic transformation for loop-local jump statements like `continue`. The refactoring engine treats `continue` as invalid to extract into separate function and either refuses extraction or produces broken code.
+*/
+
+// Simplified reproducer matching the pattern from Clang Static Analyzer source
+for (const auto *I : D->property_impls()) {
+  // We can only check the synthesized properties
+  if (I->getPropertyImplementation() != ObjCPropertyImplDecl::Synthesize)
+    continue;
+
+  ObjCIvarDecl *ID = I->getPropertyIvarDecl();
+  if (!ID)
+    continue;
+
+  QualType T = ID->getType();
+  if (!T->isObjCObjectPointerType()) // Skip non-pointer ivars
+    continue;
+
+  const ObjCPropertyDecl *PD = I->getPropertyDecl();
+  if (!PD)
+    continue;
+
+  // ivars cannot be set via read-only properties, so we'll skip them
+  if (PD->isReadOnly())
+    continue;
+
+  [...]
+}

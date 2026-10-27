@@ -1,0 +1,38 @@
+/* Refactoring Settings:
+Refactoring Type: Inline Function
+Refactoring Target: Function `f(x: bool)` and `foo(mut x: usize)`
+Refactoring Scope: Rust function inlining, argument binding optimization
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4293-213-nightly, CLion 2021.3, Rust 1.57.0, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run "Inline function" refactoring on the function call
+*/
+/* Error Root Cause:
+Observed failure: The Inline Function refactor always generates a new `let` binding for every parameter, even when the argument is a plain identifier with no side effects. This creates redundant rebindings, pollutes code, and raises the risk of accidental name shadowing.
+Expected behavior: The refactor should perform per-argument analysis:
+1. When the argument is a simple identifier, the parameter is not mutable, and there is no pattern destructuring: substitute the original identifier directly and skip creating a new binding.
+2. Preserve the generated binding if: the parameter is mutable and the source variable is immutable, the parameter uses destructuring patterns, or the argument expression has side effects / drop semantics / expensive computation.
+Underlying cause: The inlining implementation adopts a one-size-fits-all strategy: it unconditionally creates a local binding for every function parameter. It lacks an analysis pass to detect trivial identifier arguments where rebinding is semantically unnecessary and safe to eliminate.
+*/
+// Simple identifier case
+fn f(x: bool) {
+    let _ = x;
+}
+fn g() {
+    let y = true;
+    f(y);
+}
+
+// Mutable parameter cases
+fn foo(mut x: usize) -> usize {
+    x += 1;
+    x
+}
+fn bar() -> usize {
+    let a = 5;
+    foo(a)
+}
+fn quux() -> usize {
+    let mut a = 5;
+    foo(a)
+}

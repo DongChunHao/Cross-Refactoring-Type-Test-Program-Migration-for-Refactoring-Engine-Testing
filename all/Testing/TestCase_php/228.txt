@@ -1,0 +1,13 @@
+```
+<?php
+class UserService
+{
+    public function getUser()
+    {
+        return null;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `UserService::getUser()`, input invalid return type `User?` and apply refactoring.

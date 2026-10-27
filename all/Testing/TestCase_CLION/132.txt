@@ -1,0 +1,24 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+#include <unordered_map>
+#include <memory>
+#include <string>
+#include <iostream>
+// Forward declarations
+class AbstractGenerator {
+public:
+void writeCodeModel(std::ostream& hppout, std::ostream& cppout);
+void writeCodeBody(std::ostream& hppout, std::ostream& cppout);
+};
+void AbstractGenerator::someFunc(std::ostream& hppout, std::ostream& cppout)
+{
+std::unordered_map<std::string, std::shared_ptr<AbstractGenerator>> m_siblingClasses;
+for(auto sibling : m_siblingClasses) {
+std::shared_ptr<AbstractGenerator> genPtr = sibling.second; //{Extract variable for shared_ptr sibling}
+genPtr->writeCodeModel(hppout, cppout);
+hppout << std::endl;
+}
+writeCodeBody(hppout, cppout);
+}

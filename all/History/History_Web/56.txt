@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Expression `val + 1` inside function expression assigned to `vvv`
+Refactoring Scope: JavaScript file
+Trigger Operation: Select `val + 1`, run Extract Method, scope = function vvv, enable "Declare functional expression"
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The extracted function expression is assigned to a local variable `eeeee`, but the call site incorrectly uses `this.eeeee()`. Local variables are not properties of `this`, so `this.eeeee` is undefined and produces a reference error.
+Expected behavior: Call the local variable directly: `return eeeee();`
+Underlying cause: When generating the invocation for an extracted local function expression, the refactoring incorrectly emits `this.` receiver, assuming the extracted function is a method instead of a local variable.
+*/
+
+// Complete compilable test code
+var vvv = function (val) {
+    return val + 1;
+};

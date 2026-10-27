@@ -1,0 +1,20 @@
+```
+<?php
+namespace Shop\Checkout {
+    use Shop\Traits\DiscountCalc;
+    class CheckoutBase
+    {
+    }
+    class OrderHandler extends CheckoutBase
+    {
+        use DiscountCalc;
+        function applyDiscount(){}
+    }
+}
+namespace Shop\Traits {
+    trait DiscountCalc{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `OrderHandler`, target namespace `Shop\Order`

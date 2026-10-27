@@ -1,0 +1,15 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package format
+import (
+"[github.com/fatih/color](https://github.com/fatih/color)"
+)
+
+type Helper struct{}
+func (h Helper) a() { // Move method a to Helper struct
+cyan := color.New(color.FgHiCyan).SprintfFunc()
+cyan("x")
+}
+func main(){}

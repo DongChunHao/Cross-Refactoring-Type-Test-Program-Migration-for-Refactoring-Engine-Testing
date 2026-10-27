@@ -1,0 +1,22 @@
+package main
+
+//Hello world
+type Hello interface {
+	World()
+}
+
+/* Refactoring Settings:
+Refactoring type: Delete Type quickfix
+Refactoring target: interface Hello
+Refactoring rule: When deleting a top-level type declaration via Delete Type quickfix, remove the leading documentation comment that is semantically associated with this type.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After running Delete Type quickfix on interface Hello, the interface declaration `type Hello interface { World() }` is removed, but the leading `//Hello world` comment remains in the source file.
+Expected behavior:
+The associated leading doc comment for the Hello interface should be deleted together with the type declaration.
+
+Underlying cause:
+The quickfix logic only deletes the type declaration PSI node. It does not look up and remove the leading comment node that is attached as documentation for the type.
+*/

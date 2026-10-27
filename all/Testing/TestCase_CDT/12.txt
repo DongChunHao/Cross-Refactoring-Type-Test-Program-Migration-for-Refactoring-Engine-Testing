@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: a_renamed
+'''
+template 
+struct S {
+void f(T a)//rename variable for template‑dependent parameter a
+{
+T b = a;
+}
+};

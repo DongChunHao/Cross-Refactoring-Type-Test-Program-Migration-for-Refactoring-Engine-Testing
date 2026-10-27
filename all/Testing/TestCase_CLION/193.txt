@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include "NewCppClass.h"
+struct Wrapper
+{
+static void wrapper_foo() { //{Move foo logic into static wrapper member}
+NewCppClass::mVSyncUpdates = true;
+NewCppClass::mFrameTime = (1 / 30.0f) * 1000.0f;
+}
+};
+void fooBar(){
+Wrapper::wrapper_foo();
+}
+void NewCppClass::foo() {
+fooBar();
+}

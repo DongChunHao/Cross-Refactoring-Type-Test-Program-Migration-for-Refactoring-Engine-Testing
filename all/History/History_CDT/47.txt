@@ -1,0 +1,39 @@
+#define Id_0
+float func_0 ( ){
+	float LocalVar_0 = 2;
+    return LocalVar_0;
+}
+float Function_0 (  int LocalVar_1){
+    float LocalVar_0 = 2;
+    return LocalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring(local variable rename inside func_0)
+Refactoring Target: local variable `LocalVar_0` inside func_0
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select local variable LocalVar_0 in func_0, invoke Rename refactoring, input string `a v` with embedded whitespace as new variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts rename input `a v` which contains whitespace.
+The generated declaration becomes `int a 	v = 10;`, and assignment becomes `float LocalVar_0 = a 	v;`.
+In C, whitespace works as token separator. Compiler interprets `a` and `v` as two independent identifiers.
+This introduces syntax error. Note that only the local variable inside `func_0` is modified; the homonymous local variable `LocalVar_0` inside `Function_0` remains unchanged, this part of scoping behaviour is correct.
+Refactoring finishes without warning and writes ill‑formed source code.
+
+Expected behavior:
+Local‑variable rename must perform strict lexical validation on candidate new‑name before source‑code modification:
+1. Valid C identifier starts with a letter or underscore.
+2. Only letters, underscores and decimal digits are permitted characters.
+3. Reject inputs containing whitespace, special symbols (`*`, `&`, `#`), reserved keywords, digit‑starting literals.
+4. If validation fails, abort refactoring and show error message to developer.
+Rename should only accept well‑formed identifiers and never treat arbitrary text as a variable name.
+
+Underlying cause:
+CDT rename does not validate user‑input conforms to C identifier lexical rules. Raw input string is directly substituted into variable declaration and expression sites. Whitespace inside user input becomes source‑code token separator and breaks program syntax.
+*/

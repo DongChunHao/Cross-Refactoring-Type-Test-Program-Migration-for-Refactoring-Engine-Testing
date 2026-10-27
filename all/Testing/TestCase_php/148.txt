@@ -1,0 +1,10 @@
+```
+<?php
+class AppError{
+    public static final function logError(){
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static final function `logError()` from class `AppError` to built-in stub class `Exception`

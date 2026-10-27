@@ -1,0 +1,33 @@
+/* Refactoring Settings:
+Refactoring Type: Introduce Constant / Extract Constant
+Refactoring Target: Expression `1 + 1` inside `main`
+Refactoring Scope: File-level constant extraction and import generation
+Plugin Environment: IntelliJ Rust plugin 0.2.123.SNAPSHOT-201-dev, CLion 2020.1.1, Rust 1.43.0, macOS 10.15.4
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Introduce Constant on `1 + 1`, choose file scope for the new constant
+*/
+/* Error Root Cause:
+Observed failure: When creating a file-scoped constant, the refactor incorrectly inserts `use crate::I;`. Since the constant `I` is defined in the same module/file, this import is redundant and unnecessary.
+Expected behavior: Create the `const I` declaration at file level and replace the expression with `I`, without adding the spurious `use crate::I;` line.
+Underlying cause: The refactor unconditionally emits a crate-qualified import for the new name, without checking whether the reference site is already inside the same module where the constant is defined.
+*/
+// Before
+fn main() {
+    println!("{}", 1 + 1);
+}
+
+// Actual broken output
+use crate::I;
+const I: i32 = 1 + 1;
+
+fn main() {
+    println!("{}", I);
+}
+
+// Expected output
+const I: i32 = 1 + 1;
+
+fn main() {
+    println!("{}", I);
+}

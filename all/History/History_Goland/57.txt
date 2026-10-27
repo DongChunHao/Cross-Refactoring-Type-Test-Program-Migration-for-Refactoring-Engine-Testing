@@ -1,0 +1,27 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Introduce Constant
+Refactoring target: String literal `"a-constant"` in the call `f("a-constant")`
+Refactoring rule: The Introduce Constant action should only be offered for expressions that are valid Go compile-time constants. It must filter out non-constant contexts/expressions and not propose the refactoring when the target expression is inside a call to a regular variable function.
+*/
+
+/* Error Root Cause:
+Observed failure: The IDE offers the "Introduce Constant" quick action for `"a-constant"`. Even though the string literal itself is a constant, the refactoring logic does not check whether the expression’s usage context allows a named constant; or the action’s availability predicate is too loose and does not distinguish constant expressions from places where a constant declaration cannot be meaningfully extracted.
+Expected behavior: Either disable Introduce Constant here, or generate a valid top-level / block-scoped `const` for the literal.
+Underlying cause: The availability check for Introduce Constant only looks at the node kind (string literal) and ignores surrounding context; it does not verify that extraction to a `const` declaration is semantically valid for the surrounding code.
+*/
+
+func main() {
+	f := func(string) int { return 42 }
+	f("a-constant") // <caret> on the string literal
+}
+
+// Expected valid extraction output
+/*
+const c = "a-constant"
+func main() {
+	f := func(string) int { return 42 }
+	f(c)
+}
+*/

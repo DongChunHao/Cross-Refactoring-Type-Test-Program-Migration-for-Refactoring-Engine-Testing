@@ -1,0 +1,32 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Replace with indexer access
+Refactoring Target: `C` of type `React.ComponentType<P1> | React.ComponentType<P2>` used as JSX tag
+Refactoring Scope: TypeScript TSX file
+Trigger Operation: Invoke "Replace with indexer access" intention on the JSX component variable `C`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The intention generates invalid indexer access code for the generic union of React component types, producing red compile errors. React component type `ComponentType<T>` is a generic constructor/function type; naïve index access syntax is not valid for this JSX tag context.
+Expected behavior: The intention should skip or disable itself for values of generic React `ComponentType` union types used in JSX tag position, instead of emitting ill‑typed index access code.
+Underlying cause: The intention’s simple expression rewrite logic does not distinguish plain object properties from JSX tag positions and generic React component constructor types. It applies the indexer transformation unconditionally without accounting for TSX/React component type rules.
+*/
+
+// Complete compilable test code
+import * as React from 'react';
+
+function render2() {
+    interface P1 {
+        p?: boolean;
+        c?: string;
+    }
+    interface P2 {
+        p?: boolean;
+        c?: any;
+        d?: any;
+    }
+
+    var C: React.ComponentType<P1> | React.ComponentType<P2> = null as any; // Replace with indexer access
+    const a = <C p={true} />;
+}

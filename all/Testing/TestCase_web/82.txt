@@ -1,0 +1,5 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+var foo = {x: 2, y: "a", z: true}, {x, y, z} = foo; //{Rename Field target variable foo in compound var statement together with destructuring pattern}

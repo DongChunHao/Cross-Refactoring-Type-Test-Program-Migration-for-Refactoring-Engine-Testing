@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring type: Move Method (MM16)
+Refactoring target: Move inline virtual destructor definition from header to .cpp source file
+Refactoring rule expectation: When moving virtual destructor implementation out of class definition into source file, **remove `virtual` keyword from the definition**. `virtual` only belongs on the declaration inside class.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Move Method refactoring produces `virtual MoveMethodAbstractInline::~MoveMethodAbstractInline() { }` in cpp file.
+C++ rule: `virtual` qualifier is only allowed on the declaration inside the class, function/destructor definition outside class cannot have `virtual` keyword → compile error.
+
+Expected result in source file:
+MoveMethodAbstractInline::~MoveMethodAbstractInline() { }
+Header remains:
+class MoveMethodAbstractInline {
+public:
+    virtual ~MoveMethodAbstractInline();
+};
+
+Underlying cause:
+Move Method logic does not strip `virtual` qualifier when moving the definition out of the class. It blindly copies all qualifiers from inline declaration into the out-of-line definition, unaware C++ forbids `virtual` on out-of-line definitions.
+*/
+
+// MoveMethod.h
+class MoveMethodAbstractInline {
+public:
+    virtual ~MoveMethodAbstractInline()
+    {
+    }
+};

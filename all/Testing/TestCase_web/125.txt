@@ -1,0 +1,9 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper function containing variable assigned from d‑ts‑declared Object.fromEntries}
+let map2 = new Map([ [ 'a', 1 ], [ 'b', 2 ], [ 'c', 3 ] ]);
+let obj222 = Object.fromEntries(map2);
+console.log(obj222)
+}

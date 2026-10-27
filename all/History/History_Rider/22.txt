@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Symbol + Edit and Continue (EnC / Hot Reload)
+Refactoring Target: C# interface type
+Refactoring Scope: Rename interface, propagate changes to implementations and usages, apply via EnC hot reload
+IDE: JetBrains.Rider-2019.3-EAP2D-193.4753.88
+Ticket: net193-enc-usov
+*/
+
+/* Error Root Cause:
+Observed failure: Renaming an interface while debugging with Edit and Continue enabled produces uncompilable code. Rider’s rename refactoring updates source files correctly, but the EnC delta patch generated for the running debug process is invalid. The hot-reload delta does not properly update interface references on implementing classes, leaving stale type references in the loaded dynamic assembly, which causes compilation errors inside the EnC pipeline.
+Expected behavior: Either the rename refactoring generates a valid EnC patch that updates all interface/implementation bindings, or Rider blocks the rename action with a clear warning that this refactoring is incompatible with Edit and Continue.
+Underlying cause: Edit and Continue in .NET has restrictions on interface type renaming. Rider’s rename logic does not check whether the change falls into EnC unsupported territory before attempting to emit an incremental update. The EnC engine rejects the partial patch, resulting in inconsistent state between source text and the debugged runtime assembly.
+*/
+
+// Before rename
+public interface IService {}
+public class Service : IService {}
+
+// After rename IService → INewService (source text is correct)
+public interface INewService {}
+public class Service : INewService {}
+// Bug: EnC incremental patch fails to apply, debug session gets uncompilable delta

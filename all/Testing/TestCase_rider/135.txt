@@ -1,0 +1,21 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+using UnityEngine;
+using GridCoord = UnityEngine.Vector3Int;
+
+namespace DefaultNamespace
+{
+public abstract class BaseBehaviour : MonoBehaviour { }
+
+public class AliasExample : BaseBehaviour
+{
+private GridCoord x;
+
+public void ProcessCoord() //{Pull Up Method: target method for move‑file‑type‑alias‑expansion‑bug reproduction}
+{
+}
+}
+
+}

@@ -1,0 +1,31 @@
+typedef struct s {
+    char *n;
+};
+
+void foo(struct s* j) {
+    struct s* i;
+    j = i; // extract
+    j->n = "Jack";
+}
+
+int main() {
+    struct s* j;
+    foo(j);
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: assignment expression `j = i;` inside foo()
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select full statement `j = i;`, invoke Extract Function refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: The generated extracted_function is missing the return‑type entirely, producing invalid syntax `* extracted_function(struct s* j, struct s* i)`. The correct return‑type should be `struct s*`. Assignment result is pointer to struct s, but refactoring fails to deduce pointer return‑type and outputs malformed function header.
+Expected behavior: Generate function prototype `struct s* extracted_function(struct s* j, struct s* i) { j = i; return j; }`. Call site `j = extracted_function(j, i);` remains valid.
+Underlying cause: When extracting an assignment statement whose result type is a pointer, CDT’s return‑type inference fails to resolve the pointer type. It incorrectly emits only a stray asterisk without the base type, resulting in syntactically invalid function declaration.
+*/

@@ -1,0 +1,9 @@
+package goo
+
+// Bar is exported (public, uppercase)
+func Bar() {}
+
+package boo
+
+// baz is unexported (private, lowercase)
+func baz() {}

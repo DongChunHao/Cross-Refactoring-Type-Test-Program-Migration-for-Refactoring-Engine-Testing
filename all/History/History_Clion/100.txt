@@ -1,0 +1,29 @@
+#ifndef __ShapeStateImpl_H_
+#define __ShapeStateImpl_H_
+#include <stdlib.h>
+
+/* Refactoring Settings:
+Refactoring type: Move function definition to source file
+Refactoring target: Move destructor definition of ShapeStateImpl from header class body to .cpp source file
+Refactoring scope: Destructor virtual ~ShapeStateImpl() { free(_pointsPosition); }
+Refactoring rule expectation: Keep virtual keyword only in the header declaration ~ShapeStateImpl(); remove virtual keyword from out-of-line destructor definition in cpp file
+*/
+
+/* Error Root Cause:
+Observed failure: After moving destructor definition to source file, the generated out-of-line definition incorrectly retains the virtual keyword: virtual ShapeStateImpl::~ShapeStateImpl() { free(_pointsPosition); }.
+Expected behavior: Header keeps virtual ~ShapeStateImpl();, cpp file definition should be ShapeStateImpl::~ShapeStateImpl() { free(_pointsPosition); }, without virtual.
+Underlying cause: The refactoring engine copies all function specifiers including virtual from the inline destructor declaration to the external definition. C++ standard forbids virtual keyword on out-of-line definitions of destructors and member functions; virtual may only appear on the declaration inside the class.
+*/
+
+class ShapeStateImpl {
+public:
+    ShapeStateImpl(double* currentPoints, size_t numberOfPoints);
+    virtual ~ShapeStateImpl() {
+        free(_pointsPosition);
+    }
+private:
+    size_t _pointCount;
+    double *_pointsPosition;
+};
+
+#endif //__ShapeStateImpl_H_

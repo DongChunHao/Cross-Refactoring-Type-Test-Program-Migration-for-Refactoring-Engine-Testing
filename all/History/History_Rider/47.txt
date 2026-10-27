@@ -1,0 +1,55 @@
+' Refactoring Settings:
+' Refactoring Type: Extract Interface
+' Refactoring Target: VB.NET class, selected class members
+' IDE: Rider 2019.3 RD-193.5233.171
+'
+
+' Error Root Cause:
+' Observed failure:
+' When invoking Extract Interface on a VB.NET class and selecting members to extract:
+' Rider modifies the original class to add the `Implements` clause, but **does not emit the new interface type containing the selected members**.
+' The class gets the `Implements IMyInterface` declaration, yet the IMyInterface definition is missing from the project entirely.
+
+' Expected behavior:
+' 1. Create a new VB interface file / type containing signatures for all selected members.
+' 2. Add `Implements IMyInterface` to the source class.
+' 3. For each extracted member in the class, attach the `Implements` clause mapping to the interface member.
+
+' Underlying cause:
+' Rider’s VB.NET Extract Interface PSI generator had a code-path bug.
+' The refactoring split into two phases:
+' A) Generate interface type node and insert it into the document/project.
+' B) Modify the original class to implement that interface.
+' In this version, phase A silently failed or was skipped, while phase B still ran.
+' This was VB-specific; the C# Extract Interface logic worked correctly.
+' Possible triggers: VB member signature normalization, property/event/method signature parsing failure, or failure to resolve target document for the new interface.
+
+' Original VB class
+Public Class CustomerRepository
+    Public Function GetCustomer(id As Integer) As Customer
+        ' logic
+    End Function
+End Class
+
+' Expected after Extract Interface
+Public Interface ICustomerRepository
+    Function GetCustomer(id As Integer) As Customer
+End Interface
+
+Public Class CustomerRepository
+    Implements ICustomerRepository
+
+    Public Function GetCustomer(id As Integer) As Customer Implements ICustomerRepository.GetCustomer
+        ' logic
+    End Function
+End Class
+
+' Actual buggy result
+' No ICustomerRepository interface is created anywhere in the solution
+Public Class CustomerRepository
+    Implements ICustomerRepository ' compile error: ICustomerRepository is undefined
+
+    Public Function GetCustomer(id As Integer) As Customer Implements ICustomerRepository.GetCustomer
+        ' logic
+    End Function
+End Class

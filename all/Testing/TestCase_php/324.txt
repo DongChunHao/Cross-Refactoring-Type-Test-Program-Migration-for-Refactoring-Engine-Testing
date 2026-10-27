@@ -1,0 +1,8 @@
+```
+<?php
+function f($a, $b) {}
+f(/*1*/ 1 /*2*/, /*3*/ 1);
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `function f($a, $b)`; add optional parameter `$c` at the end of signature.

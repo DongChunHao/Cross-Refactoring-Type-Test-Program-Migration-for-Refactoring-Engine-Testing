@@ -1,0 +1,45 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Create field (Create property)
+Refactoring Target: `pet.zebraName` inside Flow union type function `nameOfPet`
+Refactoring Scope: Current JavaScript/Flow file
+Trigger Operation: Invoke Create field quickfix on unresolved `pet.zebraName` in a Flow union object type annotated with exact object syntax `{| ... |}`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: For Flow exact object union types `{|catName: string|} | {|dogName: string|}`, the Create field action generates a standalone top-level variable `zebraName = undefined;` and produces malformed, invalid type annotation syntax instead of adding `zebraName` into the Flow object type.
+In contrast, the equivalent TypeScript version correctly inserts the new property into the object literal type.
+Expected behavior: When using Create field on a property of a Flow exact object type, the action should extend the appropriate object type in the union by adding the `zebraName` property inside the `{| ... |}` braces, similar to how TypeScript handles object types.
+Underlying cause: The Create field logic has separate handlers for TypeScript object types and Flow exact object types; the Flow handler fails to recognize `{|...|}` as a modifiable object type and incorrectly emits a top-level variable plus broken type text instead of augmenting the existing exact object type in the union.
+*/
+
+// Complete compilable test code (Flow version)
+function getNameOfDog(
+    person: { age: number, nameOfDog?: string },
+): void | string {
+    return person.nameOfDog;
+}
+
+function nameOfPet(
+    pet: {|catName: string|} | {|dogName: string|}
+): string | void {
+    if (pet.catName) { return pet.catName; }
+    if (pet.dogName) { return pet.dogName; }
+    if (pet.zebraName) { return pet.zebraName; } //Call 'Create field' here
+}
+
+// Equivalent TypeScript version for comparison
+function nameOfPetTS(
+    pet: { catName: string, dogName: string }
+) {
+    if (pet.catName) {
+        return pet.catName;
+    }
+    if (pet.dogName) {
+        return pet.dogName;
+    }
+    if (pet.zebraName) {//Call 'Create field' here
+        return pet.zebraName;
+    }
+}

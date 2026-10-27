@@ -1,0 +1,25 @@
+<?php
+class C{}
+class A0{}
+class A extends A0{
+    public static function init() {
+        echo self::class;
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static function init() from class A to class C
+Refactoring rule: When moving a static method containing `self::class`, recognize that `self` resolves to the lexical class where the expression is written. Moving the method changes that lexical class. The refactoring must either rewrite `self::class` to the original class literal `A::class`, or present a conflict warning that the semantics will change.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving `init()` to class C, the expression `self::class` remains unchanged. Now `self` refers to C instead of the original A. The runtime value changes from `A` to `C`, altering program behavior silently with no warning.
+
+Expected behavior:
+Detect `self::class` inside the method body. Offer to rewrite it to `A::class` to preserve the original meaning, or warn the user that `self::class` will resolve to the new host class C after moving.
+
+Underlying cause:
+The reference analysis treats `self::class` as a generic static class access without special semantic handling. It does not distinguish that `self` is bound to the source class A at parse time and will change meaning once the method is relocated to another class.
+*/

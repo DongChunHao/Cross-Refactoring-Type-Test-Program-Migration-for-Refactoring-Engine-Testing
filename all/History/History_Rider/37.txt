@@ -1,0 +1,37 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: Async method returning Task<bool>
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure:
+The refactoring preview panel displays the simplified return type `Task`, hiding the generic type argument `bool`. After confirming and applying the refactoring, the final generated source is correct and emits `Task<bool>`.
+
+Expected behavior:
+Preview signature should match the final generated signature exactly: show `Task<bool>` in the preview.
+
+Underlying cause:
+There are two separate type rendering paths in the refactoring workflow:
+1. Preview UI path: uses a simplified type formatter that strips generic arguments for `Task<T>`;
+2. Actual code generation path: uses the full semantic type information and correctly emits `Task<bool>`.
+The preview renderer only prints the base type name `Task` without its type parameter, even though the semantic model knows the full constructed generic type. This is purely a preview display bug, not a code generation bug — the emitted code is right, only the preview text is misleading.
+*/
+
+// Original code snippet
+async Task<bool> CheckCondition()
+{
+    return await SomeCheckAsync();
+}
+
+// Preview (incorrectly shown)
+Task NewMethod()
+{
+    return await SomeCheckAsync();
+}
+
+// Final applied code (correct)
+async Task<bool> NewMethod()
+{
+    return await SomeCheckAsync();
+}

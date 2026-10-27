@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+#[derive(Debug)]
+enum Color { Red }
+struct Point {
+x: i32,
+y: i32,
+}
+struct A {
+position: Point, //{rename sub‑struct typed field position to coord}
+name: String,
+color: Color,
+}

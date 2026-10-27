@@ -1,0 +1,24 @@
+
+using System;
+using System.Diagnostics;
+
+namespace ConsumerCode
+{
+    public static class MyLog
+    {
+   // extract method:  "Test/Log"
+        [MenuItem("Test/Log")]
+        public static void LogSomething()
+        {
+           
+        }
+    }
+
+    public class MenuItemAttribute : Attribute
+    {
+        public MenuItemAttribute(string testLog)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

@@ -1,0 +1,16 @@
+```
+<?php
+class UserProfile {
+    public $addr_city = "";
+    public $addr_zip = "";
+    public $addr_street = "";
+}
+
+$u = new UserProfile();
+$u->addr_city = "Beijing";
+echo $u->addr_zip;
+$u->addr_street = "Main St";
+?>
+```
+
+【Refactoring Action】: Custom composite refactoring, select `$addr_city`, `$addr_zip`, `$addr_street`; group into public array property `$address`, keys `city`, `zip`, `street`, update all usages.

@@ -1,0 +1,18 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+typedef struct TestReporter TestReporter;
+typedef struct Constraint Constraint;
+void expect_(TestReporter *test_reporter, const char *function, const char *test_file, int test_line, ...);
+Constraint *where_(const char *parameter, Constraint *constraint);
+#define expect(f, ...) expect_(get_test_reporter(), #f, **FILE**, **LINE**, (Constraint *)**VA_ARGS** +0, (Constraint *)0)
+#define where(parameter, constraint) where_(#parameter, constraint)//extract method for macro used inside another macro argument
+void Ensure(const char *test_name);
+TestReporter* get_test_reporter(void);
+int mock_walker(void);
+Constraint* is_equal_to_string(const char*);
+void single_item_breadcrumb_does_calls_walker_only_once(void) {
+Ensure("single_item_breadcrumb_does_calls_walker_only_once");
+expect(mock_walker, where(name, is_equal_to_string("Hello")));
+}

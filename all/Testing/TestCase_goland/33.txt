@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type T struct{}
+func (t T) foo() (s string) {
+return s
+}
+func mainFunc() string {
+t := T{}
+return t.foo() // move foo method from T to standalone function
+}

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+fn main() {
+let local_val = 1 + 1; //{rename variable local_val to calc_result}
+println!("{}", local_val);
+}

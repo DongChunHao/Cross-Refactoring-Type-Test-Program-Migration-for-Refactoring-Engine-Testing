@@ -1,0 +1,31 @@
+<?php
+// Original scenario: Symfony 2.2 OutputFormatter class
+namespace Symfony\Component\Console\Formatter;
+
+use Symfony\Component\Console\Formatter\FormatterStyle;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Formatter\OutputFormatterStyleInterface;
+use Symfony\Component\Console\Formatter\OutputFormatterStyleStack;
+
+class OutputFormatter implements OutputFormatterInterface
+{
+    // class body
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: OutputFormatter, move to namespace N
+Refactoring rule: When generating use statements for the destination namespace, each use declaration must be emitted as a separate syntactically valid statement ending with semicolon. The class declaration node must not be lost during PSI rewrite.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving to namespace N, the generated code concatenates multiple use statements onto a single line without separators: `use Symfony\Component\Console\Formatter\FormatterStyleuse Symfony\Component\Console\Formatter\OutputFormatterInterface;` etc. The class declaration is lost, producing invalid PHP syntax.
+Expected behavior:
+Each imported type gets its own `use ...;` line, followed by the complete `class OutputFormatter implements OutputFormatterInterface` declaration.
+Underlying cause:
+The PSI text generation visitor fails to insert line breaks and semicolon terminators between emitted use nodes during bulk import generation. The token stream is concatenated naively, merging use identifiers, and the class definition node is accidentally dropped from the resulting AST.
+*/
+?>

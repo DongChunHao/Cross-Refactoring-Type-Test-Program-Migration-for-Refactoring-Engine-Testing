@@ -1,0 +1,45 @@
+```
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (CLion C++ refactoring)
+Refactoring target: class member method `Bug::foo(double bar[3][2])`
+Operation: Invoke Rename refactoring and rename method name `foo` to `fooo`
+Scope: Only rename the method identifier. Preserve the original two-dimensional array parameter type `double bar[3][2]` without converting it to `double**`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After rename refactoring:
+`double fooo(double **bar)`
+Original `double bar[3][2]` is incorrectly replaced with `double** bar`.
+`double[3][2]` decays to `double (*)[2]` (pointer to array of 2 doubles), not `double**`. `double**` is a pointer to pointer, which is an incompatible type and causes compilation error.
+
+Expected behavior:
+Only method name changes, parameter type remains:
+```cpp
+double fooo(double bar[3][2])
+{
+    return bar[2][0];
+}
+```
+
+Underlying cause:
+Rename refactoring’s type resolver incorrectly normalizes 2D array function parameter to `double**`. It confuses pointer-to-array type with pointer-to-pointer type, rewriting the source text with the wrong type during AST traversal, breaking the signature.
+*/
+
+#include <iostream>
+#include <string>
+
+class Bug {
+public:
+double foo(double bar[3][2])
+{
+return bar[2][0];
+}
+};
+
+int main() {
+Bug example;
+double test[3][2];
+std::cout << std::to_string(example.foo(test)) << std::endl;
+return 0;
+}

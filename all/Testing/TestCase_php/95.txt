@@ -1,0 +1,17 @@
+```
+<?php
+namespace Queue\Base;
+    class QueueConnector
+    {
+    }
+namespace Queue\Job;
+    class EmailJob
+    {
+    }
+    class NotificationJob
+    {
+    }
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `EmailJob`, target namespace `Queue\Job\Mail`

@@ -1,0 +1,12 @@
+```
+<?php
+namespace App\Controller {
+    class Product
+    {
+    }
+    class Category{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `Product`, move to new file

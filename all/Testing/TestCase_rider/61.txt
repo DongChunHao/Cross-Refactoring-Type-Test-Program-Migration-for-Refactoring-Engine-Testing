@@ -1,0 +1,36 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace Trackable.Repositories
+{
+public abstract class EntityBase<TKey> where TKey : IEquatable<TKey> { }
+public abstract class ModelBase<TKey> where TKey : IEquatable<TKey> { }
+public abstract class DbRepositoryBase<TKey, TData, TModel>
+where TData : EntityBase<TKey>
+where TModel : ModelBase<TKey>
+where TKey : IEquatable<TKey>
+{
+}
+
+public interface IDbQueryRepository<TKey, TData, TModel>
+where TData : EntityBase<TKey>
+where TModel : ModelBase<TKey>
+where TKey : IEquatable<TKey>
+{
+DbRepositoryBase<TKey, TData, TModel> DbBaseRepository { get; }
+void SampleOperation(); //{Push Down Method: target interface member for rename‑undo analysis‑state‑loss bug reproduction}
+}</tkey></tkey></tkey>
+
+public class ConcreteQueryRepo<TKey, TData, TModel> : IDbQueryRepository<TKey, TData, TModel>
+where TData : EntityBase<TKey>
+where TModel : ModelBase<TKey>
+where TKey : IEquatable<TKey>
+{
+public DbRepositoryBase<TKey, TData, TModel> DbBaseRepository => null;
+public void SampleOperation() { }
+}
+
+}

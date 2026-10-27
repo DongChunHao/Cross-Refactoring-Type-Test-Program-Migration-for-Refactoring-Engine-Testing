@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+const { text } = 'subtype' in callbackEventEvent
+? callbackEventEvent.message
+: callbackEventEvent; //{Extract Method target destructuring assignment over ternary‑expression for Inline‑Variable precedence‑distribute‑into‑branches defect}
+const links = extractPullRequestLinks(text);

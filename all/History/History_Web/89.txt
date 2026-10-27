@@ -1,0 +1,41 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Function
+Refactoring Target: Imported function `toInline()` inside `someFunction()`
+Refactoring Scope: TypeScript with module imports, name shadowing
+Trigger Operation: Inline imported `toInline()` which calls `tmp()` from its own module; the caller scope already has a local `tmp` that shadows the imported name
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+`toInline` is defined in another file and calls the exported `tmp` from that same file. When inlining `toInline()` into `someFunction`, the inliner naively substitutes `promote(tmp())` without qualifying or renaming the imported `tmp`.
+Since `someFunction` already declares a local `const tmp = ()=> 'bogus'`, the substituted `tmp()` binds to the local shadowing function instead of the original imported `tmp`. This changes runtime behavior silently.
+
+Expected behavior:
+Detect that the name `tmp` from the inlined body is from a different module and will be shadowed at the call site. Rename the imported binding (e.g. `tmp as tmp1`) and update the import statement, then use the renamed identifier in the inlined code.
+
+Underlying cause:
+The inliner’s name resolution does not account for lexical scope and shadowing at the target call site. It simply copies the body text and assumes identifiers resolve the same way, without checking whether identifiers from the original function’s scope collide with existing local bindings in the destination scope.
+*/
+
+// contains-function-to-inline.ts
+export const tmp = () => {
+    return 'stand-in'
+}
+
+export const promote = (value: string)=> {
+    return `promote(${value})`;
+}
+
+export const toInline = () => {
+    return promote(tmp())
+}
+
+// function-usage.ts
+import { toInline } from './contains-function-to-inline';
+
+export const someFunction = () => {
+    const tmp = ()=> 'bogus'
+    const result = toInline();
+}

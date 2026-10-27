@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: invokeFaCall
+'''
+
+invokeFaCall();
+    }
+    private function invokeFaCall()
+    {
+        $a = function () {
+            return $this->fa();
+        };
+        $this->fa();
+    }
+}
+?>

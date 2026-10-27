@@ -1,0 +1,16 @@
+```
+<?php
+abstract class Animal { }
+class Mammal extends Animal {
+    function breathe()
+    {
+    }
+}
+class Dog extends Mammal {
+    public $name;
+}
+$pet = new Dog();
+$pet->breathe();
+```
+
+【Refactoring Action】: Push Down method `breathe()` from class `Mammal` to subclass `Dog`.

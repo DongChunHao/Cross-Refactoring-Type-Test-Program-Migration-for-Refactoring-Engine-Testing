@@ -1,0 +1,20 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+namespace foo {
+}
+using Alias_t = bool;
+class Base
+{
+public:
+virtual bool testFunc() {}
+};
+class Impl : public Base //{Push down testFunc implementation from Base to Impl}
+{
+public:
+bool testFunc() override {
+Alias_t x = true;
+return x;
+}
+};

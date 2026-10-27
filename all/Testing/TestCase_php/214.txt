@@ -1,0 +1,14 @@
+```
+<?php
+namespace App\Base;
+class BaseRecord {
+}
+}
+namespace {
+class ArchiveRecord extends \App\Base\BaseRecord {
+}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring(F6), target `ArchiveRecord` from global namespace to `App\Archive`; auto-import enabled.

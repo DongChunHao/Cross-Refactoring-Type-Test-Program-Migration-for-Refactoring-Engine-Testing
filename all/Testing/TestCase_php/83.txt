@@ -1,0 +1,20 @@
+```
+<?php
+namespace App\Service {
+    use App\Traits\Timestamp;
+    class BaseService
+    {
+    }
+    class UserService extends BaseService
+    {
+        use Timestamp;
+        function save(){}
+    }
+}
+namespace App\Traits {
+    trait Timestamp{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `UserService`, target namespace `App\Domain`.

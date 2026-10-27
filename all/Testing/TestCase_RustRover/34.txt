@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// main.rs
+mod foo; //{extract function hello inside module foo into separate inner helper function}
+// foo.rs
+pub fn hello() {}

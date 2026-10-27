@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package pack1
+type Type struct{}
+type Wrapper struct{}
+func (w Wrapper) foo() (i int) {
+return
+}
+func caller() {
+w := Wrapper{}
+w.foo() // move foo method from Wrapper to Type
+}

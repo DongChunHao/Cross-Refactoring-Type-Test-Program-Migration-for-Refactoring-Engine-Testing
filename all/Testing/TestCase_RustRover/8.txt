@@ -1,0 +1,13 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+struct S {}
+trait T {
+fn bar(x: i32);
+}
+impl T for S {
+fn bar(x: i32) { //{change method bar, modify parameter metadata without removing parameter}
+println!("hello")
+}
+}

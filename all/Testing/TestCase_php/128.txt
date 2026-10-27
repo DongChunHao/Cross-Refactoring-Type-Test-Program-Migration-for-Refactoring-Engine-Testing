@@ -1,0 +1,15 @@
+```
+<?php
+class RootModel { }
+abstract class BaseEntity extends RootModel {
+    abstract public function save();
+}
+class UserEntity extends BaseEntity {
+    public function save()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target method `save()` from class `UserEntity`, pull up to parent class `RootModel`.

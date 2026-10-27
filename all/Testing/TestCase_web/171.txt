@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+class First {
+public name: string = 'test';
+get nameTrim() { //{Extract Method target getter definition whose internal this is context‑bound to First instance}
+return this.name.trim();
+}
+}
+class Second {
+first: First = new First();
+readName() {
+let trimmedName = this.first.nameTrim;
+}
+}

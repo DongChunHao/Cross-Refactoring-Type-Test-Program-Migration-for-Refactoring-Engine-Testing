@@ -1,0 +1,21 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Introduce Variable
+Refactoring Target: Ternary expression `x ? y : z` inside parenthesized selection
+Refactoring Scope: JavaScript / TypeScript
+Trigger Operation: Run Introduce Variable on `x ? y : z` from `let a = (x ? y : z) + t;`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After extraction, the refactoring keeps redundant parentheses around the new variable: `let a = (newVar) + t;`. The parentheses are unnecessary, as an identifier primary expression does not need grouping.
+
+Expected behavior:
+let newVar = x ? y : z;
+let a = newVar + t;
+
+Underlying cause: The refactoring preserves the original expression’s parenthesized grouping without checking whether the extracted result is a simple identifier that no longer requires those parentheses.
+*/
+
+// Complete compilable test code
+let a = (x ? y : z) + t;

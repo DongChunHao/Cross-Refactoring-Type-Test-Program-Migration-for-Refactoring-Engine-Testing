@@ -1,0 +1,33 @@
+<?php
+namespace NS1\NS2 {
+    use NS1\T;
+    class A2
+    {
+    }
+    class B extends A2
+    {
+        use T;
+        function f(){}
+    }
+}
+
+namespace NS1 {
+    trait T{}
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class B, target namespace N
+Refactoring rule: When moving a class to a different namespace, the refactoring must resolve all type dependencies used inside the class, including traits, global functions, and constants, and add corresponding `use` statements or fully qualified names in the new namespace scope.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving class B to namespace N, the refactoring adds `use NS1\NS2\A2;` for the parent class, but does not add an import for trait `NS1\T`. The line `use T;` becomes undefined in namespace N and produces invalid code.
+Expected behavior:
+The new namespace N block should include `use NS1\T;`, so `use T;` inside class B resolves correctly to the trait.
+Underlying cause:
+The dependency collector for Move Class only handles class/interface type references for inheritance and parameter types. It does not collect traits, free functions, or constants used within the class body, so the required `use` statements for those elements are omitted in the destination namespace.
+*/
+?>

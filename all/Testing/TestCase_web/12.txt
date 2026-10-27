@@ -1,0 +1,24 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+class Test {
+deleteOp(param) {
+localStorage.setItem(param, null);
+}
+toInline(id) { //{Move Method for toInline}
+console.log('deleting item by id ' + id)
+return this.deleteOp(id);
+}
+main(id) {
+this.toInline(id);
+this.setState({obj: null});
+};
+}
+function f2222(j) {
+return j * 2;
+}
+function testInline() {
+var ii = 2;
+f2222(ii);
+}

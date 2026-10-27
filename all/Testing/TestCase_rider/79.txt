@@ -1,0 +1,38 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+Imports System.Linq
+
+Module VbNetReproModule
+Sub Main()
+Dim source As IEnumerable(Of ModuleItem) = Enumerable.Empty(Of ModuleItem)()
+Dim flows As IEnumerable(Of FlowItem) = Enumerable.Empty(Of FlowItem)()
+
+Dim result = source _
+.Join(flows,
+Function(xModule) xModule.flowId,
+Function(flow) flow.id,
+Function(ei, fi) New With {ei, fi.pollId, .pollName = fi.Poll.name}) ' {Pull Up Method: target VB LINQ‑join projection lambda for stale‑inplace‑editor‑PSI‑corruption bug reproduction}
+End Sub
+
+End Module
+
+Public MustInherit Class BaseEntity
+End Class
+
+Public Class ModuleItem
+Inherits BaseEntity
+Public Property flowId As Integer
+End Class
+
+Public Class FlowItem
+Inherits BaseEntity
+Public Property id As Integer
+Public Property pollId As Integer
+Public Property Poll As PollItem
+End Class
+
+Public Class PollItem
+Public Property name As String
+End Class

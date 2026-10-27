@@ -1,0 +1,10 @@
+```
+<?php
+list($a, $b) = [function () {
+    echo 15;
+}, 15];
+$a();
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target anonymous function assigned via list destructuring, add new parameter `$c` with default value `null`.

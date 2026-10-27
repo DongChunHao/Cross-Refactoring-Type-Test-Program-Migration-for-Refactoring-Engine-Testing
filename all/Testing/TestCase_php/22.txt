@@ -1,0 +1,9 @@
+<?php
+interface I2{}
+interface I3 extends I2{
+    const a = 2;
+}
+class A implements I3{}
+class Test implements I2{
+    const a = 1; // <-- Pull Up refactoring target
+}

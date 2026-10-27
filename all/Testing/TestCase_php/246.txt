@@ -1,0 +1,23 @@
+```
+<?php
+namespace App\Utils {
+    class Config
+    {
+        const DEFAULT_TTL = 3600;
+    }
+}
+namespace App\Services {
+    class CacheService
+    {
+        /**
+         * @see \App\Utils\Config::DEFAULT_TTL
+         */
+        public function init()
+        {
+        }
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move `App\Utils\Config` from `App\Utils` into global namespace.

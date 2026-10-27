@@ -1,0 +1,21 @@
+int main(int a){
+    int b;
+    a = b; /* << select a */
+    return 0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: lvalue `a` on left‑hand side of assignment `a = b;` inside main()
+Refactoring Scope: current function main()
+IDE: Eclipse CDT
+Operation steps: Select lvalue `a` in assignment statement, invoke Extract Function refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT generates invalid C code `extracted_function (a) = b;`. A function call return value is used as left‑hand‑side lvalue of assignment, which is illegal in C language.
+Expected behavior: Detect that selected fragment is an lvalue in assignment position. Disallow Extract‑Function for this selection and present error/warning to user, instead of generating syntactically‑invalid code.
+Underlying cause: Extract Function refactoring does not perform lvalue‑rvalue context check before code generation. It naively wraps selected lvalue into a function call without validating whether a function call can legally occupy that syntax position, producing compile‑error code.
+*/

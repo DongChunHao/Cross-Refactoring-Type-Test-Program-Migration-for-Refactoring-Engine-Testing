@@ -1,0 +1,26 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Variable
+Refactoring Target: Condition expression inside an `if` statement
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure:
+Intermittent corruption after invoking Extract Variable on the expression inside an if condition.
+The generated code contains leftover template/placeholder marker `END$` from the refactoring engine’s preview template, producing invalid syntax like `if (bEND$b) {}`.
+
+Original intended transformation:
+```csharp
+if (read < count)
+{
+}
+
+bool b = read < count;
+if (b)
+{
+}
+
+bool b = read < count;
+if (bEND$b)
+{
+}

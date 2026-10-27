@@ -1,0 +1,46 @@
+/* Refactoring Settings:
+Refactoring type: Inline Function
+Refactoring target: Inline `foo.SetFoo(true);`
+Refactoring rule expectation: Substitute formal parameter `foo` of `SetFoo(bool foo)` with the actual argument `true`, produce `foo.m_foo = true;`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Inline refactoring substitutes `m_foo = foo` (inside SetFoo) with `foo.m_foo = foo;`.
+It incorrectly uses the variable name `foo` (the object instance) instead of the passed argument `true`.
+Also it incorrectly changes `foo.IsFoo()` → `foo.m_foo()` (attempt to call member variable as function).
+
+Expected result after inline:
+int main() {
+    Foo foo;
+    foo.m_foo = true;
+    return foo.m_foo ? 1 : 0;
+}
+
+Underlying cause:
+The inline substitution engine confuses two different identifiers:
+1. `SetFoo(bool foo)`: `foo` is the **formal parameter (bool)**
+2. `Foo foo;`: `foo` is the **instance variable (Foo object)**
+
+Name collision between parameter name and object variable name causes the substitution logic to pick the wrong symbol. It does not resolve name binding properly, leading to assigning the object `foo` into bool member `m_foo`, which is invalid.
+*/
+
+class Foo {
+public:
+    bool IsFoo() const
+    {
+        return m_foo;
+    }
+    void SetFoo(bool foo)
+    {
+        m_foo = foo;
+    }
+private:
+    bool m_foo;
+};
+
+int main() {
+    Foo foo;
+    foo.SetFoo(true);
+    return foo.IsFoo()? 1:0;
+}

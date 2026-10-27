@@ -1,0 +1,15 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+struct IncorrectReturnType {};
+struct CorrectReturnType {
+CorrectReturnType() {}
+};
+struct Wrapper {
+IncorrectReturnType mainFunction() { //{Move method mainFunction into struct Wrapper}
+ {
+return CorrectReturnType();
+};
+}
+};

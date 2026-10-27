@@ -1,0 +1,28 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method C::g()
+Scope: parameter reordering, PHPDoc @param comment formatting
+Refactoring operation: reorder parameters, move $a to last position
+*/
+
+/* Error Root Cause:
+Observed failure: After reordering parameters in Change Signature, the PHPDoc @param lines for the moved parameter gets separated with extra blank lines in the docblock.
+Expected behavior: Reorder the @param entries to match the new parameter order without inserting empty lines between them.
+Underlying cause: The PHPDoc comment rewriter for parameter reordering treats each @param as a standalone block and inserts newline separators naively, instead of maintaining a contiguous list of @param tags.
+*/
+class C {
+    /**
+     * F constructor.
+     *
+     * @param CachingIterator $a
+     * @param int             $b
+     * @param array           $c
+     *
+     * @return array
+     */
+    public function g(CachingIterator $a, int $b, array $c): array
+    {
+    }
+}
+?>

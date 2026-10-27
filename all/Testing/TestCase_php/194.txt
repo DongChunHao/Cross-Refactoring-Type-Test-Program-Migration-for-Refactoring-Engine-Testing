@@ -1,0 +1,12 @@
+```
+<?php
+function calc数値() { return 100; }
+function calc©() { return 200; }
+calc数値();
+calc©();
+calc数値();
+calc©();
+?>
+```
+
+【Refactoring Action】: Rename identifier refactoring, target function `calc©`, append `_v2` suffix.

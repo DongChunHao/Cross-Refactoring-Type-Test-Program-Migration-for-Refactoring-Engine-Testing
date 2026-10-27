@@ -1,0 +1,34 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring (constructor parameter type modification)
+Refactoring target: AA::__construct(bool $a)
+Scope: backing property type synchronization, docblock @var tag
+Refactoring operation: change parameter type from bool to int
+*/
+
+/* Error Root Cause:
+Observed failure:
+After modifying the constructor parameter type via Change Signature, the refactoring only updates the parameter type in the constructor signature.
+The associated backing typed property `private bool $a;` and its `@var bool` docblock annotation remain unchanged.
+This creates a type mismatch: constructor accepts `int $a` but assigns into a `bool` typed property, leading to type errors.
+
+Expected behavior:
+When the "Create and initialize class properties" flow was originally used to generate the backing property:
+1. Detect that this parameter is linked to a generated class property.
+2. Update both the native property type (`private int $a;`) and the corresponding `@var` tag to match the new parameter type.
+3. Show a warning if the property was manually edited by the user to avoid overwriting custom types.
+
+Underlying cause:
+The refactoring only tracks and updates the function signature and call sites. It does not maintain a persistent link between constructor parameters and the separately declared backing properties created in the earlier refactoring step. There is no logic to propagate type changes from the parameter to the property declaration.
+*/
+class AA {
+    /**
+     * @var bool
+     */
+    private bool $a;
+    public function __construct(bool $a)
+    {
+         $this->a = $a;
+    }
+}
+?>

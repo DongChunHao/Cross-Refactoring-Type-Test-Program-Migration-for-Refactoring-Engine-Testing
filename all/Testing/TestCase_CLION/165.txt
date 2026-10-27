@@ -1,0 +1,24 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <stdlib.h>
+struct BaseTest
+{
+void init(struct test* t){}
+};
+struct TestImpl : BaseTest //{Push down init implementation from BaseTest to TestImpl}
+{
+void init(struct test* t) {
+t->x = 5;
+}
+};
+struct test {
+int x;
+};
+int main() {
+void* v = malloc(sizeof(struct test));
+TestImpl impl;
+impl.init((struct test*)v);
+return 0;
+}

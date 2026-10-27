@@ -1,0 +1,53 @@
+/* Refactoring Settings:
+Refactoring Type: Move (F6) refactoring for a single type
+Refactoring Target: IClass2 interface inside Class2.cs, file also contains Class2 class
+IDE: Rider
+Related: RIDER-4312
+*/
+
+/* Error Root Cause:
+Observed failure:
+When invoking Move on just the `IClass2` interface in a file that contains multiple top-level types, Rider moves **all top-level types in the file** to the target folder, instead of only the selected interface.
+Expected: Only IClass2 is moved into Interfaces/IClass2.cs; Class2 stays in original Class2.cs.
+Actual: Both IClass2 and Class2 get moved to the destination folder, each into their own matching file.
+
+Underlying cause:
+The refactoring selection/PSI anchor resolution incorrectly picks the containing file instead of the individual type symbol.
+In this affected version, the Move-to-folder logic treats the operation as “split and move all types from this file into matching files in target folder” rather than “move only the selected type”.
+The handler confuses two distinct workflows:
+1. Move single selected top-level type (desired)
+2. Move Into Matching Files for the whole file (the behavior it mistakenly runs)
+Even though the caret is on `IClass2`, the operation erroneously falls into the batch split/move path for all top-level members of the source file.
+*/
+
+// Original Class2.cs
+namespace RiderNugetBugDemo
+{
+    public interface IClass2 {}
+    public class Class2 {}
+}
+
+// Expected result
+// Class2.cs (unchanged):
+namespace RiderNugetBugDemo
+{
+    public class Class2 {}
+}
+// Interfaces/IClass2.cs (new):
+namespace RiderNugetBugDemo
+{
+    public interface IClass2 {}
+}
+
+// Buggy actual result
+// Interfaces/IClass2.cs
+namespace RiderNugetBugDemo
+{
+    public interface IClass2 {}
+}
+// Interfaces/Class2.cs
+namespace RiderNugetBugDemo
+{
+    public class Class2 {}
+}
+// Original Class2.cs is emptied.

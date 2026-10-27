@@ -1,0 +1,26 @@
+<?php
+namespace NS1\NS2 {
+    use Exception;
+    class A2
+    {
+    }
+    class T extends Exception {
+    }
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class T, target destination: global namespace
+Refactoring rule: When moving a class into the global namespace, the refactoring should skip generating redundant `use` statements for types that already reside in the global namespace. PHP treats a simple-name `use Exception;` inside global namespace as useless and emits a warning.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving class T to the global namespace, the refactoring copies over `use Exception;`. Inside global namespace, this statement triggers PHP warning: "The use statement with non-compound name 'Exception' has no effect". The class still works, but there is an unnecessary warning.
+Expected behavior:
+Do not emit `use Exception;` in the global namespace block. Keep `class T extends Exception;` without the redundant use statement.
+Underlying cause:
+The refactoring’s import logic is uniform and does not add a special case for global namespace. It unconditionally copies or generates the use statement that was valid in the original namespaced scope, without checking whether the target scope is global and the target type is already globally available.
+*/
+?>

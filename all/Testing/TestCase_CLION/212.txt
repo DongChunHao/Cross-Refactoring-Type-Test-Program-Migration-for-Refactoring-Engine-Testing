@@ -1,0 +1,24 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <vector>
+#include <iostream>
+class BaseC
+{
+public:
+virtual void f() {}
+};
+class C : public BaseC //{Push down f implementation from BaseC to C}
+{
+public:
+void f() override;
+protected:
+std::vector<int> v = {1, 2};
+};
+void C::f() override {
+for (auto i : v) {
+std::cout << i << "\n";
+}
+v.clear();
+}

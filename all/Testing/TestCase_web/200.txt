@@ -1,0 +1,7 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing parenthesized‑ternary plus‑operation test‑case for redundant‑parentheses defect}
+let a = (x ? y : z) + t;
+}

@@ -1,0 +1,29 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+# Simulate unconditional argument binding generation defect for function refactoring
+class RefactorInliner:
+    def __init__(self):
+        pass
+
+    def process_call(self, arg_expr):
+        # Root‑cause: unconditionally generate fresh local binding for every argument, no trivial‑arg analysis
+        new_binding = self.make_binding(arg_expr) #Extract Method: extract binding generation logic into make_binding
+        return new_binding
+
+    def make_binding(self, arg):
+        return ("let temp_arg = " + repr(arg))
+
+def f(x):
+    _ = x
+
+def main():
+    inliner = RefactorInliner()
+    y = True
+    result = inliner.process_call(y)
+    print(result)
+    f(y)
+
+if __name__ == "__main__":
+    main()

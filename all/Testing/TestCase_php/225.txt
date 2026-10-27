@@ -1,0 +1,12 @@
+```
+<?php
+class A {
+    public function f(){}
+}
+class B extends A {
+    protected const publicConst = 1;
+}
+?>
+```
+
+【Refactoring Action】: Pull Up Members refactoring, target constant `publicConst` from subclass `B`, pull up to parent class `A`.

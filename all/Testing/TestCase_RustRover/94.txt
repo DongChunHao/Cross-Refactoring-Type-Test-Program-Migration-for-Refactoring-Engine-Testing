@@ -1,0 +1,9 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+fn main() {
+print!("Bar");
+();
+print!("Foo"); //{extract preceding statements into new method bar}
+}

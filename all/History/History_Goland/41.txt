@@ -1,0 +1,26 @@
+package pack1
+
+/* Refactoring Settings:
+Refactoring type: Move Declaration (Move function to another file)
+Refactoring target: Function `foo` with preceding block comment `/* doc */`
+Refactoring scope: Block comment + function declaration
+Refactoring rule: Preserve the newline separator between the closing `*/` of the block comment and the `func` declaration when moving to a new file.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving the function to another file, the block comment and function are concatenated into `/* doc */func foo() {}` without a newline, which is invalid formatting and hurts readability.
+Expected behavior: Retain a line break after the block comment terminator:
+/* doc */
+func foo() {}
+Underlying cause: The PSI text serialization logic for the move operation does not automatically emit a required whitespace/newline token between a trailing block comment and the following declaration node when writing to the new file.
+*/
+
+/* doc */
+func foo() {}
+
+// Bad actual output after move
+/* doc */func foo() {}
+
+// Expected correct output after move
+/* doc */
+func foo() {}

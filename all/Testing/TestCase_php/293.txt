@@ -1,0 +1,14 @@
+```
+<?php
+// Contract/Authenticatable.php
+namespace App\Contract;
+interface Authenticatable { }
+
+// User/UserAccount.php
+namespace App\User;
+use App\Contract\Authenticatable;
+class UserAccount implements Authenticatable { }
+?>
+```
+
+【Refactoring Action】: Rename interface `App\Contract\Authenticatable` to `UserAuthenticatable`.

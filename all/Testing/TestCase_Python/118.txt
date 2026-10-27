@@ -1,0 +1,13 @@
+
+'''
+Refactoring type: Change Method refactoring
+Refactoring new name: asdfghjkl
+'''
+import pytest
+
+@pytest.fixture
+def herro_thar_im_a_fixture():
+    return 123
+
+def test_foo(herro_thar_im_a_fixture):
+    assert herro_thar_im_a_fixture == 123

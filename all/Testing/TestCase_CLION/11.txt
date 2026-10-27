@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+namespace test2 {
+struct foo {
+static void run();
+};
+}
+using namespace test2;
+void foo::run() { }
+int main() {
+using namespace test2;
+foo::run(); //{Extract method from this call statement}
+return 0;
+}

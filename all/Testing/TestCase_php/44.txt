@@ -1,0 +1,17 @@
+```
+<?php
+class Storage { }
+class DiskStorage extends Storage {
+    static private function validatePath(string $p): bool { return true; }
+    function save(string $path)
+    {
+        if (self::validatePath($path)) {
+            return true;
+        }
+        return false;
+    }
+}
+class BackupDisk extends DiskStorage{}
+```
+
+【Refactoring Action】: Pull Up method `save()` from class `DiskStorage` to parent class `Storage`.

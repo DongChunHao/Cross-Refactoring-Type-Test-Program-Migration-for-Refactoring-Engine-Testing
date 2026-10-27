@@ -1,0 +1,27 @@
+<?php
+namespace {
+    class GlobalClass
+    {
+    }
+}
+
+namespace Vendor {
+    use GlobalClass;
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: GlobalClass, move to namespace N
+Refactoring rule: When updating use statements for a moved class, do not add an unnecessary leading backslash to the imported name. `use` declarations accept qualified names without a leading backslash.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving GlobalClass to namespace N, the use statement in namespace Vendor becomes `use \N\GlobalClass;`. The leading `\` is redundant and non-standard for use declarations; valid form is `use N\GlobalClass;`.
+Expected behavior:
+Update the use statement to `use N\GlobalClass;` without the leading backslash.
+Underlying cause:
+The refactoring resolver outputs the fully qualified name including the root namespace separator for the use clause, ignoring PHP syntax rules that use targets are relative to the global namespace and should omit the leading backslash.
+*/
+?>

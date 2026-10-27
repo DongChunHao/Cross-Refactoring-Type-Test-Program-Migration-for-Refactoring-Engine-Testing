@@ -1,0 +1,38 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Extract Variable
+Refactoring target: conversion expression `MyType1(0)`
+Refactoring rule: Distinguish type conversion expressions from regular function calls. When extracting a type conversion, the extracted variable must bind the whole conversion `MyType1(0)`, not just the type identifier `MyType1`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When extracting variable on `MyType1(0)`, the refactoring incorrectly selects the type name `MyType1` as the expression to extract. It produces `type1 := MyType1; _ = type1(0)`. This is invalid Go code: `MyType1` is a type, not a value, and cannot be assigned to a variable.
+
+Expected behavior:
+Extract the full conversion expression:
+```go
+type1 := MyType1(0)
+_ = type1
+type MyType1 int
+
+func main() {
+_ = MyType1(0) // <caret>
+}
+
+// Bad actual refactored result
+/*
+func main() {
+type1 := MyType1
+_ = type1(0)
+}
+*/
+
+// Expected correct refactored result
+/*
+func main() {
+type1 := MyType1(0)
+_ = type1
+}
+*/

@@ -1,0 +1,21 @@
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace StaleIndexNavigationRepro
+{
+public class OldName
+{
+}
+
+public class Consumer
+{
+public void Run() //{Move Method: target method for rename‑stale‑PSI‑index‑Go‑to‑Declaration‑broken bug reproduction}
+{
+var x = new OldName();
+Console.WriteLine("demo");
+}
+}
+
+}

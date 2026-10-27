@@ -1,0 +1,16 @@
+```
+<?php
+/**
+ * UserModel
+ * @method getProfile()
+ */
+class UserModel {
+    public function load()
+    {
+        $this->getProfile(123);
+    }
+}
+?>
+```
+
+【Refactoring Action】: Caret on `getProfile` in call `$this->getProfile(123)`; invoke Change Signature.

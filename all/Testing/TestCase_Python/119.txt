@@ -1,0 +1,9 @@
+''' Refactoring Settings:
+Refactoring type: Change method refactoring
+Refactoring target: instance attribute eggs, rename to bacon
+'''
+class Spam(object):
+    __slots__ = ["eggs"]
+
+    def __init__(self):
+        self.eggs = None

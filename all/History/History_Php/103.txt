@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method B::f()
+Scope: method signature and its abstract parent declaration A::f()
+Refactoring operation: add new parameter $b to B::f(), without modifying the abstract method in A
+*/
+
+/* Error Root Cause:
+Observed failure: Adding a parameter to B::f() via Change Signature produces a fatal PHP inheritance signature incompatibility, but the refactoring dialog does not show any warning before applying the change. The resulting code violates LSP: the child method signature no longer matches the abstract parent.
+Expected behavior: Detect that modifying B::f() will create a signature mismatch with the abstract parent A::f(), display a warning in the refactoring preview/dialog, and optionally offer to update the parent abstract method as well.
+Underlying cause: The Change Signature validation logic does not check inheritance hierarchy for abstract/overridden methods before applying edits. It only modifies the selected method and skips compatibility validation against parent abstract declarations.
+*/
+abstract class A{
+    abstract function f();
+}
+
+class B extends A{
+    public function f()
+    {
+    }
+}
+?>

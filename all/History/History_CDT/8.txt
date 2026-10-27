@@ -1,0 +1,22 @@
+template <typename T>
+struct S {
+    void f(T a)
+    {
+        T b = a;
+    }
+};
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Local Variable refactoring
+Refactoring Target: reference to parameter `a` inside function f() in template struct S
+Refactoring Scope: current function f()
+Operation steps: select usage of `a` in `T b = a;`, invoke Extract Local Variable refactoring
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: After refactoring, generated variable has incorrect type `void`: `void a0 = a; T b = a0;`. The correct type should be `T a0 = a;`.
+Expected behavior: The extracted local variable should inherit the type T from the original expression `a`, producing `T a0 = a; T b = a0;`.
+Underlying cause: The refactoring engine cannot correctly resolve the template‑dependent type T inside the template member function. When calculating the type for the newly extracted variable, it falls back to void instead of resolving the template parameter type of the expression.
+*/

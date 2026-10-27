@@ -1,0 +1,18 @@
+```
+<?php
+class Bar
+{
+    public string $name;
+    public function getName(): string
+    {
+        return $this->name;
+    }
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Rename refactoring (Shift+F6), target dynamic property `$name` inside class `Bar`. Options: Rename accessors checked, Search for text unchecked, Search in comments unchecked.

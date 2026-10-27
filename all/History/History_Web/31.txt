@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Type Alias
+Refactoring Target: Type `T` inside generic function `identity<T>`
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Execute Extract Type Alias on the type parameter `T` within the generic function identity.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Type Alias creates a top-level non-generic alias `type Created = T;`. The generated alias refers to the out-of-scope type parameter `T`, producing invalid code.
+Expected behavior: The extracted type alias should capture the generic parameter and become generic itself: `type Created<T> = T;`, and the function should become `function identity<T>(arg: Created<T>): Created<T>`.
+Underlying cause: The Extract Type Alias refactoring does not collect and lift generic type parameters from the local scope where the selected type originates; it generates a non-generic top-level alias without accounting for scope-bound type parameters.
+*/
+
+// Complete compilable test code
+function identity<T>(arg: T): T {
+    return arg;
+}

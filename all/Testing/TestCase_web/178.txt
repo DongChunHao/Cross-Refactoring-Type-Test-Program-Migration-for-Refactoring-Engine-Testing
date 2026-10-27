@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+const { text } = 'subtype' in callbackEventEvent
+? callbackEventEvent.message
+: callbackEventEvent;
+const links = extractPullRequestLinks(text); //{Move Method target reference‑site of destructured variable subject to inlining}

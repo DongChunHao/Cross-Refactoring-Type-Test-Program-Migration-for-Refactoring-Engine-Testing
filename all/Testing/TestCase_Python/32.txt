@@ -1,0 +1,6 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Refactoring only deletes the target definition node from parent compound block; it does not detect when the parent block becomes empty after removal and does not inject pass placeholder, resulting in invalid Python empty‑block syntax
+if condition:
+def func(): // REFACTOR_TARGET
+pass
+inner_var = 1

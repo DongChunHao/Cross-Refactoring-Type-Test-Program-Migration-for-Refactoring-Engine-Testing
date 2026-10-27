@@ -1,0 +1,69 @@
+/* Refactoring Settings:
+Refactoring Type: Inline Function
+Refactoring Target: Nested inner function `foo` inside `main`
+Refactoring Scope: Clean up nested function definition after inlining all usages
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4293-213-nightly, CLion 2021.3, Rust 1.57.0, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Inline function, select “Inline all and remove the method”
+*/
+/* Error Root Cause:
+Observed failure: When inlining a **nested inner function** (defined inside another function), after replacing all call sites with its body, the refactor fails to delete the original `fn foo() { ... }` declaration that lives in the same enclosing scope.
+For top-level functions, “Inline all and remove the method” correctly deletes the function item; but for local/nested function items inside a block, the deletion logic is not triggered.
+
+Before:
+fn main() {
+    fn foo() -> u64 {
+        let x = 0;
+        x
+    }
+    let y = foo();
+}
+
+Actual after inline: retains the unused nested `fn foo`
+fn main() {
+    fn foo() -> u64 {
+        let x = 0;
+        x
+    }
+    let x = 0;
+    let y = x;
+}
+
+Expected: after inlining all usages, delete the now-unused local function definition entirely
+fn main() {
+    let x = 0;
+    let y = x;
+}
+
+Notes:
+- Works correctly for top-level functions
+- Works correctly when the nested function body is a single return expression
+- Fails when nested function body contains multiple statements (let binding + tail expression)
+
+Underlying cause: The “remove the method” logic only handles top-level function AST nodes, and does not visit/delete local function items inside block scopes even when all calls are inlined.
+*/
+// Before
+fn main() {
+    fn foo() -> u64 {
+        let x = 0;
+        x
+    }
+    let y = foo();
+}
+
+// Actual broken output
+fn main() {
+    fn foo() -> u64 {
+        let x = 0;
+        x
+    }
+    let x = 0;
+    let y = x;
+}
+
+// Expected output
+fn main() {
+    let x = 0;
+    let y = x;
+}

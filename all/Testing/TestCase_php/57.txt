@@ -1,0 +1,18 @@
+```
+<?php
+class Node { }
+class CompositeNode extends Node {
+    protected function renderContent()
+    {
+        return "content";
+    }
+}
+class ListNode extends CompositeNode {
+    function render(){
+        $text = parent::renderContent();
+        return "<ul>".$text."</ul>";
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `render()` from class `ListNode` to parent class `CompositeNode`

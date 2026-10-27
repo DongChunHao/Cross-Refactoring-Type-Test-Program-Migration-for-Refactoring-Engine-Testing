@@ -1,0 +1,59 @@
+using System;
+using System.Collections.Generic;
+
+/* Refactoring Settings:
+Refactoring Type: Inline Method (C# refactoring)
+Refactoring Target: Method Smaller(int i, int j)
+Refactoring Scope: All invocations of Smaller() inside ProperParent(int i)
+Refactoring Rule Expectation: Preserve short-circuit evaluation semantics of the original ternary conditional operator `?:`. Arguments inside each branch of the ternary must only be evaluated when that branch is taken, matching original lazy evaluation.
+*/
+
+/* Error Root Cause:
+Observed failure: After inlining Smaller(), the refactoring engine lifts all subexpressions (LChild(i), RChild(i)) out of ternary branches into eager local variable declarations at the top of the method. RChild(i) is invoked unconditionally even when RChildValid(i) is false, triggering ArgumentOutOfRangeException.
+Expected behavior: Inlining should keep subexpressions inside their respective ternary branches so they are only evaluated conditionally, preserving original short‑circuit / lazy evaluation order.
+Underlying cause: The inline method rewriter naively extracts all captured subexpressions into precomputed locals without respecting the evaluation order and short-circuit semantics of the ternary conditional operator `?:`. Ternary branches are not treated as conditional scopes; all child-index calculations become unconditional eager evaluations.
+*/
+
+public class BinaryHeap
+{
+    protected List<int> HeapData = new();
+
+    protected int LChild(int i) => 2 * i + 1;
+    protected int RChild(int i) => 2 * i + 2;
+    protected bool LChildValid(int i) => LChild(i) < HeapData.Count;
+    protected bool RChildValid(int i) => RChild(i) < HeapData.Count;
+    protected bool Ordered(int a, int b) => HeapData[a] <= HeapData[b];
+
+    // Method targeted for "Inline Method" refactoring
+    protected int Smaller(int i, int j) => Ordered(i, j) ? i : j;
+
+    // Original ProperParent before refactoring
+    protected int ProperParent(int i) =>
+        RChildValid(i)
+            ? Smaller(Smaller(i, LChild(i)), RChild(i))
+            : (LChildValid(i) ? Smaller(i, LChild(i)) : i);
+
+    // --- The broken version produced by Inline Method ---
+    // protected int ProperParent(int i)
+    // {
+    //     int j = LChild(i);
+    //     int i1 = Ordered(i, j) ? i : j;
+    //     int j1 = RChild(i); // Unconditional call, throws ArgumentOutOfRangeException when RChild invalid
+    //     int j2 = LChild(i);
+    //     return RChildValid(i)
+    //         ? Ordered(i1, j1) ? i1 : j1
+    //         : (LChildValid(i) ? Ordered(i, j2) ? i : j2 : i);
+    // }
+}
+
+// Unit test to reproduce the failure
+public static class HeapTests
+{
+    public static void TestProperParentThrowsAfterInlining()
+    {
+        var heap = new BinaryHeap();
+        heap.HeapData.AddRange(new[] { 10, 20 });
+        // Index 1 only has left child valid, right child out of bounds
+        _ = heap.ProperParent(0);
+    }
+}

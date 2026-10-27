@@ -1,0 +1,28 @@
+/* Refactoring Settings:
+Refactoring type: Change Signature (CLion C++ refactoring)
+Refactoring target: constructor `A::A(int i)`
+Operation: Invoke Change Signature refactoring to add a new `float f` parameter to the constructor.
+Scope: Preserve C++11 brace uniform initialization syntax. When adding constructor parameters, update the initializer list inside curly braces, not append parenthesized call after the brace variable declaration.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After changing constructor signature, refactoring produces invalid code:
+`A a{1}(0, 0);`
+This is ill-formed C++. The refactoring incorrectly appends a parenthesized argument list after the brace initialization instead of extending the list inside `{}`.
+
+Expected behavior:
+`A a{1, 0.0};`
+
+Underlying cause:
+Change Signature refactoring mishandles uniform brace initialization syntax for object construction. It treats the brace initializer as a complete variable definition and inserts an extra function-style call, instead of extending the comma-separated argument list inside the curly braces.
+*/
+
+class A {
+public:
+    A(int i) {}
+};
+
+void f() {
+    A a{1};
+}

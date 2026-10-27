@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract CONSTANT
+Refactoring new name: not_A
+'''
+#define A // Id to be renamed
+int main(int argc, char** argv) {
+int a;
+#ifdef A
+a = 1;
+#endif
+#ifndef A
+a = 2;
+#endif
+return a; //extract constant for macro‑rename invalid‑whitespace‑identifier‑and‑stale‑preprocessor‑reference defect scenario
+}

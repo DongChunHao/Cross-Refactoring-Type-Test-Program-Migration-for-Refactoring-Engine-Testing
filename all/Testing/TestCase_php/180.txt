@@ -1,0 +1,13 @@
+```
+<?php
+namespace Shop;
+class Product
+{
+}
+class ProductVariant
+{
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `ProductVariant`, target namespace stays `Shop`, enable "Move class to a new file".

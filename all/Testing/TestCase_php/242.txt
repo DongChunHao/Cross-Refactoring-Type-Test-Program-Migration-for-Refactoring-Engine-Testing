@@ -1,0 +1,17 @@
+```
+<?php
+interface UserFinder
+{
+    public function find(): UserFinder;
+}
+class DbUserFinder implements UserFinder
+{
+    public function find(): UserFinder
+    {
+        return new DbUserFinder();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target `UserFinder::find()`, attempt to change return type from `UserFinder` to `UserFinder[]` and propagate to implementor.

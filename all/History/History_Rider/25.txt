@@ -1,0 +1,50 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: Statement `Array.Reverse(chars);` inside `PrintReversedString` static method
+Refactoring Scope: Newly extracted method accessibility
+IDE: JetBrains.Rider-2018.2-EAP0D-182.SNAPSHOT
+*/
+
+/* Error Root Cause:
+Observed failure: In the Extract Method dialog, user selects a visibility modifier other than `private`, but the generated method is always emitted as `private`, ignoring the visibility selection.
+Expected behavior: The extracted method should use the accessibility modifier chosen in the refactoring preview dialog.
+Underlying cause: The Extract Method processor did not correctly consume the visibility setting from the UI dialog. The code generation logic had a hardcoded default of `private` and failed to override it with the user-selected access modifier when emitting the new method PSI node.
+*/
+
+// Original code
+public static void PrintReversedString(string input)
+{
+    var chars = input.ToCharArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray();
+    Array.Reverse(chars);
+    var reversed =  new string(chars);
+    Console.WriteLine(reversed);
+}
+
+// User selects Array.Reverse(chars); → Extract Method, chooses public/internal/protected
+// Actual (buggy output):
+public static void PrintReversedString(string input)
+{
+    var chars = input.ToCharArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray();
+    ReverseChars(chars);
+    var reversed =  new string(chars);
+    Console.WriteLine(reversed);
+}
+
+private static void ReverseChars(char[] chars)
+{
+    Array.Reverse(chars);
+}
+
+// Expected output (example if user selected public):
+public static void PrintReversedString(string input)
+{
+    var chars = input.ToCharArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray().ToArray();
+    ReverseChars(chars);
+    var reversed =  new string(chars);
+    Console.WriteLine(reversed);
+}
+
+public static void ReverseChars(char[] chars)
+{
+    Array.Reverse(chars);
+}

@@ -1,0 +1,29 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+typedef typeof(sizeof 0) size_t;
+void free(void *);
+typedef struct memory_pool {
+struct memory_pool_item {
+void *p;
+} *items;
+size_t	len;
+} memory_pool;
+struct Wrapper
+{
+void wrapperMpoolFree(memory_pool *pool) { //{Move mpool_free logic into struct Wrapper member function}
+for (; pool->len > 0; pool->len--)
+{
+struct memory_pool_item *item = pool->items + pool->len - 1;
+struct memory_pool_item *item2 = item;
+void *p = item2->p;
+free(p);
+}
+}
+};
+static void mpool_free(memory_pool *pool)
+{
+Wrapper w;
+w.wrapperMpoolFree(pool);
+}

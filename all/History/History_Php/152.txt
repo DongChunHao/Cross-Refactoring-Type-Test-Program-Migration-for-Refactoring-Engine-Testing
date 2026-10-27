@@ -1,0 +1,39 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Function to Class (convert global/namespace functions into static class methods)
+Refactoring target: N2\f, N2\f2, N2\f3
+Scope: intra-group function call rewriting inside the moved function bodies
+Refactoring operation: move all three functions into class N1\D as static methods
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving the set of related functions into static methods of class D, cross-calls between the moved functions inside their bodies are not updated.
+Inside `D::f()` the code remains `echo f2();` instead of `echo self::f2();` or `D::f2();`.
+The top-level call sites outside the function bodies are correctly rewritten to `D::f()`, `D::f2(...)`, but the call sites nested inside the moved function bodies are skipped, producing unresolved function calls.
+
+Expected behavior:
+When a batch of functions are moved together into the same target class as static methods:
+1. Collect all call sites inside the bodies of the selected functions.
+2. If the callee is also part of the same refactoring batch, rewrite those internal calls to static method calls on the target class (e.g. `self::f2()`).
+3. Update both top-level external usages AND internal intra-batch references.
+
+Underlying cause:
+The reference visitor only scans top-level expression usages outside of the function definitions. It does not traverse the AST inside the function bodies to rewrite calls to other functions that are also being moved in the same refactoring session.
+*/
+namespace N2;
+use N1\D;
+function f ():void {
+    echo f2();
+}
+function f2(D $a):D {
+    return 1;
+}
+function f3() {}
+f();
+f2(f2(f2()));
+f3();
+
+namespace N1;
+class D{}
+?>

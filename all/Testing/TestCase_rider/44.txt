@@ -1,0 +1,19 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System;
+
+public static class ResxRefactorRepro
+{
+public static void Main()
+{
+var value = Resources1.Program_Main_shoo; //{Change Method: target resource property access subject to RESX‑rename conflict bug}
+Console.WriteLine(value);
+}
+}
+
+public static class Resources1
+{
+public static string Program_Main_shoo => "Original text";
+}

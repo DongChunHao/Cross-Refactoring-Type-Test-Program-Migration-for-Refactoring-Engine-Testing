@@ -1,0 +1,16 @@
+```
+<?php
+class Logger {
+    static function writeLog()
+    {
+        echo "log message";
+    }
+}
+class FileLogger extends Logger {
+}
+$logObj = new Logger();
+call_user_func(array($logObj, 'writeLog'));
+?>
+```
+
+【Refactoring Action】: Push Members Down refactoring, target static method `writeLog()` in class `Logger`, push down to subclass `FileLogger`

@@ -1,0 +1,23 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#ifndef _*ShapeStateImpl_H*
+#define _*ShapeStateImpl_H*
+#include <stdlib.h>
+class BaseShapeState
+{
+public:
+virtual ~BaseShapeState() = 0; //{Pull up destructor declaration into BaseShapeState}
+};
+class ShapeStateImpl : public BaseShapeState {
+public:
+ShapeStateImpl(double* currentPoints, size_t numberOfPoints);
+virtual ~ShapeStateImpl() {
+free(_pointsPosition);
+}
+private:
+size_t _pointCount;
+double *_pointsPosition;
+};
+#endif //_*ShapeStateImpl_H*

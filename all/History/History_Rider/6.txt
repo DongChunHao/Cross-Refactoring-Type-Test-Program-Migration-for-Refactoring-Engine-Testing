@@ -1,0 +1,64 @@
+using NExpect;
+using static NExpect.Expectations;
+
+/* Refactoring Settings:
+Refactoring Type: Move to {classname}.cs (Rider C# type-move refactoring)
+Refactoring Target: A class defined in the current source file, to be moved into its own dedicated .cs file
+Refactoring Scope: Move the target class declaration to a new file, resolve all references
+Refactoring Rule Expectation: When moving the type to a new file, the refactoring engine should detect static `using static` imports required by the moved class and carry those using static directives into the destination file, preserving the original static call syntax.
+Current observed behaviour: Static `using static` directives are not copied over; static method calls inside the moved class are rewritten to fully qualified names in the new file, and the required static imports are omitted.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving a class with static method calls that rely on `using static`, the new file does not receive the corresponding `using static` directives. Rider rewrites static invocations into fully-qualified member access instead of preserving the compact static-call syntax and bringing the static imports across.
+Expected behavior: The refactoring should collect all `using static` imports that are required by the moved type, emit those using static statements in the new file, and keep the original static invocation syntax unchanged.
+Underlying cause: The "Move to new file" refactoring’s import transfer logic does not treat `using static` as first-class imports to propagate. It only tracks regular namespace usings; when static symbols are encountered in the moved code, it falls back to qualification rather than adding the missing static using directives to the destination file.
+*/
+
+// Original source file: TestSubjectTests.cs
+public class ExistingTestFixture
+{
+    [Test]
+    public void ExistingTest()
+    {
+        Expect(1).To.Equal(1);
+    }
+}
+
+// Target class to be moved via "Move to {classname}.cs"
+public class RelatedSubjectTests
+{
+    [Test]
+    public void RelatedTest()
+    {
+        Expect(2).To.Equal(2);
+    }
+}
+
+// Resulting broken new file after refactoring (RelatedSubjectTests.cs):
+/*
+using NExpect;
+
+public class RelatedSubjectTests
+{
+    [Test]
+    public void RelatedTest()
+    {
+        NExpect.Expectations.Expect(2).To.Equal(2);
+    }
+}
+*/
+// Desired new file should retain the static import:
+/*
+using NExpect;
+using static NExpect.Expectations;
+
+public class RelatedSubjectTests
+{
+    [Test]
+    public void RelatedTest()
+    {
+        Expect(2).To.Equal(2);
+    }
+}
+*/

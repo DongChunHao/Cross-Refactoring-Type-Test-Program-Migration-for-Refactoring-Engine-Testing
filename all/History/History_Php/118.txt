@@ -1,0 +1,24 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Push Down Members refactoring
+Refactoring target: constant T::C
+Scope: class alias resolution, inheritance lookup
+Refactoring operation: push constant C down from class T into its child classes
+*/
+
+/* Error Root Cause:
+Observed failure: Push Down refactoring ignores `class_alias("T", 'C')`. The refactoring only looks at the native inheritance graph (A extends C) and fails to resolve that `C` is an alias pointing back to T. It does not recognize that A is a subclass of the original T, so it either skips pushing the constant into A or produces invalid references.
+Expected behavior: Resolve class aliases during inheritance analysis, treat `A extends C` as `A extends T`, and correctly push the constant into A.
+Underlying cause: The refactoring’s inheritance resolver works on raw class names from the AST, it does not evaluate runtime `class_alias()` mappings when computing the set of child classes for push-down.
+*/
+class T{
+    const C =1; //invoke Push Down refactoring
+}
+class_alias("T",'C');
+class A extends C{
+    public function f()
+    {
+        echo self::f();
+    }
+}
+?>

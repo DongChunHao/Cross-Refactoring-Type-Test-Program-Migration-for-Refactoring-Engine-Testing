@@ -1,0 +1,16 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: setupTestStruct
+'''
+#include <stdlib.h>
+struct test {
+int x;
+};
+void setupTestStruct(struct test* t) { //{Rename method init_test to setupTestStruct}
+t->x = 5;
+}
+int main() {
+void* v = malloc(sizeof(struct test));
+init_test(v);
+return 0;
+}

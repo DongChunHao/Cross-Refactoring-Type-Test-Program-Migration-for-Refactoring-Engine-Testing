@@ -1,0 +1,29 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Move Module Member
+Refactoring Target: Class `NewName` and the subsequent `NewName.propTypes` property assignment
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Execute Move Module Member on the React component class NewName.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The Move Module Member refactoring does not move property assignments attached to the class (such as `NewName.propTypes`) together with the class declaration.
+Expected behavior: When moving a class, immediately following static property assignments on that class should also be moved. If other declarations separate the class and the assignment, those assignments should not be automatically moved.
+Underlying cause: The Move Module Member logic does not track immediate post-declaration property assignments for class nodes; it treats them as unrelated top-level statements and leaves them behind.
+*/
+
+// Complete compilable test code
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+
+class NewName extends PureComponent {
+    render() {
+        return <>{this.props.name} is {this.props.age} years old</>;
+    }
+}
+
+NewName.propTypes = {
+    name: PropTypes.string,
+    age: PropTypes.number
+};

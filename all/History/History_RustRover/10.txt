@@ -1,0 +1,25 @@
+/* Refactoring Settings:
+Refactoring Type: Convert Function to Closure
+Refactoring Target: Nested item function `fn foo(x: i32) -> i32 { x + 1 }` inside `fn main()`
+Refactoring Scope: Rust function body
+Plugin Environment: IntelliJ Rust plugin 0.4.155.4071-212-nightly, CLion 2021.2, Rust 1.53.0, macOS 11.4
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run "Convert Function to Closure" refactor on the nested `fn foo` function
+*/
+/* Error Root Cause:
+Observed failure: All preceding line comments and doc comments attached to the nested function are discarded after conversion to a closure. The inverse refactor (Convert Closure to Function) correctly preserves comments.
+Expected behavior: All leading associated comments (// line comments and /// doc comments) should be retained and placed above the new closure binding `let foo = |x: i32| -> i32 { x + 1 };`.
+Underlying cause: The AST visitor implementation for "Convert Function to Closure" does not copy comment nodes associated with the original function item to the newly created let-statement closure binding. The comment-handling logic exists for the closure-to-function direction but is missing from the function-to-closure path.
+*/
+fn main() {
+    //fn foo(x: i32) -> i32 { x + 1 }
+    //fn foo(x: i32) -> i32 { x + 1 }
+    let a = 7;
+    //comment 1
+    //comment 2
+
+    ///comment 3
+    //comment 4
+    fn foo(x: i32) -> i32 { x + 1 } //convert from function to closure
+}

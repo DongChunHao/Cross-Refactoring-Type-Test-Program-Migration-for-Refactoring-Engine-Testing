@@ -1,0 +1,16 @@
+```
+<?php
+class HelperStore { }
+class BaseApi{
+    protected static $apiToken = 'secret';
+}
+class ProductApi extends BaseApi {
+    static function getToken()
+    {
+        echo BaseApi::$apiToken;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `getToken()` from class `ProductApi` to class `HelperStore`.

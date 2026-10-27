@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack1
+func foo() string {
+return helper() // extract return expression into helper function
+}
+func helper() string {
+return ""
+}

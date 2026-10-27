@@ -1,0 +1,24 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace EncRenameInterfaceRepro
+{
+public interface IBaseService { }
+
+public interface IService : IBaseService
+{
+void Execute(); //{Pull Up Method: target interface member for interface‑rename‑EnC‑hot‑reload‑delta‑failure bug reproduction}
+}
+
+public class Service : IService
+{
+public void Execute()
+{
+Console.WriteLine("run");
+}
+}
+
+}

@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package pack
+type I interface {
+foo() string
+}
+type S struct{}
+func (S) foo() (s string) {
+return getS() // extract return expression into getS
+}
+func getS() string {
+return s
+}

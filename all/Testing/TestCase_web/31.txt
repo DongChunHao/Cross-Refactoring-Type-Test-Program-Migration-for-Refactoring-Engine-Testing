@@ -1,0 +1,10 @@
+'''
+Refactoring type: Move Field
+Refactoring new name: N/A
+'''
+class Holder {}
+export default class Example { //{Move Field targeting class‑bound identifier Example}
+constructor(foo) {
+this.foo = foo;
+}
+}

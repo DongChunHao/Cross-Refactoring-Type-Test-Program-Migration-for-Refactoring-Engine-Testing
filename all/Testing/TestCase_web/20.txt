@@ -1,0 +1,6 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+let temp = 10 - 2 - 1; //{Rename Variable on temp}
+let x = temp;

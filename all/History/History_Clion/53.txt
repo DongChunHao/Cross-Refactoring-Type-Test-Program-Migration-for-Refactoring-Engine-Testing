@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (C++ CLion refactoring)
+Refactoring target: local variable `myVal1` inside for loop body in main()
+Operation: Invoke Rename refactoring on the loop-scoped `myVal1`
+Scope: Respect lexical scoping rules; only rename usages of the target loop-local `myVal1`. Do NOT touch the separate `const int myVal1` declared after the for loop and its usage `g_res = myVal1;`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Renaming the `myVal1` variable inside the for loop incorrectly renames the second, unrelated `myVal1` declared after the for loop. The two variables share the same simple name but live in different lexical scopes.
+
+Expected behavior:
+Only rename the loop's `myVal1` and its use `g_sum += myVal1;`. The later `const int myVal1 = 500;` and `g_res = myVal1;` must remain unchanged.
+
+Underlying cause:
+Rename refactoring's symbol resolution fails to resolve lexical scope boundaries properly. It matches the identifier token `myVal1` instead of resolving the exact symbol in its scope, confusing two identically named variables from different scopes.
+*/
+
+int g_sum;
+int g_res;
+
+int main(void) {
+    for ( int i = 0; i < 10; ++i ) {
+        int myVal1 = i * 2;
+        g_sum += myVal1;
+    }
+    const int myVal1 = 500;
+    g_res = myVal1;
+    return 0;
+}

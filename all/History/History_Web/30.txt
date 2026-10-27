@@ -1,0 +1,26 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Rename Interface Member
+Refactoring Target: interface Foo property bar
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Configure a field prefix (underscore `_`) in IDE settings, then rename `bar` to `barbar`.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: With field prefix enabled, renaming interface member `bar` to `barbar` produces `_barbar`. The refactoring incorrectly applies the field prefix to an interface property, even though interface members are not class fields and should not get the configured field prefix.
+Expected behavior: The field prefix setting should only apply to class fields; renaming an interface member should not prepend the `_` prefix.
+Underlying cause: The rename processor applies the field prefix transformation unconditionally for all symbol renames, without checking whether the target symbol is an interface property (which is not a class field).
+*/
+
+// Complete compilable test code
+interface Foo {
+  bar: number;
+}
+
+function createFoo<T>(x: T) {
+  return (y: T) => null;
+}
+
+const foo = createFoo<Foo>({ bar: 1 });
+foo({ bar: 2 });

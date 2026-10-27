@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <exception>
+struct Wrapper
+{
+static void wrapper_test(int y) { //{Move test logic into static wrapper member}
+if(y == 5) {
+throw std::exception();
+} else {
+}
+}
+};
+void test(int y)
+{
+Wrapper::wrapper_test(y);
+}

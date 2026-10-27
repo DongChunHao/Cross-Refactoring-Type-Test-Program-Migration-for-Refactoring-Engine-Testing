@@ -1,0 +1,34 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method / Extract Function
+Refactoring Target: Selected await expression `async { () }.await` inside an `async fn`
+Refactoring Scope: Extracting code containing `.await`
+Plugin Environment: IntelliJ Rust plugin 0.2.106.2135-192, CLion 2019.2.2, nightly-2019-08-21, Arch Linux
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select `async { () }.await` inside async function and run Extract Method
+*/
+/* Error Root Cause:
+Observed failure: The refactor creates a regular synchronous `fn bar()`, putting `.await` inside it, which is invalid Rust. The call site becomes `bar()` instead of `bar().await`.
+Expected behavior: Detect that the extracted fragment uses `.await`, create an `async fn bar()`, and emit `bar().await` at the original call site.
+Underlying cause: The extract method logic does not check whether the selected expression contains await points. It defaults to generating a normal synchronous function and does not append `.await` to the call.
+*/
+// Before
+async fn foo() {
+    async { () }.await
+}
+
+// Bad actual output (compile error)
+async fn foo() {
+    bar()
+}
+fn bar() -> () {
+    async { () }.await
+}
+
+// Expected valid output
+async fn foo() {
+    bar().await
+}
+async fn bar() -> () {
+    async { () }.await
+}

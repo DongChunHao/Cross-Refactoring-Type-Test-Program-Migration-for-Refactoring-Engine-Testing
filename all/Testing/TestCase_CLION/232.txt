@@ -1,0 +1,21 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: getBFromAPtr
+'''
+class B;
+class A {
+public:
+B* GetB() {return dynamic_cast<B*>(this);}
+void foo() {
+B*b = GetB();
+}
+};
+class B : public A { };
+B* getBFromAPtr(A* a) { //{Extract method getBFromAPtr}
+return a->GetB();
+}
+int main() {
+A* a;
+B* b = getBFromAPtr(a);
+return 0;
+}

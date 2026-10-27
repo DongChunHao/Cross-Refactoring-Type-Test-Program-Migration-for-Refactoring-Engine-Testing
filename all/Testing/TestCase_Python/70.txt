@@ -1,0 +1,16 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Cross‑file move refactoring fails to synchronously update consumer‑side import statements and qualified references; leaves stale import paths or outdated call‑site identifiers leading to unresolved‑reference errors
+class MyClass: // REFACTOR_TARGET
+def hello(self):
+pass
+def my_func():
+obj = MyClass()
+return obj
+def stub_helper():
+pass
+
+ How to ensure the accuracy of migrated test cases?
+
+ What are the common challenges in cross-refactoring test case migration?
+
+ Can you provide some examples of successful cross-refactoring test case migrations?

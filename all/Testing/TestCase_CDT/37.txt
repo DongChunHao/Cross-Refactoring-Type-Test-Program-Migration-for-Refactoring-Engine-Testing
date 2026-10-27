@@ -1,0 +1,20 @@
+'''
+Refactoring type: Extract CONSTANT
+Refactoring new name: MACRO2
+'''
+// file h1.h
+#define MACRO1
+#ifdef MACRO1
+int c = 20;
+#endif
+// .c file
+#include <stdio.h>
+#include "h1.h"
+extern int c;
+int main(){
+#ifdef MACRO2
+printf("%d", c);
+#endif
+printf("%d", 13); // output: 13 //extract constant for cross‑file macro‑rename missed‑reference indexer‑defect scenario
+return 0;
+}

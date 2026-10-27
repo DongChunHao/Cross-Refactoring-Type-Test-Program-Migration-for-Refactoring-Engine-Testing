@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn main() { //{move variable definition and format macro call into nested inner function}
+let hello: &str = "hello";
+format!("{hello:?}");
+}

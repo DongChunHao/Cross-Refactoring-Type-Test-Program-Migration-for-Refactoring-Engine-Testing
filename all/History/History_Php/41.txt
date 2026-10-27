@@ -1,0 +1,24 @@
+<?php
+class Test {
+    /**
+     * @var int
+     */
+    protected $typpo = 2;
+
+    /**
+     * @param int $typpo
+     */
+    public function setTyppo($typpo)
+    {
+        $this->typpo = $typpo;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTyppo()
+    {
+        return $this->typpo;
+    }
+}
+?>

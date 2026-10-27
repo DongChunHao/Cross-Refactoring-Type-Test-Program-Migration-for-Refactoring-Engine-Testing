@@ -1,0 +1,11 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn main() {
+fn foo() -> u64 { //{change method signature of nested foo, add unused parameter}
+let x = 0;
+x
+}
+let y = foo();
+}

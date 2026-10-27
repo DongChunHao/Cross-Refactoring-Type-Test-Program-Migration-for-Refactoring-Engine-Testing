@@ -1,0 +1,12 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+class SomeClass {
+private _x = 1;
+protected _y = 2;
+public getSomething() { //{Change Method target public method getSomething, modify signature}
+return this._x + this._y
+}
+}
+console.log(new SomeClass().getSomething())

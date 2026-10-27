@@ -1,0 +1,24 @@
+<?php
+trait T{}
+class Test {
+    use T;
+    public function test()
+    {
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method test() in class Test
+Target destination: trait T which is used by Test
+Refactoring rule: Pull Up refactoring should treat traits used by the class as valid pull-up destinations. The UI should list used traits alongside parent classes and interfaces, allowing moving class members into the trait.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Running Pull Up on test() outputs the error "Cannot perform refactoring. test doesn't have base classes/interfaces in current project". The refactoring does not offer trait T as a target.
+Expected behavior:
+The refactoring moves the test() method from class Test into trait T, leaving class Test with only the use T; statement.
+Underlying cause:
+Pull Up’s destination collector only considers parent classes and implemented interfaces. It does not scan for traits consumed by the class, so traits are excluded from the list of valid targets for pull-up.
+*/

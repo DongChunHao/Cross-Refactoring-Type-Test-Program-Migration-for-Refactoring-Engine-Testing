@@ -1,0 +1,38 @@
+/* Refactoring Settings:
+Refactoring type: Inline Variable (CLion C refactoring)
+Refactoring target: local variable `p` inside the for loop body of `mpool_free`
+Operation: Invoke Inline Variable on `void *p = item2->p;`
+Scope: Remove original variable declaration after all usages of the variable are fully inlined; clean up unused local declarations
+*/
+
+/* Error Root Cause:
+Observed failure:
+When inlining variable `item2`: declaration is properly deleted.
+When inlining variable `p`: the refactoring substitutes the usages of `p` with `item2->p`, but leaves the original declaration `void *p;` in the source code, which becomes unused dead code.
+
+Expected behavior: After all references to `p` are inlined, remove the local declaration `void *p = item2->p;` entirely.
+
+Underlying cause:
+The Inline Variable logic has inconsistent cleanup logic. It fails to detect that all usages of `p` have been replaced and the original declaration is no longer referenced. The refactoring only substitutes variable read sites, but does not reliably delete the original variable declaration in all cases.
+*/
+
+typedef typeof(sizeof 0) size_t;
+void free(void *);
+
+typedef struct memory_pool {
+	struct memory_pool_item {
+		void *p;
+	} *items;
+	size_t	len;
+} memory_pool;
+
+static void mpool_free(memory_pool *pool)
+{
+	for (; pool->len > 0; pool->len--)
+	{
+		struct memory_pool_item *item = pool->items + pool->len - 1;
+		struct memory_pool_item *item2 = item;
+		void *p = item2->p;
+		free(p);
+	}
+}

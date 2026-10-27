@@ -1,0 +1,35 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (CLion C++ refactoring)
+Refactoring target: expression `int data = std::string::npos;` inside function foo()
+Operation: Select the marked line and invoke Extract Method, name new function `getInt`
+Scope: Preserve the user-written simple type alias `std::string` in generated code; if fully qualified type is required, use complete template instantiation `std::__cxx11::basic_string<char>`, not bare template name `std::__cxx11::basic_string`. Do not replace user's `std::string` with internal implementation namespace tokens unless necessary.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After extracting method, generated code uses `std::__cxx11::basic_string::npos`. This is invalid C++ syntax.
+`std::__cxx11::basic_string` is an uninstantiated template, not a type. The correct fully qualified symbol should be `std::__cxx11::basic_string<char>::npos`. The refactoring incorrectly drops template argument `<char>`.
+
+Expected behavior:
+Option 1 (preferred): retain user original code:
+int getInt() {
+    int data = std::string::npos;
+    return data;
+}
+Option2 (if fully qualified):
+int getInt() {
+    int data = std::__cxx11::basic_string<char>::npos;
+    return data;
+}
+
+Underlying cause:
+The refactoring engine resolves the alias `std::string` down to libstdc++ internal implementation namespace `std::__cxx11::basic_string` but fails to preserve the template argument `<char>`. It emits the bare template name instead of the instantiated template specialization, producing invalid syntax. The engine should keep the user-level typedef/alias `std::string` instead of expanding to internal implementation symbols.
+*/
+
+#include <string>
+#include <iostream>
+
+void foo() {
+  int data = std::string::npos; //!
+  std::cout << data << '\n';
+}

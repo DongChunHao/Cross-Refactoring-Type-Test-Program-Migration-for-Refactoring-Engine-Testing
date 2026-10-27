@@ -1,0 +1,26 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <string>
+class Bug {
+public:
+double foo(double bar[3][2])
+{
+return bar[2][0];
+}
+};
+struct Wrapper
+{
+double wrapperFoo(Bug& obj, double bar[3][2]) { //{Move foo call logic into struct Wrapper member function}
+return obj.foo(bar);
+}
+};
+int main() {
+Bug example;
+double test[3][2];
+Wrapper w;
+std::cout << std::to_string(w.wrapperFoo(example, test)) << std::endl;
+return 0;
+}

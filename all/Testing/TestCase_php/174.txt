@@ -1,0 +1,11 @@
+```
+<?php
+namespace Shop;
+class Product {
+}
+class ProductExtra {
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move class `ProductExtra` from namespace `Shop` to namespace `ShopExtra`

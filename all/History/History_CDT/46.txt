@@ -1,0 +1,38 @@
+float func_0 (  float LocalVar_1){
+	int LocalVar_0 = 2;
+    return LocalVar_1;
+}
+int Function_0 ( ){
+    int LocalVar_0 = -1;
+    return LocalVar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring(local variable rename inside func_0)
+Refactoring Target: local variable `LocalVar_0` inside func_0
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select local variable LocalVar_0 inside func_0, invoke Rename refactoring, input integer literal `0` as new variable name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts numeric literal `0` as rename candidate for local variable.
+Declaration becomes `int 0 = 2;` which is invalid C syntax, variable cannot be named with numeric literal.
+Every usage of `LocalVar_0` inside func_0 is substituted by literal `0`, producing `int LocalVar_0 = 0;`.
+Lexical scope handling is correct: the homonymous local variable `LocalVar_0` inside Function_0 is untouched.
+Refactoring completes without warning and persists broken source file.
+
+Expected behavior:
+Local‑variable rename must perform lexical validation for candidate name before modifying source:
+1. Valid C identifier must start with letter or underscore.
+2. Allowed characters are letters, underscores, decimal digits only.
+3. Reject pure numeric literals and any candidate starting with digit.
+4. Reject reserved keywords, whitespace and special symbols (`*`, `&` etc.).
+Abort refactoring and report error message once validation fails.
+
+Underlying cause:
+CDT rename does not check whether user‑provided input conforms to C identifier grammar. Raw input literal is directly substituted into declaration and expression sites. It delegates all syntax validity checking to compiler.
+*/

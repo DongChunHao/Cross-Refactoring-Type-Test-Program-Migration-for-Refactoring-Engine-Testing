@@ -1,0 +1,10 @@
+```
+<?php
+class BaseModel {}
+class User extends BaseModel {
+    protected const STATUS_ACTIVE = 1;
+}
+?>
+```
+
+【Refactoring Action】: Pull Up Members refactoring, pull `STATUS_ACTIVE` from `User` up to `BaseModel`.

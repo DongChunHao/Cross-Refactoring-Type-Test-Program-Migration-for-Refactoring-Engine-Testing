@@ -1,0 +1,57 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+/* Refactoring Settings:
+Refactoring type: Create Type quick-fix (Create type 'User')
+Refactoring target: undefined type `User` in `u := &User{ ... }` composite literal
+Refactoring rule: When inferring field types from composite literal initializers for a new struct, resolve the static type of each value expression and use that concrete type, not fallback to `interface{}`.
+*/
+
+/* Error Root Cause:
+Observed failure: The quickfix infers `Author interface{}` for the `Author` field, even though the initializer is `Author{}` of the locally defined struct `Author`. It incorrectly falls back to empty interface instead of the known concrete `Author` type.
+Expected behavior: Generate `Author Author` for that struct field.
+Underlying cause: The type inference logic for struct fields in the "Create type" quick-fix fails to resolve the literal `Author{}` to the existing named struct type, defaulting to `interface{}`.
+*/
+
+type Author struct {
+	Namee   string
+	Surname time.Time
+}
+
+func main() {
+	u := &User{
+		Author:        Author{},
+		Name:          "Sammy the Shark",
+		Password:      "fisharegreat",
+		PreferredFish: nil,
+		CreatedAt:     time.Now(),
+	}
+
+	fmt.Println(u.Name)
+}
+
+// Expected correct generated User struct
+/*
+type User struct {
+	Author        Author
+	Name          string
+	Password      string
+	PreferredFish interface{}
+	CreatedAt     time.Time
+}
+*/
+
+// Bad actual generated User struct
+/*
+type User struct {
+	Author        interface{}
+	Name          string
+	Password      string
+	PreferredFish interface{}
+	CreatedAt     time.Time
+}
+*/

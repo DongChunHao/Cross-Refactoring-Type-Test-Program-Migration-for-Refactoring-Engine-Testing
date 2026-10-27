@@ -1,0 +1,6 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+const aaa = {};
+const bbb = { ...aaa }; //{Extract Method target full object‑literal containing spread element}

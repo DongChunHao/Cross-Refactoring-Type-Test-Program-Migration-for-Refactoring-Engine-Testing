@@ -1,0 +1,16 @@
+```
+<?php
+class Transport { }
+class LandTransport extends Transport {
+    protected function startEngine()
+    {
+    }
+}
+class Car extends LandTransport {
+    public function test() {
+        $this->startEngine();
+    }
+}
+```
+
+【Refactoring Action】: Push Down method `startEngine()` from class `LandTransport` to subclass `Car`.

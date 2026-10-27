@@ -1,0 +1,24 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+mod mod1 {
+pub fn foo() {}
+}
+mod mod2 { //{change method test inside inner3, preserve existing glob import statement}
+mod inner1 {
+fn test() { crate::mod1::foo(); }
+}
+mod inner2 {
+fn test() {
+use crate::mod1;
+mod1::foo();
+}
+}
+mod inner3 {
+fn test() {
+use crate::mod1::*;
+foo();
+}
+}
+}

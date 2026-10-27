@@ -1,0 +1,7 @@
+<?php
+class Fruit {
+    const MAX_WEIGHT = 500;
+}
+class Apple extends Fruit {
+}
+【Refactoring Action】: Push Down class constant `MAX_WEIGHT` from parent class `Fruit` to child class `Apple`.

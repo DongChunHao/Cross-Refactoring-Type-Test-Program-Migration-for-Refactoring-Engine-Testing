@@ -1,0 +1,8 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+function bug() { //{Rename Method target enclosing function bug}
+const [foo, bar] = [1, 2];
+console.log(foo, bar);
+}

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+int main(int argc, char** argv) { // paramater argc to be renamed //extract variable for rename‑refactoring numeric‑literal‑as‑identifier‑input defect scenario
+int a = 1;
+return argc;
+}

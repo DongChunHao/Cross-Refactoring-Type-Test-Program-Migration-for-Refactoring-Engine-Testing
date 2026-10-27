@@ -1,0 +1,36 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method
+Refactoring target: A::foo(C $c1 = null, C ...$c2)
+Operation: Move method foo from class A to class C
+Scope: Variadic parameter preservation and call-site argument rewriting for moved instance methods
+*/
+
+/* Error Root Cause:
+Observed failure: After moving the variadic method A::foo() into class C, the variadic parameter ...$c2 is completely dropped from the new method signature. Call sites that originally passed multiple trailing arguments are rewritten incorrectly, losing the variadic parameter and the semantics of variable-length arguments.
+Expected behavior: Preserve the full original signature including the variadic parameter `C ...$c2` when moving the method, and correctly adjust all call sites to maintain the original argument list.
+Underlying cause: The Move Instance Method logic does not handle variadic parameters in the source method; it strips the variadic parameter during signature reconstruction and fails to map multiple trailing arguments in call sites.
+*/
+class C {
+    public function f()
+    {
+        $a = new A;
+        $a->foo(null);
+    }
+}
+
+class A {
+    public function foo(C $c1 = null, C ...$c2)
+    {
+        var_dump($c2);
+    }
+
+    public function bar()
+    {
+        $this->foo(new C, new C, new C, new C);
+    }
+}
+
+$a = new A;
+$a->bar();
+?>

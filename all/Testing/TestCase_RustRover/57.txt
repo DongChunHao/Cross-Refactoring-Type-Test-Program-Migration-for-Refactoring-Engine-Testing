@@ -1,0 +1,26 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+# Simulate IntelliJ‑like dumb‑mode index access defect scenario
+class IndexService:
+    def __init__(self):
+        self.is_dumb_mode = True  # indexing in‑progress (dumb mode active)
+
+    def resolve_psi_reference(self, name: str):
+        if self.is_dumb_mode:
+            raise Exception("IndexNotReadyException")  # root‑cause exception
+        return name
+
+def main():
+    index = IndexService()
+    original_val = 10
+    test_var = original_val  #Extract Variable: extract literal 10 into original_val local variable
+    try:
+        index.resolve_psi_reference("test_var")
+        print(f"{test_var}")
+    except Exception as e:
+        print(e)
+
+if __name__ == "__main__":
+    main()

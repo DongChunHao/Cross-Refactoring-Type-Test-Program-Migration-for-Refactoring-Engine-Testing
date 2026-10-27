@@ -1,0 +1,65 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+public record NumericColumnAndValues(TableReferenceColumnNumeric Column);
+public record SumColumnAndValues(TableReferenceColumnNumeric Column);
+public record NonNumericColumnAndValues(TableReferenceColumn Column);
+public record ColorColumnAndValues(ColorSelectorReferenceColumn Column);
+public record TableReferenceColumnNumeric;
+public record TableReferenceColumn;
+public record ColorSelectorReferenceColumn;
+
+public class CaseNode
+{
+public CaseNode(
+string tableName,
+TableReferenceColumnNumeric[] numericColumns,
+TableReferenceColumnNumeric[] sumColumns,
+TableReferenceColumn[] refColumns,
+ColorSelectorReferenceColumn[] referencedColorSelectorsCols,
+object[] rsColumns,
+object[] outputColumns,
+object[] resultColumns)
+{
+}
+}
+
+public class Table
+{
+public string Name { get; set; }
+}
+
+public static class RefactoringTestProgram
+{
+public static void Main()
+{
+var table = new Table { Name = "TestTable" };
+var numericTableColumns = new List<NumericColumnAndValues>();
+var referencedSumsCols = new List<SumColumnAndValues>();
+var nonNumericTableColumns = new List<NonNumericColumnAndValues>();
+var referencedColorSelectorsCols = new List<ColorColumnAndValues>();
+object[] rsColumns = Array.Empty<object>();
+object[] outputColumns = Array.Empty<object>();
+object[] resultColumns = Array.Empty<object>();
+
+var node = new CaseNode(
+table.Name,
+numericTableColumns.Select(c => c.Column) //{Change Method: target LINQ extension inside constructor argument}
+.ToArray(),
+referencedSumsCols.Select(c => c.Column).ToArray(),
+nonNumericTableColumns.Select(c => c.Column)
+.ToArray(),
+referencedColorSelectorsCols.Select(c => c.Column)
+.ToArray(),
+rsColumns,
+outputColumns,
+resultColumns
+);
+}
+
+}

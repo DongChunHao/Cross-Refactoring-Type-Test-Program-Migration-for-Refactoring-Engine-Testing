@@ -1,0 +1,21 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Parameter
+Refactoring Target: String literal `'last name'` inside arrow function `doStuff`
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Select `'last name'` inside the arrow function body, run Extract Parameter and mark the new parameter as non‑optional.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Parameter adds the new `lastName: string` parameter to the arrow function signature and replaces the literal inside the function body, but fails to update existing call sites, leaving `doStuff('first name')` with missing argument.
+Expected behavior: The refactoring should append the extracted literal `'last name'` as an argument to every existing call site, resulting in `doStuff('first name', 'last name')`.
+Underlying cause: The Extract Parameter processor for variable‑assigned arrow functions only modifies the function itself, skipping the call-site argument injection logic that works for regular named function declarations.
+*/
+
+// Complete compilable test code
+const doStuff = (firstName: string) => {
+  console.log(firstName, 'last name');
+};
+
+doStuff('first name');

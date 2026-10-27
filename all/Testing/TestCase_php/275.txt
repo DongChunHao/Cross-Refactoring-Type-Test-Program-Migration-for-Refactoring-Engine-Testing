@@ -1,0 +1,20 @@
+```
+<?php
+class User
+{
+    public function load()
+    {
+        $data = [
+            'id'   => 123,
+            'name' => 'test',
+        ];
+        $query = UserQuery::create()
+            ->where('active = ?', true)
+            ->limit(10)
+            ->orderByCreatedAt();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, move `User` class to namespace `App\Model`.

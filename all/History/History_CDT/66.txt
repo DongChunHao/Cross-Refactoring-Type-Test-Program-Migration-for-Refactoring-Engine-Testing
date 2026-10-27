@@ -1,0 +1,44 @@
+template <typename T> struct foo //rename here..
+{
+        foo() {}
+        ~foo() {}
+};
+
+template <> struct foo<int> //...or here
+{
+        foo() {}
+        ~foo() {}
+};
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (C++ class / struct rename with template full specialization)
+Refactoring Target: struct `foo` (either primary template definition or its full specialization)
+IDE: Eclipse CDT
+Operation steps: Select struct name `foo`, invoke Rename refactoring and provide new class name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+When renaming the template struct `foo` (primary template or its full specialization `foo<int>`), the constructor `foo()` and destructor `~foo()` inside the full specialization `foo<int>` are **not updated**.
+C++ rule: A constructor’s name must exactly match the name of its enclosing class; destructor uses `~` followed by class name. After renaming the struct, the constructor/destructor inside `foo<int>` still keep the old identifier `foo`.
+The primary template’s constructor/destructor may be correctly renamed, but the specialized struct’s constructor and destructor remain unchanged.
+This creates inconsistent source code: the specialized struct has a constructor named `foo`, while the struct itself has been renamed, leading to compile errors.
+
+Expected behavior:
+When renaming a C++ template class (primary template or specialization):
+1. Traverse **all associated template entities**: primary template, all partial specializations, all full explicit specializations.
+2. For every specialization, update:
+   - the struct/class name in the specialization header,
+   - constructors (constructor name matches enclosing class name),
+   - destructors (`~ClassName`),
+   - all member references inside the specialization.
+3. Maintain C++ template semantic linkage: primary template and its specializations are considered the same logical entity for rename refactoring.
+
+Underlying cause:
+CDT’s rename refactoring does not fully unify the symbol table for template primary definition and its specializations.
+The symbol resolver treats the constructor/destructor inside the explicit specialization as separate symbols and fails to track that their name is bound to the enclosing specialized class name.
+When rename is triggered, the visitor only visits some symbol locations, missing constructor and destructor declarations inside template specializations.
+The tool’s cross-specialization symbol dependency analysis is incomplete.
+*/

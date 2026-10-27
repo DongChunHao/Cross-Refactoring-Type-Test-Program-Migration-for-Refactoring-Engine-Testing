@@ -1,0 +1,25 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: target_var
+'''
+# Simulate IntelliJ‑like dumb‑mode index access defect scenario
+class IndexService:
+    def __init__(self):
+        self.is_dumb_mode = True  # indexing in‑progress (dumb mode active)
+
+    def resolve_psi_reference(self, name: str):
+        if self.is_dumb_mode:
+            raise Exception("IndexNotReadyException")  # root‑cause exception
+        return name
+
+def main():
+    index = IndexService()
+    target_var = 10  #Rename Variable: rename test_var to target_var
+    try:
+        index.resolve_psi_reference("target_var")
+        print(f"{target_var}")
+    except Exception as e:
+        print(e)
+
+if __name__ == "__main__":
+    main()

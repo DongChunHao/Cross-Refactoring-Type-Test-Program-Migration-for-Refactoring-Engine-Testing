@@ -1,0 +1,16 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+namespace ConsoleApp2
+{
+public abstract class BaseA {}
+
+public class A : BaseA
+{
+public void Run() //{Pull Up Method: target method for multi‑target‑project‑move‑to‑file‑CS0101‑duplicate‑definition‑bug reproduction}
+{
+}
+}
+
+}

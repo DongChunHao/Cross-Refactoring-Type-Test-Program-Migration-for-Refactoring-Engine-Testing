@@ -1,0 +1,30 @@
+/* Refactoring Settings:
+Refactoring Type: Rename Symbol + Undo
+Refactoring Target: C# interface `IDbQueryRepository`
+Refactoring Scope: Solution-wide rename, then undo the rename transaction; code analysis / highlighting state of open editor tab
+IDE: Rider, regression unreproducible in 232 nightly
+Repo: microsoft/Bing-Maps-Fleet-Tracker
+File: Backend/src/Trackable.Repositories/IDbQueryRepository.cs
+*/
+
+/* Error Root Cause:
+Observed failure: After renaming interface `IDbQueryRepository` → `IDbQueryRepository2` and performing Undo, the editor enters a state where code analysis is turned off; inspections, highlighting and context actions stop working in that tab.
+Expected behavior: Undo should fully roll back the rename PSI transaction, restore the original symbol name, and keep code analysis/inspections enabled for the open document without requiring tab reload.
+Underlying cause: The rename refactoring’s undo transaction does not fully restore the document’s analysis state. The PSI tree reverts textually, but the code analysis scheduler/inspection marker service is not re-enabled for the editor document. This state is transient and non-deterministic; the issue could not be reproduced in the 232 nightly build, indicating it was fixed by an unrelated PSI/inspection pipeline change.
+*/
+
+// Before rename
+namespace Trackable.Repositories
+{
+    public interface IDbQueryRepository<TKey, TData, TModel>
+        where TData : EntityBase<TKey>
+        where TModel : ModelBase<TKey>
+        where TKey : IEquatable<TKey>
+    {
+        DbRepositoryBase<TKey, TData, TModel> DbBaseRepository { get; }
+    }
+}
+
+// After rename to IDbQueryRepository2 then Undo
+// Source text reverts back to IDbQueryRepository, but editor code analysis engine is disabled
+// Symptoms: No inspections, no highlights, Alt+Enter context actions unavailable

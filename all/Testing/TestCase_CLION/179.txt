@@ -1,0 +1,22 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+#include<stdio.h>
+#include<stdlib.h>
+void accept(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m, int dummyParam); //{Change method signature add int dummyParam parameter}
+void accept(int A[][4],int N[][4],int M[4][4],int W[1][4],int *n,int *m, int dummyParam){
+int i,j;
+for(i=0;i<*n;i++)
+for(j=0;j<*m;j++)
+N[i][j]=M[i][j]-A[i][j];
+}
+int main(){
+int A[5][4];
+int M[5][4];
+int N[5][4];
+int W[1][4];
+int n=5,m=4;
+accept(A,N,M,W,&n,&m,0);
+return 0;
+}

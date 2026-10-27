@@ -1,0 +1,21 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Variable
+Refactoring Target: Destructuring binding `name = 'Jane'` from `let {name = 'Jane', age} = student;`
+Refactoring Scope: JavaScript / TypeScript
+Trigger Operation: Inline the `name` destructured variable, choose inline all references and remove variable
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The inline refactoring treats the destructuring default value `'Jane'` as a constant value, directly replacing every use of `name` with `'Jane'` and dropping the destructuring default logic entirely. This loses the fallback behavior: `name` should be `student.name` when it exists, only fall back to `'Jane'` if `student.name` is `undefined`.
+
+Expected behavior: Either prevent inlining this variable (show a message that it has a destructuring default value and cannot be safely inlined), or emit equivalent conditional logic like `student.name ?? 'Jane'` instead of hardcoding the constant `'Jane'`.
+
+Underlying cause: The inliner does not understand that destructuring defaults are conditional fallbacks, not constant initial values. It only sees the right-hand side literal and substitutes it naively.
+*/
+
+// Complete compilable test code
+let student;
+let {name = 'Jane', age} = student;
+console.log(name);

@@ -1,0 +1,37 @@
+<?php
+class A {
+    /**
+     * @param $a
+     * @param $b
+     */
+    public function foo($a, $b)
+    {
+    }
+}
+class B extends A {
+    /**
+     * {@inheritdoc}
+     */
+    public function foo($a, $b)
+    {
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: A::foo(), swap parameter order of $a and $b
+Refactoring rule: When refactoring a base method’s signature and propagating changes to overriding methods, preserve the original PHPDoc strategy of overriding methods. If an overriding method only contains `{@inheritdoc}` without explicit @param tags, do not inject new @param tags into its PHPDoc. Only update the signature in the code, leave the inheriting doc comment as-is.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After running Change Signature on A::foo() and swapping parameters, the signature of B::foo() is correctly updated. However the refactoring appends new `@param $b` / `@param $a` lines to B’s comment block which originally only had `{@inheritdoc}`.
+The `{@inheritdoc}` tag already tells PHPDoc to inherit parameter descriptions from the parent; adding explicit @param tags pollutes the comment and is unnecessary.
+
+Expected behavior:
+For overriding methods whose PHPDoc consists solely of `{@inheritdoc}` (no handwritten @param), update the method parameter list in code, but leave the entire PHPDoc comment unchanged. Do not inject auto-generated @param tags into these inheriting docblocks.
+If the overriding method already has custom @param tags mixed with {@inheritdoc}, then update those existing tags as needed.
+
+Underlying cause:
+The Change Signature processor applies a uniform PHPDoc update logic to all overrides. It does not check whether the overriding method’s documentation relies purely on {@inheritdoc} and skips injecting redundant @param entries for that case.
+*/

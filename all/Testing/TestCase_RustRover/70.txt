@@ -1,0 +1,7 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+async fn foo() {
+async { () }.await //Change Method: modify method signature while retaining await‑containing body expression
+}

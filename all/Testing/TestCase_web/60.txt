@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+const doStuff = (firstName: string) => { //{Change Method target variable‑assigned arrow function doStuff, modify signature}
+console.log(firstName, 'last name');
+};
+doStuff('first name');

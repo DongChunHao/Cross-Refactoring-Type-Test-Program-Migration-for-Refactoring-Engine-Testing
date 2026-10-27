@@ -1,0 +1,6 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Selection parser maps partial string‑literal text range onto the full string AST node; cannot operate on inner substring, extracts whole string literal instead of selected substring fragment
+def demo():
+path = "directory/file.html"
+def stub(): // REFACTOR_TARGET
+pass

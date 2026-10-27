@@ -1,0 +1,18 @@
+```
+<?php
+namespace{
+    class ProductEntity{}
+    class SourceClass
+    {
+        public static ProductEntity $current;
+    }
+}
+namespace N2{
+    class TargetB extends \SourceClass
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move typed static property `SourceClass::$current` from global-namespace class `SourceClass` into namespace `N2` class `TargetB`

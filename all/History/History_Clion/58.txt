@@ -1,0 +1,38 @@
+```
+/* Refactoring Settings:
+Refactoring type: Extract Function (CLion C++ refactoring)
+Refactoring target: expression `g() + 5` inside function `f()`
+Operation: Invoke Extract Function, click "+" to add new argument, leave argument empty in dialog, perform refactoring
+Scope: Validate arguments added in refactoring dialog; disallow empty arguments; do not inject dummy literal `0` for empty argument slots
+*/
+
+/* Error Root Cause:
+Observed failure:
+User adds an empty argument in the Extract Function dialog. After refactoring, the generated call becomes `getInt(0)`. The newly created function `getInt()` has zero parameters, but the call site incorrectly passes literal `0` as an argument. This creates compilation error (too many arguments to function call).
+
+Expected behavior:
+Either prevent user from adding empty/invalid arguments in the dialog, or ignore empty argument entries and generate `getInt()` without any parameters:
+```
+
+int getInt() { return g() + 5; }
+int f() {
+int a = getInt();
+return a;
+}
+
+```
+
+Underlying cause:
+The refactoring UI permits creation of empty argument entries, and backend substitution logic falls back to default literal `0` for empty argument definitions. It does not detect that the empty argument is invalid and should be discarded, leading to mismatched parameter count between function definition and call site.
+*/
+
+int g() {
+    return 0;
+}
+
+int f()
+{
+    int a = g() + 5; // Extract method/function here
+    return a;
+}
+```

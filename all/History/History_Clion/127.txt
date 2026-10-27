@@ -1,0 +1,29 @@
+/* Refactoring Settings:
+Refactoring type: Inline macro / Inline symbol
+Refactoring target: Inline the `NEW_VAR(v)` macro invocations inside `counter_macro_sample()`
+Refactoring rule expectation: Properly expand `__COUNTER__` as a preprocessor builtin (incrementing integer value), preserve separate unique numbers for each macro expansion. Do not insert the macro definition text itself into the inlined code.
+*/
+
+/* Error Root Cause:
+Observed failure: When performing Inline refactoring on `NEW_VAR(v)`, CLion inserts the macro source code including literal `__COUNTER__` instead of expanding it to distinct integer values. All expanded instances get the same `__COUNTER__` token, which leads to duplicate variable names (`__v_##__COUNTER__`) → redefinition compile error. Additionally, quick documentation preview shows wrong source lines.
+Expected behavior:
+After inline refactoring, expand each `NEW_VAR(v)` substituting `__COUNTER__` to unique integer:
+void counter_macro_sample() {
+    static void *__v_0 = (void *)&v;
+    static void *__v_1 = (void *)&v;
+    static void *__v_2 = (void *)&v;
+}
+Underlying cause:
+The inline refactoring engine treats `__COUNTER__` as an ordinary identifier instead of GCC/Clang preprocessor builtin. It does not evaluate the preprocessor counter during macro expansion phase, simply pastes the raw token `__COUNTER__` into generated code. Quick doc preview also uses raw macro text instead of showing fully expanded AST.
+*/
+
+static int v;
+#define __NEW_VAR(name, num) static void *__v_##num = (void *)&name;
+#define _NEW_VAR(name, num) __NEW_VAR(name, num)
+#define NEW_VAR(name) _NEW_VAR(name, __COUNTER__)
+
+void counter_macro_sample() {
+    NEW_VAR(v)
+    NEW_VAR(v)
+    NEW_VAR(v)
+}

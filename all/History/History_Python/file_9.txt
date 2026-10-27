@@ -1,0 +1,25 @@
+''' Refactoring Settings:
+Refactoring type: Rename local function argument refactoring
+Refactoring target: function parameter "batt" of method validate_batt
+Refactoring scope: local scope inside validate_batt method body only
+Refactoring rule expectation: Rename shall only affect the local function parameter and its usages inside validate_batt; must NOT modify the identifier passed as argument to the outer‑scope @validates() decorator.
+'''
+''' Error Root Cause:
+Observed failure: When renaming the local "batt" parameter inside validate_batt, refactoring engine incorrectly also renames the symbol "batt" which is the argument to the @validates decorator, even though this "batt" refers to the class‑level Column attribute in outer class scope, not the local method parameter.
+Expected behavior: Only rename local parameter and its references within validate_batt function body; leave @validates(batt) decorator argument untouched.
+Underlying cause: The rename symbol resolution fails to distinguish two homonymous "batt" symbols from different scopes. It conflates the local method‑scope parameter with the class‑scope Column attribute, treating the decorator’s argument as a usage of the local parameter instead of the class‑level field.
+'''
+from sqlalchemy import Column, Integer
+from sqlalchemy.orm import validates
+from sqlalchemy.orm.decl_api import DeclarativeBase
+
+class Base(DeclarativeBase):
+    pass
+
+class DeviceState(Base):
+    batt = Column(Integer, nullable=True, doc="Battery level: 0..100%")
+
+    @validates(batt)  # this is renamed either
+    def validate_batt(self, key, batt):
+        assert batt is None or 0 <= batt <= 100, 'Battery charge must be in [0..100]'
+        return batt

@@ -1,0 +1,20 @@
+```
+<?php
+namespace Store {
+    class Product
+    {
+        public function getDefaultLabel(): string
+        {
+            return "default";
+        }
+    }
+}
+namespace Store {
+    class ProductMeta
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move instance method `Store\Product::getDefaultLabel()` to `Store\ProductMeta`.

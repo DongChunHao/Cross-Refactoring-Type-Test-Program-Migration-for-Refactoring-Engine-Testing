@@ -1,0 +1,27 @@
+```
+<?php
+class D {
+    protected $data;
+    public function __construct($data) {
+        $this->data = $data;
+    }
+    public function getArrayAccess() {
+        return new class($this->data) extends D implements ArrayAccess {
+            public function offsetGet($offset)
+            { return $this->data[$offset]; }
+            public function offsetSet($offset, $data)
+            { return ($this->data[$offset] = $data); }
+            public function offsetUnset($offset)
+            { unset($this->data[$offset]); }
+            public function offsetExists($offset)
+            { return isset($this->data[$offset]); }
+        };
+    }
+}
+$outer = new D(array(
+    rand(1, 100)
+));
+?>
+```
+
+【Refactoring Action】: Rename refactoring (AutomaticRenamer), target class `D`, rename to `DataWrapper`.

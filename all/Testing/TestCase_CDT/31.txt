@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: z_renamed
+'''
+#include <stdio.h>
+int z = 2;
+int main(){
+int x = 5;  //extract constant 5 //rename field for global‑symbol duplicate‑declaration scenario
+printf("%d", z);
+}

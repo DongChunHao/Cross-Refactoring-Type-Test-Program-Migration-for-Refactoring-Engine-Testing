@@ -1,0 +1,5 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+void main (  int aa_0){ } //rename variable for rename‑refactoring‑ampersand‑declarator‑fragment‑injection‑parameter‑type‑mutation defect scenario

@@ -1,0 +1,11 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+<?php
+class A {
+    function a($b) {} // Rename method a
+}
+
+class B extends A {
+}

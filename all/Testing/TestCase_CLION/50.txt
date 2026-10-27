@@ -1,0 +1,19 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <vector>
+namespace ns {
+template<typename>
+struct foo {
+};
+std::vector<foo<int>>
+f(int dummy) { //{Change method signature add int dummy parameter}
+std::vector<foo<int>> v;
+v.push_back({});
+return v;
+}
+}
+int main() {
+}

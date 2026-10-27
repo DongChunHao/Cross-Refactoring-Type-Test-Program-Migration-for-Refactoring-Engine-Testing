@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace QuickfixMoveTypeLossRepro
+{
+public class ThisExceptionIsGoingToShowABugInRiderWatchMe : Exception
+{
+public void Validate() //{Rename Method: target method for quick‑fix‑move‑type‑silent‑source‑loss‑bug reproduction}
+{
+}
+}
+}

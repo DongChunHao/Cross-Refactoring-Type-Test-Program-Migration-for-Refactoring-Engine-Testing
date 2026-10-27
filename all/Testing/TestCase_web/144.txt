@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+class Car {
+constructor(brand) {
+this.carname = brand; //{Extract Method target constructor body for second Extract‑Superclass triggering duplicate super() insertion}
+}
+present(x) {
+return x + ", I have a " + this.carname;
+}
+}

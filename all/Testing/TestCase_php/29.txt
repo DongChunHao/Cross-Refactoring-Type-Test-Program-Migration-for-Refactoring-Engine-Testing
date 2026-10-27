@@ -1,0 +1,6 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+
+<?php class MyException extends Exception { } class MyChildException extends MyException { function b(){ $this->a(); } } trait MyExceptionTrait { function a(){} //{pull up method a() from MyException to parent Exception (built-in, unmodifiable)} } class MyExceptionWithTrait extends Exception { use MyExceptionTrait; } ?>

@@ -1,0 +1,17 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+(function (\() {
+    function testFunction(\)this) {
+const selExpr = $this.children(":first"); //Rename Variable for selExpr reference expression
+if (selExpr.hasClass('placeholder')) {
+selExpr.removeClass('placeholder');
+selExpr.text('');
+}
+$this.addClass('edit-mode');
+const selExpr2 = $this.children(':first'); //Rename Variable for selExpr2 reference expression
+selExpr2.attr('contentEditable', true);
+selExpr2.focus();
+}
+})(jQuery);

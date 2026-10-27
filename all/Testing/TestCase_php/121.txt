@@ -1,0 +1,10 @@
+```
+<?php
+$sku = "ABC123";
+$productFn = function () use($sku) {
+    var_dump($sku);
+};
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target anonymous function `$productFn`, add new parameter `$sku`.

@@ -1,0 +1,37 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+// Assume required headers and forward declarations are present
+#define ASSET_DOUBLE_TAP_TIMEOUT_MS 100
+#define ASSET_LONG_TAP_TIMEOUT_MS 500
+#define YI_TRUE true
+class Timer {
+public:
+void SetInterval(int ms);
+void SetSingleShot(bool enable);
+template
+void Connect(Slot&& slot);
+};
+class AssetViewBase
+{
+protected:
+Timer m_tapCountTimer;
+Timer m_longTapTimer;
+void PrepareTimers() {}
+};
+class AssetView : public AssetViewBase //{Push down PrepareTimers implementation from AssetViewBase to AssetView}
+{
+protected:
+void OnTapTimer();
+void OnLongTapTimer();
+};
+void AssetView::PrepareTimers()
+{
+m_tapCountTimer.SetInterval(ASSET_DOUBLE_TAP_TIMEOUT_MS);
+m_tapCountTimer.SetSingleShot(YI_TRUE);
+m_tapCountTimer.TimeoutSig.Connect(*this, &AssetView::OnTapTimer);
+m_longTapTimer.SetInterval(ASSET_LONG_TAP_TIMEOUT_MS);
+m_longTapTimer.SetSingleShot(YI_TRUE);
+m_longTapTimer.TimeoutSig.Connect(*this, &AssetView::OnLongTapTimer);
+}

@@ -1,0 +1,15 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move module), IDE preferred import style set to `import <module>.<name>`
+Refactoring target: module `mod` moved away from original `pack` package
+Refactoring scope: source file import statements, qualified‑style import generation, in‑code symbol reference `mod`
+Refactoring rule expectation: After moving module mod to new package, generate new import conforming to configured preferred import style, update references so `mod` name is resolvable in current scope.
+'''
+''' Error Root Cause:
+Observed failure: After moving module mod, original `from pack import mod` import is deleted entirely. Function body retains `print(mod)`, no new import is added for mod. This triggers unresolved reference error, even though IDE is configured for fully‑qualified‑name import style.
+Expected behavior: Generate import statement following configured preference, either `import new_pack.mod` or equivalent, and adjust `print(mod)` to `print(new_pack.mod)` or keep short name via proper import‑as binding.
+Underlying cause: Move refactor respects preferred import style when generating references for symbols inside moved module, but fails to apply the same import‑style logic for consumers in source file. It removes old import without producing replacement import matching IDE settings, leaving bare short‑name reference `mod` with no corresponding import.
+'''
+from pack import mod
+
+def use_imported_from():
+    print(mod)

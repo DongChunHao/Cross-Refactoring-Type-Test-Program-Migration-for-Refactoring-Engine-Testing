@@ -1,0 +1,22 @@
+/* Refactoring Settings:
+Refactoring type: Inline Variable (CLion C++ refactoring)
+Refactoring target: local variable `x` inside function `qqq()`
+Operation: Trigger Inline Variable refactoring on variable `MyClass x = 239;`
+Scope: Inline variable for class object created via implicit conversion constructor; preserve temporary object construction syntax during inlining, avoid generating invalid literal.field member access
+*/
+
+/* Error Root Cause:
+Observed failure: When inlining variable `x` initialized as `MyClass x = 239;`, refactoring replaces `x.field` with `239.field;`. This is invalid C++ syntax, integer literals cannot have member access.
+Expected behavior: Recognize `239` is used to construct a temporary `MyClass` instance, inline to `MyClass(239).field;`.
+Underlying cause: The PSI reference resolver only extracts the initializer expression `239` directly, and loses the implicit conversion / object construction context. It treats the initializer raw value as the object itself instead of `MyClass(239)`, producing invalid member access on integer literal.
+*/
+
+struct MyClass {
+    MyClass(int);
+    int field;
+};
+
+void qqq() {
+    MyClass x = 239;
+    x.field;
+}

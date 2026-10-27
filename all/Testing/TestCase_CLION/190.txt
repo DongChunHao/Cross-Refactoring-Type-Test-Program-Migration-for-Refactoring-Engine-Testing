@@ -1,0 +1,18 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: ~ShapeStateImplRenamed
+'''
+#ifndef _*ShapeStateImpl_H*
+#define _*ShapeStateImpl_H*
+#include <stdlib.h>
+class ShapeStateImpl {
+public:
+ShapeStateImpl(double* currentPoints, size_t numberOfPoints);
+virtual ~ShapeStateImplRenamed() { //{Rename destructor to ~ShapeStateImplRenamed}
+free(_pointsPosition);
+}
+private:
+size_t _pointCount;
+double *_pointsPosition;
+};
+#endif //_*ShapeStateImpl_H*

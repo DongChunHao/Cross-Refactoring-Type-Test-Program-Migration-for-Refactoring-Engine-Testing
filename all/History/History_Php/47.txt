@@ -1,0 +1,27 @@
+<?php
+class A { }
+class B extends A {
+    function fa2() {
+        B::fs();
+    }
+    function fs() {
+        echo 'a';
+    }
+}
+?>
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method fa2() in class B, pull up to parent class A
+Refactoring rule: When pulling up a method containing explicit-class static-style invocation of a non-static method (ClassName::method()), detect that after moving the lexical scope changes. Even though PHP historically permits this syntax in the original child class, after moving to parent, the call remains B::fs() while fs() stays an instance-only method in B; the refactoring must warn about this semantic breakage.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling fa2() into A produces no warning. Original code B::fs() inside B is allowed (deprecated/soft-warning style callable syntax in older PHP). After pull-up, fa2() lives in A, still calling B::fs(). fs() is a non-static instance method on B, and invoking it via :: from outside B’s instance context becomes an invalid static call.
+Expected behavior:
+The refactoring should detect `B::fs()` where fs() is non-static, emit a warning that moving fa2() to A will turn this into an invalid static invocation of an instance method. This check is specific to Pull Up and not required for Push Down.
+Underlying cause:
+The refactoring’s static-call analysis only checks whether the target method is declared static, but does not evaluate the change in invocation context after moving the method into the parent class. It treats the explicit-class `::` call as safe regardless of whether the caller’s lexical class is changing.
+*/
+?>

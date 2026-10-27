@@ -1,0 +1,10 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func foo(a string, b ...string) {
+innerFoo(a, b...) // extract empty body logic into innerFoo
+}
+func innerFoo(a string, b ...string) {
+}

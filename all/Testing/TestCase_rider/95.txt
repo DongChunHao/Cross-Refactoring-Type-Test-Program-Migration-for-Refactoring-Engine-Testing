@@ -1,0 +1,22 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace EncRenameInterfaceRepro
+{
+public interface IService
+{
+void Execute(); //{Change Method: target interface member for interface‑rename‑EnC‑hot‑reload‑delta‑failure bug reproduction}
+}
+
+public class Service : IService
+{
+public void Execute()
+{
+Console.WriteLine("run");
+}
+}
+
+}

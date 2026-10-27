@@ -1,0 +1,23 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: method C::f()
+Scope: return type, interface contract I::f()
+Refactoring operation: change return type of C::f() from int to float, without updating the base interface method
+*/
+
+/* Error Root Cause:
+Observed failure: Changing the return type of implementing method C::f() to float without modifying the interface I::f() does not trigger any warning in the refactoring dialog. This produces a fatal PHP error because the implementing method’s return type is incompatible with the interface declaration.
+Expected behavior: Detect that this change violates the interface contract, show a warning in the refactoring preview, and offer an option to also update the base interface method.
+Underlying cause: The Change Signature logic does not validate return type compatibility against implemented interfaces when the user chooses not to propagate changes to base methods. It only applies the modification locally without inheritance/contract checking.
+*/
+interface I {
+    public function f(): int;
+}
+
+class C implements I {
+    function f(): int
+    {
+    }
+}
+?>

@@ -1,0 +1,8 @@
+```
+<?php
+namespace Service;
+class UserRepo { }
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target `Service\UserRepo`, keep all destination settings unchanged, execute refactor.

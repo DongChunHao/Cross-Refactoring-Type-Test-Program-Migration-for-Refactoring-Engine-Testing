@@ -1,0 +1,7 @@
+// Target Refactoring Type: Move Method
+// Expected Defect Performance: Inline‑variable implementation only copies variable value expression; it does not collect and migrate trailing line‑comment attached to assignment AST node, comment gets discarded on removing temporary assignment
+def example():
+temp = "aaaaaa"  # some clever comment // REFACTOR_TARGET
+value = temp + "bbbbb"
+def stub_helper():
+pass

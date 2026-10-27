@@ -1,0 +1,14 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+package main
+func inc(val int) int { // extract increment statement into inc
+val++
+return val
+}
+func _() (returnInt int) {
+returnInt = inc(returnInt)
+returnInt--
+return
+}

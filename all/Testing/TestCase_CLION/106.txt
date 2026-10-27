@@ -1,0 +1,21 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#define array_length(arr) (sizeof(arr) / sizeof((arr)[0]))
+struct num {
+int member;
+} num[] = {{ 1 }};
+struct BaseDemo
+{
+static void demo(void)
+{
+const char *str;
+for (const struct num *p = num + array_length(num); p-- != num;)
+if ((str = "expr") != 0)
+return;
+}
+};
+struct DemoOps : BaseDemo //{Push down demo function from BaseDemo to DemoOps}
+{
+};

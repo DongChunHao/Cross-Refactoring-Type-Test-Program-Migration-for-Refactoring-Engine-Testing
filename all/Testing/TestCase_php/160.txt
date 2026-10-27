@@ -1,0 +1,17 @@
+```
+<?php
+class TargetBox { }
+class BaseService{
+    static function initConfig(){
+    }
+}
+class UserService extends BaseService {
+    static function setup()
+    {
+        self::initConfig();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `initConfig()` from class `BaseService` to class `TargetBox`

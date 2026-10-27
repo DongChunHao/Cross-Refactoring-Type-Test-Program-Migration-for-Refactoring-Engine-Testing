@@ -1,0 +1,20 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Pull Up Members refactoring
+Refactoring target: method f() inside an anonymous class created via `new class { ... }`
+Scope: anonymous class instance
+Refactoring operation: attempt to pull up method f()
+*/
+
+/* Error Root Cause:
+Observed failure: When executing Pull Up on a method inside an anonymous class, the UI/preview shows placeholder text `{{\}}` instead of a proper label indicating an anonymous class.
+Expected behavior: The refactoring dialog and preview should clearly display a readable identifier such as "anonymous class" for the target type, rather than broken placeholder tokens.
+Underlying cause: The refactoring UI renderer does not have a dedicated display handler for anonymous class type symbols; it falls back to raw internal placeholder tokens instead of a human-readable name. Anonymous classes have no user-defined class name, so the symbol presentation logic is missing this case.
+*/
+$anonClass = new class {
+    public function f()
+    {
+        echo "a";
+    }
+};
+?>

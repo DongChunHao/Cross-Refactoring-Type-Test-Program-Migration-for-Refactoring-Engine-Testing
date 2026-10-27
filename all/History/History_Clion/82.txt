@@ -1,0 +1,23 @@
+#include <iostream>
+#include <map>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract the for loop statement inside main() into a new function testMethod
+Refactoring scope: Selected for-loop block iterating over std::map<std::string,int>
+Refactoring rule expectation: Preserve the complete template arguments for std::map iterator type in extracted function body, keep std::map<std::string,int>::iterator instead of stripping template parameters
+*/
+
+/* Error Root Cause:
+Observed failure: After Extract Method refactoring, the iterator declaration inside extracted testMethod becomes std::map::iterator it, which is invalid C++ code (std::map requires template arguments). Original code used std::map<std::string,int>::iterator.
+Expected behavior: The extracted function should retain std::map<std::string,int>::iterator in the for loop.
+Underlying cause: The refactoring engine incorrectly strips template arguments from the qualified iterator type when moving code into the new function, generating an incomplete template name that cannot compile.
+*/
+
+int main() {
+    std::map<std::string,int> testmap = {{"a", 1}, {"b", 2}};
+    for (std::map<std::string,int>::iterator it = testmap.begin(); it != testmap.end(); ++it) {
+        std::cout << it->first << " -> " << it->second << "\n";
+    }
+    return 0;
+}

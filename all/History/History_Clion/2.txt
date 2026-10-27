@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring type: Rename (Shift+F6) C++ refactoring
+Refactoring target: enum class enumerator `X::One` which is defined inside function main()
+Operation: Place caret on `One` inside function-scoped enum class X and trigger rename refactoring
+Scope: Rename enumerator inside function-local enum class; collect all references to the enumerator inside the same function scope
+*/
+
+/* Error Root Cause:
+Observed failure: When renaming enumerator `One` of a function-scoped enum class X, the refactoring throws an exception and fails to update the usage `X::One;`.
+Expected behavior: Rename the enumerator `One` to new name, update all references like `X::One` inside main() without throwing exception.
+Underlying cause: The symbol reference resolution logic does not properly handle enumerators belonging to enum classes declared inside function scope. The refactoring engine encounters an unexpected PSI node type when traversing references to the local enumerator, triggering an exception and aborting the rename operation before updating usages.
+*/
+
+int main() {
+    enum class X : char { One, Two, Three }; //Rename One here
+    X x = X::One;
+    return 0;
+}

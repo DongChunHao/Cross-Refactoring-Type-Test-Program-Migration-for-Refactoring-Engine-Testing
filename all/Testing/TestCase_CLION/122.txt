@@ -1,0 +1,31 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: calcTimeValue
+'''
+// Assume required forward declarations
+class StaticHelper {
+public:
+static int GetVersion();
+};
+class CSimpleTimer {
+private:
+bool mIsRunning;
+void Restart();
+double calcTimeValue() { //{Extract method for time calculation logic}
+double someTime = GetElapsedMillis();
+someTime += 10;
+return someTime;
+}
+public:
+CSimpleTimer();
+double GetElapsedMillis();
+};
+CSimpleTimer::CSimpleTimer() {
+int internalVersion = 0;
+double someTime = calcTimeValue();
+internalVersion = StaticHelper::GetVersion();
+if (internalVersion>1) mIsRunning = false;
+double somethingElse = someTime;
+double stuff = somethingElse;
+Restart();
+}

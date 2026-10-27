@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring type: Rename (Shift+F6) C++ refactoring
+Refactoring target: function foo
+Operation: Place caret immediately after function name `foo` (before parentheses) in `void foo() {}`, trigger Shift+F6 rename
+Scope: Caret position detection for function identifier; symbol range selection for rename refactoring
+*/
+
+/* Error Root Cause:
+Observed failure: When caret is placed right after the function identifier (between function name and `()`), invoking rename duplicates the function name during interactive rename preview.
+Expected behavior: Recognize the `foo` symbol correctly even when caret is placed after the identifier, select only the identifier text for renaming, without duplicating the function name.
+Underlying cause: The PSI range detector incorrectly captures the identifier plus adjacent empty token range when caret is after the name, causing the rename UI to treat the identifier region as two copies of the name, leading to duplicate name rendering during rename editing.
+*/
+
+void foo() {}
+
+int main() {
+  foo();
+}

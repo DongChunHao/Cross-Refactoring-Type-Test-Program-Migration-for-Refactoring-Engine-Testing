@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+struct S {}
+trait T {
+fn bar(x: i32);
+}
+impl T for S {
+fn bar(x: i32) { //{move method body content into separate helper function}
+println!("hello")
+}
+}

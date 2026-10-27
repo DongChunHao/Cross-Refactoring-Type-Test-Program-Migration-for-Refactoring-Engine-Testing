@@ -1,0 +1,32 @@
+class B;
+class A {
+public:
+    B* GetB() {return dynamic_cast<B*>(this);}
+    void foo() {
+        B*b = GetB();
+    }
+};
+class B : public A { };
+int main() {
+    A* a;
+    B* b = a->GetB(); // Inline GetB()
+    return 0;
+}
+/* Refactoring Settings:
+Refactoring type: Inline Function
+Refactoring target: Inline `a->GetB()` in main()
+Refactoring rule expectation: Replace `a->GetB()` with `dynamic_cast<B*>(a)`, do not add redundant parentheses and must not append `()` after expression.
+*/
+
+/* Error Root Cause:
+Observed failure: Inline produces `(dynamic_cast<B*>(a))()`.
+The parser incorrectly treats the pointer result of `dynamic_cast<B*>(a)` as a function and adds function call parentheses `()`.
+This is invalid C++ syntax: pointer cannot be invoked with `()`.
+The first inline inside `A::foo()` works correctly because it uses `this`; the second inline on `a->GetB()` misgenerates the extra `()`.
+
+Expected result:
+B* b = dynamic_cast<B*>(a);
+
+Underlying cause:
+The inline substitution logic mishandles member function call `a->GetB()`. When substituting the body `dynamic_cast<B*>(this)` and rebinding `this` to `a`, the AST analysis incorrectly preserves the function-call token `()` from the original `GetB()` call, appending it to the cast expression.
+*/

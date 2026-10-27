@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+// file1.go
+package pack1
+func FooPack1() { // rename Foo to FooPack1
+}
+
+// file2.go
+package pack2
+func Foo() {
+}

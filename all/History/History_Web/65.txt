@@ -1,0 +1,18 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Replace destructuring with property and index access
+Refactoring Target: Destructuring pattern `{ 'a a': a }` with non-identifier property key containing space
+Refactoring Scope: JavaScript file
+Trigger Operation: Run "Replace destructuring with property and index access"
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The refactoring incorrectly generates invalid identifier-style access like `obj.a a` instead of bracket index access `obj['a a']`.
+Expected behavior: Expand to `const a = obj['a a'];`, using bracket notation for keys that are not valid JS identifiers.
+Underlying cause: The expansion logic unconditionally uses dot access, without checking whether the property key is a valid identifier; for keys with whitespace, special characters or reserved words it must use `[]` index access.
+*/
+
+// Complete compilable test code
+var { 'a a': a } = { 'a a': 5 };
+a;

@@ -1,0 +1,17 @@
+```
+<?php
+namespace Logging\Base;
+    class LogChannel
+    {
+    }
+namespace Logging\Writer;
+    class FileWriter
+    {
+    }
+    class RotationPolicy
+    {
+    }
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `FileWriter`, target namespace `Logging\Writer\File`

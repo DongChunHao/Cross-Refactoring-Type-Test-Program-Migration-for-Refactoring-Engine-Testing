@@ -1,0 +1,19 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function f, rename parameter $b to $a
+Scope: function f
+Refactoring operation: Modify parameter name from $b to $a
+*/
+
+/* Error Root Cause:
+Observed failure: When renaming function parameter $b to $a via Change Signature, the IDE emits no warning. After refactoring, the parameter $a shadows the existing local variable $a inside the function body, altering runtime semantics.
+Expected behavior: The Change Signature validator should detect that the target parameter name $a already exists as a local variable within the function scope and show a warning about variable shadowing before applying the signature change.
+Underlying cause: The Change Signature validation logic does not scan the function body for existing local variable declarations that would collide with the new parameter name; it only checks conflicts against other parameters, ignoring local scope variable shadowing risks.
+*/
+function f($b) {
+    $a = 1;
+    echo $a;
+    echo $b;
+}
+?>

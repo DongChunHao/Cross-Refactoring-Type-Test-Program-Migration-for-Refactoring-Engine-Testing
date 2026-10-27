@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package pack1
+type (
+Type1 struct{}
+type2 struct{}
+)
+func Bar(type2) {} // rename Foo to Bar

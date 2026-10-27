@@ -1,0 +1,11 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: ~MoveMethodAbstractInlineDtor
+'''
+// MoveMethod.h
+class MoveMethodAbstractInline {
+public:
+virtual ~MoveMethodAbstractInlineDtor() //{Rename destructor ~MoveMethodAbstractInline to ~MoveMethodAbstractInlineDtor}
+{
+}
+};

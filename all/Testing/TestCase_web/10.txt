@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// foo.js
+export default class Foo {
+constructor(arg1, arg2) { //{Extract Method from constructor body}
+this.arg1 = arg1;
+this.arg2 = arg2;
+}
+}
+// bar.js
+import Bar from './foo';
+const instance = new Bar(arg1, arg2);

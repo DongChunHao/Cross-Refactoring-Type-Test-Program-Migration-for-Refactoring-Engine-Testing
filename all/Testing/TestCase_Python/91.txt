@@ -1,0 +1,7 @@
+// Target Refactoring Type: Pull Members Up
+// Expected Defect Performance: Default superclass‑target selection lacks deterministic rule; does not prioritize immediate parent, dialog pre‑selection randomly alternates between direct‑ancestor Base and object
+class Base:
+pass
+class Child(Base):
+def my_method(self): // REFACTOR_TARGET
+return 42

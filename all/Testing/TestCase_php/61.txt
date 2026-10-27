@@ -1,0 +1,17 @@
+```
+<?php
+namespace Queue\Worker {
+    use Queue\Worker as WORKER_ALIAS;
+    class AbstractWorker
+    {
+    }
+    class AsyncTask implements WORKER_ALIAS\Job\IJobHandler{
+    }
+}
+namespace Queue\Worker\Job {
+    interface IJobHandler{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `AsyncTask`, move to global namespace into new separate file.

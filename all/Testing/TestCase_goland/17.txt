@@ -1,0 +1,10 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+
+func main() { // Rename method main to entryFunc
+fmt.Println(a)
+}

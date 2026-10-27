@@ -1,0 +1,25 @@
+/* Refactoring Settings:
+Refactoring type: Move Method (C++ CLion), test case MM35
+Refactoring target: constructor definition `MoveMethodExplicit::MoveMethodExplicit()` which belongs to class inside namespace MoveMethodNamespace
+Operation: Move method definition from cpp source file into header file
+Scope: Preserve namespace order when moving method definition into header; keep class declaration before inline method definition inside namespace
+*/
+
+/* Error Root Cause:
+Observed failure: The refactoring places the constructor definition `MoveMethodExplicit::MoveMethodExplicit() { }` BEFORE the namespace `MoveMethodNamespace` and class `MoveMethodExplicit` declaration. At this point the class is undefined, creating invalid C++ syntax.
+Expected behavior: Place the constructor definition inside the namespace block after the class declaration, inline within the class body as shown in expected result.
+Underlying cause: The Move Method refactoring does not respect the lexical order of namespace and class declarations when moving definition to header. It extracts the method definition and inserts it at top of file, ignoring the namespace scope that encloses the target class.
+*/
+
+namespace MoveMethodNamespace {
+    class MoveMethodExplicit
+    {
+    public:
+        explicit MoveMethodExplicit();
+    };
+}
+
+// #TEST#: MM35 Move method to header
+MoveMethodExplicit::MoveMethodExplicit()
+{
+}

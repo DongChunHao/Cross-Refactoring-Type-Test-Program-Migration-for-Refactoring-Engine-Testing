@@ -1,0 +1,7 @@
+// Target Refactoring Type: Change Method
+// Expected Defect Performance: Multi‑line backslash‑continued import parser only deletes imported symbol name; it does not clean‑up trailing line‑continuation backslash, leaving stray backslash and producing invalid Python syntax
+from file1 import test_function1,
+test_function2 // REFACTOR_TARGET
+
+val = test_function1()
+print(val)

@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: &func_0
+'''
+int GlobalVar_0 = 0;
+int GlobalVar_1 = 100;
+int func_0() {
+return GlobalVar_1;
+}
+int Function_0() {
+return GlobalVar_0;
+} //rename method for rename‑refactoring‑ampersand‑in‑function‑rename‑declarator‑corruption‑c‑syntax‑invalid defect scenario

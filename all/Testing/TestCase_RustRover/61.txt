@@ -1,0 +1,21 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+use uuid::Uuid;
+use itertools::Itertools;
+
+struct DemoHolder;
+impl DemoHolder {
+fn source_logic(data: &[u8]) -> Vec<Uuid> {
+data.array_chunks()
+.map(|data| Uuid::from_bytes(*data))
+.collect_vec() //{Move‑Method target: chain expression statement with trailing semicolon}
+}
+}
+
+fn main() {
+let buf = [0u8;16];
+let res = DemoHolder::source_logic(&buf);
+println!("{:?}", res);
+}

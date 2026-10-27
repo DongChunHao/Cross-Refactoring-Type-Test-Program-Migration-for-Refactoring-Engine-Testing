@@ -1,0 +1,12 @@
+```
+<?php
+function getUserQuery()
+{
+    $col = 'email';
+    $sql = "SELECT id, email FROM user WHERE email = ?:col";
+    return $sql;
+}
+?>
+```
+
+【Refactoring Action】: Rename identifier refactoring, target `$col`, rename to `$emailColumn`.

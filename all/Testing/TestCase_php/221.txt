@@ -1,0 +1,12 @@
+```
+<?php
+function runQuery() {
+    $table = 'users';
+    $name = 'test';
+    $sql = "INSERT INTO ?t:table SET name = ?:name";
+    return $sql;
+}
+?>
+```
+
+【Refactoring Action】: Rename identifier refactoring, target PHP variable `$name`, rename to `$userName`.

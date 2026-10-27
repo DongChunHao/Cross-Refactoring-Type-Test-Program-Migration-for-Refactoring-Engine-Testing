@@ -1,0 +1,22 @@
+```
+<?php
+namespace Render\Base {
+    class RenderContext
+    {
+    }
+}
+/**
+ * Template node classes for AST rendering
+ */
+namespace Render\Node {
+    class TextNode
+    {
+    }
+    class ElementNode
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `TextNode`, target namespace `Render\Node\Text`

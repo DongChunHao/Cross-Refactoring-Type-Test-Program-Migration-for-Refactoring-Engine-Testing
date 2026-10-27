@@ -1,0 +1,20 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable / Extract Field
+Refactoring Target: Class identifier Example
+Refactoring Scope: Current JavaScript file, default exported ES6 class
+Trigger Operation: Select identifier "Example" in `export default class Example`, execute Refactor | Extract | Variable or Refactor | Extract | Field.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Performing Extract Variable or Extract Field on the class name of a default-exported ES6 class triggers a NullPointerException inside the refactoring engine.
+Expected behavior: The engine should either safely execute the extraction or show a clean, meaningful validation message stating that this refactoring is not available on the selected node, without throwing an internal runtime exception.
+Underlying cause: The refactoring logic for Extract Variable / Extract Field does not properly handle the AST structure of default export class declarations; it encounters an unexpected null value when resolving the binding or export node and crashes.
+*/
+
+// Complete compilable test code
+export default class Example {
+    constructor(foo) {
+    }
+}

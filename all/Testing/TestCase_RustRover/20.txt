@@ -1,0 +1,12 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn main() { //{move for‑loop and println macro invocations into nested inner function}
+for i in ["One", "Two", "", "Last"] {
+if !i.is_empty() {
+println!("Hello, world! {i}");
+println!("This was {}", i)
+}
+}
+}

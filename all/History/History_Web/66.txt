@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline
+Refactoring Target: `obj222 = Object.fromEntries(map2);`
+Refactoring Scope: JavaScript file
+Trigger Operation: Invoke Inline on the assignment statement, `Object.fromEntries` comes from .d.ts type declaration
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Inline refactoring deletes the assignment statement `obj222 = Object.fromEntries(map2);` entirely instead of substituting `Object.fromEntries(map2)` at the `console.log(obj222)` call site, leaving `obj222` unresolved.
+Expected behavior: Replace `console.log(obj222)` with `console.log(Object.fromEntries(map2))` and remove the redundant variable assignment correctly.
+Underlying cause: The inliner’s handling for functions only declared in `.d.ts` type files is flawed. It fails to treat `Object.fromEntries` as a callable value eligible for inline substitution and incorrectly discards the whole assignment node.
+*/
+
+// Complete compilable test code
+let map2 = new Map([ [ 'a', 1 ], [ 'b', 2 ], [ 'c', 3 ] ]);
+let obj222 = Object.fromEntries(map2); //Call 'Inline' here
+console.log(obj222)

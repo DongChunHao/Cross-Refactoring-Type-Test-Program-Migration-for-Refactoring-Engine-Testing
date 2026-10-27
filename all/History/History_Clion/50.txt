@@ -1,0 +1,35 @@
+/* Refactoring Settings:
+Refactoring type: Rename Symbol (C++ CLion refactoring)
+Refactoring target: the second local variable `int a = 2;` (outside the if block)
+Operation: Invoke Rename refactoring, rename this `a` to `qwert`
+Scope: Respect C++ lexical block scoping rules. Only rename usages of the target variable (the outer `a`). Must leave the inner block `int a =1` and its usages untouched.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When renaming the outer `a` to `qwert`, the refactoring incorrectly modifies the return statement inside the if block: `return a;` → `return qwert;`.
+The inner `int a =1` is a separate local variable inside the if block, which shadows nothing and should not be touched. The changed `return qwert;` becomes invalid, as `qwert` is out of scope inside the if block.
+
+Expected behavior:
+Only rename the outer `a` definition and its return site:
+int f(bool b) {
+    if (b) {
+        int a = 1;
+        return a;
+    }
+    int qwert = 2;
+    return qwert;
+}
+
+Underlying cause:
+Rename refactoring’s symbol resolution fails to distinguish identically-named variables in separate lexical blocks. It only matches the identifier token `a`, instead of resolving each reference to its exact symbol in its lexical scope, incorrectly rewriting references to the inner `a`.
+*/
+
+int f(bool b) {
+    if (b) {
+        int a = 1;
+        return a;
+    }
+    int a = 2; // <- rename refactoring to qwert
+    return a;
+}

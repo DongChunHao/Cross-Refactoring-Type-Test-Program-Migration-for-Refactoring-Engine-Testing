@@ -1,0 +1,27 @@
+<?php
+class Test {
+    static function foo() {
+    }
+    static function bar() {
+        self::foo();
+    }
+}
+class TestOther {}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring, with “Move class to a new file” checked
+Refactoring target: class Test (source file contains multiple classes) → namespace TestNS
+Refactoring rule: When moving a class that contains `self::` static calls, `self` is lexically bound to the containing class and must remain as `self` after the move. It must not be rewritten as `Namespace\self`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The source file has two classes: Test and TestOther. Moving Test into namespace TestNS and splitting it to a new file corrupts `self::foo()` into `TestNS\self::foo()`.
+`TestNS\self::foo()` is invalid PHP syntax; `self` is a keyword, not a class name that can be qualified with a namespace prefix.
+
+Expected behavior:
+Inside the moved class Test, keep `self::foo()` unchanged. `self` always refers to the class where the code is written, so no namespace qualification should be applied to the `self` keyword.
+
+Underlying cause:
+The reference rewriter treats `self` as an ordinary class name identifier during namespace adjustment. When the class is moved into a new namespace, it incorrectly applies namespace qualification to the `self` keyword. The bug only surfaces when splitting a multi-class source file into a separate file for the moved class.
+*/

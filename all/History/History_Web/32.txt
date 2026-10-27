@@ -1,0 +1,41 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Move ES6 Module Member
+Refactoring Target: class ListItem
+Refactoring Scope: Current JavaScript React module
+Trigger Operation: Execute Move Module Member to move ListItem into a separate destination file
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When moving the ListItem class out to another file via Move Module Member:
+1. The original source file that renders `<ListItem/>` is not updated with an import for ListItem.
+2. The destination file receiving ListItem is not automatically given `import React from 'react'` even though the component contains JSX markup.
+Expected behavior:
+1. Add the named import of ListItem in the source file after moving it out.
+2. Inject React import into the destination file if the moved class includes JSX.
+Underlying cause:
+The Move Module Member logic does not track JSX usages of the moved symbol inside the same source file, and does not check whether the moved member contains JSX to conditionally add the React import to the target file.
+*/
+
+// Complete compilable test code
+import React, { Component } from "react";
+
+export class List extends Component {
+  render() {
+    return (
+      <div>
+        {this.props.items.map(item => <ListItem value={item}/>)}
+      </div>
+    );
+  }
+}
+
+export class ListItem extends Component {
+  render() {
+    return (
+      <div>
+      </div>
+    );
+  }
+}

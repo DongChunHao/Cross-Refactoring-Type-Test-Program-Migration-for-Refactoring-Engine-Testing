@@ -1,0 +1,14 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+declare function isPromise(v: any): boolean;
+declare const ASYNC_START: string;
+const promiseMiddleware = store => next => action => { //{Move Method target nested curried concise‑arrow middleware function}
+if (isPromise(action.payload)) {
+store.dispatch({
+type: ASYNC_START,
+subtype: action.type,
+});
+}
+};

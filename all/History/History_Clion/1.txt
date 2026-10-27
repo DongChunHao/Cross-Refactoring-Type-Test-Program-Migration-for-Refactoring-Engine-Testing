@@ -1,0 +1,28 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: selected block `this->callee(); if (x ==4) { this->callee(); }` inside C::caller()
+Operation: Select the marked code segment and invoke Extract Method, name new method foo
+Scope: Preserve existing `this->` qualifiers on member calls inside extracted method body; retain user-written qualifiers instead of stripping them
+*/
+
+/* Error Root Cause:
+Observed failure: After Extract Method runs, the `this->` qualifiers on `this->callee()` are removed automatically, producing plain `callee();`. User expects to keep the original `this->` that existed in the selected source code.
+Expected behavior: Preserve the `this->` qualifiers in the extracted method body exactly as written in the original selected code, do not automatically strip them.
+Underlying cause: The refactoring engine applies automatic cleanup/normalization pass for member access expressions, which unconditionally removes redundant `this->` qualifiers during extraction. This cleanup step runs regardless of whether the user originally wrote `this->` and wants to retain it.
+*/
+
+class C {
+ public:
+  void caller();
+  int callee();
+};
+
+void C::caller() {
+  int x = 2 + 2;
+  // refactor beginning vvv
+  this->callee();
+  if (x == 4) {
+    this->callee();
+  }
+  // refactor ending ^^^
+}

@@ -1,0 +1,40 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method refactoring
+Refactoring target: method C::f()
+Scope: `self` / `parent` keywords, return type, PHPDoc
+Refactoring operation: move instance method f from class C to class D
+*/
+
+/* Error Root Cause:
+Observed failure: After moving method `f()` from `C` to `D`, the refactoring does not rewrite `self` and `parent` tokens.
+- `self` originally referred to `C`, now binds to the new host class `D`
+- `parent` originally referred to `C0`, now refers to D's parent (which does not match intent)
+- The `: self` return type and `@return self` PHPDoc are not adjusted to reflect the semantic change.
+The code compiles but changes the original runtime behaviour silently.
+
+Expected behavior:
+Detect `self` / `parent` inside the method body and signature. Offer to replace them with the original class name `C` (or warn user these references will change meaning after moving).
+
+Underlying cause:
+The Move Instance Method refactoring treats `self`/`parent` as static literal tokens instead of semantic class-bound references; it does not resolve their target class and rewrite them when the method is relocated to another class.
+*/
+class D{}
+class C0{}
+class C extends C0{
+    /**
+     * @param D $d
+     * @return self
+     */
+    public function f(D $d): self
+    {
+        $b = new parent();
+        return new self;
+    }
+    public function g()
+    {
+    }
+}
+$a = new D;
+(new C)->f($a)->g();
+?>

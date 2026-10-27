@@ -1,0 +1,17 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+class BaseTest
+{
+public:
+virtual int test(int testval) {
+return 0;
+}
+};
+class TestClass : public BaseTest { //{Push down virtual method test from BaseTest to TestClass}
+public:
+int test(int testval) override {
+return 0;
+}
+};

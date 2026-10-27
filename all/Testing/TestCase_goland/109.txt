@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type IncrementHelper struct{}
+func (h IncrementHelper) inc(val int) int { // move inc method from IncrementHelper to standalone function
+val++
+return val
+}
+func _() (returnInt int) {
+helper := IncrementHelper{}
+returnInt = helper.inc(returnInt)
+returnInt--
+return
+}

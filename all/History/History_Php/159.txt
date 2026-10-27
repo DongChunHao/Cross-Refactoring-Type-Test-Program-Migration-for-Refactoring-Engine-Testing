@@ -1,0 +1,44 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Instance Method (triggered from Feature Envy inspection quick-fix)
+Refactoring target: ASTVisitor::combineParentInterfaces(PHPInterface $interface): array
+Operation: Move combineParentInterfaces method from ASTVisitor class into PHPInterface class
+Scope: $this reference rewriting when moving method that mixes references to source class (ASTVisitor) and target class (PHPInterface)
+*/
+
+/* Error Root Cause:
+Observed failure: After moving combineParentInterfaces into PHPInterface, the refactoring incorrectly rewrites some $this references. Some $this that should refer to the original ASTVisitor instance get replaced with direct ASTVisitor identifier, producing invalid code.
+The method uses two kinds of receiver: $this (ASTVisitor instance, holds $stubs) and $interface (PHPInterface instance). After moving, the PHPInterface instance becomes the new $this, while the ASTVisitor object must remain as a separate parameter. The refactoring logic confuses the two receivers and mishandles recursive self-call $this->combineParentInterfaces(...).
+Expected behavior: Introduce an ASTVisitor parameter to carry the stubs dependency, rewrite recursive calls to use that ASTVisitor instance, and only use $this for PHPInterface members.
+Underlying cause: The receiver mapping logic for Move Instance Method does not properly distinguish which $this usages belong to the source class vs the new target class, leading to wrong identifier substitution in recursive calls.
+*/
+class ASTVisitor
+{
+  public $stubs;
+  public function combineParentInterfaces(PHPInterface $interface): array
+  {
+    $parents = [];
+    if (empty($interface->parentInterfaces)) {
+      return $parents;
+    }
+    /**@var string $parentInterface */
+    foreach ($interface->parentInterfaces as $parentInterface) {
+      $parents[] = $parentInterface;
+      if ($this->stubs->getInterface($parentInterface,
+          $interface->stubBelongsToCore ? null : $interface->sourceFilePath) !== null) {
+        foreach ($this->combineParentInterfaces($this->stubs->getInterface($parentInterface,
+          $interface->stubBelongsToCore ? null : $interface->sourceFilePath)) as $value) {
+          $parents[] = $value;
+        }
+      }
+    }
+    return $parents;
+  }
+}
+
+class PHPInterface {
+  public $stubBelongsToCore;
+  public $sourceFilePath;
+  public $parentInterfaces;
+}
+?>

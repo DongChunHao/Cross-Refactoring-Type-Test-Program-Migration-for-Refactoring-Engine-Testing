@@ -1,0 +1,15 @@
+```
+<?php
+class HelperBin { }
+interface ContractInterface{
+    static function validate();
+}
+class OrderHandler implements ContractInterface {
+    static function validate()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `validate()` from class `OrderHandler` to class `HelperBin`

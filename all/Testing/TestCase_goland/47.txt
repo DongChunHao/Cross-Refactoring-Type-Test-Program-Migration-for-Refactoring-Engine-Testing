@@ -1,0 +1,22 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package awesomePackage13
+import "fmt"
+type (
+Item struct {
+ID    string
+Price int
+}
+InMemoryItemStorage struct {
+items map[string]Item
+}
+)
+func (imis *InMemoryItemStorage) oldLoad(id string) (*Item, error) {
+panic("implement me")
+}
+func caller() {
+storage := &InMemoryItemStorage{}
+storage.oldLoad("1") // rename method oldLoad to Load
+}

@@ -1,0 +1,9 @@
+'''
+Refactoring type: Move Field
+Refactoring new name: N/A
+'''
+class Pqr {
+*m() {
+let x = 5; //{Move Field target variable inside generator‑method, introduce‑field ASI‑boundary defect before * token under semicolon‑less style}
+}
+}

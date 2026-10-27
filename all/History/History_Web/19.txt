@@ -1,0 +1,34 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Interface
+Refactoring Target: Class members or existing interface members
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Execute Extract Interface refactoring, covering three scenarios:
+1. Extract interface and use auto-suggested name which conflicts with existing symbols
+2. Extract interface from class Example containing field1 and field2
+3. Extract interface from an existing interface Example
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Three separate defects in Extract Interface:
+1. The automatically suggested interface name does not check for existing identifiers. The proposed name may collide with existing items and cause resolution errors after creation.
+2. When extracting an interface from a class, member semicolons are omitted in the generated interface; class `Example { field1: string; field2: number }` becomes `interface IExample { field1: string field2: number }`.
+3. Running Extract Interface on an existing interface produces malformed output like `interface Example Created` instead of generating a valid new interface.
+Expected behavior:
+1. Check the scope for existing symbols when auto-generating the interface name, avoid naming collisions.
+2. Preserve proper punctuation and add semicolons for each member in the generated interface.
+3. Handle extraction from an existing interface correctly, produce valid interface syntax instead of broken declarations.
+Underlying cause:
+The Extract Interface implementation lacks duplicate name lookup, does not retain or emit required member punctuation, and has no special handling for the source node being an existing interface, leading to invalid AST output.
+*/
+
+// Complete compilable test code
+class Example {
+    field1: string;
+    field2: number
+}
+
+interface Example {
+    field: boolean;
+}

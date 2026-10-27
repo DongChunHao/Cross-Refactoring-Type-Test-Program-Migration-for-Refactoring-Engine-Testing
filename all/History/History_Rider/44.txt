@@ -1,0 +1,45 @@
+/* Refactoring Settings:
+Refactoring Type: Move Into Matching Files
+Refactoring Target: Multiple types in a single source file, split each type into its own matching filename (TypeName.cs)
+IDE: Rider
+*/
+
+/* Error Root Cause:
+Observed failure:
+After running “Move Into Matching Files”:
+1. Rider creates separate files for each type and moves the type nodes into those new files.
+2. The editor immediately shows duplicate declaration errors on all moved types.
+3. Making any tiny edit (typing a character, space) in the original file triggers a PSI reparse, and all duplicate highlightings disappear.
+
+Expected behavior:
+After the refactoring completes, the project PSI/source model should be consistent:
+- Original file no longer contains the moved type declarations.
+- New files contain each type once.
+- No stale duplicate highlighting without manual reparse.
+
+Underlying cause:
+This is a **PSI model / document cache synchronization bug**, not a source-code generation bug.
+The refactoring performs two actions:
+1. Insert type nodes into newly created target files.
+2. Delete the corresponding type nodes from the original file.
+The issue is that the **stale PSI cache for the original file is not invalidated immediately after deletion**.
+The solution model temporarily sees both copies: the nodes still present in the old cached tree and the new nodes in the new files.
+A user edit forces a full reparse of the original file, purging the stale PSI tree, which removes the false-positive duplicate markers.
+The actual disk files are correct; only Rider’s in-memory code model is temporarily out of sync.
+*/
+
+// Before refactoring (Single file Types.cs)
+namespace Lib
+{
+    public class A {}
+    public class B {}
+}
+
+// After Move Into Matching Files
+// Types.cs (should be empty or retain only non-moved items)
+// A.cs: public class A {}
+// B.cs: public class B {}
+
+// Rider transient state after refactoring:
+// Code inspection thinks A exists both in Types.cs (stale cached PSI) AND A.cs → duplicate declaration highlight.
+// Typing anything in Types.cs → reparse discards stale PSI, diagnostics become correct.

@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring Type: Inline Function
+Refactoring Target: Function `f(x: bool) -> bool`
+Refactoring Scope: Rust function inlining, temporary parameter binding generation
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4293-213-nightly, CLion 2021.3, Rust 1.57.0, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Invoke "Inline function", select "Inline all and remove the method"
+*/
+/* Error Root Cause:
+Observed failure: After inlining two calls to `f`, the refactor creates two `let x` bindings. The second binding shadows the first one, changing program semantics and evaluating `!false && !false` instead of `!true && !false`.
+Expected behavior: The inlining pass should perform name collision detection for newly created parameter bindings. When the identifier name is already present in the current scope, generate a fresh unique name (e.g. `x1`) to prevent accidental shadowing and preserve original logic.
+Underlying cause: The inline function logic unconditionally reuses the original parameter name when creating local bindings. It lacks a scope lookup step to detect existing identifiers and disambiguate names automatically.
+*/
+fn f(x: bool) -> bool { !x }
+fn g() {
+    f(true) && f(false);
+}

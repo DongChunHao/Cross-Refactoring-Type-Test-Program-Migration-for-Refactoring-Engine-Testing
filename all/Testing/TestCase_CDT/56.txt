@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: a v
+'''
+float torename = 0;
+float GlobalVar_0 = 100;
+float f_0() {
+return GlobalVar_0;
+}
+float f_1() {
+return torename;
+} //rename field for rename‑refactoring‑embedded‑whitespace‑global‑variable‑rename‑token‑split‑syntax‑error defect scenario

@@ -1,0 +1,16 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+namespace MyLib
+{
+public abstract class ServiceBase {}
+
+public class MyService : ServiceBase
+{
+public void Execute() //{Pull Up Method: target method for cross‑project‑move‑missing‑Compile‑item‑bug reproduction}
+{
+}
+}
+
+}

@@ -1,0 +1,22 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Rename Variable
+Refactoring Target: Destructured variable x inside function foo
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Rename the x in `console.log(x)` to y, with the parameter using object destructuring and the later object literal using shorthand syntax.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After renaming the destructured x to y, the object literal shorthand `{x,}` becomes `{y,}`. This incorrectly changes the object property key.
+Expected behavior: The destructuring pattern expands to `{x: y}` and the object literal should become `{x: y,}`, keeping the property name x while only changing the local variable name to y.
+Underlying cause: The rename refactoring treats the shorthand property identifier as the same binding, conflating the object key name with the local variable reference and rewriting the shorthand property key unintentionally.
+*/
+
+// Complete compilable test code
+function foo({x}) {
+    console.log(x);
+    console.log({
+        x,
+    });
+}

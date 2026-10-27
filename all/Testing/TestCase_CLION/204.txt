@@ -1,0 +1,15 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <vector>
+struct Wrapper
+{
+static void wrapper_f() { //{Move f logic into static wrapper member}
+std::vector<int> x { 1, 2, 3 };
+x[0] = 1;
+}
+};
+void f() {
+Wrapper::wrapper_f();
+}

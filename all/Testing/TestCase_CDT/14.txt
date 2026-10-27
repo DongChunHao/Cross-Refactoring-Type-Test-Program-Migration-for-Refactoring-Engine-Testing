@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: num_renamed
+'''
+struct Foo {
+public:
+float GetNum(int) {}
+};
+Foo GetFoo() {}
+int main() {
+GetFoo().GetNum(0);//rename variable for expression with literal‑argument method call
+}

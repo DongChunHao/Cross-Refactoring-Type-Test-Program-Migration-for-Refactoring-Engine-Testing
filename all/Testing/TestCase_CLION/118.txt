@@ -1,0 +1,34 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// Assume required forward declarations
+class StaticHelper {
+public:
+static int GetVersion();
+};
+class CSimpleTimer {
+private:
+bool mIsRunning;
+void Restart();
+public:
+CSimpleTimer();
+double GetElapsedMillis();
+};
+struct Wrapper
+{
+void wrapperCtor(CSimpleTimer* timerObj) { //{Move constructor logic into struct Wrapper member function}
+int internalVersion = 0;
+double someTime = timerObj->GetElapsedMillis();
+someTime += 10;
+internalVersion = StaticHelper::GetVersion();
+if (internalVersion>1) timerObj->mIsRunning = false;
+double somethingElse = someTime;
+double stuff = somethingElse;
+timerObj->Restart();
+}
+};
+CSimpleTimer::CSimpleTimer() {
+Wrapper w;
+w.wrapperCtor(this);
+}

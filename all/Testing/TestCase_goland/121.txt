@@ -1,0 +1,16 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// pack1/main.go
+package pack1
+type Type struct{}
+func (pack1 Type) Foo() {
+fooBody(pack1) // extract method body logic into fooBody
+Bar()
+}
+func fooBody(t Type) {
+t.Foo()
+Bar()
+}
+func Bar() {}

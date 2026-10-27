@@ -1,0 +1,17 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Constant
+Refactoring target: global constant A
+Operation: Move constant A into class C as a class constant
+Scope: Validation of constant initializer expressions before moving to class constant
+*/
+
+/* Error Root Cause:
+Observed failure: The refactoring allows moving the global constant `A` with initializer `new Exception()` into class C. PHP class constants do not support object instantiation (`new`) as initial values; only scalar expressions, arrays, and constant expressions are permitted. Applying this refactoring will produce invalid PHP code.
+Expected behavior: The Move Constant dialog should detect that the initializer contains `new`, forbid the refactoring, and show an error message explaining that class constants cannot be initialized with object instances.
+Underlying cause: The Move Constant precondition checker does not validate whether the constant’s initializer expression is legal for PHP class constants; it only checks name conflicts and namespace references.
+*/
+const A = new Exception();
+class C{
+}
+?>

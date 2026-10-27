@@ -1,0 +1,21 @@
+<?php
+class Test  {
+    public function method()
+    {
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method method() inside class Test
+Refactoring rule: When there are no available parent classes, implemented interfaces, or supported pull-up destinations, the refactoring should show an accurate, user-friendly error message explaining that there is no valid target to pull the member into.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Invoking Pull Up on Test::method() shows the message "Cannot perform refactoring. method doesn't have base classes/interfaces in current project."
+Expected behavior:
+The error message should clearly state that there is no parent class, implemented interface, or supported destination available to pull this method into, instead of phrasing it as if the method itself owns base types.
+Underlying cause:
+The error message text is imprecise. The method does not have its own base classes; the containing class Test lacks parent classes or implemented interfaces that can receive the pulled-up member. The wording incorrectly attributes the lack of base types to the method rather than the enclosing class.
+*/

@@ -1,0 +1,28 @@
+<?php
+namespace N2;
+class C { }
+
+namespace N;
+use N2\C as Brr;
+class A {
+    static function f(Brr $a, $b)
+    {
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Method refactoring
+Refactoring target: static function f() from class A (namespace N) to class C (namespace N2)
+Refactoring rule: After moving the static method and updating all references, the refactoring should trigger optimize imports for the source file. Unused use aliases left behind in the source namespace should be cleaned up automatically, matching the behavior of other similar refactorings.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving f() to N2\C, the `use N2\C as Brr;` statement in namespace N remains in the file even though nothing in namespace N uses Brr anymore. Other refactorings (Move Class, Move Instance Method) automatically run optimize imports to delete unused use clauses, but Move Static Method does not. This creates inconsistent cleanup behavior.
+
+Expected behavior:
+Once the method is moved and all references are rewritten, run optimize imports on the source file. The unused `use N2\C as Brr;` should be removed automatically.
+
+Underlying cause:
+The Move Static Method processor does not enqueue an optimize imports pass on the originating file after applying changes. Other refactoring processors include this final cleanup step, while this one omits it.
+*/

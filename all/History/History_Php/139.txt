@@ -1,0 +1,32 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: AbstractClassWithConstructor::__construct($b)
+Scope: constructor call sites inside anonymous class instantiation syntax
+Refactoring operation: add a new parameter to the parent constructor
+*/
+
+/* Error Root Cause:
+Observed failure:
+After adding a new parameter to AbstractClassWithConstructor's constructor via Change Signature, the call site `new class($this->b) extends AbstractClassWithConstructor {};` is not updated. The refactoring fails to recognize the anonymous-class inheritance constructor argument list as a usage of the parent constructor.
+
+Expected behavior:
+Treat the argument list in `new class(...) extends Parent {}` as a constructor invocation of the parent class. Update the argument list to match the new constructor signature, same as regular `new Parent(...)` calls.
+
+Underlying cause:
+The refactoring’s call-site collector does not traverse anonymous class instantiation nodes to resolve the parent constructor being invoked. It treats the `new class(...)` argument list as belonging to the anonymous synthetic class instead of the extended parent class, so this usage is missed during reference rewriting.
+*/
+class TestClazz {
+    private $b;
+    public function testMe()
+    {
+        new class($this->b) extends AbstractClassWithConstructor {};
+    }
+}
+
+class AbstractClassWithConstructor{
+    public function __construct($b)
+    {
+    }
+}
+?>

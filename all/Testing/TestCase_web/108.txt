@@ -1,0 +1,16 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+import { useState, useEffect } from 'react';
+function FriendStatus(props) { //{Change Method target component function with useState,nested function,useEffect inside extract range}
+const [isOnline, setIsOnline] = useState(null);
+function handleStatusChange(status) {
+setIsOnline(status.isOnline);
+}
+useEffect('foo');
+if (isOnline === null) {
+return 'Loading...';
+}
+return isOnline ? 'Online' : 'Offline';
+}

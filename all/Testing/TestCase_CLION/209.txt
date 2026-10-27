@@ -1,0 +1,18 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+void foo(int(*)());
+class Base
+{
+public:
+virtual void bar() = 0; //{Pull up bar declaration into Base}
+};
+class Impl : public Base
+{
+public:
+void bar() override {
+int(*fp1)();
+foo(fp1);
+}
+};

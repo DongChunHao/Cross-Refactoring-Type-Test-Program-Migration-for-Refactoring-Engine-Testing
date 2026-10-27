@@ -1,0 +1,28 @@
+int main(int argc, char** argv) { // paramater argc to be renamed
+    int a = 1;
+    return argc;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring
+Refactoring Target: function formal parameter `argc`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select parameter `argc`, invoke Rename refactoring, input integer literal `0` as new name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT accepts literal `0` as candidate identifier. Parameter declaration becomes `int 0, char** argv`, and every reference site `argc` is replaced by `0`. Resulting code `int main(int 0, char** argv)` is lexically invalid; parameter cannot be numeric literal. Return statement becomes `return 0;`. Refactoring completes silently without any warning, producing uncompilable source code.
+
+Expected behavior:
+Rename operation shall only accept well‑formed C identifiers, perform lexical validation before any AST modification:
+1. Identifier must start with underscore or alphabet character.
+2. Subsequent characters limited to letters, underscores, digits.
+3. Reject pure numeric literals, reserved keywords, strings, operators.
+When candidate name violates lexical rules, immediately abort refactoring and present error message to user.
+
+Underlying cause:
+Rename refactoring lacks strict lexical validation for user‑provided name string. It does not distinguish identifier token from other token categories (integer literal). Raw input text is directly substituted into declaration and all reference locations, allowing numeric literals to be injected as parameter names and generating broken syntax.
+*/

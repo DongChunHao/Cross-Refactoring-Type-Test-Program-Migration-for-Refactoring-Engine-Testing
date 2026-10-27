@@ -1,0 +1,32 @@
+<?php
+class A{
+    protected function a(){
+        print $d;
+    }
+}
+
+class B extends A{
+    protected function a($a = 3){
+        print $a;
+    }
+    public function b(){
+        $this->a(); // <caret> invoke Change signature refactoring here
+    }
+}
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: method a, invoked at $this->a() inside B::b()
+Action: add parameter $d with default value 2
+Refactoring rule: When modifying the signature of a base class method, only propagate signature changes to child class methods that actually override the base method and follow LSP. If a child method has a different original parameter list and is not a proper override, the refactoring should not blindly overwrite its signature, as this corrupts its existing implementation.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After adding $d with default value 2 to A::a(), the refactoring also rewrites B::a() signature to `a($d)`. The original parameter $a is lost, and the body `print $a` becomes undefined, breaking the child method.
+Expected behavior:
+The refactoring should recognize that B::a() has its own distinct parameter list and is not a matching override. It should modify A::a() and update the call site `$this->a(2)`, but leave B::a() unchanged, or explicitly warn the user about the signature mismatch before altering it.
+
+Underlying cause:
+The refactoring treats any same-named method in a subclass as an override candidate and automatically applies signature changes recursively, without validating whether the child method was originally a compatible override of the base method.
+*/

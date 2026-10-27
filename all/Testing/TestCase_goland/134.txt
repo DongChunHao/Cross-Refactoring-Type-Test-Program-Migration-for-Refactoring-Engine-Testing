@@ -1,0 +1,17 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func f1(i int, ints []int) {}
+func f2(i int, ints ...int) {}
+func _(i int, nums ...int) {
+invokeF1(i, nums) // extract f1 call
+invokeF2(i, nums...) // extract f2 call
+}
+func invokeF1(i int, nums []int) {
+f1(i, nums)
+}
+func invokeF2(i int, nums ...int) {
+f2(i, nums...)
+}

@@ -1,0 +1,27 @@
+<?php
+class A { }
+class B extends A {
+    function fa2()
+    {
+    }
+}
+class C extends B {
+}
+(new C)->fa2();
+?>
+
+/* Refactoring Settings:
+Refactoring type: Push Down refactoring
+Refactoring target: method fa2() in class B, push down to subclass C
+Refactoring rule: Usage analysis for Push Down must distinguish inherited method calls from direct declaration of the method in the target subclass. A call `(new C)->fa2()` uses the inherited fa2() from B; it does NOT mean C already defines fa2().
+*/
+
+/* Error Root Cause:
+Observed failure:
+Push Down shows a false warning claiming “Class C already contains a Method fa2”. C only inherits fa2 from B, it does not declare its own fa2.
+Expected behavior:
+No such conflict warning. The refactoring should be allowed to move fa2 from B into C.
+Underlying cause:
+The conflict checker uses type lookup that considers inherited members alongside directly declared members. It does not filter out inherited methods when checking whether the target subclass already has a local definition with the same name.
+*/
+?>

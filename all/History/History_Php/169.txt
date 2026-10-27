@@ -1,0 +1,31 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature (invoked via Quick Fix)
+Refactoring target: self::ddd() call site inside C::g()
+Operation: Invoke Quick Fix and select "Change signature manually"
+Scope: Trait method alias resolution for refactoring entry point
+*/
+
+/* Error Root Cause:
+Observed failure: When triggering Change Signature from a call to a trait method alias `ddd`, the dialog targets the alias name `ddd` instead of the original underlying trait method `T::foo`.
+`ddd` is only a syntactic alias and not a real independent method declaration.
+Expected behavior: Resolve the alias to the original trait method `T::foo`, open Change Signature for `foo` rather than the alias `ddd`.
+Underlying cause: Quick Fix reference resolution picks the alias name node directly instead of resolving through trait use alias mapping to the base method PSI element.
+*/
+trait T{
+    public static function foo(int $p){
+        return 1;
+    }
+}
+
+class C{
+    use T {
+        foo as ddd;
+    }
+    public static function g(){
+        echo self::ddd(1);
+    }
+}
+
+C::g();
+?>

@@ -1,0 +1,43 @@
+#define Id_0
+#define Id_1
+int func_0(int LocalVar_1) {
+	float LocalVar_0 = 10;
+	return LocalVar_1;
+}
+void Function_0 (  int LocalVar_1){
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring(local variable rename inside func_0)
+Refactoring Target: local variable `LocalVar_0` inside func_0
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select local variable LocalVar_0 inside func_0, invoke Rename refactoring, input existing preprocessor macro name `Id_0` as new variable name.
+Related known bug pattern: Eclipse CDT Bug #435129
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts the candidate name `Id_0`, which is already defined as a preprocessor macro.
+It triggers the unintended promotion codepath: extracts local variable and inserts a top‑level static‑const declaration `static const int Id_0 = 10;` after the #define directives.
+Inside func_0, original local variable definition is removed; reference is replaced to `float LocalVar_0 = Id_0;`.
+
+Critical problems:
+1. Name collision: `Id_0` is already a pre‑existing macro. Redefining it as a static‑const variable creates name conflict between macro and file‑scope variable. During preprocessing every occurrence of `Id_0` will be expanded, breaking the newly‑added static‑const declaration and all usages.
+2. Unexpected scope transformation: local‑variable rename should keep variable inside func_0, but CDT erroneously lifts it to global static‑const.
+3. Type mismatch: original local variable is `float`, newly created static‑const is `int`, introduces implicit type conversion.
+Scope analysis partially correct: Function_0 remains untouched.
+Refactoring finishes silently, generates broken code without warning.
+
+Expected behavior:
+1. Semantic collision check before transformation: detect candidate name conflicts with existing preprocessor‑macro identifiers; reject rename and report name collision error.
+2. Local‑variable rename must preserve original function‑local scope, must not trigger extraction to file‑level static‑const.
+3. Rename should preserve original variable type, must not arbitrarily change declared type.
+
+Underlying cause:
+1. Missing semantic conflict detection: rename logic does not check whether candidate name collides with existing preprocessor macros.
+2. CDT refactoring control‑flow defect: certain invalid/conflicting identifier inputs mistakenly enter the “extract local to static‑const” code path instead of performing simple in‑scope identifier substitution.
+3. No type consistency guarantee during unintended extraction; hard‑codes `int` for static‑const declaration ignoring original variable type.
+*/

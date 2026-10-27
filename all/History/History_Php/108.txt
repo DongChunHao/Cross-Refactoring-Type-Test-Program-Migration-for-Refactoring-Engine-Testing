@@ -1,0 +1,16 @@
+<?php declare(strict_types = 1);
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function foo with scalar typed parameters int, float
+Scope: refactoring dialog validation logic for parameter default values
+Refactoring operation: modifying parameter default values inside Change Signature UI
+*/
+
+/* Error Root Cause:
+Observed failure: The Change Signature refactoring dialog shows the generic validation message "Default value for parameters with a class type hint can only be NULL" for scalar types (int, float), which is misleading and incorrect.
+Expected behavior: Show type-specific validation messages for scalar types, e.g. "Default value for parameters with an integer type can only be integer or NULL". The validation message set should be separated: one set for class/object type hints, another dedicated set for scalar built-in types.
+Underlying cause: The refactoring UI reuses the class-type validation message for all typed parameters without distinguishing class types from scalar built-in types. The validation check correctly accepts valid scalar defaults like 0 or 0.0, but the error text is not specialized for scalar type hints.
+*/
+function foo(int $i = 0, float $f = 0.0, float $b = 0.0) {}
+foo(1, 0.0, 0.0);
+?>

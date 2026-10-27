@@ -1,0 +1,16 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: Even with comment‑and‑string search options enabled, refactoring engine does not parse docstring doctest blocks as semantic references; doctest function calls are treated as plain‑text and skipped in rename processing
+def middle_index(list_): // REFACTOR_TARGET
+"""
+for list with size 1 or bigger, should return midpoint of the list
+
+> 
+> > 
+> > > 
+> > > middle_index([1]) 0
+> > > middle_index([1,2]) 1
+> > > middle_index([1,2,3]) 1
+> > > middle_index([1,2,3,4]) 2
+> > > middle_index([1,2,3,4,5]) 2
+> > > """
+> > > return len(list_) / 2

@@ -1,0 +1,37 @@
+```
+/* Refactoring Settings:
+Refactoring type: Pull Members Up (CLion C++ refactoring)
+Refactoring target: method `Derived::f1()`
+Operation: Invoke Pull Members Up refactoring to move `f1()` implementation from Derived class to Base class
+Scope: Respect C++ override rule. The `override` specifier can only be used on derived class methods that override a base virtual function. Must remove `override` keyword when moving method into the base class.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After pulling member up to Base, refactoring keeps `override` keyword:
+`int f1() override { return 1; }` inside Base class.
+`override` is invalid on a base class function; it is only permitted for overriding functions in derived classes, causing compilation error.
+
+Expected behavior:
+Base class after refactoring:
+```cpp
+class Base {
+public:
+    virtual int f1() { return 1; }
+};
+```
+
+Derived class will lose the f1() definition.
+
+Underlying cause:
+Pull Members Up refactoring does not strip `override` specifier when moving the function from derived class to base class. The refactoring engine does not check the semantic validity of `override` in the new context.
+*/
+
+class Base {
+public:
+virtual int f1() = 0;
+};
+
+class Derived : public Base {
+int f1() override { return 1; }
+};

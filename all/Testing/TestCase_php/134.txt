@@ -1,0 +1,14 @@
+```
+<?php
+class Utils {
+    static function normalize(){
+    }
+}
+class TextHelper{
+    static function normalize( string $raw ){
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Static Method refactoring, target static function `normalize()` from class `TextHelper` to class `Utils`

@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+//Hello world
+func helloWorldImpl() { // extract interface method semantics into standalone function
+}
+type Hello interface {
+World()
+}

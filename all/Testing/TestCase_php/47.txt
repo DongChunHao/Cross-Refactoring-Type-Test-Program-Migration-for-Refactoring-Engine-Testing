@@ -1,0 +1,15 @@
+```
+<?php
+class Message { }
+class AlertMessage extends Message {
+    static private function formatMsg(string $msg): string { return "! $msg"; }
+    function build(string $input)
+    {
+        $text = self::formatMsg($input);
+        return trim($text);
+    }
+}
+class ErrorAlert extends AlertMessage{}
+```
+
+【Refactoring Action】: Pull Up method `build()` from class `AlertMessage` to parent class `Message`

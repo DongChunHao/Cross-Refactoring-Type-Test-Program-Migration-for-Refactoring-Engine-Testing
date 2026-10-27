@@ -1,0 +1,13 @@
+```
+<?php
+class UserBuilder
+{
+    public function newInstance()
+    {
+        return $this;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature on `UserBuilder::newInstance()`, set return type to `static`.

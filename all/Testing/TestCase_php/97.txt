@@ -1,0 +1,15 @@
+```
+<?php
+interface LoggerInterface {}
+interface LogDefaults {
+    const LEVEL = "INFO";
+}
+class FileLogger implements LoggerInterface {
+    const LEVEL = "INFO"; // Pull Up target, move to LoggerInterface
+}
+class DbLogger implements LoggerInterface, LogDefaults {
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target constant `LEVEL` from class `FileLogger`, pulled into interface `LoggerInterface`

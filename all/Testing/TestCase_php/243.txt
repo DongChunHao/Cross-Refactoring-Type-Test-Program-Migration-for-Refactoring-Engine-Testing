@@ -1,0 +1,14 @@
+```
+<?php
+interface A {
+    public function foo(): A;
+}
+class B implements A {
+    public function foo(): A {
+        return new B();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, target interface method `A::foo()`, attempt to edit return type from `A` to `?A` and propagate changes to all implementing methods.

@@ -1,0 +1,45 @@
+#include <iostream>
+#include <iomanip>
+#include <complex>
+#include <cmath>
+
+using namespace std::complex_literals;
+int main() {
+    std::cout << std::fixed << std::setprecision(1);
+
+    std::complex<double> z1 = 1i * 1i;     // imaginary unit squared
+    std::cout << "i * i = " << z1 << '\n';
+
+    std::complex<double> z2 = std::pow(1i, 2); // imaginary unit squared
+    std::cout << "pow(i, 2) = " << z2 << '\n';
+
+    double PI = std::acos(-1);
+    std::complex<double> z3 = std::exp(1i * PI); // Euler's formula
+    std::cout << "exp(i * pi) = " << z3 << '\n';
+
+    std::complex<double> z4 = 1. + 2i, z5 = 1. - 2i; // conjugates
+    std::cout << "(1+2i)*(1-2i) = " << z4*z5 << '\n';
+}
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract all code inside main() into function `extracted()`
+Refactoring rule expectation: Preserve C++ complex literal suffix `1i` / `2i`; keep them as complex imaginary literals, not rewrite into `1operator` / `2operator`.
+*/
+
+/* Error Root Cause:
+Observed failure: After Extract Method, CLion incorrectly parses the imaginary literal suffix `i` as an operator token. It replaces `1i` → `1operator`, `2i` → `2operator`, producing completely invalid syntax.
+Expected result:
+void extracted() {
+std::cout << std::fixed << std::setprecision(1);
+std::complex<double> z1 = 1i * 1i;
+std::cout << "i * i = " << z1 << '\n';
+std::complex<double> z2 = std::pow(1i, 2);
+std::cout << "pow(i, 2) = " << z2 << '\n';
+double PI = std::acos(-1);
+std::complex<double> z3 = std::exp(1i * PI);
+std::cout << "exp(i * pi) = " << z3 << '\n';
+std::complex<double> z4 = 1. + 2i, z5 = 1. - 2i;
+std::cout << "(1+2i)*(1-2i) = " << z4 * z5 << '\n';
+}
+Underlying cause: The refactoring parser mishandles the user-defined literal suffix `i` from `std::complex_literals`. It misinterprets the literal suffix identifier `i` as the name of an operator, corrupting the numeric imaginary literals during code generation.
+*/

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#define F
+main() {
+    int a,b,c;
+    if (c==0)            /* << extract */
+    #ifdef F            /*    these */
+    if(a==0) printf("a",a);      /*    five */
+    #else                /*    lines */
+    if(b==0)    printf("b",b);  /*       >> */
+    #endif{}
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring
+Refactoring Target: multi‑line selection containing C preprocessor directives #ifdef, #else, #endif
+Refactoring Scope: current file
+IDE: Eclipse CDT
+Operation steps: Select lines covering `if(c==0)` through `#endif{}`, invoke Extract Function refactoring.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: Extract Function produces broken, ill‑formed code. The `#ifdef F` branch is moved into extracted_function, while `#else` and `#endif` remain inside main(), splitting a single preprocessor conditional block across two different functions. The resulting code yields mismatched preprocessor directives and cannot compile.
+Expected behavior: Detect that the selected text crosses preprocessor conditional boundaries (#ifdef‑#else‑#endif). Reject the refactoring with a clear user warning; do not split preprocessor directives across function boundaries.
+Underlying cause: The refactoring logic operates purely on AST statement nodes and ignores preprocessor directive boundaries. It treats preprocessor directives as trivial text, allowing a single logical `#ifdef‑#else‑#endif` block to be split between the original function and the newly extracted function, creating unbalanced preprocessor syntax.
+*/

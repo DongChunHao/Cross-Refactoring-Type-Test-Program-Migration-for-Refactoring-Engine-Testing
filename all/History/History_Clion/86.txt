@@ -1,0 +1,20 @@
+#pragma once
+#include <iostream>
+
+/* Refactoring Settings:
+Refactoring type: Move function definition to source file
+Refactoring target: Move inline definition of TestClass::Func1 from class header to .cpp source file
+Refactoring scope: Class member function definition inside the class declaration
+Refactoring rule expectation: Keep virtual keyword only on the declaration inside the class header; remove virtual keyword from the out-of-line function definition in source file
+*/
+
+/* Error Root Cause:
+Observed failure: After executing "Move function definition to source file", the generated out-of-line definition incorrectly retains the virtual keyword: virtual void TestClass::Func1() {}.
+Expected behavior: The header retains virtual void Func1();, the source file definition should be void TestClass::Func1() {} without virtual.
+Underlying cause: The refactoring engine incorrectly copies all function modifiers including virtual from the class declaration to the external definition. In C++, virtual is only allowed on the declaration inside the class, not on out-of-line member definitions.
+*/
+
+class TestClass {
+public:
+    virtual void Func1() {}
+};

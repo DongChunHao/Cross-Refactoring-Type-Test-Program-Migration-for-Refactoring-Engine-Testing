@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+template  void require_equal(T expected, T actual) {}
+class Foo {
+public:
+explicit Foo(int i) : f(i) {}
+int f;
+};
+template  int test(T t) { return t.f; } //{Extract variable for t.f}
+int main() {
+require_equal(3, test<Foo>(Foo{2}));
+return 0;
+}

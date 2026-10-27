@@ -1,0 +1,14 @@
+<?php
+class A
+{
+    protected function a(){} //rename a to c
+}
+class B extends A{
+    protected function c(){
+        $arr = [1,2,3];// extract method, new name: a
+        print_r($arr);
+    }
+    private function b(){
+        $this->a();
+    }
+}

@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+
+func demoM(m map[string]float64) {
+m["pi"] = 3.14 // Extract method for map assignment statement
+print(m["pi"])
+}
+func demoS(s []int) {
+s = append(s, 0)
+}
+func main() {}

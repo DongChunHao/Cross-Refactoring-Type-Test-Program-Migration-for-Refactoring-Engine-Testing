@@ -1,0 +1,43 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+using System.IO;
+
+namespace ExtractMethodDuplicateBlockRepro
+{
+public class ReceiptRenderer
+{
+private bool RenderReceipt;
+
+public void method1()
+{
+if (RenderReceipt) //{Change Method: target duplicated conditional block for Extract‑Method duplicate‑block‑detection‑missing‑feature reproduction}
+{
+var fileInfo = new FileInfo("filename");
+transform(fileInfo);
+}
+}
+
+public void method2()
+{
+if (RenderReceipt)
+{
+var fileInfo = new FileInfo("filename2");
+transform(fileInfo);
+}
+}
+
+public void method3()
+{
+if (RenderReceipt)
+{
+var fileInfo = new FileInfo("filename3");
+transform(fileInfo);
+}
+}
+
+private void transform(FileInfo info) { }
+}
+
+}

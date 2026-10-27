@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: y_renamed
+'''
+#include <stdio.h>
+int y = 20;
+int main(){
+int x = 10; //extract local variable from literal 10 //rename variable for outer‑scope symbol shadowing scenario
+printf("%d", y);
+return 0;
+}
+

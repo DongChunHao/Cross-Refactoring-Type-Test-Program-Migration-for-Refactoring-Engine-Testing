@@ -1,0 +1,11 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper simulating useState tuple‑destructuring, reproduce reference‑initiated‑rename context‑lookup‑failure}
+function useState() { return [undefined, ()=>{}]; }
+function MyComponent() {
+const [myState, setMyState] = useState();
+console.log(myState);
+}
+}

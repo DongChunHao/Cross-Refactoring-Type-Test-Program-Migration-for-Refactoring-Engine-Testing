@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: dtorBody
+'''
+// MoveMethod.h
+class MoveMethodAbstractInline {
+public:
+virtual ~MoveMethodAbstractInline()
+{
+dtorBody(); //{Extract method dtorBody}
+}
+private:
+void dtorBody(){}
+};

@@ -1,0 +1,16 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <vector>
+struct Wrapper
+{
+static void wrapper_main() { //{Move main logic into static wrapper member}
+std::vector<int> v;
+v.push_back(1);
+}
+};
+void main()
+{
+Wrapper::wrapper_main();
+}

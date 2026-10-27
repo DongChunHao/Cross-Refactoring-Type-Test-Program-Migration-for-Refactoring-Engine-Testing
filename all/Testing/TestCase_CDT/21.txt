@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: A_renamed
+'''
+#define A 0
+int main(int a, char** argv) {//rename method for function with proposed name colliding with preprocessor macro
+int x = a; // Line to be extracted
+return x;
+}

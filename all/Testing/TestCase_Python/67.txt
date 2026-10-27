@@ -1,0 +1,7 @@
+// Target Refactoring Type: Extract Method
+// Expected Defect Performance: Change‑signature detects keyword‑only requirement and generates keyword‑argument syntax at call‑sites, but fails to fill original positional argument values into new keyword slots; yields incomplete empty‑value keyword‑argument invalid syntax
+def do_stuff(a, b):
+pass
+def something(): // REFACTOR_TARGET
+do_stuff(1, 2)
+do_stuff(3, 4)

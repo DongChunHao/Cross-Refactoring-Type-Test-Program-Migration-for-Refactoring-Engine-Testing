@@ -1,0 +1,9 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+import { useState } from 'react';
+function MyComponent() {
+const [myState, setMyState] = useState();
+console.log(myState); //{Extract Method target useState‑tuple‑destructuring downstream‑reference, special‑handling only bound to declaration‑node}
+}

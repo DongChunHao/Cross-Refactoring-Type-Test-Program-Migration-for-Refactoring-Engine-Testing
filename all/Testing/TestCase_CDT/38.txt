@@ -1,0 +1,15 @@
+'''
+Refactoring type: Extract CONSTANT
+Refactoring new name: B
+'''
+#define A // Macro to be renamed
+int main(int argc, char** argv) {
+int a;
+#ifdef A
+a = 1;
+#endif
+#ifdef B
+a = 2;
+#endif
+return a; //extract constant for macro‑rename namespace‑conflict‑and‑stale‑reference defect scenario
+}

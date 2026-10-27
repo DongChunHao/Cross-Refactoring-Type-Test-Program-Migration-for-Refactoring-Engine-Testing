@@ -1,0 +1,30 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Extract Variable
+Refactoring target: Literal `999`, selection option "Replace all two occurrences", new variable name `zzz`
+Refactoring scope: Two instances of the numeric literal 999: initial assignment `x := 999` and loop condition `i < 999`
+Refactoring rule: Introduce the new extracted variable `zzz := 999` once, replace both literal occurrences with `zzz`.
+*/
+
+/* Error Root Cause:
+Observed failure: The extract variable refactoring mishandles the first occurrence. Instead of creating `zzz := 999; x := zzz`, it may rewrite the first site directly as `x := zzz` without defining `zzz`, or replace `x := 999` with `zzz := 999` and change the second occurrence to `zzz`, losing the `x` variable.
+Expected behavior: Insert `zzz := 999`, replace both `999` literals with `zzz`, keeping `x := zzz`.
+Underlying cause: The extraction logic treats the caret site as the definition point for the new variable and overwrites the existing assignment statement, rather than inserting the new variable declaration before it and substituting the literal value.
+*/
+
+func main() {
+	x := 999
+	for i := 0; i < 999; i++ {
+		println(x)
+	}
+}
+
+// Expected refactored output
+func main() {
+	zzz := 999
+	x := zzz
+	for i := 0; i < zzz; i++ {
+		println(x)
+	}
+}

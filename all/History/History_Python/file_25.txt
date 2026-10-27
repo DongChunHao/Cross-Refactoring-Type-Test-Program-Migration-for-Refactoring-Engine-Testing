@@ -1,0 +1,13 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move imported function test_function2)
+Refactoring target: test_function2 imported from file1
+Refactoring scope: multi‑line import statement with backslash line continuation, source file imports and destination module references
+Refactoring rule expectation: When moving test_function2 out of the multi‑line import, properly remove test_function2 from the import list and clean up the backslash line continuation character to maintain valid Python syntax.
+'''
+''' Error Root Cause:
+Observed failure: After moving test_function2 to another module, the source file import statement retains the trailing backslash, resulting in broken syntax `from file1 import test_function1\ from file2 import test_function2`. The backslash line continuation is not deleted when removing the second imported name.
+Expected behavior: The import should become `from file1 import test_function1` after removing test_function2 and the redundant trailing backslash.
+Underlying cause: The import statement parser for multi‑line backslash‑continued imports does not handle cleanup of line continuation backslash when removing an imported symbol; it only deletes the symbol name and leaves the backslash in place, producing invalid Python syntax.
+'''
+from file1 import test_function1,\
+    test_function2

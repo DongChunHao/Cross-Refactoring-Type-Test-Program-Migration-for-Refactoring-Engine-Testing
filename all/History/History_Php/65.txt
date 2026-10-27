@@ -1,0 +1,26 @@
+<?php
+function earn_money ($how_much) {
+    /* ... a lot of code ... */
+    if (true) {
+        $how_many = -10000;
+    }
+    /* ... a lot of code ... */
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Rename parameter refactoring
+Refactoring target: rename parameter $how_much to $how_many
+Refactoring rule: When renaming a parameter, the refactoring must scan the function body for existing local variables with the target name. If a local variable already uses that name, show an explicit conflict warning before applying the rename.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The user renames the function parameter $how_much to $how_many. There is already a local variable $how_many declared inside the function body. The rename proceeds without warning.
+After rename, the parameter and local variable share the same name. The local variable shadows the parameter, changing runtime behavior silently. In the example, the business logic uses the local -10000 value instead of the passed argument 10000, causing logical bugs.
+
+Expected behavior:
+Before applying the rename, perform scope-level variable collision check in the function’s body. If the desired new parameter name already exists as a local variable in the function scope, display a conflict warning explaining name shadowing and the risk of silent logic errors, giving the user the option to abort or pick another name.
+
+Underlying cause:
+Rename parameter validation checks for other parameters or global names, but does not fully scan the function’s local variable scope for existing variables that would shadow the renamed parameter. Name shadowing in local scope is treated as safe code instead of a high-risk refactoring conflict.
+*/

@@ -1,0 +1,19 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Implement Methods quick action
+Refactoring target: Caret inside empty `main()` function body
+Refactoring rule: Preserve existing comment placement and line breaks around the target function when modifying the function body; do not reorder or split adjacent comments and function declaration.
+*/
+
+/* Error Root Cause:
+Observed failure: Running "Implement Methods" with caret inside `main()` alters the surrounding comment layout. The leading comment `// main` and trailing `// after` become misaligned / separated from the function, even though only the function body should be modified.
+Expected behavior: Only edit the content inside `{ }` of `main()`; keep comments and their relative vertical position unchanged.
+Underlying cause: The PSI rewriter for the action treats the function declaration + adjacent comments as a single block and re-serializes the whole region, discarding the original whitespace attachment between comment nodes and the function node.
+*/
+
+// main
+func main() {
+	<caret>
+}
+// after

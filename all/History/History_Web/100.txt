@@ -1,0 +1,28 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Rename Variable
+Refactoring Target: Destructured state variable `myState` from `useState()` tuple
+Refactoring Scope: React + TypeScript / JavaScript, WEB-48703 regression
+Trigger Operation: Invoke Rename (Cmd+F6) on a reference of `myState` that is not the destructuring declaration site
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+After WEB-48703, renaming the `useState` destructured variable from a usage site (not the `const [myState, setMyState]` declaration) aborts the rename preview immediately on first keystroke, failing to update all references.
+The special rename handling for useState tuple destructuring was only wired to work when the caret is on the destructuring binding itself, not on downstream usages of that variable. When triggered from a reference, the rename processor does not correctly resolve the tuple binding context and terminates the refactoring session early.
+
+Expected behavior:
+Rename works consistently regardless of whether the caret is at the destructuring declaration or at any reference of `myState`, updating both `myState` and, when applicable, the paired setter `setMyState` as designed by WEB-48703.
+
+Underlying cause:
+The useState tuple rename logic only attaches to the destructuring pattern AST node. When rename is initiated from an identifier reference, the resolver fails to map back to the original useState destructuring context, causing the incremental rename session to exit prematurely.
+*/
+
+// Complete compilable test code
+import { useState } from 'react';
+
+function MyComponent() {
+  const [myState, setMyState] = useState();
+  console.log(myState); // try rename this with cmd+F6. It will fail with the first key stroke.
+}

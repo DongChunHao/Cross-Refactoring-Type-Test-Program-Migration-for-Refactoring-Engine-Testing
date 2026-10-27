@@ -1,0 +1,32 @@
+/* Refactoring Settings:
+Refactoring type: Rename (C++ CLion)
+Refactoring target: namespace-scoped `N::my_func` (definition #2 or call #3)
+Operation: Invoke Rename refactoring on `my_func` inside namespace N
+Scope: Distinguish overloads in different lexical scopes; only rename usages of N::my_func, do NOT rename top-level ::my_func and its calls
+*/
+
+/* Error Root Cause:
+Observed failure: Renaming `N::my_func` incorrectly renames the top-level global `my_func` and its usages (#1, #4). The refactoring engine confuses the two identically-named functions that live in different namespaces.
+Expected behavior: Only rename the namespace version `N::my_func` and its call site #3, leaving global `my_func` and calls #1, #4 untouched.
+Underlying cause: The symbol resolution for rename refactoring fails to fully qualify the symbol with its namespace scope. It only matches the identifier name `my_func` instead of the fully qualified name `N::my_func`, conflating global and namespace symbols with identical simple names.
+*/
+
+void my_func() {}
+
+void foo() {
+    my_func(); // 1
+}
+
+namespace N {
+    void my_func() // 2
+    {}
+
+    void foo()
+    {
+        my_func(); // 3
+    }
+}
+
+int main() {
+    my_func(); // 4
+}

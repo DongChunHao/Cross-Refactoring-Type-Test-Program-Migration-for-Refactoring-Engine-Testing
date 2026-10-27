@@ -1,0 +1,12 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+fn main() {
+for i in ["One", "Two", "", "Last"] {
+if !i.is_empty() {
+println!("Hello, world! {i}"); //{extract statement with named format placeholder into separate helper method}
+println!("This was {}", i)
+}
+}
+}

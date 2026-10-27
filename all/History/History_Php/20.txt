@@ -1,0 +1,19 @@
+<?php
+class MyException extends Exception {
+    function a(){} // <-- Pull Up refactoring target
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: method a() inside MyException
+Refactoring rule: When performing Pull Up on a member from a class that extends a built-in PHP base class (such as Exception), if the refactoring cannot create a new parent type or faces inheritance constraints, the error message presented to the user must be clear and actionable instead of an obscure technical message.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pull Up is executed on method a() of MyException, which inherits from the built-in PHP Exception class. The IDE shows a low-level, obscure error dialog first, then proceeds to the refactoring preview.
+Expected behavior:
+The error text should explain the limitation in plain user terms, e.g. "Cannot pull up this member: the parent class Exception is a built-in PHP class and cannot be modified", instead of showing raw/internal error content.
+Underlying cause:
+The error reporting layer for Pull Up does not have a dedicated user-facing message for the scenario where the immediate parent is an unmodifiable built-in PHP class; it surfaces raw internal diagnostic information directly to the UI.
+*/

@@ -1,0 +1,15 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move function)
+Refactoring target: function func from original module to new module
+Refactoring scope: import statements and references to mod in function body
+Refactoring rule expectation: After moving func to new module, preserve the original imported symbol reference. When original import is `from pack import mod`, the new module should either use `from pack import mod` and keep `use(mod)`, or correctly qualify references without breaking the mod identifier.
+'''
+''' Error Root Cause:
+Observed failure: After moving func, the import statement is incorrectly transformed from `from pack import mod` into `import pack.mod`. The body still keeps `use(mod)`, which now causes unresolved reference error because `mod` is not imported as a name in current scope under `import pack.mod`.
+Expected behavior: Either retain `from pack import mod` in destination module, or update `use(mod)` to `use(pack.mod)` to match the new import style.
+Underlying cause: Move refactor import rewriting logic converts the import form, but fails to synchronously update the in-code symbol reference. It changes import statement style without updating the corresponding identifier usage, breaking name binding.
+'''
+from pack import mod
+
+def func():
+    use(mod)

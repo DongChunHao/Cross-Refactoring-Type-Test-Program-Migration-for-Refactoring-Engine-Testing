@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: innerWork
+'''
+#pragma once
+#include <iostream>
+class TestClass {
+public:
+virtual void Func1() {
+innerWork();
+}
+void innerWork() {} //{Extract method innerWork from Func1}
+};

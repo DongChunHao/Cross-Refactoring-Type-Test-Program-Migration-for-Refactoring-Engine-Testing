@@ -1,0 +1,39 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// Assume required headers and forward declarations are present
+#define ASSET_DOUBLE_TAP_TIMEOUT_MS 100
+#define ASSET_LONG_TAP_TIMEOUT_MS 500
+#define YI_TRUE true
+class Timer {
+public:
+void SetInterval(int ms);
+void SetSingleShot(bool enable);
+template
+void Connect(Slot&& slot);
+};
+class AssetView {
+protected:
+Timer m_tapCountTimer;
+Timer m_longTapTimer;
+void OnTapTimer();
+void OnLongTapTimer();
+void PrepareTimers();
+};
+struct Wrapper
+{
+void wrapperPrepareTimers(AssetView* obj) { //{Move PrepareTimers logic into struct Wrapper member function}
+obj->m_tapCountTimer.SetInterval(ASSET_DOUBLE_TAP_TIMEOUT_MS);
+obj->m_tapCountTimer.SetSingleShot(YI_TRUE);
+obj->m_tapCountTimer.TimeoutSig.Connect(*obj, &AssetView::OnTapTimer);
+obj->m_longTapTimer.SetInterval(ASSET_LONG_TAP_TIMEOUT_MS);
+obj->m_longTapTimer.SetSingleShot(YI_TRUE);
+obj->m_longTapTimer.TimeoutSig.Connect(*obj, &AssetView::OnLongTapTimer);
+}
+};
+void AssetView::PrepareTimers()
+{
+Wrapper w;
+w.wrapperPrepareTimers(this);
+}

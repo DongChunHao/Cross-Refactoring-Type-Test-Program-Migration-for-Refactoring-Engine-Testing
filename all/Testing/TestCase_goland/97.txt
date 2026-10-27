@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Executor struct{}
+func (e Executor) runMain() { // move runMain method from Executor to standalone function
+}
+// main
+func main() {
+ex := Executor{}
+ex.runMain()
+}

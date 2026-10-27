@@ -1,0 +1,46 @@
+//move: Program:  MySafeUpper(this string input) -> MyOwn.Ext.StringExtension
+
+namespace ConsumerCode
+{
+    internal static  class Program
+    {
+        public static string MySafeUpper(this string input)
+        {
+            return input?.ToUpper() ?? string.Empty;
+        }
+    }
+}
+
+
+namespace System
+{
+    public static class SStringExtension
+    {
+        public static string MySafeUpper(this string input)
+        {
+            return input?.ToUpper() ?? string.Empty;
+        }
+    }
+}
+
+namespace MyOwn.Ext
+{
+    public static class StringExtension
+    {
+
+    }
+}
+
+using MyOwn.Ext;
+using System;
+namespace DemoConsumer
+{
+    public static class DemoConsumer
+    {
+        public static  void RunDemo()
+        {
+            string src = "hello world";
+            string result = src.MySafeUpper();
+        }
+    }
+}

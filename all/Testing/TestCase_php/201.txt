@@ -1,0 +1,16 @@
+```
+<?php
+class Template {
+    public $meta_description = "";
+    public $meta_keywords = [];
+    public $meta_charset = "utf-8";
+}
+
+$tpl = new Template();
+echo $tpl->meta_description;
+$tpl->meta_keywords = ["php", "refactor"];
+$tpl->meta_charset = "gbk";
+?>
+```
+
+【Refactoring Action】: Custom composite refactoring, select three public properties `$meta_description`, `$meta_keywords`, `$meta_charset`; group into one public array property `$meta`, map keys `description`, `keywords`, `charset`, update all read/write usages to `$obj->meta['key']`.

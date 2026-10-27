@@ -1,0 +1,22 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+type OreScanner struct{}
+func (s OreScanner) finder(mine [5]string) {
+var r []string
+for _, v := range mine {
+if v == "ore" {
+r = append(r, v)
+}
+}
+return r
+}
+func main() {
+scanner := OreScanner{}
+theMine := [5]string{"rock", "ore", "ore", "rock", "ore"}
+foundOre := scanner.finder(theMine) // move finder method from OreScanner to standalone function
+fmt.Println(foundOre)
+}

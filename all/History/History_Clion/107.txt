@@ -1,0 +1,18 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract call `foo(fp1);` with function pointer variable `fp1`
+Refactoring scope: statement `foo(fp1);` and variable `int(*fp1)();`
+Refactoring rule expectation: When parameter is a function pointer type, do **not** automatically append `const` qualifier to the function pointer type.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method produces invalid type `int (*fp1)() const`. The `const` is incorrectly attached to function pointer, which is illegal C/C++ syntax; function types cannot be const-qualified this way.
+Expected behavior: Generated parameter should be `int (*fp1)()` (without const).
+Underlying cause: The refactoring engine’s automatic const-detection logic treats function pointer parameters like ordinary object pointers. It blindly adds `const` to the parameter type, not realizing that `const` cannot be appended after a function signature.
+*/
+
+void foo(int(*)());
+void bar() {
+    int(*fp1)();
+    foo(fp1); // Extract Method here
+}

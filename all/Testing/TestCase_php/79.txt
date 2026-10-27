@@ -1,0 +1,20 @@
+```
+<?php
+namespace File\Manager {
+    use File\Traits\FilePermission;
+    class FileBase
+    {
+    }
+    class LocalStorage extends FileBase
+    {
+        use FilePermission;
+        function chmodFile(){}
+    }
+}
+namespace File\Traits {
+    trait FilePermission{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `LocalStorage`, target namespace `File\Driver`

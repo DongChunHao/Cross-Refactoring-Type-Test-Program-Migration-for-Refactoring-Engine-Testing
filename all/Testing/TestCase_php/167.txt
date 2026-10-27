@@ -1,0 +1,9 @@
+<?php
+// PriceFormatter.php
+class PriceFormatter {
+    public static function format(float $val): string {
+        return (string)$val;
+    }
+}
+?>
+【Refactoring Action】: Move Class refactoring, move `PriceFormatter` into namespace `Shop\Util`

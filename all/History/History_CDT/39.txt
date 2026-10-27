@@ -1,0 +1,29 @@
+int main(int a, char** argv) {
+    int x = 0; // Constant to be extracted
+    return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Constant refactoring
+Refactoring Target: integer literal `0` inside main()
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select literal `0`, invoke Extract Constant refactoring, use identifier `a` as new constant name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT generates global‑scope `static const int a = 0;`. Inside main function already exists formal parameter `int a`. When refactoring replaces literal `0` with `a`, `int x = a;` resolves to function‑parameter `a` instead of newly‑created static constant `a`. Program semantics silently change; there is no compile‑time error or warning, only wrong runtime behaviour.
+The lexical check for identifier is correct; there is no direct re‑declaration error, but inner‑scope symbol shadows outer‑scope extracted constant. The refactoring tool does not foresee name shadowing caused by existing inner‑scope symbol.
+
+Expected behavior:
+After candidate name passes lexical validity check:
+1. Insert the hypothetical new symbol into symbol‑table model.
+2. Traverse all locations where this constant will be referenced after transformation, perform scope‑aware name resolution simulation.
+3. Detect that at usage site inside main(), existing local‑scope symbol `a` (function parameter) shadows the new outer‑scope constant.
+4. Show explicit warning to user: “New constant ‘a’ will be shadowed by existing inner‑scope symbol ‘a’ at usage locations. Refactoring will not reference your new constant. Continue?”
+
+Underlying cause:
+Extract‑Constant only checks for direct duplicate declaration at the declaration site of new constant. It **does not simulate name resolution at each replacement site**. It does not check whether existing inner‑scope identifiers will shadow the newly‑created outer‑scope constant. The tool assumes that after replacement the token will bind to new constant, ignoring C lexical scoping shadowing rules, resulting in silent semantic alteration.
+*/

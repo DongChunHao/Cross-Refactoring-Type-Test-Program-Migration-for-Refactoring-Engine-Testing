@@ -1,0 +1,28 @@
+#define A 2 // Token to be renamed
+#define C 3
+int main(int a, char** argv) {
+    int b =0;
+    #ifdef A
+        b = C;
+    #endif
+    return b;
+}
+
+/*
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (macro‑definition rename)
+Refactoring Target: preprocessor macro `#define A 2`
+Refactoring Scope: entire translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro `A`, invoke Rename refactoring, set new name `B`.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure: CDT correctly renames the definition `#define A 2` → `#define B 2`. However it fails to update the preprocessor conditional `#ifdef A`. The `#ifdef` still references old macro name `A`. After refactoring, the conditional branch is no longer activated; program semantics change silently without compile error.
+
+Expected behavior: Macro rename refactoring must traverse **all preprocessor directives**: `#define`, `#ifdef`, `#ifndef`, `#if defined()`, `#elif defined()` and macro expansion sites. Every occurrence of macro identifier inside preprocessor directives must also be renamed. If any occurrence cannot be safely updated, warn user.
+
+Underlying cause: CDT’s AST treats preprocessor conditional directives as separate preprocessing nodes outside the main C/C++ AST. Rename refactoring only tracks macro usage inside normal program code, does not visit and rewrite identifier tokens within `#ifdef`/`#ifndef` preprocessor directives. Those tokens are ignored during search‑and‑replace, leaving stale references to old macro name and breaking program logic.
+*/

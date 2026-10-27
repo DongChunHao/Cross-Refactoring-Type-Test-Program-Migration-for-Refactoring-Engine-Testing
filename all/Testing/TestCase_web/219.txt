@@ -1,0 +1,8 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper simulating alias‑import consumption for file‑rename path‑string‑manipulation defect reproduction}
+// simulate alias import
+import("@lite-components/Button");
+}

@@ -1,0 +1,18 @@
+```
+<?php
+namespace Project\Model;
+class Entity {
+    public function __construct()
+    {
+    }
+}
+class SomeOldEntity extends \Project\Model\Entity {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring(F6), target class `SomeOldEntity`, move from `Project\Model` into new namespace `Project\Legacy`; auto-import inside namespaces enabled.

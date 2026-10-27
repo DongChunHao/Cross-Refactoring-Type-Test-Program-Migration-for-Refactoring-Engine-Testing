@@ -1,0 +1,7 @@
+<?php
+abstract class Vehicle {
+    const WHEEL_COUNT = 4;
+}
+class Car extends Vehicle {
+}
+【Refactoring Action】: Push Down class constant `WHEEL_COUNT` from abstract parent class `Vehicle` to child class `Car`.

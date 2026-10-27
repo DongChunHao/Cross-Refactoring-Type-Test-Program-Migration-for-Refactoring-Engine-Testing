@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+class Foo {
+explicit Foo() = default;
+public:
+static Foo& getInstance() {
+static Foo inst =  {
+return Foo {}; //{Extract variable for Foo{} instance}
+}();
+return inst;
+}
+};

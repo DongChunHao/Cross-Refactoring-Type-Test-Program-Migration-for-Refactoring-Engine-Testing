@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper holding throwing‑function invoked within concise‑arrow callback reproduction case}
+const fn1 = () => {
+throw new Error();
+};
+const fn2 = () => {
+(() => fn1())();
+};
+const assertFileExists = (path, message) => {
+if (!existsSync(path)) {
+throw new Error(message);
+}
+};
+['a', 'b', 'c'].forEach(p => assertFileExists(p, `${p} does not exist`));
+}

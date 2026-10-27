@@ -1,0 +1,21 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Original struct{}
+type Copy struct {
+a int
+}
+type CopyFactory struct{}
+func (f CopyFactory) buildCopy(o Original) Copy { // move buildCopy method from CopyFactory to standalone function
+return Copy{
+a: o.a,
+}
+}
+func main() {
+var o Original
+factory := CopyFactory{}
+c := factory.buildCopy(o)
+println(o, c)
+}

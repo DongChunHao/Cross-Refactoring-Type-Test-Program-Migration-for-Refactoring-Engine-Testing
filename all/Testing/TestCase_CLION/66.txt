@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: execMethod1
+'''
+union Frob
+{
+int i;
+float f;
+double d;
+void Method1() //{Rename method Method1 to execMethod1}
+{
+i = 3;
+}
+};

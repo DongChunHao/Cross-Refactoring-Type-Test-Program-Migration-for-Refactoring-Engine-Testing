@@ -1,0 +1,16 @@
+```
+<?php
+class Root { }
+class Middle extends Root {
+    function calculate()
+    {
+    }
+}
+class Leaf extends Middle {
+    function runCalc(){
+        parent::calculate();
+    }
+}
+```
+
+【Refactoring Action】: Pull Up method `runCalc()` from class `Leaf` to parent class `Middle`

@@ -1,0 +1,56 @@
+#include <string>
+
+/* Refactoring Settings:
+Refactoring type: Extract SuperClass
+Refactoring target: Extract fields `height` and `weight` along with their accessors from Human into a new superclass
+Refactoring scope: Member variables height, weight, getter/setter methods and constructor initializer list
+Refactoring rule expectation: Detect constructor initializer list dependencies on extracted fields, warn user, and properly rewrite constructor initializer list to delegate to base class constructor to maintain valid C++
+*/
+
+/* Error Root Cause:
+Observed failure: When extracting fields initialized in the constructor (height, weight) to new superclass, CLion does not emit warning and generates broken uncompilable code. The original constructor initializer list still attempts to initialize `height` / `weight` which are now members of the base class; C++ forbids initializing base-class members directly in derived class's member initializer list.
+Expected behavior:
+1. Show warning to user that these fields are initialized in constructor initializer list.
+2. Generate base class with constructor accepting height/weight.
+3. Rewrite derived Human constructor to delegate to base constructor in initializer list.
+Underlying cause: Extract SuperClass refactoring does not analyze constructor member initializer list dependencies. It moves the fields to base class but leaves the original initializer list unchanged, which is invalid C++ syntax.
+*/
+
+class Human {
+    float height;
+    float weight;
+    int age;
+    std::string name;
+public:
+    Human(float height, float weight, int age);
+    float getHeight() const {
+        return height;
+    }
+    void setHeight(float height) {
+        Human::height = height;
+    }
+    float getWeight() const {
+        return weight;
+    }
+    void setWeight(float weight) {
+        Human::weight = weight;
+    }
+    int getAge() const {
+        return age;
+    }
+    void makeSound(int type) {};
+    float bmi();
+};
+
+// Human.cpp
+Human::Human(float height, float weight, int age)
+    : height(height), weight(weight), age(age)
+{
+}
+
+float Human::bmi() {
+    if (height != 0) {
+        return weight / ((height * height));
+    }
+    return 0;
+}

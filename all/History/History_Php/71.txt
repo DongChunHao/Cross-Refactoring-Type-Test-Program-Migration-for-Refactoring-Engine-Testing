@@ -1,0 +1,35 @@
+<?php
+namespace Service;
+use IO\File as IOFile;
+
+class X {
+    public static function A()
+    {
+        self::B();
+    }
+    public static function B()
+    {
+        ...
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Method refactoring, static method B moved to newClass in same namespace Service
+Refactoring rule: When rewriting static call sites `self::B()` after moving static method to a target class, resolve the target class properly, do not mistakenly substitute an unrelated existing use alias. Also, when target class resides in the identical namespace, avoid inserting redundant `use newClass;`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Static method B is moved from Service\X to Service\newClass.
+The call `self::B()` inside X::A is incorrectly rewritten to `IOFile::B()` (IOFile is an unrelated alias `IO\File as IOFile`), and a redundant `use newClass;` is added.
+Expected rewrite: `newClass::B();` without extra use statement since newClass lives in the same namespace.
+Additionally, the auto-added `use newClass;` is marked unused by inspection.
+
+Expected behavior:
+1. Resolve the actual destination class of the moved static method, emit `newClass::B()` at call site.
+2. If target class is in the current namespace, do not add `use newClass;`.
+3. Do not confuse the destination class name with an existing unrelated import alias.
+
+Underlying cause:
+The static call-site rewriter incorrectly maps the moved method reference to an existing PSI alias entry instead of the target class symbol. The name resolution layer conflates the target class name with another imported alias; it also unconditionally inserts a use statement without checking whether the target class is already in the active namespace.
+*/

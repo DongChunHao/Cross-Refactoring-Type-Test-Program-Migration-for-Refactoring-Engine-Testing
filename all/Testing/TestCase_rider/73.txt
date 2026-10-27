@@ -1,0 +1,15 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+using System;
+
+public abstract class BaseClass { }
+
+public class Class1 : BaseClass
+{
+public void ProcessData() //{Pull Up Method: target member for invalid‑file‑rename‑undo stale‑PSI‑document‑state bug reproduction}
+{
+Console.WriteLine("sample logic");
+}
+}

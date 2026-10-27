@@ -1,0 +1,25 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Function (batch move)
+Refactoring target: function foo(), function qux()
+Operation: Move both selected functions into class Bar
+Scope: Duplicate member existence check and error message reporting for batch function moving
+*/
+
+/* Error Root Cause:
+Observed failure: Bar already contains a method named qux(). When batch moving foo() and qux() into Bar, the warning message incorrectly claims that foo already exists, instead of correctly reporting that qux conflicts with the existing Bar::qux().
+Expected behavior: Detect that qux is the conflicting name, show error message pointing to qux as the duplicate member.
+Underlying cause: The batch conflict checker iterates over the selected functions with incorrect state tracking; it attaches the conflict diagnostic to the wrong function entry in the batch selection list.
+*/
+class Bar {
+    public static int $bar;
+    public function __construct() {
+        self::$bar = 15;
+    }
+
+    function qux() {}
+}
+
+function foo() {}
+function qux() {}
+?>

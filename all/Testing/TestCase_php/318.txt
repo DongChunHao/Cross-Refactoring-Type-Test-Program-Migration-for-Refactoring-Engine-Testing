@@ -1,0 +1,9 @@
+```
+<?php
+function f($c, $a,) {
+}
+f(1, 1,);
+?>
+```
+
+【Refactoring Action】: Invoke Change Signature on `f($c, $a,)`, remove all parameters from function signature.

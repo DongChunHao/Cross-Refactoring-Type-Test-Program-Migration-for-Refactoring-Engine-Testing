@@ -1,0 +1,24 @@
+'''
+Refactoring type: Push Down Method
+Refactoring new name: N/A
+'''
+using System;
+using System.IO;
+
+namespace MsBuildMetadataLossRepro
+{
+public abstract class BaseLoader
+{
+public abstract void LoadConfig();
+}
+
+public class DataLoader : BaseLoader
+{
+public override void LoadConfig() //{Push Down Method: target method for MSBuild‑item‑metadata‑loss during file‑rename bug reproduction}
+{
+var content = File.ReadAllText("data.json");
+Console.WriteLine(content);
+}
+}
+
+}

@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+namespace JbrMetalSleepRepro
+{
+public class RenderTestFixture
+{
+public void SimulateFullscreenUiUpdate() //{Rename Method: target method for JBR‑Metal‑macOS‑sleep‑wake‑blank‑mission‑control‑preview bug reproduction fixture}
+{
+}
+}
+}

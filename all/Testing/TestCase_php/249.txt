@@ -1,0 +1,21 @@
+```
+<?php declare(strict_types = 1);
+// ClassOne.php
+class ClassOne {
+    const FOO = 'bar';
+}
+// ClassTwo.php
+use \RuntimeException as R;
+class ClassTwo {
+    public function fun()
+    {
+        echo ClassOne::FOO;
+    }
+}
+// ClassThree.php
+class ClassThree {
+}
+?>
+```
+
+【Refactoring Action】: Move Member To Class refactoring, move constant `ClassOne::FOO` from `ClassOne` to `ClassThree`, update all usages of `ClassOne::FOO`.

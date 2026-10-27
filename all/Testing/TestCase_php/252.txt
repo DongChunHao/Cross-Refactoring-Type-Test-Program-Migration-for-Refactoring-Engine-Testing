@@ -1,0 +1,9 @@
+```
+<?php
+function getUser(?int $id): ?int {
+    return $id;
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, add new parameter `string $name` after `$id`, keep existing nullable types untouched.

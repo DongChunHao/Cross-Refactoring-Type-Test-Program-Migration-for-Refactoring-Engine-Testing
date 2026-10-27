@@ -1,0 +1,10 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+macro_rules! console {
+($level:expr, $msg:expr) => { println!($msg) };
+}
+fn foo(bar: u32) { //{change method foo, adjust parameter metadata, retain macro argument usage}
+console!(log, format!("something {}", bar));
+}

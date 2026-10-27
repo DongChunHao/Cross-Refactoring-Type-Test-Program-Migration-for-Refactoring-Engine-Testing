@@ -1,0 +1,15 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: templateCalc
+'''
+template 
+T someFunctionThatNeedsRefactoring(T a, T b){ //{Rename method someFunctionThatNeedsRefactoring to templateCalc}
+T c = a*b;
+T d = a+b;
+return c+b;
+}
+int main()
+{
+auto res = someFunctionThatNeedsRefactoring(2,3);
+return 0;
+}

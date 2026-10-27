@@ -1,0 +1,17 @@
+```
+<?php
+namespace Service;
+use DB\Query as DBQuery;
+class OrderManager {
+    public static function loadOrder()
+    {
+        self::applyDiscount();
+    }
+    public static function applyDiscount()
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Method refactoring, move static method `applyDiscount()` from `Service\OrderManager` to `Service\PriceCalculator`.

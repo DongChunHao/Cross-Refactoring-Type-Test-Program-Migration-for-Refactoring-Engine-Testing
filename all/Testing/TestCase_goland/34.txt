@@ -1,0 +1,17 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+package main
+type Helper struct{}
+func (h Helper) foo() (int, string) {
+return 0, ""
+}
+func main() {
+var i int
+var s string
+h := Helper{}
+i, s = h.foo() // move foo method from Helper to standalone function
+_ = i
+_ = s
+}

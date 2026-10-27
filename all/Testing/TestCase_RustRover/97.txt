@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+struct Foo(usize);
+fn new(x: usize) -> usize { //{move method new into main as nested function}
+let x = x;
+x
+}
+fn consume<T>(_: T) {}
+fn main() {
+consume(new(3))
+}

@@ -1,0 +1,27 @@
+<?php
+trait T{
+    public static $a = 2;
+    public static function f(){
+    }
+}
+class C{
+    use T;
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Member refactoring
+Refactoring target: static $a and static function f from trait T to class C
+Refactoring rule: When moving a trait member into a class which `use`s that trait, the conflict check must distinguish between members physically declared directly in the class and members that are only available via trait composition. The warning about duplicate declaration should only trigger when the class has an explicit, locally-defined member with the same name.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving static members from trait T into class C, the refactoring’s symbol lookup sees that C has the member $a available through trait inclusion and emits a false positive warning: “Class C already contains a Field a”.
+In reality, $a is not declared inside C itself; it is injected via the trait. After the refactoring, the member is moved from T into C directly, the result is valid PHP code, and the warning is unnecessary.
+
+Expected behavior:
+During conflict validation for move from trait to using class, filter out members that come solely from trait flattening. Only report a name collision if the target class has a native locally-defined member with identical name. Do not treat trait-provided members as pre-existing duplicates.
+
+Underlying cause:
+The validator uses the effective type member list (including trait merged members) instead of the list of members physically declared in the target class PSI. It conflates runtime flattened class members with source-level declarations.
+*/

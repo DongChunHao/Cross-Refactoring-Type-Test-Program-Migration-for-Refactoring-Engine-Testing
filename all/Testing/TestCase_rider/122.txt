@@ -1,0 +1,13 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+namespace ConsoleApp2
+{
+public class A
+{
+public void Run() //{Extract Method: target method for multi‑target‑project‑move‑to‑file‑CS0101‑duplicate‑definition‑bug reproduction}
+{
+}
+}
+}

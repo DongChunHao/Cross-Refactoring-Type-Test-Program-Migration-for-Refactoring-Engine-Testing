@@ -1,0 +1,25 @@
+'''
+Refactoring type: Move Class
+Refactoring new name: N/A
+'''
+using System;
+
+namespace TestSolution
+{
+// Initial state
+public class X { }
+public class B { } //{Move Class: move class B to namespace TestSolution.Other, intended type name remains B, conflict check scans decompiler cache}
+}
+
+namespace TestSolution.Other
+{
+}
+// Defect trigger context: Originally class A existed, was renamed to X; decompiler cache still holds stale synthetic A type entry.
+// When moving class B into target namespace, refactoring conflict checker incorrectly includes stale decompiler cache symbols, reports false type name conflict even though no real source‑code type exists in target namespace.
+// Cache invalidation does not clear decompiler cache index used for conflict validation.
+
+ How to handle the conflict between the refactoring conflict checker and the decompiler cache?
+
+ Can the refactoring conflict checker be customized or extended?
+
+ Are there any other factors that need to be considered during cross-refactoring test case migration?

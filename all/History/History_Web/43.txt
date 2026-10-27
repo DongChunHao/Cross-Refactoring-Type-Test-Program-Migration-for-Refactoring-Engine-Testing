@@ -1,0 +1,43 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Move Module Member
+Refactoring Target: Class App in app.js, moving it to a new separate file
+Refactoring Scope: JavaScript React module
+Trigger Operation: Execute Move Module Member to extract class App into a new file
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After moving App to the new file, the generated import for the default Hello component uses the wrong relative path: `import Hello from "./app";` instead of the correct `import Hello from "./hello";`.
+This bug specifically affects default imports of React components in JSX; regular default imports of plain classes/variables are handled correctly.
+Expected behavior: The destination file should preserve the original relative import path `./hello` for the Hello default import.
+Underlying cause: The Move Module Member reference resolver incorrectly reuses the source file’s path (`app.js`) when reconstructing default import statements for JSX component usages, rather than recalculating the relative path from the new destination file to the Hello module.
+*/
+
+// app.js
+import React, {Component} from "react";
+import Hello from "./hello";
+
+class App extends Component {
+    render() {
+        return (
+            <div>
+                <Hello/>
+            </div>
+        );
+    }
+}
+
+// hello.js
+import React, {Component} from 'react';
+
+class Hello extends Component {
+    render() {
+        return (
+            <div>
+                Hello
+            </div>
+        );
+    }
+}
+export default Hello;

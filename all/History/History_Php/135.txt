@@ -1,0 +1,32 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: PHPDoc @method virtual method `f()` on class C
+Scope: @method tag PSI handling, refactoring entry point
+Refactoring operation: invoke Change Signature on call site `$this->f(1)` which resolves to the PHPDoc @method declaration
+*/
+
+/* Error Root Cause:
+Observed failure:
+When triggering Change Signature from the call site `$this->f(1)` that resolves to a virtual method declared only in `@method f()` PHPDoc tag, the refactoring fails to open the signature edit dialog and throws an internal exception.
+The @method is a synthetic, virtual symbol in PSI, not a real method body element. The refactoring path for call-site-initiated signature change lacks support for @method synthetic declarations, while invoking Change Signature directly on the `@method f()` line in the PHPDoc works correctly.
+
+Expected behavior:
+When the call target resolves to a PHPDoc @method virtual method:
+1. Route the refactoring to the corresponding `@method` tag in the class docblock.
+2. Open the Change Signature dialog, modify the signature inside the `@method` annotation, and update all call sites of this virtual method.
+
+Underlying cause:
+The call-site resolution logic for Change Signature assumes the target is a real PHP method with a function declaration PSI node. Synthetic @method entries do not have a standard function element, and the code path does not redirect to the PHPDoc tag PSI, leading to an assertion/exception and suppression of the dialog.
+*/
+/**
+ * Class C
+ * @method f()
+ */
+class C{
+    public function g()
+    {
+        $this->f(1);
+    }
+}
+?>

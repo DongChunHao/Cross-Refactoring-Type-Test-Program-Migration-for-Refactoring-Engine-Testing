@@ -1,0 +1,38 @@
+/* Refactoring Settings:
+Refactoring Type: Rename file + Unity console log navigation integration
+Refactoring Target: Unity C# editor script file MyLog.cs → MyLogRenamed.cs
+Refactoring Scope: Rider <-> Unity console navigation, debug log click jump
+IDE: Rider + Unity Editor
+*/
+
+/* Error Root Cause:
+Observed failure:
+1. Create MyLog.cs with MenuItem method, run menu item, Unity console outputs log bound to MyLog.cs.
+2. Rename file to MyLogRenamed.cs in Rider.
+3. Double‑click the old log entry in Unity Console: Rider creates a brand new empty MyLog.cs file on disk.
+
+Expected behavior:
+Rider should detect that the source file path stored in the log no longer exists. It should show a warning that the file cannot be found and must NOT create an empty file automatically.
+
+Underlying cause:
+Unity stores the original file path (`MyLog.cs`) inside the log entry. Rider’s navigation handler receives this stale absolute/relative path, and its “open file” logic defaults to creating the missing file instead of checking whether the file was renamed and looking up the new location via the project PSI model. The rename refactor updates Rider’s project model, but it cannot retroactively modify old log messages already present inside Unity’s console buffer.
+*/
+
+// Original file MyLog.cs
+using UnityEditor;
+using UnityEngine;
+namespace DefaultNamespace
+{
+	public static class MyLog
+	{
+		[MenuItem("Test/Log")]
+		public static void LogSomething()
+		{
+			Debug.Log("Test"); // Log embeds reference to MyLog.cs
+		}
+	}
+}
+
+// After Rider rename → MyLogRenamed.cs
+// Unity console log still points to old path MyLog.cs
+// Bug: Double‑click log → Rider creates empty MyLog.cs

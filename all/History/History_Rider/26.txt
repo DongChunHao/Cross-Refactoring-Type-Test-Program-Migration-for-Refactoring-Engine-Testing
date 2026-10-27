@@ -1,0 +1,35 @@
+' Refactoring Settings:
+' Refactoring Type: Extract Variable
+' Refactoring Target: Expression inside VB.NET code, target is implicitly typed variable
+' IDE: Rider
+
+' Error Root Cause:
+' Observed failure:
+' Running Extract Variable on an expression in VB.NET produces invalid syntax for implicitly typed (`Dim` without type) variables.
+' VB’s type inference semantics differ from C#. The refactoring logic originally shared with C# is not adapted to VB’s syntax rules.
+'
+' Symptoms:
+' 1. May emit invalid modifiers or wrong initializer structure.
+' 2. Sometimes produces code that fails compile, e.g. malformed `Dim` declaration or incorrect replacement at usage site.
+' 3. Rider’s PSI emitter for VB does not correctly handle inferred-type variable declaration templates.
+'
+' Expected behavior:
+' When extracting an expression, Rider should generate a valid VB implicitly typed local:
+' Dim extractedVar = SomeExpression()
+' and replace the selected expression with `extractedVar`.
+'
+' Underlying cause:
+' The Extract Variable template and PSI generation path had C#-centric assumptions.
+' VB.NET requires special handling for `Dim` with type inference; the refactoring engine reused logic that works for C# `var` but generates broken syntax for VB.
+
+' Original VB example
+Console.WriteLine(GetMessage())
+
+' Expected after Extract Variable
+Dim message = GetMessage()
+Console.WriteLine(message)
+
+' Buggy possible outputs (examples of broken variants):
+' Dim message As = GetMessage() ' invalid syntax
+' Console.WriteLine(message message)
+' Or emits other invalid VB declaration forms the compiler rejects.

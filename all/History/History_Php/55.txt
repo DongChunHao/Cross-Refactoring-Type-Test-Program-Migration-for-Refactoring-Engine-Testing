@@ -1,0 +1,26 @@
+<?php
+class B {  }
+class C{
+    protected static $a = 2;
+    public static function f(){
+        echo self::$a;
+    }
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Move Static Member refactoring, multiple selection (static field $a + static method f)
+Refactoring target: move both $a and f from class C to class B
+Refactoring rule: When multiple dependent static members are selected together for moving, the conflict analysis must evaluate visibility and references in the context of the full set of members being moved, not evaluate each reference against the destination class as it exists before the refactoring is applied.
+*/
+
+/* Error Root Cause:
+Observed failure:
+When moving both `protected static $a` and `f()` together to B, the validator checks `self::$a` inside f() against the current state of B (which does not yet contain $a). It incorrectly emits a warning that $a is inaccessible in B.
+After the refactoring completes, B will own both $a and f(); inside B::f(), `self::$a` refers to B’s own static protected field and works correctly. The warning is a false positive.
+
+Expected behavior:
+For multi-selection member move, build a temporary model of the destination class including all selected members that are going to be moved. Resolve references like `self::$a` using this projected post-refactoring state. Suppress this spurious visibility warning.
+
+Underlying cause:
+The conflict checker uses the original, pre-refactoring PSI/type information of the destination class only. It does not account for the other selected members that are also being moved into that destination as part of the same transaction.
+*/

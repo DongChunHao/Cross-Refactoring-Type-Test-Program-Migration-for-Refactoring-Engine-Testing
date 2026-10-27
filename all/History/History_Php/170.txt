@@ -1,0 +1,25 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: T2 namespace function f()
+Operation: Add new parameter of type \T1\A
+Scope: Type reference rendering, preferring existing use alias instead of emitting fully qualified name
+*/
+
+/* Error Root Cause:
+Observed failure: When adding a parameter of type \T1\A via Change Signature, the refactoring uses the fully qualified name \T1\A instead of the already existing alias T1_A declared by `use \T1\A as T1_A;` in namespace T2.
+Expected behavior: Detect the existing import alias and use `T1_A $a` in the signature rather than the FQN.
+Underlying cause: The type renderer for Change Signature does not look up available local use aliases when generating the parameter type annotation; it directly outputs the fully qualified type name.
+*/
+namespace T1 {
+    class A {}
+}
+
+namespace T2 {
+    use \T1\A as T1_A;
+
+    class A {}
+    function f() {
+    }
+}
+?>

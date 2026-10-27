@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: textContent
+'''
+#include <string>
+void func()
+{
+std::string text = "demo"; //{Rename variable text to textContent}
+}
+class A {
+std::string text;
+};

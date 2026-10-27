@@ -1,0 +1,32 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Change Signature
+Refactoring Target: Arrow function variable `updateParent`
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Execute Change Signature on the arrow function assigned to a const variable, without modifying any parameter types.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Running Change Signature on an arrow function (assigned to a const) strips the parameter type annotations, even if the user makes no changes to parameters. Named function declarations retain their type annotations correctly.
+Expected behavior: Change Signature should preserve existing parameter type annotations for arrow functions just like it does for named function declarations.
+Underlying cause: The Change Signature handler treats arrow functions assigned to variables differently from function declarations. It does not persist the original parameter type information when reconstructing the function signature, dropping the `: State` parameter annotations during AST rewrite.
+*/
+
+// Complete compilable test code
+type State = {
+  entities: Record<string, { children: string[] }>;
+};
+declare const entityAdapter: {
+  updateOne: <T>(opts: { id: string; changes: Partial<T> }, state: T) => T;
+};
+
+const updateParent = (state: State, parentName: string, name: string): State => {
+    const parent = state.entities[parentName]
+    return entityAdapter.updateOne({
+        id: parentName,
+        changes: {
+            children: parent.children.concat(name)
+        }
+    }, state)
+}

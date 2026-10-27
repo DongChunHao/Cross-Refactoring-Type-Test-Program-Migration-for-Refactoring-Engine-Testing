@@ -1,0 +1,30 @@
+def foo(arg_1=1, arg_2=2, arg_3=3, arg_4=4):
+    res = arg_1 + arg_2 + arg_3 + arg_4
+    print(res)
+
+def bar():
+    res_1 = 1
+    res_2 = 2
+    res_3 = 3
+    res_4 = 4
+    foo(res_1, res_2, res_3, res_4)
+
+bar()
+
+def baz(par_1=1, par_2=2, par_3=3, par_4=4):
+    foo(par_1, par_2, par_3, par_4)
+
+"""
+/* Refactoring Settings: */
+Refactoring Type: Inline Function refactoring
+Refactoring Target: function foo()
+Refactoring Scope: entire current file, all call sites of foo
+Operation steps: invoke Refactoring -> Inline on function foo
+"""
+
+"""
+/* Error Root Cause: */
+Observed failure: The refactoring preview UI shows occurrence count as `-1` instead of the correct number of function usages, refactoring count calculation is corrupted.
+Expected behavior: The engine should correctly count all foo() call occurrences and display the positive integer count, then allow user to preview and execute inline refactoring.
+Underlying cause: Internal counter variable for reference occurrences has an integer underflow or uninitialized error in the Python refactoring engine’s usage search module. When scanning all call sites across the file, the counting logic returns -1 as a sentinel/error value instead of counting valid references properly.
+"""

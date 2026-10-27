@@ -1,0 +1,21 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <stdlib.h>
+#include <stdbool.h>
+bool _try() {
+return (bool) (rand() % 2);
+}
+static int wrapper_a(int y) { //{Move function a logic into wrapper function}
+bool got_data = false;
+if(_try()) {
+got_data = true;
+}
+if (!got_data) {
+}
+return 0;
+}
+int a(int y) {
+return wrapper_a(y);
+}

@@ -1,0 +1,32 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring
+Refactoring target: class My\N1\C2, move it from namespace My\N1 into the global namespace
+Scope: source class file and PHPDoc @see references pointing to C2::A
+Refactoring operation: relocate class C2 to global namespace and update related PHPDoc annotations
+*/
+
+/* Error Root Cause:
+Observed failure: After moving C2 to the global namespace, the @see \My\N1\C2::A tag becomes @see \null, producing invalid PHPDoc.
+Expected behavior: Update the @see tag to @see \C2::A, correctly referencing the class and constant now located in the global namespace.
+Underlying cause: The PHPDoc reference resolver fails to recompute the new FQN for the constant after the containing class is moved to the global namespace. The symbol resolution returns a null reference, and the serializer writes \null into the annotation instead of the updated global FQN.
+*/
+namespace My\N1 {
+    class C2
+    {
+        const A = 2;
+    }
+}
+
+namespace N2 {
+    class C
+    {
+        /**
+         * @see \My\N1\C2::A
+         */
+        function f()
+        {
+        }
+    }
+}
+?>

@@ -1,0 +1,11 @@
+```
+<?php
+function calculateTotal(float $price, int $qty,) : float
+{
+    return $price * $qty;
+}
+calculateTotal(9.99, 2,);
+?>
+```
+
+【Refactoring Action】: Change Signature on `calculateTotal(float $price, int $qty,)`, delete all parameters.

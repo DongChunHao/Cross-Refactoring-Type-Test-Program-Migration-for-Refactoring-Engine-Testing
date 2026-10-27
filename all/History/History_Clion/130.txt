@@ -1,0 +1,37 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract statement `X x(i);` inside `foo()`
+Refactoring rule expectation: Detect that `X x(i)` creates an instance of X which is used later in `return x.getI()`. Offer to create a function returning `X`, so caller can capture the constructed object.
+*/
+
+/* Error Root Cause:
+Observed failure: CLion Extract Method creates `void createX(int i)`. It treats `X x(i);` as a local side-effect only, does not recognize the newly created object `x` needs to be returned to caller. In generated code:
+1. `X x;` default constructs empty object in foo()
+2. `createX(i)` makes a local temporary X inside createX (discarded after function returns)
+The original `x` in foo() remains default-constructed, program logic broken.
+Expected result:
+struct X {
+    X(int i);
+    int getI() const;
+};
+X createX(int i);
+int foo() {
+    int i = 5;
+    X x = createX(i);
+    return x.getI();
+}
+X createX(int i) {
+    return X(i);
+}
+Underlying cause: Extract method scope analysis only sees the constructor statement as a local variable declaration inside extracted block. It fails to track that the variable `x` is consumed after the extracted line, so it only proposes void return type instead of detecting that we need to return the constructed instance.
+*/
+
+struct X {
+    X(int i);
+    int getI() const;
+};
+int foo() {
+    int i = 5;
+    X x(i); // Extract this line
+    return x.getI();
+}

@@ -1,0 +1,19 @@
+''' Refactoring Settings:
+Refactoring type: Rename refactoring, trigger point is call‑site myfunct() inside third()
+Refactoring target: function myfunct, rename to myfunction
+Refactoring scope: function definition, all call‑sites across the file (second(), third())
+Refactoring rule expectation: Trigger rename at call‑site should update function definition and every invocation location: definition, second() call, third() call all become myfunction.
+'''
+''' Error Root Cause:
+Observed failure: Invoking rename refactor on the call‑site inside third() only rewrites the function definition `def myfunction(name):`. The two call‑sites inside second() and third() retain old name myfunct, causing unresolved‑reference errors.
+Expected behavior: All usages (all call sites + definition) should be synchronously renamed.
+Underlying cause: Rename refactoring symbol‑resolution bug when initiation cursor sits on call‑expression node instead of definition node. The refactor correctly resolves target function definition for rewriting, but fails to collect all call‑site usages from reference graph; it only mutates definition node and skips rewriting call‑site references.
+'''
+def myfunct(name):
+    print(name, 'hola')
+
+def second():
+    myfunct('second')
+
+def third():
+    myfunct('third')

@@ -1,0 +1,58 @@
+/* Refactoring Settings:
+Refactoring Type: Inline Function
+Refactoring Target: `use_mutex(m: &Mutex<u32>)`
+Refactoring Scope: Scope/lifetime preservation for inlined local variables
+Plugin Environment: IntelliJ Rust plugin 0.4.162.4293-213-nightly, CLion 2021.3, Rust 1.57.0, Linux 5.4.0-91-generic
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Run Inline function on `use_mutex`
+*/
+/* Error Root Cause:
+Observed failure: The inliner takes all statements and local bindings from the function body and inserts them directly into the caller’s scope, lifting the function’s locals out of their original scope. This extends their lifetime past the point where the original function would have returned and dropped them. In the reproducer, the `MutexGuard` stored in `mx` remains held when the next `lock()` is called, causing an immediate deadlock.
+
+Original correct behavior: When `use_mutex` returns, its stack frame is destroyed, `mx` is dropped, releasing the mutex.
+Actual inlined code: `mx` lives until the end of `main`, holding the lock across the `println!` call.
+
+Expected behavior:
+By default, wrap the entire inlined body in an explicit block `{ ... }`. This reproduces the original lexical scope and drop semantics exactly, including panics, `?`/try control flow, and normal return.
+Alternative advanced strategy (higher risk): Try to insert explicit `drop()` calls, but this cannot fully replicate panic/non-local control-flow semantics, so it should not be the default. Unwrapping the block can be a separate user-initiated refactoring.
+
+Underlying cause: The inline logic does not preserve the function body as a separate lexical scope; it flattens it into the parent scope unconditionally.
+*/
+// Before
+use std::sync::Mutex;
+
+fn use_mutex(m: &Mutex<u32>) {
+    let mut mx = m.lock().unwrap();
+    *mx += 1;
+}
+
+fn main() {
+    let m = Mutex::new(0);
+    use_mutex(&m);
+    println!("{}", m.lock().unwrap());
+}
+
+// Actual broken output (deadlocks)
+use std::sync::Mutex;
+
+fn main() {
+    let m = Mutex::new(0);
+    let m_argument = &m;
+    let mut mx = m_argument.lock().unwrap();
+    *mx += 1;
+    println!("{}", m.lock().unwrap());
+}
+
+// Preferred expected output (scope preserved via block)
+use std::sync::Mutex;
+
+fn main() {
+    let m = Mutex::new(0);
+    {
+        let m_argument = &m;
+        let mut mx = m_argument.lock().unwrap();
+        *mx += 1;
+    }
+    println!("{}", m.lock().unwrap());
+}

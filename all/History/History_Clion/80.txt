@@ -1,0 +1,21 @@
+#include <cstdio>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract the printf statement inside C::foo() into a new member function bar()
+Refactoring scope: Code block inside the inline member function C::foo()
+Refactoring rule expectation: When extracting a new member function inside a class, either declare bar() only (with definition outside class) OR define bar() inline; should not generate both a separate declaration void bar(); and an inline definition void bar() { ... } inside the same class body
+*/
+
+/* Error Root Cause:
+Observed failure: After Extract Method refactoring, the class contains both a declaration `void bar();` and an inline definition `void bar() { printf(""); }` within the same class scope. This is redundant and unnecessary.
+Expected behavior: If the extracted function is defined inline inside the class, omit the separate forward declaration of bar().
+Underlying cause: The refactoring engine incorrectly adds a forward declaration for the new method while also placing the full inline definition inside the class body, producing duplicate member declarations.
+*/
+
+class C {
+    void foo()
+    {
+        printf("");
+    }
+};

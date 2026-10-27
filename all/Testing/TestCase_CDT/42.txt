@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: b
+'''
+#define A
+int main(int argc, char** argv) {
+int a; // Variable to be renamed //extract variable for rename‑refactoring preprocessor‑conditional‑enclosed‑variable false‑positive‑rejection defect scenario
+#ifdef A
+a = 1;
+#else
+a = 2
+#endif
+return a;
+}

@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function (Ctrl + Alt + M)
+Refactoring Target: Selected expression `*ptr` inside an unsafe function
+Refactoring Scope: Extracting unsafe operation from unsafe function
+Plugin Environment: IntelliJ Rust plugin
+Trigger Operation: Select `*ptr` inside `unsafe fn this_is_unsafe` and run Extract function
+*/
+/* Error Root Cause:
+Observed failure: Extracting an unsafe dereference operation from inside an `unsafe fn` creates a normal safe `fn extracted()`. The extracted function performs raw pointer dereference without being marked `unsafe`, and the call site is not wrapped in an `unsafe {}` block. The resulting code fails compilation.
+Expected behavior: Two valid options:
+1. Mark the extracted function as `unsafe fn extracted(...)`, and keep the call inside the original unsafe function (no extra unsafe block required), OR
+2. Keep `extracted` as a safe function and wrap the extracted unsafe expression inside `unsafe { ... }` within extracted.
+The refactor must emit Rust-valid code.
+Underlying cause: Extract function logic does not track that the selected fragment contains unsafe operations requiring an unsafe context. It does not automatically add the `unsafe` modifier to the new function or wrap the extracted code in an `unsafe` block.
+*/
+// Before
+unsafe fn this_is_unsafe(ptr: *const u32) -> u32 {
+    *ptr
+}
+
+// Bad produced output (does not compile)
+unsafe fn this_is_unsafe(ptr: *const u32) -> u32 {
+    extracted(ptr)
+}
+fn extracted(ptr: *const u32) -> u32 {
+    *ptr
+}

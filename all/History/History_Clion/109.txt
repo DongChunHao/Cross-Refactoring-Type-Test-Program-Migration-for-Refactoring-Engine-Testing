@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract statement `this->*pF = 1;` inside Foo::test()
+Refactoring scope: extracted function containing member pointer write `this->*pF =1`
+Refactoring rule expectation: Detect that the code modifies object state via pointer-to-member, **do not mark the extracted method as const**.
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method generates a `const` qualified member function, even though `this->*pF =1` mutates the instance member `f` through pointer-to-member. A const member function cannot modify object members, leading to compile error.
+Expected behavior: The extracted method should be non-const.
+Underlying cause: The refactoring engine’s side-effect analysis does not recognize writes through pointer-to-member (`this->*memberPointer`) as object mutation. It incorrectly assumes no state modification and automatically adds `const` qualifier to the new method.
+*/
+
+class Foo {
+    int f{0};
+public:
+    void test();
+};
+void Foo::test () {
+    int Foo::*pF = &Foo::f;
+    this->*pF = 1; // extract this line
+}
+int main() {
+    Foo x;
+    x.test();
+    return 0;
+}

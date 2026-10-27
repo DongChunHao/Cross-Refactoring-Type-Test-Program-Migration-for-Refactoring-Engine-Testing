@@ -1,0 +1,70 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+import React, { Component } from 'react';
+export default class Blah extends React.Component {
+render() {
+return (
+
+            <div>
+<div>
+<div>foo</div>
+</div>
+<div>
+<div>bar</div>
+</div>
+{this.renderBaz()}
+</div>
+)
+}
+renderBaz() { //{Move Method for renderBaz}
+return <div><div>baz</div></div>;
+}
+}
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+import React, { Component } from 'react';
+export default class Blah extends React.Component {
+render() {
+return (
+<div>
+<div>
+<div>foo</div>
+</div>
+<div>
+<div>bar</div>
+</div>
+{this.renderBaz()}
+</div>
+)
+}
+renderBaz() { //{Rename Method on renderBaz}
+return <div><div>baz</div></div>;
+}
+}
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+import React, { Component } from 'react';
+export default class Blah extends React.Component {
+render() {
+return (
+<div>
+<div>
+<div>foo</div>
+</div>
+<div>
+<div>bar</div>
+</div>
+{this.renderBaz()}
+</div>
+)
+}
+renderBaz() { //{Change Method signature for renderBaz}
+return <div><div>baz</div></div>;
+}
+}

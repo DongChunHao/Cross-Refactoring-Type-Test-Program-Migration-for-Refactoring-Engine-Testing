@@ -1,0 +1,9 @@
+```
+<?php
+function f(?string $v): ?string {
+    return $v;
+}
+?>
+```
+
+【Refactoring Action】: Change Signature refactoring, rename parameter `$v` to `$value`, preserve nullable types.

@@ -1,0 +1,15 @@
+```
+<?php
+abstract class BaseReport {
+    private static $title = '';
+    private static function render(){}
+}
+class PdfReport extends BaseReport { }
+class RawReport {
+    public static $title = '';
+    public static function render(){}
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target static property `$title` and static function `render()` from class `RawReport` to class `PdfReport`

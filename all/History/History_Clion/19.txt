@@ -1,0 +1,24 @@
+/* Refactoring Settings:
+Refactoring type: Extract Method (C++ CLion)
+Refactoring target: `return CorrectReturnType();` inside the lambda in `mainFunction()`
+Operation: Select the return statement inside the lambda and invoke Extract Method, name new method getType
+Scope: Deduce return type from lambda body; avoid inheriting outer function return type; prevent injecting invalid `this->` token inside extracted function
+*/
+
+/* Error Root Cause:
+Observed failure: Extract Method inside lambda incorrectly takes the outer function `mainFunction` return type `IncorrectReturnType` as the extracted method’s return type instead of the lambda’s actual return type `CorrectReturnType`. Additionally, it incorrectly adds `this->` before `CorrectReturnType()`, which is invalid in this context.
+Expected behavior: Deduce return type as `CorrectReturnType`, generate `CorrectReturnType getType() { return CorrectReturnType(); }` without `this->`.
+Underlying cause: The PSI type inference visitor incorrectly binds to the enclosing function’s return type instead of evaluating the lambda’s local expression type. It also mistakenly treats the type identifier as a class member access and injects `this->`, even though there is no `this` available in this lambda context.
+*/
+
+struct IncorrectReturnType {};
+struct CorrectReturnType {
+  CorrectReturnType() {}
+};
+
+IncorrectReturnType mainFunction() {
+  []() {
+    // Assume that this is a complicated method and warrants extraction
+    return CorrectReturnType();
+  };
+}

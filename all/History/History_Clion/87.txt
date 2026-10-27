@@ -1,0 +1,28 @@
+#include <iostream>
+#include <string>
+
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: Extract code statement "std::cout << count << \"|\" << key << \"\\n\";" into a new standalone function
+Refactoring scope: Selected expression statement inside the original function
+Refactoring rule expectation: Preserve the original qualified name std::cout without modifying namespace identifiers during extraction
+*/
+
+/* Error Root Cause:
+Observed failure: After applying Extract Method refactoring, std::cout is incorrectly replaced with std::__1::cout in the extracted method body.
+Expected behavior: The extracted function should retain std::cout exactly as written in the original source code.
+Underlying cause: The refactoring engine uses the compiler's internal libc++ implementation namespace std::__1 when generating new code, leaking the internal implementation namespace instead of keeping the user-written public namespace std.
+*/
+
+void original_func(const std::string& key, int count)
+{
+    std::cout << count << "|" << key << "\n";
+}
+
+int main()
+{
+    std::string key = "test_key";
+    int count = 10;
+    original_func(key, count);
+    return 0;
+}

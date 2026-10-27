@@ -1,0 +1,10 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+package main
+
+func _() { // Change method signature: modify return values
+println(myParam)
+}
+func main() {}

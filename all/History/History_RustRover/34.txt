@@ -1,0 +1,19 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Function (Ctrl + Alt + M)
+Refactoring Target: Two `println!` statements separated by an empty line inside main
+Refactoring Scope: Preserving blank lines in extracted code
+Plugin Environment: IntelliJ Rust plugin 0.2.119.2201-201, IDEA 2020.1, Rust 1.42.0, Arch Linux
+Macro expansion engine: new
+Name resolution engine: new
+Trigger Operation: Select `println!("a");` and `println!("b");` including the empty line between them, run Extract function
+*/
+/* Error Root Cause:
+Observed failure: The refactor strips empty lines from the code moved into the new function. The blank line separating the two print statements disappears.
+Expected behavior: Preserve user-intentional blank lines inside the extracted code block.
+Underlying cause: The PSI/text extraction logic discards whitespace-only empty lines when generating the body of the new function, treating them as insignificant formatting whitespace instead of user code layout.
+*/
+fn main() {
+    println!("a");
+
+    println!("b");
+}

@@ -1,0 +1,20 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+export class Test {
+private handleAction = (params) => {
+const a = () => this.customOutput("A") //{Extract Method target call‑site as sole‑expression of concise‑arrow, multi‑statement substitution requires expand‑to‑block‑body}
+a()
+const someFunction = () => {
+this.customOutput("B")
+}
+}
+private customOutput = (greeting) => {
+if (greeting === "world") {
+console.log("Hello world")
+} else {
+console.log("Hello", greeting)
+}
+}
+}

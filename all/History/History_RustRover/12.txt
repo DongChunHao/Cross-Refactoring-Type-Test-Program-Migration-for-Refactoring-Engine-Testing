@@ -1,0 +1,42 @@
+/* Refactoring Settings: */
+/* Refactoring Type: Move Item */
+/* Refactoring Target: Move public function `foo` from `mod mod1` into `mod mod2` */
+/* Refactoring Scope: Rust module system, glob imports (`use ...::*`) */
+/* Trigger Operation: Execute Move Item refactor on `mod1::foo` and set target location inside `mod mod2` */
+
+/* Error Root Cause: */
+/*
+Observed failure:
+After moving `foo` from `mod1` to `mod2`, the glob import `use crate::mod1::*;` in `inner3` is left in place.
+The refactor adds an extra explicit import `use crate::mod2::foo;` to make `foo()` resolve, instead of removing the now‑useless glob import from `mod1`.
+The glob `use crate::mod1::*;` no longer brings `foo` into scope because `foo` has been moved out of `mod1`, yet the refactoring logic does not detect that this glob no longer contributes the name `foo`.
+
+Expected behavior:
+When moving the only name `foo` that a glob import supplies to a scope, the refactor should delete the stale glob import `use crate::mod1::*;` entirely, leaving only the required new import or adjusting references appropriately.
+In this example, after moving `foo` into `mod2`, `inner3` should not retain `use crate::mod1::*;`.
+
+Underlying cause:
+The Move Item processor tracks direct named imports but does not fully analyze what names are provided by glob imports. It treats glob imports as opaque and does not compute whether the moved symbol was the sole or last name being brought in by the glob. It compensates by adding a new explicit import for the moved item rather than cleaning up the obsolete glob.
+*/
+
+// Original source
+mod mod1 {
+    pub fn foo() {}
+}
+mod mod2 {
+    mod inner1 {
+        fn test() { crate::mod1::foo(); }
+    }
+    mod inner2 {
+        fn test() {
+            use crate::mod1;
+            mod1::foo();
+        }
+    }
+    mod inner3 {
+        fn test() {
+            use crate::mod1::*;
+            foo();
+        }
+    }
+}

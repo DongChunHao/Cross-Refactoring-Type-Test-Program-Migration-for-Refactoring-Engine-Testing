@@ -1,0 +1,10 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+var test = {
+testProp: wrapperFunc()
+};
+function wrapperFunc() { //{Change Method signature for wrapperFunc}
+return console.log();
+}

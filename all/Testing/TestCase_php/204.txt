@@ -1,0 +1,22 @@
+```
+<?php
+// UserService.php
+namespace App;
+use App\Types\{
+    UserId
+};
+class UserService {
+}
+
+// LegacyHelper.php
+namespace App;
+use App\Types\UserId;
+class LegacyHelper {
+    public static function loadUser() {
+        return new UserId(123);
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Method refactoring, target static method `LegacyHelper::loadUser()` from `App\LegacyHelper` to `App\UserService`; preserve existing grouped use statement in UserService.php.

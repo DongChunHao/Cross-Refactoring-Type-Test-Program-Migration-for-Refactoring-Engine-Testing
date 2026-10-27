@@ -1,0 +1,35 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Change Visibility (make method private/protected)
+Refactoring Target: Class method `method()` with two decorators `@f()` and `@g()`
+Refactoring Scope: Current TypeScript file
+Trigger Operation: Change the visibility modifier of the decorated method from public to private or protected.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Changing method visibility reorders the decorators. Original `@f()` then `@g()` becomes `@g() @f()` after refactoring. Decorator execution order in TypeScript matters: decorators apply top-to-bottom.
+Expected behavior: The sequence of decorators should be preserved exactly as written when only modifying the method's access modifier.
+Underlying cause: The refactoring logic for rewriting method AST nodes does not preserve the original decorator list order when reconstructing the method definition; it serializes decorators in reversed order.
+*/
+
+// Complete compilable test code
+function f() {
+  console.log("f(): evaluated");
+  return function (target, propertyKey: string, descriptor: PropertyDescriptor) {
+    console.log("f(): called");
+  }
+}
+
+function g() {
+  console.log('g(): evaluated');
+  return function (target, propertyKey: string, descriptor: PropertyDescriptor) {
+    console.log("g(): called");
+  }
+}
+
+class C{
+  @f()
+  @g()
+  method() {}
+}

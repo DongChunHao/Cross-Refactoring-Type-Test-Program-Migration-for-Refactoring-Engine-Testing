@@ -1,0 +1,24 @@
+<?php
+interface I2{}
+interface I3 extends I2{
+    const a = 2; // <-- Pull Up refactoring target
+}
+class Test implements I2{
+    const a = 1;
+}
+
+/* Refactoring Settings:
+Refactoring type: Pull Up refactoring
+Refactoring target: constant `a` in interface I3, target destination: I2
+Refactoring rule: When checking for constant naming collisions during Pull Up, the collision diagnostic must correctly distinguish interfaces and classes, and reference the correct type name in the warning message.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Pulling `const a = 2` from I3 up into I2 emits an incorrect warning: "Constant 'a' will conflict with constant from interface 'Test'". Test is a class, not an interface.
+Expected behavior:
+The warning should state that the conflict comes from class `Test`, which implements I2 and already defines constant `a`. The wording must not mislabel a class as an interface.
+Underlying cause:
+The collision detection logic correctly finds the conflicting constant in Test, but the message formatter uses the wrong type label (interface instead of class) when rendering the warning text.
+*/
+?>

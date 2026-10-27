@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: fld
+'''
+struct MyClass {
+MyClass(int);
+int field; //{Rename field field to fld}
+};
+void qqq() {
+MyClass x = 239;
+x.field;
+}

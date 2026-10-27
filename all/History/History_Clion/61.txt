@@ -1,0 +1,28 @@
+/* Refactoring Settings:
+Refactoring type: Move refactoring (CLion C++ move code to another file)
+Refactoring target: code block containing `std::this_thread::sleep_for(0.4s);`
+Operation: Move a large code block (>600 lines) containing chrono duration literal `0.4s` to another file.
+Scope: Preserve chrono user-defined literal syntax `0.4s`. Must not replace the suffix `s` with bare `operator`.
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving code, `0.4s` becomes `0.4operator`. The generated `std::this_thread::sleep_for(0.4operator);` is invalid C++.
+`0.4s` is chrono user-defined literal calling `operator""s`. The refactoring incorrectly deletes the suffix identifier `s` and leaves only bare `operator`.
+
+Expected behavior:
+Keep original code unchanged:
+std::this_thread::sleep_for(0.4s);
+
+Underlying cause:
+Symbol resolution for C++ user-defined literals is broken during large-scale move refactoring. The AST walker recognizes the user-defined literal operator template but fails to preserve the literal suffix token `s`, only emitting the keyword `operator`. This bug is triggered when moving large code blocks (600+ lines).
+*/
+
+#include <chrono>
+#include <thread>
+
+void func()
+{
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(0.4s);
+}

@@ -1,0 +1,18 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Variable
+Refactoring Target: Spread expression `...aaa` inside object literal `{ ...aaa }`
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Execute Extract Variable with caret inside `...aaa`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Variable lists `...aaa` as a candidate. Applying this choice generates `const newVar = ...aaa;` and `{ newVar }`, which is invalid syntax because the spread operator `...` may only appear inside array/object literals or function calls and cannot be assigned to a variable by itself.
+Expected behavior: The candidate list should exclude `...aaa`; only `aaa` and the full object literal `{ ...aaa }` should be available for extraction.
+Underlying cause: The candidate collector treats the spread element `...aaa` as a standalone valid expression, without checking that spread syntax cannot exist outside of a literal context.
+*/
+
+// Complete compilable test code
+const aaa = {};
+const bbb = { ...aaa };

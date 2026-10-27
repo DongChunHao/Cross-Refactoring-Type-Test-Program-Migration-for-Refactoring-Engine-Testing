@@ -1,0 +1,12 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+fn foo(x: u32) -> u32 {
+x *= 2;
+new_fn(x)
+}
+fn new_fn(x: u32) -> u32 { //{change method new_fn signature, adjust parameter mutability}
+x += 1;
+x
+}

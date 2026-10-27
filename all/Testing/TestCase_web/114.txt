@@ -1,0 +1,16 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+class Foo {
+keyList = [];
+handleDeleteSubmit(event) { //{Change Method target method holding multiple semantically‑equivalent expression instances}
+if (/^[a-zA-Z]+$/.test(event.target.value) && this.keyList.indexOf(event.target.value) !== -1) {
+let index = this.keyList.indexOf(event.target.value);
+let val = event.target.value;
+this.keyList.splice(index, 1);
+} else {
+alert("Non‑Existent Key Value");
+}
+}
+}

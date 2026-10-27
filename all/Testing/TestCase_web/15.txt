@@ -1,0 +1,13 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+function foo(){
+return 1 + 2; //{Move Method for partial return expression fragment}
+}
+async function fooAsync() {
+return await asyncFunction();
+}
+async function asyncFunction() {
+return Promise.resolve(0);
+}

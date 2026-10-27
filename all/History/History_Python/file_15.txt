@@ -1,0 +1,33 @@
+''' Refactoring Settings:
+Refactoring type: Move symbol refactoring (F6 move class)
+Refactoring target: class ExcFilePathError from exp_modul.py to new.py
+Refactoring scope: all cross-module references to ExcFilePathError in one.py, import statements in one.py
+Refactoring rule expectation: After moving ExcFilePathError to new.py, update one.py: remove the old exc.ExcFilePathError reference, add import for new module, rewrite except clause to new.ExcFilePathError.
+'''
+''' Error Root Cause:
+Observed failure: After moving ExcFilePathError class from exp_modul.py to new.py, the reference `exc.ExcFilePathError` in one.py is not updated at all, still uses old alias from exp_modul, leading to unresolved reference.
+Expected behavior: one.py should add import of new module, change `exc.ExcFilePathError` to `new.ExcFilePathError`.
+Underlying cause: Move refactoring’s cross-module reference resolver fails to update exception type references in except blocks. The symbol usage collector misses type references inside `except <ExceptionType>:` clauses when calculating usages for a class being moved.
+'''
+# ---- one.py ----
+import exp_modul as exc
+
+try:
+    pass
+except exc.ExcFilePathError:
+    pass
+
+# ---- exp_modul.py ----
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
+
+class ExcFilePathError(Error):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
+
+class ExcAutoObjParam(Error):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message

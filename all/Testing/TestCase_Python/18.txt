@@ -1,0 +1,12 @@
+/ Target Refactoring Type: Move Field
+// Expected Defect Performance: The refactoring usage‑collector correctly discovers @ivar as a usage occurrence, but the symbol rewrite logic excludes @ivar doc‑directive entries for text replacement; only @type directive is processed for modification
+class SomeClass(object):
+""" Awesome class
+@ivar someVar: great stuff
+@type someVar: string
+"""
+def **init**(self):
+pass
+class Holder(object):  // REFACTOR_TARGET
+def **init**(self):
+self.someVar = None

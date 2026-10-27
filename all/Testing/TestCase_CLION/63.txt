@@ -1,0 +1,29 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+namespace XXX{
+class Base
+{
+class NBase{
+public:
+NBase(int) {}
+int a;
+};
+public:
+NBase foo(NBase a) {return a;}
+};
+}
+struct Wrapper{
+void runMain() { //{Move main logic into struct Wrapper member function}
+using namespace XXX;
+Base b;
+b.foo(0);
+return;
+}
+};
+int main() {
+Wrapper w;
+w.runMain();
+return 0;
+}

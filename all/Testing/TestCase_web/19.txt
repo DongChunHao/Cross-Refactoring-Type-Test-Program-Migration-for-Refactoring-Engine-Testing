@@ -1,0 +1,9 @@
+'''
+Refactoring type: Extract Variable
+Refactoring new name: N/A
+'''
+function func() {
+return {x: "x"}
+}
+var {x} = func(); //{Extract Variable for destructured binding x}
+console.log(x)

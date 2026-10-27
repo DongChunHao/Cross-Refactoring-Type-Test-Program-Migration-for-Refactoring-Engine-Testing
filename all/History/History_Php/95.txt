@@ -1,0 +1,21 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Pull Up Members refactoring
+Refactoring target: protected constant publicConst from subclass B pulled up to parent class A
+Scope: class A and class B
+Refactoring operation: move constant publicConst from B to A
+*/
+
+/* Error Root Cause:
+Observed failure: After pulling the protected constant publicConst up to class A, the visibility modifier is lost; the constant becomes implicit public (PHP default for constants) instead of staying protected. No warning about the visibility change is shown to the user.
+Expected behavior: Preserve the original `protected` visibility for the constant after moving it to the parent class, or emit a warning that pulling this constant will change its effective visibility.
+Underlying cause: The Pull Up refactoring logic for constants does not explicitly copy the visibility modifier to the new parent declaration. When no modifier is written, PHP constants default to public, altering the access semantics silently.
+*/
+class A {
+    public function f(){}
+}
+
+class B extends A {
+    protected const publicConst = 1;
+}
+?>

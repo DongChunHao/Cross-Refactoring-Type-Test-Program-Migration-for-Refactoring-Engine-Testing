@@ -1,0 +1,5 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+var foo = {x: 2, y: "a", z: true}, {x, y, z} = foo; //{Extract Method target entire compound var statement containing declaration and destructuring}

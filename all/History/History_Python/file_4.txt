@@ -1,0 +1,19 @@
+''' Refactoring Settings:
+Refactoring type: Inline function refactoring
+Refactoring target: function print2
+Refactoring scope: all call‑sites of print2, function body including inline comments inside print2
+Refactoring rule expectation: When inlining print2 at call‑site, move all executable statements from print2 body to call‑site location; comments attached to function‑body lines should also be moved together with corresponding statements to the inline location.
+'''
+''' Error Root Cause:
+Observed failure: Performing inline‑function refactoring for print2 does not move the lines carrying comments from inside print2 function body out to the call‑site; comment lines remain inside original function definition or get lost, while only executable logic is inlined.
+Expected behavior: Comments that belong to statements inside print2 should be transferred together with corresponding code when inlining function body into each call site.
+Underlying cause: The inline‑refactoring statement‑extraction logic filters out or ignores comment nodes when extracting function body content for inlining; it only collects executable AST nodes and discards associated comment trivia nodes.
+'''
+def print2(*, k, d):
+    # Very important comment
+    print(k, d)     # Comment 0
+    return k, d
+
+my_results = []
+for i in range(10):
+    my_results.append(print2(k=11, d=12))

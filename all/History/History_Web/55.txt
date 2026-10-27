@@ -1,0 +1,25 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Replace with let / Split variable declaration and initialization
+Refactoring Target: Destructuring pattern `{ userName, age }: User`
+Refactoring Scope: TypeScript file
+Trigger Operation: Apply "Replace with let" or "Split declaration and initialization" on annotated object destructuring variable
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The intention produces `let userName: string, age: number; ({userName, age}: User = obj);`. The type annotation `: User` is incorrectly kept on the assignment expression `({userName, age}: User = obj);`, which is invalid TypeScript syntax; type annotations cannot be placed on standalone assignment statements.
+Expected behavior: After splitting, the type information should be expressed on the individual variables `userName` and `age`, and the assignment should omit the misplaced destructuring type annotation:
+let userName: string, age: number;
+({userName, age} = obj);
+Underlying cause: The split logic treats the type annotation as belonging to the destructuring pattern rather than decomposing it into separate type annotations for each destructured variable. It preserves the `: User` annotation on the assignment expression, violating TS grammar.
+*/
+
+// Complete compilable test code
+interface User {
+  userName: string;
+  age: number;
+}
+
+const obj: any = { name: 'Johnny', age: 25 };
+const { userName, age }: User = obj;

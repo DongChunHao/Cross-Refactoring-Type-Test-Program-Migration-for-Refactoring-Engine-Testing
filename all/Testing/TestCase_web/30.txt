@@ -1,0 +1,9 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+export default class Example { //{Rename Field targeting class‑bound identifier Example}
+constructor(foo) {
+this.foo = foo;
+}
+}

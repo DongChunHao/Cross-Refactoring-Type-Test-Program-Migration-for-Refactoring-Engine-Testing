@@ -1,0 +1,33 @@
+' Refactoring Settings:
+' Refactoring Type: Rename (Shift+F6) VB.NET lambda parameter
+' Refactoring Target: Lambda parameters ei, fi inside LINQ Join projection lambda
+' Refactoring Scope: VB lambda parameter rename, paste from clipboard (Ctrl+V) scenario
+' IDE: Rider 2018.2 EAP RD-182.4174.36
+'
+' Refactoring Rule Expectation:
+' When renaming a VB.NET lambda parameter with Shift+F6, whether typing a new name or pasting from clipboard, the PSI parse tree should stay valid.
+' The lambda body, anonymous type With initializer, and all references to the parameter must be correctly rewritten; syntax should remain intact after commit.
+
+' Error Root Cause:
+' Observed failure:
+' 1. Renaming `ei` by Shift+F6 + Ctrl+V paste works superficially, but the rename editor’s grey highlight frame does not dismiss properly.
+' 2. Simply invoking Shift+F6 on `fi` (without even entering a new name) corrupts the lambda expression syntax.
+' 3. Undo reveals the AST/parse tree has been damaged by the rename PSI modification logic.
+'
+' Expected behavior:
+' The rename inplace editor should cleanly apply the new identifier, release the PSI node after confirmation, and a subsequent rename invocation on another lambda parameter should operate on a stable parse tree.
+'
+' Underlying cause:
+' Rider’s VB.NET rename in-place editor leaves stale PSI edit state/selection markers on the lambda syntax node after the first paste-rename operation.
+' When Shift+F6 is triggered again on a different lambda parameter, the stale editor state interferes with the VB parser/PSI visitor, corrupting the anonymous type `New With { ... }` syntax in the projection lambda, destroying the expression.
+
+' Original code snippet
+Dim result = source _
+.Join(flows,
+    Function(xModule) xModule.flowId,
+    Function(flow) flow.id,
+    Function(ei, fi) New With {ei, fi.pollId, .pollName = fi.Poll.name})
+
+' Scenario:
+' Step1: Copy text to clipboard. Shift+F6 on ei, Ctrl+V paste, Enter confirm. ei is renamed, but inlay grey frame remains.
+' Step2: Shift+F6 on fi without changing name → VB expression tree is corrupted.

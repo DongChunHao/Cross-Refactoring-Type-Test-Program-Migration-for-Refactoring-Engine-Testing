@@ -1,0 +1,27 @@
+// my.h
+#ifndef UNTITLED33_MY_H
+#define UNTITLED33_MY_H
+
+/* Refactoring Settings:
+Refactoring type: Move (Move class to header and wrap into namespace NAMES)
+Refactoring target: Move class A into my.h and wrap it inside namespace NAMES
+Refactoring scope: Class definition `class A{};`
+Refactoring rule expectation: Place the namespace NAMES and class A **inside** the header guard block (between #define and #endif)
+*/
+
+/* Error Root Cause:
+Observed failure: After moving class A into my.h with new namespace NAMES, the generated namespace and class are placed after `#endif`, outside of the header guard block.
+Expected behavior:
+#ifndef UNTITLED33_MY_H
+#define UNTITLED33_MY_H
+namespace NAMES {
+    class A{};
+}
+#endif //UNTITLED33_MY_H
+Underlying cause: The move refactoring engine incorrectly inserts namespace + class after closing #endif of header guard when target destination includes a namespace wrap; without namespace wrapping, the class is correctly placed inside the guard.
+*/
+
+#endif //UNTITLED33_MY_H
+namespace NAMES {
+class A{};
+}

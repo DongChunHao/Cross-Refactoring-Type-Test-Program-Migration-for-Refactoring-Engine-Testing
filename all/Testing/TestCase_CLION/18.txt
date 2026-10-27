@@ -1,0 +1,25 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <string>
+using namespace std;
+class Foo {
+public:
+Foo( string f, string l );
+void greet() const;
+protected:
+const string first;
+const string last;
+};
+Foo::Foo( string f, string l ) : first( move( f ) ), last( move( l ) ) { }
+void Foo::greet() const { //{Move method greet out of class Foo}
+string name = first + " " + last;
+cout << "Good day " << name << endl;
+}
+int main( int argc, char *argv[] ) {
+Foo* pFoo = new Foo( "Foo", "Bar" );
+pFoo->greet();
+delete pFoo;
+}

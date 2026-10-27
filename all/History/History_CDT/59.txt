@@ -1,0 +1,43 @@
+#define identifier_0
+float gvar_0 = 10;
+void f_0() {
+    int var_0 = 0;
+    var_0 = 0;
+}
+void f_1() {
+    int var_0 = 2;
+    #ifdef identifier_0
+        var_0 = 100;
+    #else
+        var_0 = 10;
+    #endif
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename)
+Refactoring Target: preprocessor macro `identifier_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro `identifier_0`, invoke Rename refactoring, input C reserved keyword `int` as new macro name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts reserved keyword `int` as macro name, generating `#define int`.
+Two critical problems arise:
+1. Preprocessor allows defining macro with keyword name, but every occurrence of keyword `int` in source code will be subject to macro expansion. All type specifier `int` in the code becomes subject to replacement, breaking variable declarations and producing heavy compilation errors.
+2. Additionally, inside `#ifdef int`, even if we ignore macro‑expansion side‑effects: `#ifdef` expects a macro identifier; using keyword here yields invalid preprocessor syntax.
+Refactoring completes silently without warning, producing uncompilable code.
+
+Expected behavior:
+For macro rename operation:
+1. Validate candidate name against C reserved‑keyword list. If candidate matches any keyword such as `int`, `float`, `if`, `return`, reject rename immediately and report error.
+2. Enforce standard C identifier lexical rules: allowed characters are letters, underscores, digits; first character must be letter or underscore.
+3. Even though the C preprocessor technically permits defining macros with keyword names, refactoring tool must prevent this unsafe transformation, as it will catastrophically break source‑code semantics.
+4. After passing validation, ensure all macro references inside preprocessor directives (`#ifdef`, `#ifndef`, `defined()`) are fully updated.
+
+Underlying cause:
+Macro rename refactoring does not check whether candidate new name is a C reserved keyword. While the underlying preprocessor technically supports macros named after keywords, this is an unsafe practice. CDT refactoring assumes user input is a safe macro identifier and performs no keyword filtering. The tool does not simulate macro expansion side‑effects to detect that defining a keyword‑named macro will corrupt the whole translation unit.
+*/

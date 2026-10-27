@@ -1,0 +1,19 @@
+'''
+Refactoring type: Rename Variable
+Refactoring new name: N/A
+'''
+fn foo() {
+let _ = false;
+|| false; //{Rename‑Variable target: shorthand‑closure inner expression, multi‑occurrence scenario}
+let _ = false;
+}
+
+fn main() {
+foo();
+}
+
+ 解释一下代码中 || false 的作用
+
+ 除了 Rename Variable 还有哪些常见的 refactoring 类型？
+
+ 如何确保新的测试用例能够覆盖所有的代码路径？

@@ -1,0 +1,8 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+void foo() {}
+int main() {
+foo(); //{Extract method from foo() call statement}
+}

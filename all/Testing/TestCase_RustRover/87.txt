@@ -1,0 +1,11 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+fn main() {
+fn foo() -> u64 { //{move nested foo out of main scope}
+let x = 0;
+x
+}
+let y = foo();
+}

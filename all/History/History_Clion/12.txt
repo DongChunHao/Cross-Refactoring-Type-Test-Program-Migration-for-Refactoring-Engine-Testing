@@ -1,0 +1,20 @@
+/* Refactoring Settings:
+Refactoring type: Extract Constant (C/C++ CLion)
+Refactoring target: string literal `"extract this literal into constant"` inside TEST() macro body
+Operation: Select the string literal, invoke Refactor -> Extract Constant
+Scope: Extract constant inside expanded GoogleTest TEST macro; handling of macro-expanded AST/PSI nodes, placement of new constant declaration, and transaction/commit of refactoring changes
+*/
+
+/* Error Root Cause:
+Observed failure: When extracting constant inside GoogleTest TEST() macro body, CLion briefly creates the constant but silently rolls back the refactoring, reverting to original code with no visible error message. Simple hand-written test macros do not reproduce this bug; only the complex real GoogleTest macro triggers it.
+Expected behavior: Persist the extracted constant declaration, insert it at correct scope (e.g. before TEST macro or inside test case), replace the literal with constant reference, and keep the refactored code.
+Underlying cause: The complex expansion of the GoogleTest TEST macro creates a PSI/AST structure that confuses the refactoring transaction logic. The refactoring successfully computes the edit, but the change validation/post-processing step detects an inconsistent PSI state inside macro-expanded code and automatically rolls back the entire refactoring transaction. Simple handwritten macros do not generate the same complex AST structure, so the rollback condition is not triggered.
+*/
+
+#include <gtest/gtest.h>
+
+void  f(char const*) { }
+
+TEST(repro_suite, repro_case) {
+  f("extract this literal into constant");
+}

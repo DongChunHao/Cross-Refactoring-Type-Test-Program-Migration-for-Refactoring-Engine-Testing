@@ -1,0 +1,16 @@
+```
+<?php
+class T{
+    const C =1; //invoke Push Down refactoring
+}
+class_alias("T",'C');
+class A extends C{
+    public function f()
+    {
+        echo self::f();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Push Down Members refactoring, push constant `C` from source class `T` down to all child classes.

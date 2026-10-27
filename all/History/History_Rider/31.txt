@@ -1,0 +1,57 @@
+/* Refactoring Settings:
+Refactoring Type: Extract Method
+Refactoring Target: Code block that contains / calls a local function
+IDE: Rider RS-171.4456.902
+*/
+
+/* Error Root Cause:
+Observed failure:
+When running Extract Method on a code block that uses a **local function** (defined inside the containing method), Rider’s variable/closure analysis does **not** treat the local function as a captured usage.
+Two common symptoms:
+1. Rider does not automatically add the local function as a parameter to the new extracted method.
+2. Or, it tries to move the local function out of scope, resulting in compile errors after refactoring.
+3. Or it silently produces broken code where the extracted method cannot resolve the local function.
+
+Expected behavior:
+The refactoring engine should detect references to local functions in the selected range:
+- If the local function is defined **inside the selection**: move the local function into the new extracted method (or prompt user).
+- If the local function is defined **outside the selection but used inside it**: treat it like a captured variable, pass it as a delegate parameter to the new method, or warn the user that a local function is referenced.
+
+Underlying cause:
+At this Rider version, the Extract Method PSI analysis pass only scans for local variables, parameters, and constants. It does **not** include local function symbols in the set of captured symbols. Local function usages are ignored during parameter collection, leading to unresolved references in the generated method.
+*/
+
+// Minimal reproduction example
+void Outer()
+{
+    int LocalFunc(int x) => x + 1; // local function
+
+    // Selection starts here
+    var a = LocalFunc(10);
+    Console.WriteLine(a);
+    // Selection ends here
+}
+
+// Actual bad output (Rider does not add LocalFunc as a parameter)
+void Outer()
+{
+    int LocalFunc(int x) => x + 1;
+    NewMethod(); // Compile error: NewMethod cannot see LocalFunc
+}
+
+void NewMethod()
+{
+    var a = LocalFunc(10);
+    Console.WriteLine(a);
+}
+
+// Expected: Rider should detect LocalFunc usage and either:
+// Option A: Promote delegate as parameter
+void NewMethod(Func<int, int> localFunc)
+{
+    var a = localFunc(10);
+    Console.WriteLine(a);
+}
+// Call: NewMethod(LocalFunc);
+
+// Option B: Warn user that selection references an out-of-scope local function

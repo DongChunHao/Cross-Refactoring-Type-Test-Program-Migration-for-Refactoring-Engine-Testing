@@ -1,0 +1,29 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Invalid partial code fragments
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select incomplete syntax fragments and execute Refactor -> Extract Method. Two test cases:
+1. Select "1 +" inside return 1 + 2;
+2. Select "asyncFunction();" after await keyword in return await asyncFunction();
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The Extract Method refactoring permits selection of syntactically invalid or incomplete code fragments and attempts extraction.
+Expected behavior: The refactoring engine should validate that the selected range forms a complete, standalone expression or statement. It should reject partial, syntax-broken selections and disallow Extract Method on such ranges.
+Underlying cause: The precondition checker for Extract Method lacks syntax validity and range completeness verification; it does not verify whether the selected AST node is a full expression or statement before enabling the refactoring action.
+*/
+
+// Complete compilable test code
+function foo(){
+    return 1 + 2;
+}
+
+async function foo() {
+    return await asyncFunction();
+}
+
+async function asyncFunction() {
+    return Promise.resolve(0);
+}

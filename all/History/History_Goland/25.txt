@@ -1,0 +1,45 @@
+package main
+
+import (
+	"fmt"
+)
+
+/* Refactoring Settings:
+Refactoring type: Implement Interface (Generate Stub Methods)
+Refactoring target: Implement composite interface `a` on type `b`
+Refactoring scope: Type `b`, composite interface `a` which embeds `fmt.Stringer` and declares `neverCallIt()`
+Refactoring rule: Generate missing methods directly on the target receiver type `b`, not on the embedded field type `aPartialImpl`.
+*/
+
+/* Error Root Cause:
+Observed failure: When invoking "Implement interface" on type `b`, GoLand generates the missing `String() string` method on the embedded `aPartialImpl` type instead of on `b`.
+Expected behavior: The stub `String() string` should be created with receiver `b`, since `b` is the type selected for interface implementation.
+Underlying cause: The refactoring implementation prioritizes the embedded field type `aPartialImpl` for method stub generation, incorrectly resolving the receiver to the embedded type rather than the explicitly selected outer type `b`.
+*/
+
+type a interface {
+	fmt.Stringer
+	neverCallIt()
+}
+
+type aPartialImpl struct{}
+
+func (aPartialImpl) neverCallIt() {}
+
+type b struct {
+	aPartialImpl
+}
+
+// Bad generated stub produced by GoLand (attached to embedded type)
+func (a aPartialImpl) String() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+// Expected correct generated stub (attached to target type b)
+func (b b) String() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func main() {}

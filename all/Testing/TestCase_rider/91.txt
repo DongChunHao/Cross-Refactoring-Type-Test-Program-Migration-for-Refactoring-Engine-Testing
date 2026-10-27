@@ -1,0 +1,19 @@
+'''
+Refactoring type: Pull Up Method
+Refactoring new name: N/A
+'''
+using System;
+
+namespace CaseOnlyRenameRepro
+{
+public abstract class BaseType {}
+
+public class Foooo : BaseType
+{
+public void ExecuteLogic() //{Pull Up Method: target method for Windows case‑only file‑rename solution‑explorer‑disappear bug reproduction}
+{
+Console.WriteLine("demo");
+}
+}
+
+}

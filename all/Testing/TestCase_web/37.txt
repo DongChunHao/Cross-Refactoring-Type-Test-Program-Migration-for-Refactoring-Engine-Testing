@@ -1,0 +1,19 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+type State = {
+entities: Record<string, { children: string[] }>;
+};
+declare const entityAdapter: {
+updateOne: <T>(opts: { id: string; changes: Partial<T> }, state: T) => T;
+};
+const updateParent = (state: State, parentName: string, name: string): State => {
+const parent = state.entities[parentName];
+return entityAdapter.updateOne({ //{Extract Method target return statement inside arrow‑function updateParent}
+id: parentName,
+changes: {
+children: parent.children.concat(name)
+}
+}, state);
+}

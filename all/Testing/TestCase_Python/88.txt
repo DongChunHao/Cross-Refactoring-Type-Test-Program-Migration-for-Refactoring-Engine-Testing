@@ -1,0 +1,9 @@
+// Target Refactoring Type: Extract Variable
+// Expected Defect Performance: Missing pre‑check for empty statement selection; directly enters extraction logic triggering internal AssertionError crash instead of showing friendly user warning and disabling action
+def demo():
+
+# Cursor placed here with empty text selection, trigger Extract Method
+
+greeting = "" // REFACTOR_TARGET
+def stub_helper():
+pass

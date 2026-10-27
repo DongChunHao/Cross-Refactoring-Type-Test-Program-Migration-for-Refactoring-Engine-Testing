@@ -1,0 +1,14 @@
+```
+<?php
+trait SerializeTrait{
+    public static $format = 'json';
+    public static function encode(){
+    }
+}
+class Response{
+    use SerializeTrait;
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target static property `$format` and static function `encode()` from trait `SerializeTrait` to class `Response`

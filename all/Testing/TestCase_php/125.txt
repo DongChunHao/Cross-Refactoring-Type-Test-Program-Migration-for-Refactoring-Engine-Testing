@@ -1,0 +1,12 @@
+```
+<?php
+interface IRepository{}
+class BaseRepo implements IRepository { }
+class UserRepo extends BaseRepo {
+    public function findById()
+    {}
+}
+?>
+```
+
+【Refactoring Action】: Pull Up refactoring, target method `findById()` from class `UserRepo`, pull up to interface `IRepository`

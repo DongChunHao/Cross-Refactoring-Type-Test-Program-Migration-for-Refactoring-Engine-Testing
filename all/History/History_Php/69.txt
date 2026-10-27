@@ -1,0 +1,22 @@
+<?php
+function fn($reqParam, $optParam = null, &...$params) {
+    var_dump($reqParam, $optParam, $params);
+}
+?>
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: function fn, remove reference & from variadic parameter &...$params
+Refactoring rule: The validator for parameter ordering must respect PHP syntax rules: optional parameters may be followed by a trailing variadic parameter. The error "Required parameters are not permitted after optional parameters" should not be triggered for variadic parameters.
+*/
+
+/* Error Root Cause:
+Observed failure:
+The function signature `$reqParam, $optParam = null, ...$params` is valid PHP: optional parameter, then trailing variadic. When removing the `&` from `&...$params` via Change Signature, the dialog incorrectly shows the warning "Required parameters are not permitted after optional parameters".
+The validation logic treats the variadic parameter as an ordinary required parameter and applies the old rule, ignoring the special exception for variadics.
+
+Expected behavior:
+Parameter order validation should skip this error when the parameter after an optional is a variadic (`...`). Keep the warning for regular required parameters after optional ones, but allow `optional = value, ...$var`.
+
+Underlying cause:
+The Change Signature parameter validator does not have an exception clause for trailing variadic parameters. It runs the same "no required after optional" check for all parameter kinds.
+*/

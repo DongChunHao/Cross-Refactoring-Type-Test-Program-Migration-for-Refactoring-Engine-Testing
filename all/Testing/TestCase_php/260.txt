@@ -1,0 +1,13 @@
+```
+<?php
+class A{ }
+class B extends A{
+    public function f(): self
+    {
+        return new static();
+    }
+}
+?>
+```
+
+【Refactoring Action】: Pull Up Members refactoring, pull method `f()` from subclass `B` up to parent class `A`.

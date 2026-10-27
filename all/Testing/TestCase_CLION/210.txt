@@ -1,0 +1,24 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <vector>
+#include <iostream>
+class C {
+public:
+void f();
+protected:
+std::vector<int> v = {1, 2};
+};
+struct Wrapper
+{
+static void wrapper_f(C* obj) { //{Move f logic into static wrapper member}
+for (auto i : obj->v) {
+std::cout << i << "\n";
+}
+obj->v.clear();
+}
+};
+void C::f() {
+Wrapper::wrapper_f(this);
+}

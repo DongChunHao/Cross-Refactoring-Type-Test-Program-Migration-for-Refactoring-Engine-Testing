@@ -1,0 +1,20 @@
+/* Refactoring Settings:
+Refactoring Type: Rename local variable (Rider C# rename refactoring)
+Refactoring Target: A local variable where the identifier text is selected via double‑click before invoking Refactor->Rename from context menu
+Refactoring Scope: Local variable and its usages inside the containing method
+Refactoring Rule Expectation: When a local variable name is selected by double‑click, invoking rename should keep the original identifier text intact in the rename input box, allowing the user to type the new name, and correctly apply the rename to all usages.
+IDE: Rider RD-172.4144.1459, macOS 10.13.1
+*/
+
+/* Error Root Cause:
+Observed failure: If the user double‑clicks to select the local variable’s identifier text and then opens the right‑click Refactor→Rename menu, the prefilled value inside the rename dialog text box becomes mangled/corrupted. The rest of the rename logic (finding and updating variable usages) works correctly once a new name is entered. Right‑clicking the variable without preselecting the name does not trigger this mangling.
+Expected behavior: Double‑click selection of the variable identifier should populate the rename dialog with the clean, original variable name.
+Underlying cause: The editor selection range handling for double‑click word selection interacts incorrectly with the rename action’s PSI element extraction logic. The action reads the selected text instead of cleanly fetching the identifier from the PSI node, resulting in corrupted text being preloaded into the rename input field.
+*/
+
+public void ExampleMethod()
+{
+    // Double‑click "localValue", right‑click → Refactor->Rename triggers the bug
+    var localValue = 42;
+    Console.WriteLine(localValue);
+}

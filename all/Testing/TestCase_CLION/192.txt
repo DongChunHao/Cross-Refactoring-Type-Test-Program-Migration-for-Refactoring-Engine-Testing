@@ -1,0 +1,26 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#ifndef _*ShapeStateImpl_H*
+#define _*ShapeStateImpl_H*
+#include <stdlib.h>
+class ShapeStateImpl {
+public:
+ShapeStateImpl(double* currentPoints, size_t numberOfPoints);
+virtual ~ShapeStateImpl();
+private:
+size_t _pointCount;
+double *_pointsPosition;
+};
+struct Wrapper
+{
+static void wrapper_dtor(ShapeStateImpl* obj) { //{Move destructor logic into static wrapper member}
+free(obj->_pointsPosition);
+}
+};
+inline ShapeStateImpl::~ShapeStateImpl()
+{
+Wrapper::wrapper_dtor(this);
+}
+#endif //_*ShapeStateImpl_H*

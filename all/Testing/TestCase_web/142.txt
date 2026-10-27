@@ -1,0 +1,18 @@
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper simulating context for repeated extract‑superclass on existing subclass}
+class AccountingDepartment {
+name;
+printName() {
+console.log("Department name: " + this.name);
+}
+printMeeting() {
+console.log("The Accounting Department meets each Monday at 10am.");
+}
+generateReports() {
+console.log("Generating accounting reports...");
+}
+}
+}

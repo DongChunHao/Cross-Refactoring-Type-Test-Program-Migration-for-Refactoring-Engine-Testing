@@ -1,0 +1,27 @@
+/* Refactoring Settings:
+Refactoring type: Move function definition to source file (CLion C++)
+Refactoring target: virtual member function `test(int testval)` inside class TestClass
+Operation: Invoke "Move function definition to source file" via Alt+Enter intention action
+Scope: C++ grammar rule: `virtual` keyword only appears in class declaration (header), must NOT be present in out-of-line source (.cpp) definition
+*/
+
+/* Error Root Cause:
+Observed failure:
+After moving definition out of class to source file, generated signature contains `virtual` keyword:
+`int virtual TestClass::test(int testval) { ... }`
+This is invalid C++ syntax.
+
+Expected behavior:
+The .cpp definition should omit `virtual`, produce:
+`int TestClass::test(int testval) { ... }`
+
+Underlying cause:
+The refactoring engine copies all function specifiers naively from the class declaration to the out-of-line definition. It does not implement C++ grammar knowledge that `virtual` is only allowed inside the class declaration and must be stripped from the source file definition.
+*/
+
+class TestClass {
+  virtual int test(int testval) {
+    /* ... */
+    return 0;
+  }
+};

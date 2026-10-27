@@ -1,0 +1,8 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+type Mx<T> = T[]; //{Move Method target generic type‑alias definition for array‑notation substitution bug}
+interface Tx {
+mx: Mx<T>;
+}

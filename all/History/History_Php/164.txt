@@ -1,0 +1,38 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Move Class
+Refactoring target: global namespace class B
+Operation: Move class B from global namespace into namespace N
+Scope: Rewriting references to global-namespace functions, constants and classes when moving a type into a named namespace
+*/
+
+/* Error Root Cause:
+Observed failure: After moving global class B into namespace N, `echo B;` and `echo d();` inside method f() incorrectly resolve to namespace N's constant B and function d(), instead of the original global constant B and global function d(). The class reference A2 gets a `use A2;` import correctly, but constant and function references are not qualified with the global namespace prefix `\`.
+Expected behavior: Rewrite them to `echo \B;` and `echo \d();` to keep pointing to the original global constant and global function.
+Underlying cause: Move class reference rewriting logic only handles class type imports via use statements; it does not add global namespace qualifiers for constant and function references that were originally in the global scope, so after entering the new namespace they bind to local namespace declarations with identical names.
+*/
+namespace  {
+    class A2
+    {
+    }
+
+    function d(){
+        return 'a';
+    }
+
+    const B = 3;
+
+    class B
+    {
+        function f(A2 $a2){
+            echo B;
+            echo d();
+        }
+    }
+}
+
+namespace N{
+    const B = 3;
+    function d(){}
+}
+?>

@@ -1,0 +1,14 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: N/A
+'''
+package format
+import (
+"[github.com/fatih/color](https://github.com/fatih/color)"
+)
+
+func a() { // Rename method a to printCyanText
+cyan := color.New(color.FgHiCyan).SprintfFunc()
+cyan("x")
+}
+func main(){}

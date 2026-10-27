@@ -1,0 +1,7 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+let map2 = new Map([ [ 'a', 1 ], [ 'b', 2 ], [ 'c', 3 ] ]);
+let obj222 = Object.fromEntries(map2);
+console.log(obj222) //{Move Method target usage site consuming variable assigned from d‑ts‑only function}

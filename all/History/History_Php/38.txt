@@ -1,0 +1,28 @@
+<?php
+interface I{
+    function __construct();
+}
+class B implements I{
+    function __construct()
+    {
+    }
+}
+new B(1);
+?>
+/* Refactoring Settings:
+Refactoring type: Change Signature refactoring
+Refactoring target: __construct method declared in interface I
+Refactoring rule: PHP constructor `__construct` is a special magic method. It cannot be renamed. Even when an interface declares a constructor signature, Change Signature must block renaming the constructor name, warn that constructor renaming is invalid, and recognize instantiation expressions like `new B(1)` as relevant usages.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Change Signature allows modifying the name of `__construct` from the interface I. It propagates the rename to the implementing class B silently, without warning. This breaks `new B(1);` because PHP no longer treats the renamed method as the class constructor.
+Rename refactoring correctly detects the instantiation usage and prevents this invalid operation, but Change Signature lacks the same guard.
+
+Expected behavior:
+When the target method is `__construct`, disable the name edit field in the Change Signature dialog or show an explicit warning: constructors cannot be renamed. Do not propagate a name change to implementing classes.
+
+Underlying cause:
+Change Signature’s validation does not include a special case for the PHP constructor magic method. It treats `__construct` like a regular interface method and permits name modification, ignoring that PHP’s constructor identity is tied to the reserved name `__construct` rather than interface method signatures.
+*/

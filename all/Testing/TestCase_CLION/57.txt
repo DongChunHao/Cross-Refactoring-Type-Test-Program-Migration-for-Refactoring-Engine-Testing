@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: runMainLogic
+'''
+struct IncorrectReturnType {};
+struct CorrectReturnType {
+CorrectReturnType() {}
+};
+IncorrectReturnType mainFunction() { //{Rename method mainFunction to runMainLogic}
+ {
+return CorrectReturnType();
+};
+}

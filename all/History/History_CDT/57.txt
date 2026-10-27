@@ -1,0 +1,37 @@
+#define identifier_0
+float gvar_0 = -1;
+void f_0() {
+    int var_0 = -1;
+    var_0 = 100;
+}
+float f_1(float var_0) {
+    return gvar_0;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Rename refactoring (preprocessor macro rename)
+Refactoring Target: preprocessor macro `identifier_0`
+Refactoring Scope: current translation unit
+IDE: Eclipse CDT
+Operation steps: Select macro `identifier_0`, invoke Rename refactoring, input string `&identifier_0` as new macro name.
+*/
+
+/*
+/* Error Root Cause: */
+Observed failure:
+CDT accepts candidate name `&identifier_0` containing ampersand operator `&` and produces `#define &identifier_0`.
+C preprocessor grammar enforces that macro names must be valid C identifiers. The `&` character is not allowed inside an identifier. The generated `#define` line is illegal preprocessor syntax and triggers compilation error.
+No validation is performed inside refactoring workflow; invalid source code is written to disk without warning.
+
+Expected behavior:
+For macro rename, perform strict lexical validation of candidate name before modifying source:
+1. A valid macro name must conform to C identifier rules: first character is letter or underscore; subsequent characters are letters, underscores, digits only.
+2. Reject any input containing special symbols such as `&`, `*`, `#`, `+`, `-`, whitespace.
+3. Reject reserved keywords and numeric‑starting literals.
+4. When validation fails, abort refactoring and present an error message to the user.
+The refactoring tool shall not delegate grammar validation entirely to the C compiler.
+
+Underlying cause:
+Macro rename does not apply identifier‑lexical checking on user‑provided input string. Raw input text is directly emitted into the `#define` directive. CDT assumes the user always provides a syntactically valid macro name and performs no early filtering of special non‑identifier characters.
+*/

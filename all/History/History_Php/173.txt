@@ -1,0 +1,18 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Extract Method
+Refactoring target: RHS expression `"foo"` in assignment `$a = "foo";`, caret placed on variable $a
+Operation: Invoke Extract Method to extract the right-hand side value
+Scope: Selection / caret placement logic for assignment statements, distinguishing LHS and RHS
+*/
+
+/* Error Root Cause:
+Observed limitation: When the caret is on the left-hand side variable `$a` of an assignment statement, Extract Method does not automatically select and extract only the right-hand side expression `"foo"`. It may try to extract the whole assignment statement instead, or fail to isolate the value expression.
+Expected behavior: When caret is on LHS variable of an assignment and user triggers Extract Method, offer extracting the right-hand side expression into a new function, replace RHS with a call to that function, and return the value (as shown in the sample: $a = getStr();).
+Underlying cause: The Extract Method PSI rule treats the full assignment as the primary node when caret is on LHS; it does not have dedicated logic to infer the user’s intent of lifting only the assigned value expression into a separate method.
+*/
+function f($a){
+    $a = "foo";
+    echo $a;
+}
+?>

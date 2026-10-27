@@ -1,0 +1,6 @@
+'''
+Refactoring type: Rename Field
+Refactoring new name: N/A
+'''
+document.body.style.display = "block";
+var elvisLives = (Math.PI > 4) ? "Да" : "Нет"; //{Rename Field target string‑literal inner content, partial‑inside‑quote‑selection triggers AST‑parent‑node‑destruction risk}

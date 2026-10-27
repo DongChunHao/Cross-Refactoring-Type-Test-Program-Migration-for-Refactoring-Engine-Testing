@@ -1,0 +1,28 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Method
+Refactoring Target: Expression `event.target.value` inside `handleDeleteSubmit`
+Refactoring Scope: TypeScript file
+Trigger Operation: Select `event.target.value`, invoke Extract Method
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Extract Method only replaces the single selected occurrence of `event.target.value` and does not offer a prompt to replace all four identical occurrences in the function. In contrast, Extract Variable / Extract Field correctly provides the “replace all” option for the same expression.
+Expected behavior: Extract Method should detect all semantically equivalent occurrences of the selected expression within the target scope, present a prompt to replace all matches, and substitute every instance with the new method call `this.getValue(event)`.
+Underlying cause: The “replace all occurrences” collection logic was implemented for Extract Variable/Field but missing for Extract Method. The refactoring treats method extraction as single-site only, even when multiple identical expression nodes exist.
+*/
+
+// Complete compilable test code
+class Foo {
+  keyList = [];
+  handleDeleteSubmit(event) {
+    if (/^[a-zA-Z]+$/.test(event.target.value) && this.keyList.indexOf(event.target.value) !== -1) {
+      let index = this.keyList.indexOf(event.target.value);
+      let val = event.target.value;
+      this.keyList.splice(index, 1);
+    } else {
+      alert("Non-Existent Key Value");
+    }
+  }
+}

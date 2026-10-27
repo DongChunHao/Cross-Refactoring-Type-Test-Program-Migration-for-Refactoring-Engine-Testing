@@ -1,0 +1,35 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Extract Superclass
+Refactoring Target: Class `AccountingDepartment` that already extends another class
+Refactoring Scope: TypeScript file
+Trigger Operation: Run Extract Superclass a second time on the subclass, selecting remaining members
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure:
+Case 1: When reusing the existing superclass name (Department) on the second extraction, the IDE creates a duplicate `class Department {}` declaration instead of appending the selected members into the already existing superclass.
+Case 2: When entering a different new name (Department2), the refactoring generates `extends Department, Department2`, which is invalid JavaScript/TypeScript, since JS does not support multiple class inheritance.
+
+Expected behavior:
+1. If the specified superclass already exists and is the current parent of the subclass, append the selected fields/methods into that existing superclass instead of creating a duplicate class definition.
+2. Prevent the user from creating a second separate superclass, because a class cannot extend two base classes; show an error/warning instead of emitting comma-separated extends clauses.
+
+Underlying cause:
+The Extract Superclass logic treats every run as “create a brand-new superclass from scratch”, without checking whether the chosen name already exists as the current parent class. It also lacks validation that JavaScript classes have single inheritance only, allowing generation of invalid multiple-extends syntax.
+*/
+
+// Original code
+class AccountingDepartment {
+    name;
+    printName() {
+        console.log("Department name: " + this.name);
+    }
+    printMeeting() {
+        console.log("The Accounting Department meets each Monday at 10am.");
+    }
+    generateReports() {
+        console.log("Generating accounting reports...");
+    }
+}

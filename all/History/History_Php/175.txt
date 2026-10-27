@@ -1,0 +1,29 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: New proposed refactoring: Convert between local variable and object field
+Refactoring target: Local $user inside Message::tell(), or instance field $this->content
+Operation: Convert local variable to class instance field, or convert instance field usage to local variable
+Scope: Distinction between local variable symbol and instance property symbol, limitations of standard Rename (Shift+F6)
+*/
+
+/* Error Root Cause:
+Observed limitation: Standard Rename (Shift+F6) cannot turn a local variable $user into $this->user, nor turn $this->content usages into a local $content variable. Rename only changes the name of the same symbol; it cannot change the symbol’s kind (local variable ↔ instance property).
+Expected behavior (new refactoring): Provide a dedicated refactoring action to lift a local variable into an instance field (add property declaration, replace local assignments/reads with $this->prop), or to introduce a local variable from repeated property access (add local variable, replace property reads with the local).
+Underlying cause: Rename refactoring operates on a single symbol’s identifier; local variable and class property are two separate symbols in the PSI model, so plain rename cannot convert between them. This is a missing dedicated refactoring, not a rename bug.
+*/
+class Message {
+     private $content = '';
+     function __construct($content = '') {
+        $this->content = $content;
+    }
+     function tell($user = null) {
+        $user = $user ? $user : 'all';
+        echo "Hi, $user!" . PHP_EOL;
+        if (!empty($this->content)) {
+            echo "There is a message for you: {$this->content}";
+        } else {
+            echo "Sorry, no messages for you...";
+        }
+    }
+}
+?>

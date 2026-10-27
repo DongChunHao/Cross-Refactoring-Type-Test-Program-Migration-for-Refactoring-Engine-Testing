@@ -1,0 +1,18 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+use std::sync::Mutex;
+fn foo(x: u32, y: u32) -> u32 { x + y }
+fn use_mutex(m: &Mutex<u32>) -> u32 {
+let mut mx = m.lock().unwrap();
+*mx + 1
+}
+mod target_mod {
+pub fn wrapper(a: u32, b: u32) -> u32 { a + b } //Move Method: move wrapper consuming two drop‑sensitive argument calls
+}
+fn main() {
+let m = Mutex::new(0);
+let bar = target_mod::wrapper(use_mutex(&m), use_mutex(&m)); //Move Method: target dual argument calls with drop‑sensitive temporaries
+println!("{}", bar);
+}

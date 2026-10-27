@@ -1,0 +1,32 @@
+```
+<?php
+class ServiceX {
+    public function run() {}
+}
+class ServiceY {
+    public function run() {}
+}
+class Container
+{
+    private ServiceX $xSvc;
+    private ServiceY $ySvc;
+    public function boot()
+    {
+        $this->xSvc = $this->resolve(new ServiceX());
+        $this->ySvc = $this->resolve(new ServiceY());
+        $this->xSvc->run();
+        $this->ySvc->run();
+    }
+    /**
+     * @param ServiceX|ServiceY $service
+     * @return ServiceX|ServiceY
+     */
+    private function resolve($service)
+    {
+        return $service;
+    }
+}
+?>
+```
+
+【Refactoring Action】: Rename method `ServiceX::run()` to `runX`.

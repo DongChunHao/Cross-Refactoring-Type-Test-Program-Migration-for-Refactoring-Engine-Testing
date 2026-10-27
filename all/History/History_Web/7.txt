@@ -1,0 +1,26 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Change Signature
+Refactoring Target: Constructor of default-exported ES2015 class Foo
+Refactoring Scope: Cross-file between foo.js and bar.js
+Trigger Operation: Modify the parameter order of Foo's constructor using Change Signature refactoring in foo.js.
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: After changing the constructor signature and swapping the two parameters, the call site in bar.js becomes new constructor(arg2, arg1) which uses the identifier "constructor" incorrectly.
+Expected behavior: The call site should be updated to new Bar(arg2, arg1), preserving the imported class identifier Bar while adjusting argument order.
+Underlying cause: The Change Signature refactoring logic mishandles default-exported ES6 class constructors and cross-file import aliases; it incorrectly replaces the class name at instantiation site with the literal identifier "constructor".
+*/
+
+// foo.js: Complete compilable ES2015 class with default export
+export default class Foo {
+    constructor(arg1, arg2) {
+        this.arg1 = arg1;
+        this.arg2 = arg2;
+    }
+}
+
+// bar.js: Complete compilable importing and instantiation code
+import Bar from './foo';
+const instance = new Bar(arg1, arg2);

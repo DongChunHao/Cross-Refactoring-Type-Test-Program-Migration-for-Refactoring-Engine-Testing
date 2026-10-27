@@ -1,0 +1,37 @@
+```
+<?php
+// SomeClass.php
+class SomeClass {
+    /**
+     * @return string
+     */
+    public static function doit() {
+    }
+}
+?>
+```
+
+```
+<?php
+// template.php
+<?= $somevar ?> <? echo SomeClass::doit(); ?>
+?>
+```
+
+/* Refactoring Settings:
+Refactoring type: Move Class refactoring, move SomeClass into namespace Foobar
+Refactoring rule: When updating PHP template files that contain short echo tags `<?= ... ?>`, the refactoring must not inject `use` statements inside the `<?= ... ?>` expression block. Use statements must be placed as top-level PHP statements, outside short-echo tags.
+*/
+
+/* Error Root Cause:
+Observed failure:
+Moving SomeClass to namespace Foobar triggers updates in template.php. The refactoring incorrectly inserts `use Foobar\SomeClass;` inside the existing `<?= $somevar ?>` tag, producing invalid PHP:
+`<?= use Foobar\SomeClass;  $somevar ?>`
+`use` is a top-level declaration and cannot live inside a short echo `<?= ... ?>`. The resulting file is parse-broken.
+
+Expected behavior:
+Locate a valid top-level PHP opening tag (`<?php` / `<?`) in the template file to insert the `use Foobar\SomeClass;` import, leaving the original `<?= $somevar ?>` expression untouched. If no suitable top-level PHP block exists, either prompt the user or skip auto-adding the use statement with a notification. Do not inject namespace imports into short echo tag contents.
+
+Underlying cause:
+The reference rewriter treats all `<?`-style PHP opening nodes uniformly and picks the nearest PHP tag to the usage for inserting the use clause, without distinguishing short echo `<?=` from regular `<?php`. It does not check whether the target PHP node is an echo-expression that cannot contain declarations.
+*/

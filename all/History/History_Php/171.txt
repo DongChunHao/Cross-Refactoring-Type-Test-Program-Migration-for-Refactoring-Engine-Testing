@@ -1,0 +1,22 @@
+<?php
+/* Refactoring Settings:
+Refactoring type: Extract Method (PHP)
+Refactoring target: the whole anonymous class creation expression `new class { ... }` inside function f($a)
+Operation: Select the anonymous class definition and trigger Extract Method
+Scope: Handling of anonymous class expressions and capture of surrounding variable context
+*/
+
+/* Error Root Cause:
+Observed failure: After extraction, original code becomes `$this->extracted();`. The extracted anonymous class method body is lost. Using `$this->` is invalid here because `f` is a plain global function with no `$this` available.
+Expected behavior: Generate a regular function returning the anonymous class instance, e.g. `extracted($a) { return new class { public function f() { echo $a; } }; }`, and replace original code with `extracted($a);`.
+Underlying cause: Extract Method logic incorrectly assumes the extraction happens inside a class instance method, so it emits `$this->` call syntax. It also mishandles the anonymous class PSI node, discarding the class body instead of wrapping the whole expression as the return value of the new extracted function.
+*/
+function f($a) {
+    new class {
+        public function f()
+        {
+            echo "a";
+        }
+    };
+}
+?>

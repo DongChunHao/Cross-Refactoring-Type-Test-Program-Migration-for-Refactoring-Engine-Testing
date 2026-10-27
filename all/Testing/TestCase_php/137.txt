@@ -1,0 +1,15 @@
+```
+<?php
+trait PriceCalcTrait{
+    public static function computeTax(){
+    }
+}
+class BaseProduct{
+    use PriceCalcTrait;
+}
+class DigitalProduct extends BaseProduct{
+}
+?>
+```
+
+【Refactoring Action】: Move Static Member refactoring, target static function `computeTax()` from trait `PriceCalcTrait` to class `DigitalProduct`.

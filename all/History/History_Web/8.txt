@@ -1,0 +1,42 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Function
+Refactoring Target: Method toInline(id) in class Test; function f2222(j)
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Select the call site of target function/method, execute Refactor -> Inline Function. Two test scenarios:
+1. Inline this.toInline(id) inside Test.main(id)
+2. Inline f2222(ii) inside testInline(), choose "inline and remove" option
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: When inlining a function/method whose return expression carries side effects, the refactoring engine discards the returned expression entirely and deletes the call, which removes side-effect logic and alters program behavior.
+Expected behavior: The engine must detect side effects in the returned expression. If side effects exist, retain the inlined expression statement even when the return value is unused. Only when the returned expression is proven side-effect-free can the call be safely eliminated under "inline and remove".
+Underlying cause: The inline function refactoring does not perform side-effect analysis on the return value expression; it uniformly discards the whole call when the return value is unused, regardless of whether the expression has side effects.
+*/
+
+// Complete compilable test code
+class Test {
+    deleteOp(param) {
+        localStorage.setItem(param, null);
+    }
+
+    toInline(id) {
+        console.log('deleting item by id ' + id)
+        return this.deleteOp(id);
+    }
+
+    main(id) {
+        this.toInline(id);
+        this.setState({obj: null});
+    };
+}
+
+function f2222(j) {
+    return j * 2;
+}
+
+function testInline() {
+    var ii = 2;
+    f2222(ii);
+}

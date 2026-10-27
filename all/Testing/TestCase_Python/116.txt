@@ -1,0 +1,12 @@
+// Target Refactoring Type: Change Method
+// Expected Defect Performance: Inheritance‑resolution logic disregards Python MRO for multiple‑inheritance; naively traverses base‑class list and picks wrong ancestor method instead of actual runtime super() target
+class A(object):
+def m(self):
+print(1)
+class B():
+def m(self):
+print(2)
+class C(B, A):
+def m(self): // REFACTOR_TARGET
+super().m()
+print(3)

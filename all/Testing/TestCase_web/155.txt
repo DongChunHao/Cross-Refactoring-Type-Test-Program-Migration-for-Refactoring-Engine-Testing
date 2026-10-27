@@ -1,0 +1,47 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+// @flow
+import React from "react";
+import { Log } from "../logs";
+function LogRow(props: { log: Log }) {
+return ( //{Extract Method target parenthesized JSX return triggering spurious‑fragment‑wrapper defect}
+
+        <tr>
+<td>{props.log.getMessage()}</td>
+</tr>
+);
+}
+export default LogRow;
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+// @flow
+import React from "react";
+import { Log } from "../logs";
+function LogRow(props: { log: Log }) {
+return (
+<tr>
+<td>{props.log.getMessage()}</td>
+</tr>
+); //{Move Method target parenthesized‑JSX return statement for introduce‑variable fragment‑insertion bug}
+}
+export default LogRow;
+'''
+Refactoring type: Change Method
+Refactoring new name: N/A
+'''
+function wrapper() { //{Change Method target wrapper containing parenthesized JSX return expression reproduction case}
+// @flow
+import React from "react";
+function LogRow(props) {
+return (
+<tr>
+<td>{props.log.getMessage()}</td>
+</tr>
+);
+}
+}
+'''

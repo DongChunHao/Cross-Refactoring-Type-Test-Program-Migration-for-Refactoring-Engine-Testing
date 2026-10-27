@@ -1,0 +1,29 @@
+package main
+
+import "fmt"
+
+/* Refactoring Settings:
+Refactoring type: Extract Function / Extract Method
+Refactoring target: Extract the call `fWithVariadic("The beginning of the alphabet is %s %s %s", "a", "b", "c")` inside main()
+Refactoring scope: Full variadic function call site with string format argument plus multiple variadic string arguments
+Refactoring rule: Preserve variadic parameter syntax and correctly handle expansion `a...` when extracting calls to variadic functions.
+*/
+
+/* Error Root Cause:
+Observed failure: When extracting the variadic function call `fWithVariadic(formatStr, "a", "b", "c")`, the refactoring engine may mishandle the variadic slice expansion syntax, incorrectly generating invalid code for the extracted function parameters or the call site, such as dropping `...` or producing wrong argument forwarding.
+Expected behavior: The extracted helper function either accepts the same variadic signature and forwards arguments with `a...`, or captures the static arguments as individual parameters while keeping valid Go variadic calling syntax.
+Underlying cause: The refactoring engine's argument capture logic for variadic function calls does not properly distinguish between discrete variadic arguments at the call site and a pre-existing slice variable that requires `...` expansion.
+*/
+
+func main() {
+	fWithVariadic(
+		"The beginning of the alphabet is %s %s %s",
+		"a",
+		"b",
+		"c",
+	)
+}
+
+func fWithVariadic(format string, a ...interface{}) {
+	fmt.Printf(format, a...)
+}

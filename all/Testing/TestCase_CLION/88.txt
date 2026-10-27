@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: computeReturn
+'''
+class TestClass {
+public:
+virtual int test(int testval) {
+return computeReturn(testval);
+}
+private:
+int computeReturn(int testval) { //{Extract method for return computation}
+return 0;
+}
+};

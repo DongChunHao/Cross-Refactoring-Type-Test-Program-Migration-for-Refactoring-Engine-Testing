@@ -1,0 +1,19 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Intention - Split variable declaration and initializer
+Refactoring Target: `var p` inside the head of a `for…of` loop
+Refactoring Scope: JavaScript file
+Trigger Operation: Apply "Split variable declaration and initializer" intention on the loop variable `var p` in `for (var p of people)`
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: Applying the intention produces invalid syntax `for (var p; of people)`. The refactoring incorrectly leaves the `var` keyword inside the for-loop header and corrupts the `for...of` syntax, instead of lifting the variable declaration outside the loop.
+Expected behavior: Lift `var p` out of the loop header: `var p; for (p of people) { ... }`
+Underlying cause: The split-declaration logic was written for classic `for(init;cond;inc)` loops and does not have special handling for `for…of` / `for…in` loop header syntax. It naïvely inserts a semicolon after the variable inside the parentheses, breaking the `of` keyword.
+*/
+
+// Original code
+for (var p of people) {
+    document.write(p.name);
+}

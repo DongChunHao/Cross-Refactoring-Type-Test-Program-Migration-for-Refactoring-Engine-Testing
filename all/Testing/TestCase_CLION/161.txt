@@ -1,0 +1,19 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: assignXField
+'''
+#include <stdlib.h>
+struct test {
+int x;
+};
+void assignXField(struct test* t) { //{Extract method assignXField from init_test}
+t->x = 5;
+}
+void init_test(struct test* t) {
+assignXField(t);
+}
+int main() {
+void* v = malloc(sizeof(struct test));
+init_test(v);
+return 0;
+}

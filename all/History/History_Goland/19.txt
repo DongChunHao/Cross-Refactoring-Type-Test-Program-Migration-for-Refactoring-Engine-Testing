@@ -1,0 +1,50 @@
+package main
+
+/* Refactoring Settings:
+Refactoring type: Change Signature
+Refactoring target: Function `foo()` with return signature `(int, string)`
+Refactoring scope: Swap the order of the two named return values of foo
+Refactoring rule: After reordering return types, update all multi-assignment call sites `i, s = foo()` to match the new return order.
+*/
+
+/* Error Root Cause:
+Observed failure: After swapping foo’s return signature to `(string, int)`, the multi-assignment statement `i, s = foo()` is left unchanged. This causes a type mismatch compile error, assigning string into `i` and int into `s`.
+Expected behavior: The refactoring rewrites the call site to `s, i = foo()` to align variables with the reordered return values.
+Underlying cause: Change Signature logic tracks direct single-value assignments but does not traverse and rewrite multi-value tuple assignment usages when modifying return parameter ordering.
+*/
+
+func main() {
+	var i int
+	var s string
+	i, s = foo()
+	_ = i
+	_ = s
+}
+
+func foo() (int, string) {
+	return 0, ""
+}
+
+// After swapping return order (bad unmodified call site):
+/*
+func foo() (string, int) {
+	return "", 0
+}
+func main() {
+	var i int
+	var s string
+	i, s = foo() // Type mismatch, unchanged
+}
+*/
+
+// Expected correct rewritten call site:
+/*
+func foo() (string, int) {
+	return "", 0
+}
+func main() {
+	var i int
+	var s string
+	s, i = foo()
+}
+*/

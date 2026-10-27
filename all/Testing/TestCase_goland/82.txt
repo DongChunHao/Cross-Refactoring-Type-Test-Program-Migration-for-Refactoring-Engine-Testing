@@ -1,0 +1,23 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import "fmt"
+func finder(mine [5]string) {
+var r []string
+collectOre(mine, &r) // extract for loop logic into collectOre
+return r
+}
+func collectOre(mine [5]string, r *[]string) {
+for _, v := range mine {
+if v == "ore" {
+*r = append(*r, v)
+}
+}
+}
+func main() {
+theMine := [5]string{"rock", "ore", "ore", "rock", "ore"}
+foundOre := finder(theMine)
+fmt.Println(foundOre)
+}

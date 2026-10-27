@@ -1,0 +1,27 @@
+/* Refactoring Settings: */
+/*
+Refactoring Type: Inline Variable
+Refactoring Target: local variable bar
+Refactoring Scope: Current JavaScript file
+Trigger Operation: Invoke Refactor -> Inline on the declared local variable bar. Two test scenarios:
+1. var bar = baz['bar'];
+2. var bar = 1; var zoo = {bar: 'bar'};
+*/
+
+/* Error Root Cause: */
+/*
+Observed failure: The inline variable refactoring incorrectly treats string literals, object literal keys with the same identifier name as references to the local variable, and deletes the variable declaration when it should find no valid references for inlining.
+Expected behavior: The refactoring engine should distinguish variable references from syntactically unrelated string literals and object property keys with matching names. If there are no actual references to the local variable, it should indicate that inlining is not applicable and make no changes.
+Underlying cause: The reference resolver for inline variable uses simple name matching instead of precise AST scope binding analysis; it conflates identifiers in different syntactic roles, leading to false positive matches and incorrect variable deletion.
+*/
+
+// Complete compilable test code
+function foo() {
+    var baz;
+    var bar = baz['bar'];
+}
+
+function foo2() {
+    var bar = 1;
+    var zoo = {bar: 'bar'};
+}

@@ -1,0 +1,24 @@
+// Target Refactoring Type: Rename Method
+// Expected Defect Performance: The cross‑module symbol usage collector misses exception‑type references inside except clauses; those type occurrences are not processed and remain unchanged after refactoring, producing unresolved references
+
+# ---- one.py ----
+
+import exp_modul as exc
+try:
+pass
+except exc.ExcFilePathError: // REFACTOR_TARGET
+pass
+
+# ---- exp_modul.py ----
+
+class Error(Exception):
+"""Base class for exceptions in this module."""
+pass
+class ExcFilePathError(Error):
+def **init**(self, expression, message):
+self.expression = expression
+self.message = message
+class ExcAutoObjParam(Error):
+def **init**(self, expression, message):
+self.expression = expression
+self.message = message

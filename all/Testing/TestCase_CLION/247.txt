@@ -1,0 +1,12 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: validateY
+'''
+#include <exception>
+void validateY(int y) //{Rename method test to validateY}
+{
+if(y == 5) {
+throw std::exception();
+} else {
+}
+}

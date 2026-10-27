@@ -1,0 +1,22 @@
+```
+<?php
+namespace Queue\Base {
+    class QueueConnector
+    {
+    }
+}
+/*
+ * Job definition classes for async task queue
+ */
+namespace Queue\Job {
+    class EmailJob
+    {
+    }
+    class NotificationJob
+    {
+    }
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `EmailJob`, target namespace `Queue\Job\Mail`

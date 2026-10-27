@@ -1,0 +1,22 @@
+'''
+Refactoring type: Move Method
+Refactoring new name: N/A
+'''
+#include <cstdio>
+class Foo {
+public:
+static void foo() {}
+};
+class Bar {
+void bar();
+};
+struct Wrapper
+{
+void wrapperBar(Bar* obj) { //{Move bar logic into struct Wrapper member function}
+Foo::foo();
+}
+};
+void Bar::bar() {
+Wrapper w;
+w.wrapperBar(this);
+}

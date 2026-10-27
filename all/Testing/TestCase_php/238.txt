@@ -1,0 +1,18 @@
+```
+<?php
+class UserManager
+{
+    private static function prepare()
+    {
+        // Select block
+        $user = new stdClass();
+        $user->name = "test";
+        // Remaining code overwrites $user
+        $user = new stdClass();
+        $user->name = "final";
+    }
+}
+?>
+```
+
+【Refactoring Action】: Extract Method refactoring, select `$user = new stdClass(); $user->name = "test";`, extract into private static `buildTempUser()`.

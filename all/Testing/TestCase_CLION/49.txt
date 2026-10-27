@@ -1,0 +1,19 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: extract_f
+'''
+#include <iostream>
+#include <vector>
+namespace ns {
+template<typename>
+struct foo {
+};
+std::vector<foo<int>>
+f() { //{Rename method f to extract_f}
+std::vector<foo<int>> v;
+v.push_back({});
+return v;
+}
+}
+int main() {
+}

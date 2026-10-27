@@ -1,0 +1,14 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+template 
+class CSome {
+public:
+void Foo () {};//extract method for template class member function
+};
+int main () {
+CSome <int> A;
+A.Foo();
+return 0;
+}

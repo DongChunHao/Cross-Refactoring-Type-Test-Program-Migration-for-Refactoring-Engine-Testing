@@ -1,0 +1,12 @@
+```
+<?php
+namespace App\Model {
+    class User
+    {
+    }
+    class Profile{}
+}
+?>
+```
+
+【Refactoring Action】: Move Class refactoring, target class `User`, move to new file

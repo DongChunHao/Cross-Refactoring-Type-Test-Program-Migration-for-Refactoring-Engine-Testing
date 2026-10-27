@@ -1,0 +1,25 @@
+'''
+Refactoring type: Pull up method
+Refactoring new name: N/A
+'''
+#include <iostream>
+#include <string>
+class BasePrinter {
+public:
+virtual void print(const std::string& key, int count) = 0; //{Pull up print declaration into BasePrinter}
+};
+class Printer : public BasePrinter
+{
+public:
+void print(const std::string& key, int count) override {
+std::cout << count << "|" << key << "\n";
+}
+};
+int main()
+{
+std::string key = "test_key";
+int count = 10;
+Printer p;
+p.print(key, count);
+return 0;
+}

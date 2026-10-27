@@ -1,0 +1,38 @@
+// sandbox/a/a.go
+package a
+
+import "fmt"
+
+/* Refactoring Settings:
+Refactoring type: Move Function to Another File / Another Package
+Refactoring target: Move function Foo() from package a to package b
+Refactoring scope: Function Foo() which references package-level global variable S in package a
+Refactoring rule: After moving Foo to a different package, rewrite the reference to the global variable as qualified package selector `a.S`, not `a.String()`.
+*/
+
+/* Error Root Cause:
+Observed failure: After moving Foo to package b, the reference `_ = S.String()` is incorrectly rewritten to `_ = a.String()`. This code is invalid, as `a` is the imported package name and does not have a String method.
+Expected behavior: Rewrite the access to the exported global variable S as `_ = a.S.String()` in the new package b, preserving the selector chain.
+Underlying cause: The refactoring's cross-package reference rewrite logic mishandles the selector expression; it incorrectly discards the variable identifier `S` and treats the package import prefix as the receiver of the String() call.
+*/
+
+var S fmt.Stringer
+
+func Foo() {
+	_ = S.String()
+}
+
+// sandbox/b/b.go
+package b
+
+import "sandbox/a"
+
+// Bad actual refactoring output
+func Foo() {
+	_ = a.String()
+}
+
+// Expected correct refactoring output
+func Foo() {
+	_ = a.S.String()
+}

@@ -1,0 +1,16 @@
+''' Refactoring Settings:
+Refactoring type: Rename instance attribute refactoring
+Refactoring target: instance attribute eggs, rename to bacon
+Refactoring scope: class Spam, instance‑attribute usages and __slots__ class‑level slot declaration
+Refactoring rule expectation: When renaming instance attribute eggs to bacon, the corresponding string literal entry inside __slots__ shall also be updated synchronously.
+'''
+''' Error Root Cause:
+Observed failure: After renaming self.eggs to self.bacon in __init__, only the instance assignment self.eggs = None gets updated to self.bacon = None. The corresponding "eggs" string entry in __slots__ list remains unchanged.
+Expected behavior: Both self.eggs usage and the matching slot string "__slots__ = ["eggs"]" should be renamed to "__slots__ = ["bacon"]".
+Underlying cause: The rename usage‑finder does not treat string literals inside __slots__ as usages of the instance attribute symbol. The refactoring engine ignores __slots__ declarations during rename processing, even though slot string literals define valid instance‑attribute names.
+'''
+class Spam(object):
+    __slots__ = ["eggs"]
+
+    def __init__(self):
+        self.eggs = None

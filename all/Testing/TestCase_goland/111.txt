@@ -1,0 +1,11 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+func computeValue() int { // extract expression into computeValue
+return 0 + 1 + 2
+}
+func main() {
+var v = computeValue()
+}

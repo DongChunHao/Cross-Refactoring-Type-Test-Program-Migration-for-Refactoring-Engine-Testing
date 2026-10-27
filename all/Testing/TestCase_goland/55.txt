@@ -1,0 +1,17 @@
+'''
+Refactoring type: Extract Method
+Refactoring new name: N/A
+'''
+package main
+import (
+"[github.com/labstack/echo/v4](https://github.com/labstack/echo/v4)"
+)
+func main() {
+var ctx echo.Context
+invokeMakeFunc(ctx) // extract makeFunc call into invokeMakeFunc
+}
+func invokeMakeFunc(ctx echo.Context) {
+makeFunc(ctx)
+}
+func makeFunc(ctx echo.Context) {
+}

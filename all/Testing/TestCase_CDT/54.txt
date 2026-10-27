@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: 0
+'''
+float GlobalVar_0 = 0;
+float func_0() {
+float LocalVar_0 = 100;
+return GlobalVar_0;
+}
+float Function_0() {
+float LocalVar_0 = 1;
+return GlobalVar_0;
+} //rename method for rename‑refactoring‑numeric‑literal‑as‑function‑name‑lexical‑invalid‑compile‑error defect scenario

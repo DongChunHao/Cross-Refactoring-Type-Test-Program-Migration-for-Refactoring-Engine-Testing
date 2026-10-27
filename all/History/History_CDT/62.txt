@@ -1,0 +1,78 @@
+// Example 1 (correct extraction)
+/*$*/a++;/*$$*/ std::cout << a;
+// Extracted correctly:
+int extracted (int a) {
+    a++;
+    return a;
+}
+
+// Example 2 (incorrect extraction)
+/*$*/a++;/*$$*/ std::cout << a << '\n';
+// Actual result:
+void extracted(int a) {
+    a++;
+}
+
+// Example3 (two variables case)
+/*$*/a++; b++;/*$$*/ std::cout << a << b;
+// Actual result:
+int extracted(int a, int b) {
+	a++;
+	b++;
+	return b;
+}
+// Expected correct result:
+int extracted(int a, int& b) {
+	a++;
+	b++;
+	return a;
+}
+
+/*
+/* Refactoring Settings: */
+Refactoring Type: Extract Function refactoring, Eclipse CDT flow analysis
+Operation steps: Select marked code block between /*$*/ and /*$$*/ for Extract Function.
+The code after selection is the usage site of modified variables (std::cout << ...).
+Root cause pointed in your description:
+The `getVariableReadOutside()` in NodeContainer only collects variable from the LAST `<<` operation.
+`getFlowInfo(IASTNode node)` in FlowAnalyzer uses HashMap.remove() instead of HashMap.get().
+*/
+
+/*
+Observed failure:
+The flow analysis tracks variables modified inside extracted region and read after the extracted region.
+The algorithm collects variables that are read after the extracted block to decide:
+1. Return type of extracted function (void or value return)
+2. Whether parameters should be passed by value or reference
+3. Which variable is used as the return value.
+
+Bug behaviours:
+1. Case 1: post block only `cout << a` → works fine, return `a`.
+2. Case 2: post block `cout << a << '\n'` (chained operator<<):
+   Flow analysis fails to detect that `a` is read after extraction. It thinks no variable is read outside, produces void function.
+3. Case3: post block `cout << a << b` (two variables chained):
+   Only the last variable `b` is captured. The refactoring chooses to return `b`, and passes both a and b by value.
+   Expected: detect both a and b are read outside. Since b is mutated inside block and used after, it needs reference parameter. The return value should be `a`.
+
+The underlying implementation bug:
+`FlowAnalyzer.getFlowInfo()` uses `map.remove(node)`:
+- remove() retrieves AND DELETES the entry from hashmap after reading it.
+- When visiting multiple nodes (the chained `<<` operands), the first operand’s entry is removed from map and no longer available for subsequent analysis.
+- Only the LAST operand survives and is collected into `getVariableReadOutside()`.
+If changed to `map.get(node)` (read without deleting entry), all entries remain in the map, all variables read after extraction can be collected completely.
+
+Expected behavior:
+1. Flow information lookup must read the map entry **without deleting it**. Use `get()` instead of `remove()`.
+2. Collect ALL variables modified inside extracted block and read after the extracted region, not only last one.
+3. For each modified variable that is read after extraction:
+   - pass-by-reference for variables mutated inside and used outside the extracted block.
+4. If multiple variables are read after extraction, properly select return candidate or generate multiple out-parameters/reference parameters, instead of arbitrarily picking last variable as return value.
+*/
+
+/*
+Underlying cause:
+The FlowAnalyzer’s hashmap uses `remove()` when fetching flow information for AST nodes.
+This is a logic error: retrieving flow state consumes/deletes the entry from the map.
+When processing a sequence of AST nodes (chained `operator<<` arguments), earlier nodes' flow info entries are erased and lost.
+`getVariableReadOutside()` only receives the last variable in the chain, leading to incomplete post-usage analysis, wrong return type, wrong parameter passing mode and wrong return variable selection.
+*/

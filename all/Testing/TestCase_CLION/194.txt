@@ -1,0 +1,13 @@
+'''
+Refactoring type: Rename Method
+Refactoring new name: setupFrameParams
+'''
+#include "NewCppClass.h"
+void fooBar(){
+NewCppClass::mVSyncUpdates = true;
+NewCppClass::mFrameTime = (1 / 30.0f) * 1000.0f;
+}
+void NewCppClass::setupFrameParams() { //{Rename method foo to setupFrameParams}
+fooBar();
+}
+

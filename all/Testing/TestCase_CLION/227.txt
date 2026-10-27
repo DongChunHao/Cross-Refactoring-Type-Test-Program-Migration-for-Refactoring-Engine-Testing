@@ -1,0 +1,18 @@
+'''
+Refactoring type: Push down method
+Refactoring new name: N/A
+'''
+#include <cstdlib>
+class Base
+{
+public:
+virtual void test() {}
+};
+class Impl : public Base //{Push down test implementation from Base to Impl}
+{
+public:
+void test() override {
+int x;
+x = rand();
+}
+};
